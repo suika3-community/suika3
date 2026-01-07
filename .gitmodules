@@ -1,3 +1,3 @@
 [submodule "external/PlayfieldEngine"]
 	path = external/PlayfieldEngine
-	url = git@github.com:awemorris/PlayfieldEngine.git
+	url = https://github.com/awemorris/PlayfieldEngine.git
