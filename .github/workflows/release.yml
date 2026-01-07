@@ -20,7 +20,7 @@ jobs:
         run: choco install -y winflexbison3
 
       - name: Set up dependencies
-        run: git submodule update --init
+        run: git submodule update --init --recursive
 
       - name: Configure (x64)
         run: >
