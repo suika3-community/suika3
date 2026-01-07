@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Install flex & bison (Chocolatey)
+        run: choco install -y winflexbison3
+
+      - name: Set up dependencies
+        run: git submodule update --init
+
+      - name: Configure (x64)
+        run: >
+          cmake --preset windows-msvc-x64-release
+          -DFLEX_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_flex.exe"
+          -DBISON_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_bison.exe"
+
+      - name: Build (x64)
+        run: cmake --build --preset windows-msvc-x64-release --config Release --parallel
+
+      - name: Upload Windows EXEs
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-binaries
+          path: |
+            out/**/suika.exe
+          if-no-files-found: error
+          retention-days: 7
