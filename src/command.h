@@ -18,6 +18,6 @@
  * Command Implementation
  */
 
-bool command_bg(void);
+bool command_bg(void *p);
 
 #endif

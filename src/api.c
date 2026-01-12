@@ -9,19 +9,19 @@
  * Suika3 API for Playfield Script
  */
 
-#include <suika.h>
+#include <suika3/suika3.h>
+#include <playfield/playfield.h>
+#include "game.h"
 #include "command.h"
-
-static NoctEnv *env;
 
 struct api_func {
 	const char *name;
-	bool (*func)(NoctEnv *);
+	bool (*func)(void *);
 };
 
-static bool api_suika_start(NoctEnv *env);
-static bool api_suika_update(NoctEnv *env);
-static bool api_suika_render(NoctEnv *env);
+static bool api_suika_start(void *p);
+static bool api_suika_update(void *p);
+static bool api_suika_render(void *p);
 
 static struct api_func api_func[] = {
 	/* Skeleton */
@@ -36,19 +36,19 @@ static struct api_func api_func[] = {
 bool init_api(void)
 {
 	const char *params[] = {"param"};
-	const int tbl_size = sizeof(funcs) / sizeof(struct func);
+	const int tbl_size = sizeof(api_func) / sizeof(struct api_func);
 	int i;
 
 	/* Register functions. */
 	for (i = 0; i < tbl_size; i++) {
-		if (!pf_register_func(api_func[i].name, api_func[i].func))
+		if (!pf_install_api(api_func[i].name, api_func[i].func))
 			return false;
 	}
 
 	return 0;
 }
 
-static bool api_suika_start(NoctEnv *env)
+static bool api_suika_start(void *p)
 {
 	if (!on_game_start())
 		return false;
@@ -56,7 +56,7 @@ static bool api_suika_start(NoctEnv *env)
 	return true;
 }
 
-static bool api_suika_update(NoctEnv *env)
+static bool api_suika_update(void *p)
 {
 	if (!on_game_update())
 		return false;
@@ -64,7 +64,7 @@ static bool api_suika_update(NoctEnv *env)
 	return true;
 }
 
-static bool api_suika_render(NoctEnv *env)
+static bool api_suika_render(void *p)
 {
 	if (!on_game_render())
 		return false;

@@ -1,0 +1,371 @@
+/* -*- coding: utf-8; tab-width: 8; indent-tabs-mode: t; -*- */
+
+/*
+ * Suika3
+ * Copyright (c) 2001-2026 The Suika3 Authors
+ */
+
+/*
+ * Audio Mixer
+ */
+
+#include <suika3/suika3.h>
+#include "mixer.h"
+#include "conf.h"
+
+#include <playfield/playfield.h>
+
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+
+/* Is playing on the track. */
+static bool is_playing[S3_MIXER_TRACKS];
+
+/* Is fading on the track. */
+static bool is_fading[S3_MIXER_TRACKS];
+
+/* Current volume in the track. */
+static float vol_cur[S3_MIXER_TRACKS];
+
+/* Start volume of the fading on the track. */
+static float vol_start[S3_MIXER_TRACKS];
+
+/* End volume of the fading on the track. */
+static float vol_end[S3_MIXER_TRACKS];
+
+/* Fading time on the track. */
+static float vol_span[S3_MIXER_TRACKS];
+
+/* Start time of the fading on the track. */
+static uint64_t sw[S3_MIXER_TRACKS];
+
+/* Volume value to be written to the local save data. */
+static float vol_local[S3_MIXER_TRACKS];
+
+/* Master volume. */
+static float vol_master;
+
+/* Global volume of the track. */
+static float vol_global[S3_MIXER_TRACKS];
+
+/* Per-character volume. */
+static float vol_character[S3_CH_VOL_SLOTS];
+
+/* Which character to apply the volume. */
+static int ch_vol_index;
+
+/* BGM file name. */
+static char *bgm_file_name;
+
+/* SE file name. (if looped) */
+static char *se_file_name;
+
+/*
+ * Initialize the mixer subsystem.
+ */
+bool init_mixer(void)
+{
+	int track;
+
+	vol_master = 1.0f;
+	vol_global[S3_TRACK_BGM] = conf_sound_vol_bgm;
+	vol_global[S3_TRACK_VOICE] = conf_sound_vol_voice;
+	vol_global[S3_TRACK_SE] = conf_sound_vol_se;
+	vol_global[S3_TRACK_SYS] = conf_sound_vol_se;
+
+	for (track = 0; track < S3_MIXER_TRACKS; track++) {
+		is_playing[track] = false;
+		vol_cur[track] = 1.0f;
+		vol_local[track] = 1.0f;
+		is_fading[track] = false;
+
+		pf_set_volume(track, vol_master * vol_global[track]);
+	}
+
+	for (track = 0; track < S3_CH_VOL_SLOTS; track++)
+		vol_character[track] = 1.0f;
+
+	ch_vol_index = S3_CH_VOL_SLOT_DEFAULT;
+
+	return true;
+}
+
+/*
+ * Cleanup the mixer subsystem.
+ */
+void cleanup_mixer(void)
+{
+	int track;
+
+	for (track = 0; track < S3_MIXER_TRACKS; track++) {
+		pf_stop_sound(track);
+		if (is_playing[track]) {
+			is_playing[track] = false;
+		}
+	}
+
+	free(bgm_file_name);
+	bgm_file_name = NULL;
+}
+
+/*
+ * Set the BGM file name.
+ */
+bool
+s3_set_bgm_file_name(const char *file)
+{
+	if (bgm_file_name != NULL) {
+		free(bgm_file_name);
+		bgm_file_name = NULL;
+	}
+
+	if (file != NULL) {
+		bgm_file_name = strdup(file);
+		if (bgm_file_name == NULL) {
+			s3_log_out_of_memory();
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/*
+ * Get the BGM file name.
+ */
+const char *
+s3_get_bgm_file_name(void)
+{
+	return bgm_file_name;
+}
+
+/*
+ * Set the SE file name.
+ */
+bool
+s3_set_se_file_name(
+	const char *file)
+{
+	if (se_file_name != NULL) {
+		free(se_file_name);
+		se_file_name = NULL;
+	}
+
+	if (file != NULL) {
+		se_file_name = strdup(file);
+		if (se_file_name == NULL) {
+			s3_log_out_of_memory();
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/*
+ * Get the SE file name. (only when loopback-playing)
+ */
+const char *
+s3_get_se_file_name(void)
+{
+	return se_file_name;
+}
+
+/*
+ * Play a sound file on a mixer track.
+ */
+void
+s3_set_mixer_input_file(
+	int track,
+	const char *file)
+{
+	assert(n < S3_MIXER_TRACKS);
+
+	if (is_playing[track]) {
+		stop_sound(track);
+		is_playing[track] = false;
+	}
+
+	if (file != NULL) {
+		pf_play_sound(track, file);
+		is_playing[track] = true;
+	}
+}
+
+/*
+ * Set the volume for a mixer track.
+ */
+void
+s3_set_mixer_volume(
+	int track,
+	float vol,
+	float span)
+{
+	assert(track < S3_MIXER_TRACKS);
+	assert(vol >= 0 && vol <= 1.0f);
+
+	if (span > 0) {
+		is_fading[track] = true;
+		vol_start[track] = vol_cur[track];
+		vol_end[track] = vol;
+		vol_span[track] = span;
+		vol_local[track] = vol;
+		reset_lap_timer(&sw[track]);
+	} else {
+		is_fading[track] = false;
+		vol_cur[track] = vol;
+		vol_local[track] = vol;
+		set_sound_volume(track, vol_global[track] * vol * vol_master);
+	}
+
+	/* TODO: completely separate SE/SYS */
+	if (track == S3_TRACK_SE)
+		s3_set_mixer_volume(S3_TRACK_SYS, vol, span);
+}
+
+/*
+ * Get the volume for a mixer track.
+ */
+float
+s3_get_mixer_volume(
+	int track)
+{
+	assert(n < S3_MIXER_TRACKS);
+
+	return vol_local[track];
+}
+
+/*
+ * Set the master volume.
+ */
+void
+s3_set_master_volume(
+	float vol)
+{
+	int i;
+
+	assert(vol >= 0 && vol <= 1.0f);
+
+	vol_master = vol;
+
+	for (i = 0; i < S3_MIXER_TRACKS; i++)
+		set_sound_volume(i, vol_global[i] * vol_cur[i] * vol_master);
+}
+
+/*
+ * Get the master volume.
+ */
+float
+s3_get_master_volume(void)
+{
+	return vol_master;
+}
+
+/*
+ * Set the global volume for a track.
+ */
+void
+s3_set_mixer_global_volume(
+	int track,
+	float vol)
+{
+	assert(n < S3_MIXER_TRACKS);
+	assert(vol >= 0 && vol <= 1.0f);
+
+	vol_global[track] = vol;
+
+	set_sound_volume(track, vol_global[track] * vol_cur[track] * vol_master);
+
+	/* TODO: completely separate SE/SYS */
+	if (track == S3_TRACK_SE)
+		s3_set_mixer_global_volume(S3_TRACK_SYS, vol);
+}
+
+/*
+ * Get the global volume of a track.
+ */
+float
+s3_get_mixer_global_volume(
+	int track)
+{
+	assert(track < MIXER_STREAMS);
+
+	return vol_global[track];
+}
+
+/*
+ * Set the character volume.
+ */
+void
+s3_set_character_volume(
+	int ch_index,
+	float vol)
+{
+	assert(ch_index >= 0 && ch_index < CH_VOL_SLOTS);
+
+	vol_character[ch_index] = vol;
+
+	ch_vol_index = ch_index;
+	vol = vol_global[S3_TRACK_VOICE] * vol_local[S3_TRACK_VOICE] *
+	      vol_character[ch_vol_index] * vol_master;
+	set_sound_volume(S3_TRACK_VOICE, vol);
+}
+
+/*
+ * Get the character volume.
+ */
+float
+s3_get_character_volume(
+	int ch_index)
+{
+	assert(ch_index >= 0 && ch_index < CH_VOL_SLOTS);
+
+	return vol_character[ch_index];
+}
+
+/*
+ * Check if the track playback is finished.
+ */
+bool
+s3_is_mixer_sound_finished(
+	int track)
+{
+	if (pf_is_sound_finished(track))
+		return true;
+
+	return false;
+}
+
+/*
+ * Process sound fading.
+ */
+void process_sound_fading(void)
+{
+	int track;
+	float lap, vol;
+
+	for (track = 0; track < S3_MIXER_TRACKS; track++) {
+		if (!is_fading[track])
+			continue;
+
+		/* Get the lap time. */
+		lap = (float)get_lap_timer_millisec(&sw[track]) / 1000.0f;
+		if (lap >= vol_span[track]) {
+			lap = vol_span[track];
+			is_fading[track] = false;
+		}
+
+		/* Decide the volume to be set. */
+		vol = vol_start[track] * (1.0f - lap / vol_span[track]) +
+		      vol_end[track] * (lap / vol_span[track]);
+
+		/* If a per-character volume is applied. */
+		if (track == S3_TRACK_VOICE && ch_vol_index != -1)
+			vol *= vol_character[ch_vol_index];
+
+		/* Set the volume. */
+		vol_cur[track] = vol;
+		pf_set_volume(track, vol_global[track] * vol_cur[track] * vol_master);
+	}
+}

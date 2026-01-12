@@ -6,12 +6,13 @@
  */
 
 /*
- * `bg` command
+ * "bg" command
  */
 
 #include <suika3/suika3.h>
+#include "command.h"
 
-bool command_bg(void)
+bool command_bg(void *p)
 {
 	return true;
 }

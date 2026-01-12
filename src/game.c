@@ -11,33 +11,47 @@
 
 #include <suika3/suika3.h>
 #include "api.h"
+#include "conf.h"
+#include "stage.h"
+#include "sysbtn.h"
+#include "mixer.h"
+#include "tag.h"
+
+#include <playfield/playfield.h>
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <time.h>
+#include <assert.h>
 
 /*
  * Input States
  */
 
-static bool is_left_button_pressed;
-static bool is_right_button_pressed;
-static bool is_left_clicked;
-static bool is_right_clicked;
-static bool is_return_pressed;
-static bool is_space_pressed;
-static bool is_escape_pressed;
-static bool is_up_pressed;
-static bool is_down_pressed;
-static bool is_left_arrow_pressed;
-static bool is_right_arrow_pressed;
-static bool is_page_up_pressed;
-static bool is_page_down_pressed;
-static bool is_control_pressed;
-static bool is_s_pressed;
-static bool is_l_pressed;
-static bool is_h_pressed;
-static bool is_touch_canceled;
-static bool is_swiped;
 static int mouse_pos_x;
 static int mouse_pos_y;
+static bool is_mouse_left_pressed;
+static bool is_mouse_right_pressed;
+static bool is_mouse_left_clicked;
+static bool is_mouse_right_clicked;
 static bool is_mouse_dragging;
+static bool is_return_key_pressed;
+static bool is_space_key_pressed;
+static bool is_escape_key_pressed;
+static bool is_up_key_pressed;
+static bool is_down_key_pressed;
+static bool is_left_key_pressed;
+static bool is_right_key_pressed;
+static bool is_pageup_key_pressed;
+static bool is_pagedown_key_pressed;
+static bool is_control_key_pressed;
+static bool is_s_key_pressed;
+static bool is_l_key_pressed;
+static bool is_h_key_pressed;
+static bool is_touch_canceled;
+static bool is_swiped;
 
 /*
  * Internal Game States
@@ -66,7 +80,7 @@ static int saved_pen_x;
 static int saved_pen_y;
 
 /* Calling arguments. */
-static char *call_arg[CALL_ARGS];
+static char *call_arg[S3_CALL_ARGS];
 
 /* Stored message for the page mode. */
 static char *buffered_message;
@@ -106,8 +120,20 @@ bool on_game_start(void)
 	if (!init_conf())
 		return false;
 
-	/* Load the first tag file. */
-	if (!pf_move_to_tag_file(S3_FIRST_TAG_FILE))
+	/* Initialize the stage subsystem. */
+	if (!init_stage())
+		return false;
+
+	/* Initialize the sysbtn subsystem. */
+	if (!init_sysbtn())
+		return false;
+
+	/* Initialize the mixer subsystem. */
+	if (!init_mixer())
+		return false;
+
+	/* Initialize the tag subsystem. */
+	if (!init_tag())
 		return false;
 
 	/* Initialize the game states. */
@@ -119,24 +145,24 @@ bool on_game_start(void)
 	page_line = 0;
 
 	/* Clear the input states. */
-	is_left_button_pressed = false;
-	is_right_button_pressed = false;
-	is_left_clicked = false;
-	is_right_clicked = false;
-	is_return_pressed = false;
-	is_space_pressed = false;
-	is_escape_pressed = false;
-	is_up_pressed = false;
-	is_down_pressed = false;
-	is_page_up_pressed = false;
-	is_page_down_pressed = false;
-	is_control_pressed = false;
-	is_s_pressed = false;
-	is_l_pressed = false;
-	is_h_pressed = false;
 	mouse_pos_x = 0;
 	mouse_pos_y = 0;
+	is_mouse_left_pressed = false;
+	is_mouse_right_pressed = false;
+	is_mouse_left_clicked = false;
+	is_mouse_right_clicked = false;
 	is_mouse_dragging = false;
+	is_return_key_pressed = false;
+	is_space_key_pressed = false;
+	is_escape_key_pressed = false;
+	is_up_key_pressed = false;
+	is_down_key_pressed = false;
+	is_pageup_key_pressed = false;
+	is_pagedown_key_pressed = false;
+	is_control_key_pressed = false;
+	is_s_key_pressed = false;
+	is_l_key_pressed = false;
+	is_h_key_pressed = false;
 }
 
 /*
@@ -174,18 +200,18 @@ bool on_game_update(void)
 	process_sound_fading();
 
 	/* Reset input states. */
-	is_left_clicked = false;
-	is_right_clicked = false;
-	is_space_pressed = false;
-	is_return_pressed = false;
-	is_escape_pressed = false;
-	is_up_pressed = false;
-	is_down_pressed = false;
-	is_left_arrow_pressed = false;
-	is_right_arrow_pressed = false;
-	is_s_pressed = false;
-	is_l_pressed = false;
-	is_h_pressed = false;
+	is_mouse_left_clicked = false;
+	is_mouse_right_clicked = false;
+	is_space_key_pressed = false;
+	is_return_key_pressed = false;
+	is_escape_key_pressed = false;
+	is_up_key_pressed = false;
+	is_down_key_pressed = false;
+	is_left_key_pressed = false;
+	is_right_key_pressed = false;
+	is_s_key_pressed = false;
+	is_l_key_pressed = false;
+	is_h_key_pressed = false;
 	is_touch_canceled = false;
 	is_swiped = false;
 
@@ -197,8 +223,7 @@ bool on_game_update(void)
  */
 bool on_game_render(void)
 {
-	if (!s3_render_stage())
-		return false;
+	s3_render_stage();
 
 	return true;
 }
@@ -333,33 +358,33 @@ int s3_get_mouse_pos_y(void)
 /*
  * Check if mouse left button is pressed.
  */
-bool s3_is_left_button_pressed(void)
+bool s3_is_mouse_left_pressed(void)
 {
-	return is_left_button_pressed;
+	return is_mouse_left_pressed;
 }
 
 /*
  * Check if mouse right button is pressed.
  */
-bool s3_is_right_button_pressed(void)
+bool s3_is_mouse_right_pressed(void)
 {
-	return is_right_button_pressed;
+	return is_mouse_right_pressed;
 }
 
 /*
  * Check if mouse left button is pressed then released.
  */
-bool s3_is_left_clicked(void)
+bool s3_is_mouse_left_clicked(void)
 {
-	return is_left_clicked;
+	return is_mouse_left_clicked;
 }
 
 /*
  * Check if mouse right button is pressed then released.
  */
-bool s3_is_right_clicked(void)
+bool s3_is_mouse_right_clicked(void)
 {
-	return is_right_clicked;
+	return is_mouse_right_clicked;
 }
 
 /*
@@ -373,25 +398,25 @@ bool s3_is_mouse_dragging(void)
 /*
  * Check if return key is pressed.
  */
-bool s3_is_return_pressed(void)
+bool s3_is_return_key_pressed(void)
 {
-	return is_return_pressed;
+	return is_return_key_pressed;
 }
 
 /*
  * Check if space key is pressed.
  */
-bool s3_is_space_pressed(void)
+bool s3_is_space_key_pressed(void)
 {
-	return is_space_pressed;
+	return is_space_key_pressed;
 }
 
 /*
  * Check if escape key is pressed.
  */
-bool s3_is_escape_pressed(void)
+bool s3_is_escape_key_pressed(void)
 {
-	return is_escape_pressed;
+	return is_escape_key_pressed;
 }
 
 /*
@@ -495,16 +520,16 @@ bool s3_is_swiped(void)
  */
 void s3_clear_input_state(void)
 {
-	is_left_button_pressed = false;
-	is_right_button_pressed = false;
-	is_left_clicked = false;
-	is_right_clicked = false;
-	is_return_pressed = false;
-	is_up_pressed = false;
-	is_down_pressed = false;
-	is_left_arrow_pressed = false;
-	is_right_arrow_pressed = false;
-	is_escape_pressed = false;
+	is_mouse_left_pressed = false;
+	is_mouse_right_pressed = false;
+	is_mouse_left_clicked = false;
+	is_mouse_right_clicked = false;
+	is_return_key_pressed = false;
+	is_up_key_pressed = false;
+	is_down_key_pressed = false;
+	is_left_key_pressed = false;
+	is_right_key_pressed = false;
+	is_escape_key_pressed = false;
 }
 
 /*
@@ -718,7 +743,7 @@ bool s3_set_call_argument(int index, const char *val)
 		free(call_arg[index]);
 	call_arg[index] = strdup(val);
 	if (call_arg[index] == NULL) {
-		log_memory();
+		s3_log_out_of_memory();
 		return false;
 	}
 	return true;
@@ -764,7 +789,7 @@ bool s3_append_buffered_message(const char *msg)
 
 	s = malloc(len + 1);
 	if (s == NULL) {
-		log_memory();
+		s3_log_out_of_memory();
 		return false;
 	}
 
@@ -846,7 +871,7 @@ bool s3_register_bgvoice(const char *file)
 	if (file != NULL) {
 		bgvoice = strdup(file);
 		if (bgvoice == NULL) {
-			log_memory();
+			s3_log_out_of_memory();
 			return false;
 		}
 	}
@@ -876,6 +901,73 @@ void s3_set_bgvoice_playing(bool is_playing)
 bool s3_is_bgvoice_playing(void)
 {
 	return flag_bgvoice_playing;
+}
+
+/*
+ * Logging
+ */
+
+/*
+ * Print a debug message.
+ */
+void
+s3_log_info(
+	const char *msg,
+	...)
+{
+	char buf[4096];
+	va_list ap;
+
+	va_start(ap, msg);
+	vsnprintf(buf, sizeof(buf), msg, ap);
+	va_end(ap);
+
+	log_info(buf);
+}
+
+/*
+ * Print a warning message.
+ */
+void
+s3_log_warn(
+	const char *msg,
+	...)
+{
+	char buf[4096];
+	va_list ap;
+
+	va_start(ap, msg);
+	vsnprintf(buf, sizeof(buf), msg, ap);
+	va_end(ap);
+
+	log_warn(buf);
+}
+
+/*
+ * Print an error message.
+ */
+void
+s3_log_error(
+	const char *msg,
+	...)
+{
+	char buf[4096];
+	va_list ap;
+
+	va_start(ap, msg);
+	vsnprintf(buf, sizeof(buf), msg, ap);
+	va_end(ap);
+
+	log_error(buf);
+}
+
+/*
+ * Print an out-of-memory error message.
+ */
+void
+s3_log_out_of_memory(void)
+{
+	pf_log_error("Out-of-memory.");
 }
 
 /*
