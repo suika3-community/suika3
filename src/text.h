@@ -6,11 +6,11 @@
  */
 
 /*
- * Glyph Rendering
+ * Text Rendering
  */
 
-#ifndef SUIKA3_GLYPH_H
-#define SUIKA3_GLYPH_H
+#ifndef SUIKA3_TEXT_H
+#define SUIKA3_TEXT_H
 
 #include <suika3/suika3.h>
 
@@ -25,17 +25,6 @@
 #define FONT_SELECT3		(2)
 #define FONT_SELECT4		(3)
 #define FONT_COUNT		(4)
-
-/* Initialize the glyph subsystem. */
-bool init_glyph(void);
-
-/* Cleanup the glyph subsystem. */
-void cleanup_glyph(void);
-
-
-/*
- * Message drawing
- */
 
 /*
  * Context for message drawing.
@@ -88,6 +77,12 @@ struct draw_msg_context {
 	bool runtime_is_gyoto_kinsoku_second;
 	bool is_quoted;
 };
+
+/* Initialize the glyph subsystem. */
+bool init_text(void);
+
+/* Cleanup the glyph subsystem. */
+void cleanup_text(void);
 
 /* Check if c is an escape sequence character. */
 bool is_escape_sequence_char(char c);

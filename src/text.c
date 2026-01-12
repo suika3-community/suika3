@@ -10,7 +10,7 @@
  */
 
 #include <suika3/suika3.h>
-#include "glyph.h"
+#include "text.h"
 #include "image.h"
 #include "conf.h"
 
@@ -50,7 +50,7 @@ static bool draw_emoji(struct draw_msg_context *context, const char *name, int *
  * Initialize the glyph subsystem.
  */
 bool
-init_glyph(void)
+init_text(void)
 {
 	int i;
 
@@ -91,7 +91,7 @@ init_glyph(void)
  * Cleanup the glyph subsystem.
  */
 void
-cleanup_glyph(void)
+cleanup_text(void)
 {
 	int i;
 
@@ -226,7 +226,8 @@ s3_get_glyph_width(
 /*
  * Get the glyph height.
  */
-int get_glyph_height(int font_type, int font_size, uint32_t codepoint)
+int
+s3_get_glyph_height(int font_type, int font_size, uint32_t codepoint)
 {
 	if (!load_cached_glyph(font_type, codepoint, font_size, 0, 0, 0))
 		return 0;
@@ -237,7 +238,8 @@ int get_glyph_height(int font_type, int font_size, uint32_t codepoint)
 /*
  * Get the string width.
  */
-int get_string_width(int font_type, int font_size, const char *mbs)
+int
+s3_get_string_width(int font_type, int font_size, const char *mbs)
 {
 	uint32_t c;
 	int mblen, w;
@@ -274,7 +276,8 @@ int get_string_width(int font_type, int font_size, const char *mbs)
 /*
  * 文字列を描画した際の高さを取得する
  */
-int get_string_height(int font_type, int font_size, const char *mbs)
+int
+s3_get_string_height(int font_type, int font_size, const char *mbs)
 {
 	uint32_t c;
 	int mblen, h, h_max;
@@ -482,7 +485,8 @@ static bool is_small_kana(uint32_t wc);
 /*
  * Initialize a message drawing context.
  */
-void construct_draw_msg_context(
+void
+s3_construct_draw_msg_context(
 	struct draw_msg_context *context,
 	struct s3_image *image,
 	const char *msg,

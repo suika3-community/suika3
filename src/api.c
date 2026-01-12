@@ -33,7 +33,7 @@ static struct api_func api_func[] = {
 	{"Tag_bg", command_bg},
 };
 
-bool init_api(void)
+bool install_s3_api(void)
 {
 	const char *params[] = {"param"};
 	const int tbl_size = sizeof(api_func) / sizeof(struct api_func);

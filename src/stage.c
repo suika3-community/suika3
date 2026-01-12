@@ -9,7 +9,7 @@
 #include "conf.h"
 #include "stage.h"
 #include "image.h"
-#include "glyph.h"
+#include "text.h"
 #include "anime.h"
 
 #include <playfield/playfield.h>
@@ -2006,7 +2006,7 @@ s3_fill_namebox(void)
  * Show or hides the name box.
  */
 void
-show_namebox(
+s3_show_namebox(
 	bool show)
 {
 	is_namebox_visible = show;

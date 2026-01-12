@@ -9,7 +9,8 @@
  * Animation Subsystem
  */
 
-#include "opennovel.h"
+#include <suika3/suika3.h>
+#include "anime.h"
 
 #define INVALID_ACCEL_TYPE	(0)
 
@@ -44,7 +45,7 @@ struct sequence {
 };
 
 /* アニメーションシーケンス(レイヤxシーケンス長) */
-static struct sequence sequence[STAGE_LAYERS][SEQUENCE_COUNT];
+static struct sequence sequence[S3_STAGE_LAYERS][SEQUENCE_COUNT];
 
 /* レイヤごとのアニメーションの状況 */
 struct layer_context {
@@ -62,7 +63,7 @@ struct layer_context {
 	uint64_t sw;
 	float cur_lap;
 };
-static struct layer_context context[STAGE_LAYERS];
+static struct layer_context context[S3_STAGE_LAYERS];
 
 /* レイヤー名とレイヤーのインデックスのマップ */
 struct layer_name_map {
@@ -70,12 +71,13 @@ struct layer_name_map {
 	int index;
 };
 static struct layer_name_map layer_name_map[] = {
-	{"bg", LAYER_BG},
-	{"bg2", LAYER_BG2},
-	{"effect5", LAYER_EFFECT5},
-	{"effect6", LAYER_EFFECT6},
-	{"effect7", LAYER_EFFECT7},
-	{"effect8", LAYER_EFFECT8},
+	{"bg",		S3_LAYER_BG},
+	{"bg_fo",	S3_LAYER_BG},
+	{"bg2",		S3_LAYER_BG2},
+	{"efb1",	LAYER_EFFECT5},
+	{"efb2",	LAYER_EFFECT6},
+	{"efb3",	LAYER_EFFECT7},
+	{"efb4",	LAYER_EFFECT8},
 	{"chb", LAYER_CHB},
 	{"chb-eye", LAYER_CHB_EYE},
 	{"chb-lip", LAYER_CHB_LIP},

@@ -211,8 +211,10 @@ set(SUIKA_BASE_SOURCES
   src/stage.c
   src/sysbtn.c
   src/mixer.c
-  src/glyph.c
+  src/text.c
+  src/anime.c
   src/command_bg.c
+  src/translation.c
 )
 
 # I18N Source

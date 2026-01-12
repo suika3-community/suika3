@@ -15,6 +15,6 @@
 #include <suika3/suika3.h>
 
 /* Install the API. */
-bool init_api(void);
+bool install_s3_api(void);
 
 #endif

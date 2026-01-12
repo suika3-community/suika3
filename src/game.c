@@ -102,7 +102,7 @@ static bool dispatch_render(void);
 bool playfield_init_hook(void)
 {
 	/* Install the s3* API. */
-	if (!init_api())
+	if (!install_s3_api())
 		return false;
 		
 	return 0;
