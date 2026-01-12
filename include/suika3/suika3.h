@@ -24,61 +24,82 @@
 #define S3_FIRST_TAG_FILE	"start.s3"
 
 /*
+ * Name of the config file (conf.c)
+ */
+#define S3_CONFIG_FILE		"config.ini"
+
+/*
  * Stage layers. (stage.c)
  */
 #define S3_LAYER_BG		(0)	/* Background */
-#define S3_LAYER_BG2		(1)	/* Background2 */
-#define S3_LAYER_EFB1		(2)	/* Back effect 1 */
-#define S3_LAYER_EFB2		(3)	/* Back effect 2 */
-#define S3_LAYER_EFB3		(4)	/* Back effect 3 */
-#define S3_LAYER_EFB4		(5)	/* Back effect 4 */
-#define S3_LAYER_CHB		(6)	/* Character "back" */
-#define S3_LAYER_CHB_EYE	(7)	/*   Eyes */
-#define S3_LAYER_CHB_LIP	(8)	/*   Lips */
-#define S3_LAYER_CHL		(9)	/* Character "left" */
-#define S3_LAYER_CHL_EYE	(10)	/*   Eyes */
-#define S3_LAYER_CHL_LIP	(11)	/*   Lips */
-#define S3_LAYER_CHLC		(12)	/* Character "left-center" */
-#define S3_LAYER_CHLC_EYE	(13)	/*   Eyes */
-#define S3_LAYER_CHLC_LIP	(14)	/*   Lips */
-#define S3_LAYER_CHR		(15)	/* Character "right" */
-#define S3_LAYER_CHR_EYE	(16)	/*   Eyes */
-#define S3_LAYER_CHR_LIP	(17)	/*   Lips */
-#define S3_LAYER_CHRC		(18)	/* Character "right-center" */
-#define S3_LAYER_CHRC_EYE	(19)	/*   Eyes */
-#define S3_LAYER_CHRC_LIP	(20)	/*   Lips */
-#define S3_LAYER_CHC		(21)	/* Character "right-center" */
-#define S3_LAYER_CHC_EYE	(22)	/*   Eyes */
-#define S3_LAYER_CHC_LIP	(23)	/*   Lips */
-#define S3_LAYER_EFF1		(24)	/* Front effect 1 */
-#define S3_LAYER_EFF2		(25)	/* Front effect 2 */
-#define S3_LAYER_EFF3		(26)	/* Front effect 3 */
-#define S3_LAYER_EFF4		(27)	/* Front effect 4 */
-#define S3_LAYER_MSGBOX		(28)	/* Message box (text layer) */
-#define S3_LAYER_NAMEBOX	(29)	/* Name box (text layer) */
-#define S3_LAYER_CHOOSE1	(30)	/* Choose box 1 (text layer) */
-#define S3_LAYER_CHOOSE2	(31)	/* Choose box 2 (text layer) */
-#define S3_LAYER_CHOOSE3	(32)	/* Choose box 3 (text layer) */
-#define S3_LAYER_CHOOSE4	(33)	/* Choose box 4 (text layer) */
-#define S3_LAYER_CHOOSE5	(34)	/* Choose box 5 (text layer) */
-#define S3_LAYER_CHOOSE6	(35)	/* Choose box 6 (text layer) */
-#define S3_LAYER_CHOOSE7	(36)	/* Choose box 7 (text layer) */
-#define S3_LAYER_CHOOSE8	(37)	/* Choose box 8 (text layer) */
-#define S3_LAYER_CHF		(38)	/* Character "face" */
-#define S3_LAYER_CHF_EYE	(39)	/*   Eyes */
-#define S3_LAYER_CHF_LIP	(40)	/*   Lips */
-#define S3_LAYER_CLICK		(41)	/* Click animation */
-#define S3_LAYER_AUTO		(42)	/* Auto mode banner */
-#define S3_LAYER_SKIP		(43)	/* Skip mode banner */
-#define S3_LAYER_TEXT1		(44)	/* Text layer 1 */
-#define S3_LAYER_TEXT2		(44)	/* Text layer 2 */
-#define S3_LAYER_TEXT3		(44)	/* Text layer 3 */
-#define S3_LAYER_TEXT4		(44)	/* Text layer 4 */
-#define S3_LAYER_TEXT5		(44)	/* Text layer 5 */
-#define S3_LAYER_TEXT6		(44)	/* Text layer 6 */
-#define S3_LAYER_TEXT7		(44)	/* Text layer 7 */
-#define S3_LAYER_TEXT8		(44)	/* Text layer 8 */
-#define S3_STAGE_LAYERS		(45)	/* Total layers */
+#define S3_LAYER_BG_FO		(1)	/*   Fade-Out */
+#define S3_LAYER_BG2		(2)	/* Background2 */
+#define S3_LAYER_EFB1		(3)	/* Back effect 1 */
+#define S3_LAYER_EFB2		(4)	/* Back effect 2 */
+#define S3_LAYER_EFB3		(5)	/* Back effect 3 */
+#define S3_LAYER_EFB4		(6)	/* Back effect 4 */
+#define S3_LAYER_CHB		(7)	/* Character "back" */
+#define S3_LAYER_CHB_EYE	(8)	/*   Eyes */
+#define S3_LAYER_CHB_LIP	(9)	/*   Lips */
+#define S3_LAYER_CHB_FO		(10)	/*   Fade-Out */
+#define S3_LAYER_CHL		(11)	/* Character "left" */
+#define S3_LAYER_CHL_EYE	(12)	/*   Eyes */
+#define S3_LAYER_CHL_LIP	(13)	/*   Lips */
+#define S3_LAYER_CHL_FO		(14)	/*   Fade-Out */
+#define S3_LAYER_CHLC		(15)	/* Character "left-center" */
+#define S3_LAYER_CHLC_EYE	(16)	/*   Eyes */
+#define S3_LAYER_CHLC_LIP	(17)	/*   Lips */
+#define S3_LAYER_CHLC_FO	(18)	/*   Fade-Out */
+#define S3_LAYER_CHR		(19)	/* Character "right" */
+#define S3_LAYER_CHR_EYE	(20)	/*   Eyes */
+#define S3_LAYER_CHR_LIP	(21)	/*   Lips */
+#define S3_LAYER_CHR_FO		(22)	/*   Fade-Out */
+#define S3_LAYER_CHRC		(23)	/* Character "right-center" */
+#define S3_LAYER_CHRC_EYE	(24)	/*   Eyes */
+#define S3_LAYER_CHRC_LIP	(25)	/*   Lips */
+#define S3_LAYER_CHRC_FO	(26)	/*   Fade-Out */
+#define S3_LAYER_CHC		(27)	/* Character "right-center" */
+#define S3_LAYER_CHC_EYE	(28)	/*   Eyes */
+#define S3_LAYER_CHC_LIP	(29)	/*   Lips */
+#define S3_LAYER_CHC_FO		(30)	/*   Fade-Out */
+#define S3_LAYER_EFF1		(31)	/* Front effect 1 */
+#define S3_LAYER_EFF2		(32)	/* Front effect 2 */
+#define S3_LAYER_EFF3		(33)	/* Front effect 3 */
+#define S3_LAYER_EFF4		(34)	/* Front effect 4 */
+#define S3_LAYER_MSGBOX		(35)	/* Message box (text layer) */
+#define S3_LAYER_NAMEBOX	(36)	/* Name box (text layer) */
+#define S3_LAYER_CHOOSE1_IDLE	(37)	/* Choose box 1 (idle, text layer) */
+#define S3_LAYER_CHOOSE1_HOVER	(38)	/* Choose box 1 (hover, text layer) */
+#define S3_LAYER_CHOOSE2_IDLE	(39)	/* Choose box 2 (idle, text layer) */
+#define S3_LAYER_CHOOSE2_HOVER	(40)	/* Choose box 2 (hover, text layer) */
+#define S3_LAYER_CHOOSE3_IDLE	(41)	/* Choose box 3 (idle, text layer) */
+#define S3_LAYER_CHOOSE3_HOVER	(42)	/* Choose box 3 (hover, text layer) */
+#define S3_LAYER_CHOOSE4_IDLE	(43)	/* Choose box 4 (idle, text layer) */
+#define S3_LAYER_CHOOSE4_HOVER	(44)	/* Choose box 4 (hover, text layer) */
+#define S3_LAYER_CHOOSE5_IDLE	(45)	/* Choose box 5 (idle, text layer) */
+#define S3_LAYER_CHOOSE5_HOVER	(46)	/* Choose box 5 (hover, text layer) */
+#define S3_LAYER_CHOOSE6_IDLE	(47)	/* Choose box 6 (idle, text layer) */
+#define S3_LAYER_CHOOSE6_HOVER	(48)	/* Choose box 6 (hover, text layer) */
+#define S3_LAYER_CHOOSE7_IDLE	(49)	/* Choose box 7 (idle, text layer) */
+#define S3_LAYER_CHOOSE7_HOVER	(50)	/* Choose box 7 (hover, text layer) */
+#define S3_LAYER_CHOOSE8_IDLE	(51)	/* Choose box 8 (idle, text layer) */
+#define S3_LAYER_CHOOSE8_HOVER	(52)	/* Choose box 8 (hover, text layer) */
+#define S3_LAYER_CHF		(53)	/* Character "face" */
+#define S3_LAYER_CHF_EYE	(54)	/*   Eyes */
+#define S3_LAYER_CHF_LIP	(55)	/*   Lips */
+#define S3_LAYER_CHF_FO		(56)	/*   Fade-Out */
+#define S3_LAYER_CLICK		(57)	/* Click animation */
+#define S3_LAYER_AUTO		(58)	/* Auto mode banner */
+#define S3_LAYER_SKIP		(59)	/* Skip mode banner */
+#define S3_LAYER_TEXT1		(60)	/* Text layer 1 */
+#define S3_LAYER_TEXT2		(61)	/* Text layer 2 */
+#define S3_LAYER_TEXT3		(62)	/* Text layer 3 */
+#define S3_LAYER_TEXT4		(63)	/* Text layer 4 */
+#define S3_LAYER_TEXT5		(64)	/* Text layer 5 */
+#define S3_LAYER_TEXT6		(65)	/* Text layer 6 */
+#define S3_LAYER_TEXT7		(66)	/* Text layer 7 */
+#define S3_LAYER_TEXT8		(67)	/* Text layer 8 */
+#define S3_STAGE_LAYERS		(68)	/* Total layers */
 
 /*
  * Number of the text layers. (stage.c)
@@ -98,7 +119,7 @@
 /*
  * Number of the choose box
  */
-#define S3_CHOOSE_BOXES		(8)
+#define S3_CHOOSE_COUNT		(8)
 
 /*
  * Character positions. (stage.c)
@@ -124,8 +145,27 @@
 /*
  * Blending mode. (stage.c)
  */
-#define S3_BLEND_NORMAL		(0)
+#define S3_BLEND_ALPHA		(0)
 #define S3_BLEND_ADD		(1)
+#define S3_BLEND_SUB		(2)
+
+/*
+ * Fading Descriptor Index
+ */
+#define S3_FADE_DESC_BG		(0)
+#define S3_FADE_DESC_CHB	(1)
+#define S3_FADE_DESC_CHL	(2)
+#define S3_FADE_DESC_CHLC	(3)
+#define S3_FADE_DESC_CHR	(4)
+#define S3_FADE_DESC_CHRC	(5)
+#define S3_FADE_DESC_CHC	(6)
+#define S3_FADE_DESC_CHF	(7)
+#define S3_FADE_DESC_COUNT	(8)
+
+/*
+ * Kira Kira Effect Frames
+ */
+#define S3_KIRAKIRA_FRAMES	(16)
 
 /*
  * Mixer Tracks
@@ -139,17 +179,73 @@
 /*
  * Character Volume Slots
  */
-#define CH_VOL_SLOTS		(16)
-#define CH_VOL_SLOT_DEFAULT	(0)
+#define S3_CH_VOL_SLOTS		(33)
+#define S3_CH_VOL_SLOT_DEFAULT	(0)
+
+/*
+ * Character Map Count
+ */
+#define S3_CHARACTER_MAP_COUNT	(32)
+
+/*
+ * Emoji Count
+ */
+#define S3_EMOJI_COUNT		(32)
+
+/*
+ * Call Arguments for GUI and Anime
+ */
+#define S3_CALL_ARGS		(32)
+
+/*
+ * Fonts
+ */
+#define S3_FONT_SELECT1		(0)
+#define S3_FONT_SELECT2		(1)
+#define S3_FONT_SELECT3		(2)
+#define S3_FONT_SELECT4		(3)
+#define S3_FONT_COUNT		(4)
 
 /*
  * Types
  */
 
 /*
- * Image
+ * Pixel (image.c)
+ */
+
+typedef uint32_t s3_pixel_t;
+
+/*
+ * Image (image.c)
  */
 struct s3_image;
+
+/*
+ * Fade Descriptor (stage.c)
+ */
+struct s3_fade_desc {
+	bool stay;
+	const char *fname;
+	struct s3_image *image;
+	int x;
+	int y;
+	int alpha;
+	float scale_x;
+	float scale_y;
+	int center_x;
+	int center_y;
+	float rotate;
+};
+
+/*
+ * Message Drawing
+ */
+
+/*
+ * Context for message drawing.
+ */
+struct draw_msg_context;
 
 /*
  * Functions
@@ -182,28 +278,28 @@ int s3_get_mouse_pos_x(void);
 int s3_get_mouse_pos_y(void);
 
 /* Check if mouse left button is pressed. */
-bool s3_is_left_button_pressed(void);
+bool s3_is_mouse_left_pressed(void);
 
 /* Check if mouse right button is pressed. */
-bool s3_is_right_button_pressed(void);
+bool s3_is_mouse_right_pressed(void);
 
 /* Check if mouse left button is pressed then released. */
-bool s3_is_left_clicked(void);
+bool s3_is_mouse_left_clicked(void);
 
 /* Check if mouse right button is pressed then released. */
-bool s3_is_right_clicked(void);
+bool s3_is_mouse_right_clicked(void);
 
 /* Check if mouse is dragging. */
 bool s3_is_mouse_dragging(void);
 
 /* Check if return key is pressed. */
-bool s3_is_return_pressed(void);
+bool s3_is_return_key_pressed(void);
 
 /* Check if space key is pressed. */
-bool s3_is_space_pressed(void);
+bool s3_is_space_key_pressed(void);
 
 /* Check if escape key is pressed. */
-bool s3_is_escape_pressed(void);
+bool s3_is_escape_key_pressed(void);
 
 /* Check if up key is pressed. */
 bool s3_is_up_key_pressed(void);
@@ -387,9 +483,142 @@ bool s3_is_bgvoice_playing(void);
  * Image Management (image.c)
  */
 
-struct s3_image *s3_create_image_from_file(const char *file);
-struct s3_image *s3_create_image(int width, int height);
-void s3_destroy_image(struct s3_image *image);
+/* Load an image from a file. */
+struct s3_image *
+s3_create_image_from_file(
+	const char *file);
+
+/* Create an image. */
+struct s3_image *
+s3_create_image(int width,
+		int height);
+
+/* Load a glyph image. */
+struct s3_image *
+s3_load_glyph_image(
+	int slot,
+	int codepoint,
+	int size,
+	s3_pixel_t color,
+	int outline_width,
+	s3_pixel_t outline_color);
+
+/* Destroy an image. */
+void s3_destroy_image(
+	struct s3_image *image);
+
+/* Copy an image to an image. */
+void s3_draw_image_copy(
+	struct s3_image *dst,
+	int dst_left,
+	int dst_top,
+	struct s3_image *src,
+	int dst_width,
+	int dst_height,
+	int src_left,
+	int src_top);
+
+/* Draw an image to an image with alpha blending. */
+void s3_draw_image_alpha(
+	struct s3_image *dst,
+	int dst_left,
+	int dst_top,
+	int dst_width,
+	int dst_height,
+	struct s3_image *src,
+	int src_left,
+	int src_top,
+	int alpha);
+
+/* Draw an image to an image with add blending. */
+void s3_draw_image_add(
+	struct s3_image *dst,
+	int dst_left,
+	int dst_top,
+	int dst_width,
+	int dst_height,
+	struct s3_image *src,
+	int src_left,
+	int src_top,
+	int alpha);
+
+/* Draw an image to an image with sub blending. */
+void s3_draw_image_sub(
+	struct s3_image *dst,
+	int dst_left,
+	int dst_top,
+	int dst_width,
+	int dst_height,
+	struct s3_image *src,
+	int src_left,
+	int src_top,
+	int alpha);
+
+/* Draw an image to an image with sub blending. */
+void s3_draw_image_dim(
+	struct s3_image *dst,
+	int dst_left,
+	int dst_top,
+	int dst_width,
+	int dst_height,
+	struct s3_image *src,
+	int src_left,
+	int src_top,
+	int alpha);
+
+/* Draw a glyph image to an image. */
+void
+s3_draw_image_glyph(
+	struct s3_image *dst,
+	int dst_left,
+	int dst_top,
+	int dst_width,
+	int dst_height,
+	struct s3_image *src,
+	int src_left,
+	int src_top,
+	int alpha);
+
+/* Draw an emoji image to an image. */
+void
+s3_draw_image_emoji(
+	struct s3_image *dst,
+	int dst_left,
+	int dst_top,
+	int dst_width,
+	int dst_height,
+	struct s3_image *src,
+	int src_left,
+	int src_top,
+	int alpha);
+
+/* Draw an image with scaling. */
+void
+s3_draw_image_scale(
+	struct s3_image *dst,
+	int virtual_dst_width,
+	int virtual_dst_height,
+	int virtual_dst_left,
+	int virtual_dst_top,
+	struct s3_image *src);
+
+/* Make a pixel value. */
+s3_pixel_t
+s3_make_pixel(
+	int r,
+	int g,
+	int b,
+	int a);
+
+/* Fill a rectangle on an image */
+void
+s3_fill_image_rect(
+	struct s3_image *image,
+	int left,
+	int top,
+	int width,
+	int height,
+	s3_pixel_t color);
 
 /*
  * Stage Layer Management (stage.c)
@@ -401,279 +630,484 @@ bool s3_reload_stage_images(void);
 /* Reload the stage positions by the config. */
 void s3_reload_stage_positions(void);
 
-/* Gets the layer X position. */
+/* Get the layer X position. */
 int s3_get_layer_x(int layer);
 
-/* Gets the layer Y position. */
+/* Get the layer Y position. */
 int s3_get_layer_y(int layer);
 
-/* Sets the layer position. */
+/* Set the layer position. */
 void s3_set_layer_position(int layer, int x, int y);
 
-/* Sets the layer scale. */
+/* Set the layer scale. */
 void s3_set_layer_scale(int layer, float scale_x, float scale_y);
 
-/* Gets the layer image width. */
+/* Get the layer image width. */
 int s3_get_layer_width(int layer);
 
-/* Gets the layer image height. */
+/* Get the layer image height. */
 int s3_get_layer_height(int layer);
 
-/* Gets the layer alpha. */
+/* Get the layer alpha. */
 int s3_get_layer_alpha(int layer);
 
-/* Sets the layer alpha. */
+/* Set the layer alpha. */
 void s3_set_layer_alpha(int layer, int alpha);
 
-/* Sets the layer belnd mode. */
+/* Set the layer belnd mode. */
 void s3_set_layer_blend(int layer, int blend);
 
-/* Sets the layer center coordinate. */
+/* Set the layer center coordinate. */
 void s3_set_layer_center(int layer, int x, int y);
 
-/* Sets the layer rotation. */
+/* Set the layer rotation. */
 void s3_set_layer_rotate(int layer, float rad);
 
-/* Gets the layer file name. */
+/* Get the layer file name. */
 const char *s3_get_layer_file_name(int layer);
 
-/* Sets the layer file name. */
+/* Set the layer file name. */
 bool s3_set_layer_file_name(int layer, const char *file_name);
 
-/* Gets the layer image for a glyph drawing. */
-int s3_get_layer_image(int layer);
+/* Get the layer image for a glyph drawing. */
+struct s3_image *s3_get_layer_image(int layer);
 
-/* Sets the layer image for a load.*/
-void s3_set_layer_image(int layer, struct image *img);
+/* Set the layer image for a load.*/
+void s3_set_layer_image(int layer, struct s3_image *img);
 
-/* Sets the layer frame for eye blinking and lip synchronization. */
+/* Set the layer frame for eye blinking and lip synchronization. */
 void s3_set_layer_frame(int layer, int frame);
 
-/* Clears the basic layers. */
+/* Get the text layer string. */
+const char *
+s3_get_layer_text(
+	int text_layer_index);
+
+/* Set the text layer string. */
+bool
+s3_set_layer_text(
+	int textlayer_index,
+	const char *msg);
+
+/* Get the sysbtn idle image. */
+struct s3_image *
+s3_get_sysbtn_idle_image(void);
+
+/* Get the sysbtn hover image. */
+struct s3_image *
+s3_get_sysbtn_hover_image(void);
+
+/* Clear the basic layers. */
 void s3_clear_stage_basic(void);
 
-/* Clears the stage and make it initial state. */
+/* Clear the stage and make it initial state. */
 void s3_clear_stage(void);
 
 /*
  * Conversion of Layer Index and Character Position (stage.c)
  */
 
-/* Converts a character position to a stage layer index. */
+/* Convert a character position to a stage layer index. */
 int s3_chpos_to_layer(int chpos);
 
-/* Converts a character position to a stage layer index (character eye). */
+/* Convert a character position to a stage layer index (character eye). */
 int s3_chpos_to_eye_layer(int chpos);
 
-/* Converts a character position to a stage layer index (character lip). */
+/* Convert a character position to a stage layer index (character lip). */
 int s3_chpos_to_lip_layer(int chpos);
 
-/* Converts a stage layer index to a character position. */
+/* Convert a stage layer index to a character position. */
 int s3_layer_to_chpos(int chpos);
 
 /*
  * Stage Rendering (stage.c)
  */
 
-/* Renders the stage with all stage layers. */
+/* Render the stage with all stage layers. */
 void s3_render_stage(void);
 
 /*
  * Save Data Thumbnail Drawing (stage.c)
  */
 
-/* Draws entire stage into the save data thumbnail. */
+/* Draw entire stage into the save data thumbnail. */
 void s3_draw_stage_to_thumb(void);
 
 /* Get the image of the save data thumbnail */
-int get_thumb_image(void);
+struct s3_image *get_thumb_image(void);
 
 /*
  * Fading Control (stage.c)
  */
 
-/* Gets a fading method from a string. */
-int s3_get_fade_method(const char *method);
+/* Get a fading method from a string. */
+int
+s3_get_fade_method(
+	const char *method);
 
-/* Starts a fading for the bg command. */
-bool s3_start_fade_for_bg(const char *fname, struct image *img, int x, int y,
-			  int alpha, int method, struct image *rule_img);
+/* Start a fading. */
+bool s3_start_fade(
+	struct s3_fade_desc *desc,
+	int method,
+	struct s3_image *rule_img);
 
-/* Starts a fading for the ch command. */
-bool s3_start_fade_for_ch(int chpos, const char *fname, struct image *img,
-			  int x, int y, int alpha, int method,
-			  struct image *rule_img);
-
-/* Starts a fading for the all command. */
-bool s3_start_fade_for_chs(const bool *stay, const char **fname,
-			   struct image **img, const int *x, const int *y,
-			   const int *alpha, int method, struct image *rule_img);
-
-/* Starts a fading for the cl command. */
-bool s3_start_fade_for_ciel(const bool *stay, const char **fname,
-			    struct image **img, const int *x, const int *y,
-			    const int *alpha, int method, struct image *rule_img);
-
-/* Starts a fading for the shake command. */
-void s3_start_fade_for_shake(void);
-
-/* Sets the fading progress. */
+/* Set the fading progress. */
 void s3_set_fade_progress(float progress);
 
-/* Sets the offset for the shake command. */
+/* Set the offset for the shake command. */
 void s3_set_shake_offset(int x, int y);
 
-/* Ends the fading. */
+/* End the fading. */
 void s3_finish_fade(void);
 
 /*
- * Character Change (stage.c)
+ * Character Control (stage.c)
  */
 
-/* Specifies a character index for a character position. */
+/* Specify a character index for a character position. */
 void s3_set_ch_name_mapping(int chpos, int ch_name_index);
 
-/* Sets the talker character name index. */
+/* Set the talker character name index. (-1 for no speaker) */
 void s3_set_ch_talking(int ch_name_index);
 
-/* Gets the talker character position. */
+/* Get the talker character position. */
 int s3_get_talking_chpos(void);
 
-/* Updates the character dimming automatically. */
+/* Update the character dimming automatically. */
 void s3_update_ch_dim_by_talking_ch(void);
 
-/* Updates the character dimming manually. */
+/* Update the character dimming manually. */
 void s3_force_ch_dim(int chpos, bool is_dim);
 
 /*
  * Name Box Control
  */
 
-/* Fills the name box by the name box image. */
+/* Fill the name box by the name box image. */
 void s3_fill_namebox(void);
 
-/* Shows or hides the name box. */
+/* Show or hides the name box. */
 void s3_show_namebox(bool show);
 
 /*
  * Message Box Control
  */
 
-/* Fills the message box by the message box image. */
+/* Fill the message box by the message box image. */
 void s3_fill_msgbox(void);
 
-/* Shows or hides the message box. */
+/* Show or hides the message box. */
 void s3_show_msgbox(bool show);
 
 /*
  * Click Animation Control
  */
 
-/* Sets the position of the click animation. */
+/* Set the position of the click animation. */
 void s3_set_click_position(int x, int y);
 
-/* Shows or hides the click animation. */
+/* Show or hides the click animation. */
 void s3_show_click(bool show);
+
+/* Set the click animation frame index. */
+void s3_set_click_index(int index);
 
 /*
  * Choose Box Control
  */
 
-/* Fills the choose box by the choose box bg image. */
-void s3_fill_choose_bg_image(int index);
+/* Fill the choose box by the choose box bg image. */
+void s3_fill_cbox_idle_image(int index);
 
-/* Fills the choose box by the choose box fg image. */
-void s3_fill_choose_fg_image(int index);
-
-/*
- * Character Drawing
- */
-
-/* Draws a character on a layer. */
-bool s3_draw_char_on_layer(int layer, int x, int y, uint32_t wc, pixel_t color,
-			   pixel_t outline_color, int base_font_size,
-			   bool is_dimming, int *ret_width, int *ret_height,
-			   int *union_x, int *union_y, int *union_w, int *union_h);
+/* Fill the choose box by the choose box fg image. */
+void s3_fill_cbox_hover_image(int index);
 
 /*
  * Banner Control
  */
 
-/* Shows or hides the auto mode banner. */
+/* Show or hides the auto mode banner. */
 void s3_show_automode_banner(bool show);
 
-/* Shows or hides the skip mode banner. */
+/* Show or hides the skip mode banner. */
 void s3_show_skipmode_banner(bool show);
 
 /*
- * GUI Rendering
+ * GUI Rendering (stage.c)
  */
 
 /* Render an image. */
-void s3_render_image(int dst_left, int dst_top, int dst_width, int dst_height,
-		     int image, int src_x, int src_y, eint src_width,
-		     int src_height, int alpha);
+void
+s3_render_image(
+	int dst_left,
+	int dst_top,
+	int dst_width,
+	int dst_height,
+	struct s3_image *image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha);
 
-/* Render a texture. */
-void s3_render_image_3d(float x1, float y1, float x2, float y2,
-			float x3, float y3, efloat x4, float y4,
-			int image, int src_left, int src_top, int src_width,
-			int src_height, int alpha);
+/* Render a image with free transform. */
+void
+s3_render_image_3d(
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	struct s3_image *image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha);
 
 /*
- * Text Layers Control (stage.c)
+ * System Button (sysbtn.c)
  */
 
-/* Gets the text layer string. */
-const char *s3_get_layer_text(int text_layer_index);
+/* Show or hide the system button. */
+bool
+s3_show_sysbtn(
+	bool is_visible);
 
-/* Sets the text layer string. */
-bool s3_set_layer_text(int textlayer_index, const char *msg);
+/* Check if the system button is visible. */
+bool
+s3_is_sysbtn_visible(void);
+
+/* Update the system button's pointed state by the mouse position. */
+void
+s3_update_sysbtn_state(void);
+
+/* Check if the system bytton is pointed. */
+bool
+s3_is_sysbtn_pointed(void);
+
+/* Check if the system bytton is clicked. */
+bool
+s3_is_sysbtn_clicked(void);
+
+/*
+ * Glyph (glyph.c)
+ */
+
+/* Convert the top character of a utf-8 string to utf-32. */
+int
+s3_utf8_to_utf32(
+	const char *mbs,
+	uint32_t *wc);
+
+/* Count the characters of a utf-8 string. */
+int
+s3_count_utf8_chars(
+	const char *mbs);
+
+/* Get the glyph width. */
+int
+s3_get_glyph_width(
+	int font_type,
+	int font_size,
+	uint32_t codepoint);
+
+/* Get the glyph height. */
+int
+s3_get_glyph_height(
+	int font_type,
+	int font_size,
+	uint32_t codepoint);
+
+/* Get the string width. */
+int
+s3_get_string_width(
+	int font_type,
+	int font_size,
+	const char *mbs);
+
+/* Get the string height. */
+int
+s3_get_string_height(
+	int font_type,
+	int font_size,
+	const char *mbs);
+
+/* Draw a glyph. */
+bool
+s3_draw_glyph(
+	struct s3_image *img,
+	int font_type,
+	int font_size,
+	int base_font_size,
+	int outline_size,
+	int x,
+	int y,
+	s3_pixel_t color,
+	s3_pixel_t outline_color,
+	uint32_t codepoint,
+	int *ret_w,
+	int *ret_h,
+	bool is_dim);
+
+/*
+ * Message Drawing (glyph.c)
+ */
+
+/* Initialize a message drawing context. */
+void
+s3_construct_draw_msg_context(
+	struct draw_msg_context *context,
+	struct s3_image *dst,
+	const char *msg,
+	int font,
+	int font_size,
+	int base_font_size,
+	int ruby_size,
+	int outline_size,
+	int pen_x,
+	int pen_y,
+	int area_width,
+	int area_height,
+	int left_margin,
+	int right_margin,
+	int top_margin,
+	int bottom_margin,
+	int line_margin,
+	int char_margin,
+	s3_pixel_t color,
+	s3_pixel_t outline_color,
+	s3_pixel_t bg_color,
+	bool fill_bg,
+	bool is_dimming,
+	bool ignore_linefeed,
+	bool ignore_font,
+	bool ignore_outline,
+	bool ignore_color,
+	bool ignore_size,
+	bool ignore_position,
+	bool ignore_ruby,
+	bool ignore_wait,
+	void (*inline_wait_hook)(float),
+	bool use_tategaki);
+
+/* Count the remaining characters excluding escape sequences. */
+int
+s3_count_chars_common(
+	struct draw_msg_context *context, int *width);
+
+/* Draw characters in a message up to (max_chars) characters. */
+int
+s3_draw_msg_common(
+	struct draw_msg_context *context,
+	int max_chars);
+
+/* Get a pen position. */
+void
+s3_get_pen_position_common(
+	struct draw_msg_context *context,
+	int *pen_x,
+	int *pen_y);
+
+/* Check if a message is a quoted serif. (TODO: delete) */
+bool
+s3_is_quoted_serif(
+	const char *msg);
 
 /*
  * Mixer (mixer.c)
  */
 
-/* Sets the BGM file name. */
+/* Set the BGM file name. */
 bool s3_set_bgm_file_name(const char *file);
 
-/* Gets the BGM file name. */
+/* Get the BGM file name. */
 const char *s3_get_bgm_file_name(void);
 
-/* Sets the SE file name. */
+/* Set the SE file name. */
 bool s3_set_se_file_name(const char *file);
 
-/* Gets the SE file name. (only when loopback-playing) */
+/* Get the SE file name. (only when loopback-playing) */
 const char *s3_get_se_file_name(void);
 
-/* Plays a sound file on a mixer track. */
+/* Play a sound file on a mixer track. */
 void s3_set_mixer_input_file(int track, const char *file);
 
-/* Sets the volume for a mixer track. */
+/* Set the volume for a mixer track. */
 void s3_set_mixer_volume(int track, float vol, float span);
 
-/* Gets the volume for a mixer track. */
+/* Get the volume for a mixer track. */
 float s3_get_mixer_volume(int n);
 
-/* Sets the master volume. */
+/* Set the master volume. */
 void s3_set_master_volume(float vol);
 
-/* Gets the master volume. */
+/* Get the master volume. */
 float s3_get_master_volume(void);
 
-/* Sets the track volume. */
-void s3_set_mixer_track_volume(int track, float vol);
+/* Set the global volume for a track. */
+void s3_set_mixer_global_volume(int track, float vol);
 
-/* Gets the track volume. */
+/* Get the global volume for a track. */
 float s3_get_mixer_global_volume(int track);
 
-/* Sets the character volume. */
+/* Set the character volume. */
 void s3_set_character_volume(int ch_index, float vol);
 
-/* Gets the character volume. */
+/* Get the character volume. */
 float s3_get_character_volume(int ch_index);
 
 /* Check if the track playback is finished. */
 bool s3_is_mixer_sound_finished(int track);
+
+/*
+ * Tag File (tag.c)
+ */
+
+/* Move to a tag file. */
+bool s3_move_to_tag_file(const char *file);
+
+/* Move to a next tag. */
+bool s3_move_to_next_tag(void);
+
+/* Move to a label. */
+bool s3_move_to_label(const char *label);
+
+/*
+ * Logging (game.c)
+ */
+
+/*
+ * Print a debug message.
+ */
+void
+s3_log_info(
+	const char *msg,
+	...);
+
+/*
+ * Print a warning message.
+ */
+void
+s3_log_warn(
+	const char *msg,
+	...);
+
+/*
+ * Print an error message.
+ */
+void
+s3_log_error(
+	const char *msg,
+	...);
+
+/*
+ * Print an out-of-memory error message.
+ */
+void
+s3_log_out_of_memory(void);
 
 #endif
