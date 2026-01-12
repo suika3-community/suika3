@@ -42,7 +42,7 @@ Suika3 represents the culmination of over two decades of relentless innovation a
 * **Suika2 (2016)**: The cornerstone of our current architecture and the fruit of a decade of dedicated R&D.
   It delivers a full visual novel experience with extensive platform compatibility.
 * **Playfield Engine (2025)**: A versatile 2D engine derived from the core portability layer of the Suika series.
-* **Suika3**: By synthesizing these legacies and introducing **NovelML/SeedScript**,
+* **Suika3 (2026–)**: By synthesizing these legacies and introducing **NovelML/SeedScript**,
   Suika3 delivers the rock-solid stability of its predecessors alongside the cutting-edge flexibility of modern technology.
 
 ## Manifesto
