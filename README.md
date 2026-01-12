@@ -39,7 +39,7 @@ Suika3 represents the culmination of over two decades of relentless innovation a
 
 * **Suika Studio (2001)**: The origin of our codebase, featuring our first GUI-based editors. Inspired by the legendary AGES engine.
 * **The Wilderness Years (2004–2015)**: A decade of R&D focused on establishing a robust portability layer for cross-platform support.
-* **Suika2 (2016)**: The cornerstone of our current architecture and the fruit of a decade of dedicated R&D.
+* **Suika2 (2016–2024)**: The cornerstone of our current architecture and the fruit of a decade of dedicated R&D.
   It delivers a full visual novel experience with extensive platform compatibility.
 * **Playfield Engine (2025)**: A versatile 2D engine derived from the core portability layer of the Suika series.
 * **Suika3 (2026–)**: By synthesizing these legacies and introducing **NovelML/SeedScript**,
