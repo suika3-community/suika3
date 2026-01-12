@@ -8,6 +8,17 @@ The next-generation visual novel engine for the 2030s and beyond.
 Suika3 aims to empower creators across the globe for the decades to
 come.
 
+Games made with Suika3 run on the `Suika JIT Virtual Machine` (VM).
+The VM executes `Suika NovelML` along with `Suika SeedScript`.
+
+NovelML is a tag-based markup language for visual novels. It is very
+intuitive for developers with experience with other engines.
+
+SeedScript is our original scripting language that runs at true native
+speed within the VM. Inspired by JavaScript, SeedScript offers a
+streamlined syntax that is more intuitive for beginners yet powerful
+enough for seasoned developers.
+
 ## Status: Work in Progress
 
 This repository is currently under active development. Features and
@@ -15,57 +26,60 @@ APIs are subject to change.
 
 ## Key Features
 
-* Run Anywhere: Designed with a "native-first" approach to ensure high  
-  performance on any platform.
-* Modern Heritage: Built on the proven codebase of Suika2, integrated  
-  with the versatile Playfield Engine.
-* Low-Spec Optimized: Engineered to run smoothly even on low-cost  
-  hardware and in developing regions.
-* Creator-Centric: A seamless porting layer and a powerful scripting  
-  language to bring your stories to life without limits.
+* **High Performance**: Powered by the Suika JIT VM, it delivers unparalleled execution speed.
+* **Lightweight**: Engineered to run smoothly even on low-spec hardware and in developing regions.
+* **Universal Platform**: Designed with a "port anywhere" strategy, ensuring compatibility with almost every modern platform.
+* **Extensible**: NovelML can be seamlessly expanded by developers using SeedScript.
+* **Reliable**: Built on the proven codebase of Suika2 and integrated with the modern Playfield Engine.
+* **Jot-and-Run**: A powerful markup language designed to bring your stories to life in an instant.
 
-## Lineage
+## Lineage: The Grand Journey
 
-Suika3 is the direct evolution of a long-standing legacy:
+Suika3 represents the culmination of over two decades of relentless innovation and development:
 
-* Suika1 (2001) & Suika2 (2016): The foundations of our community and  
-  codebase.
-* Playfield Engine: A versatile 2D engine derived from Suika2's  
-  porting layer.
-* Suika3: By merging the entire Suika2 codebase with the modern  
-  Playfield Engine, Suika3 offers both the stability of its  
-  predecessors and the flexibility of modern technology.
+* **Suika Studio (2001)**: The origin of our codebase, featuring our first GUI-based editors. Inspired by the legendary AGES engine.
+* **The Wilderness Years (2004–2015)**: A decade of R&D focused on establishing a robust portability layer for cross-platform support.
+* **Suika2 (2016)**: The cornerstone of our current architecture and the fruit of a decade of dedicated R&D.
+  It delivers a full visual novel experience with extensive platform compatibility.
+* **Playfield Engine (2025)**: A versatile 2D engine derived from the core portability layer of the Suika series.
+* **Suika3**: By synthesizing these legacies and introducing **NovelML/SeedScript**,
+  Suika3 delivers the rock-solid stability of its predecessors alongside the cutting-edge flexibility of modern technology.
 
 ## Manifesto
 
-### Stories are for Everyone.
+### Stories Belong to Everyone.
 
-We believe that storytelling is one of humanity's greatest forms of
-information. Creating and sharing stories is not a privilege for the
-few — it is a fundamental human activity.
+We believe that storytelling is one of humanity's most powerful forms
+of recording information. Creating and sharing stories should not be a
+privilege reserved for the few — it is a fundamental human right.
 
-### Accessibility without Borders.
+### Accessibility Without Borders.
 
-Tools for creation should be open and accessible to everyone,
-regardless of wealth, location, or hardware. Suika3 is intentionally
-built to run comfortably on low-cost PCs. Your creativity should never
-be limited by the price tag of your hardware.
+Creative tools should be open and accessible to all, regardless of
+wealth, geography, or hardware. Suika3 is intentionally engineered to
+run smoothly on entry-level, affordable PCs. Your creativity should
+never be limited by the price tag of your hardware.
 
-### Empowering Global Creators.
+### Empowering Creators Worldwide.
 
-We believe in a world where you can create for platforms you don't
-even own, reaching audiences far beyond your immediate environment.
+We envision a world where you can develop for platforms you've never
+even touched, reaching audiences far beyond your immediate
+environment. By empowering creators, we aim to foster an open
+ecosystem where:
 
-### An Open Ecosystem.
+* **Players** are emotionally enriched by a diverse tapestry of stories.
+* **Developers** can sustain themselves both creatively and economically.
 
-By supporting creators, we aim to build an open ecosystem where:
-
-* Players are emotionally enriched by diverse stories.
-* Developers can sustain themselves economically and creatively.
-
-This is not just software. This is an invitation to create.
+This is more than just software. This is an invitation to create.
 
 ## Contributing
+
+We welcome contributions from everyone! Whether you are fixing a bug,
+improving documentation, or proposing new features, your help is what
+drives **Suika3** forward.
+
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for our contribution
+guidelines and code of conduct.
 
 ## License
 
@@ -73,5 +87,11 @@ This software is released under the `zlib License`.
 
 ```
 Suika3
-Copyright (c) 2001-2026, The Suika3 Authors.
+Copyright (c) 2001-2026 The Suika3 Authors
 ```
+
+## Community
+
+Our official Discord server is coming soon! We are hard at work
+creating a space for creators to connect, share, and grow. Stay tuned
+for updates.

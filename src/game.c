@@ -119,8 +119,8 @@ static bool dispatch_render(void);
  */
 bool playfield_init_hook(void)
 {
-	/* Install the s3* API. */
-	if (!install_s3_api())
+	/* Install the API. */
+	if (!s3i_install_api())
 		return false;
 		
 	return 0;
@@ -129,29 +129,29 @@ bool playfield_init_hook(void)
 /*
  * Called when the game starts.
  */
-bool on_game_start(void)
+bool s3i_on_game_start(void)
 {
 	/* Initialize the pseudo random number. */
 	srand((unsigned int)time(NULL));
 
 	/* Initialize the config subsystem. */
-	if (!init_conf())
+	if (!s3i_init_conf())
 		return false;
 
 	/* Initialize the stage subsystem. */
-	if (!init_stage())
+	if (!s3i_init_stage())
 		return false;
 
 	/* Initialize the sysbtn subsystem. */
-	if (!init_sysbtn())
+	if (!s3i_init_sysbtn())
 		return false;
 
 	/* Initialize the mixer subsystem. */
-	if (!init_mixer())
+	if (!s3i_init_mixer())
 		return false;
 
 	/* Initialize the tag subsystem. */
-	if (!init_tag())
+	if (!s3i_init_tag())
 		return false;
 
 	/* Initialize the game states. */
@@ -186,7 +186,7 @@ bool on_game_start(void)
 /*
  * Called when a frame is updated.
  */
-bool on_game_update(void)
+bool s3i_on_game_update(void)
 {
 	int s3_continue;
 	bool tag_end;
@@ -239,7 +239,7 @@ bool on_game_update(void)
 /*
  * Called when a frame is rendering.
  */
-bool on_game_render(void)
+bool s3i_on_game_render(void)
 {
 	s3_render_stage();
 
