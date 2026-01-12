@@ -1,8 +1,8 @@
-/* -*- Coding: utf-8; tab-width: 8; indent-tabs-mode: t; -*- */
+/* -*- coding: utf-8; tab-width: 8; indent-tabs-mode: t; -*- */
 
 /*
- * OpenNovel
- * Copyright (c) 2001-2024, OpenNovel.org. All rights reserved.
+ * Suika3
+ * Copyright (C) 2001-2026 The Suika3 Authors
  */
 
 /*
