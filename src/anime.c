@@ -11,13 +11,23 @@
 
 #include <suika3/suika3.h>
 #include "anime.h"
+#include "image.h"
+#include "conf.h"
+
+#include <playfield/playfield.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <assert.h>
 
 #define INVALID_ACCEL_TYPE	(0)
 
-/* レイヤごとのアニメーションシーケンスの最大数 */
+/* Maximum number of the anime sequences per a layer. */
 #define SEQUENCE_COUNT		(1024)
 
-/* アニメーションシーケンスの構造 */
+/* Anime sequence. */
 struct sequence {
 	int layer;
 	float start_time;
@@ -43,11 +53,9 @@ struct sequence {
 	bool hide_special;
 	bool show_special;
 };
-
-/* アニメーションシーケンス(レイヤxシーケンス長) */
 static struct sequence sequence[S3_STAGE_LAYERS][SEQUENCE_COUNT];
 
-/* レイヤごとのアニメーションの状況 */
+/* Context of a layer anime. */
 struct layer_context {
 	/* props */
 	int seq_count;
@@ -65,67 +73,95 @@ struct layer_context {
 };
 static struct layer_context context[S3_STAGE_LAYERS];
 
-/* レイヤー名とレイヤーのインデックスのマップ */
+/* Mapping from a layer name to a layer index. */
 struct layer_name_map {
 	const char *name;
 	int index;
 };
 static struct layer_name_map layer_name_map[] = {
-	{"bg",		S3_LAYER_BG},
-	{"bg_fo",	S3_LAYER_BG},
-	{"bg2",		S3_LAYER_BG2},
-	{"efb1",	LAYER_EFFECT5},
-	{"efb2",	LAYER_EFFECT6},
-	{"efb3",	LAYER_EFFECT7},
-	{"efb4",	LAYER_EFFECT8},
-	{"chb", LAYER_CHB},
-	{"chb-eye", LAYER_CHB_EYE},
-	{"chb-lip", LAYER_CHB_LIP},
-	{"chl", LAYER_CHL},
-	{"chl-eye", LAYER_CHL_EYE},
-	{"chl-lip", LAYER_CHL_LIP},
-	{"chlc", LAYER_CHLC},
-	{"chlc-eye", LAYER_CHLC_EYE},
-	{"chlc-lip", LAYER_CHLC_LIP},
-	{"chr", LAYER_CHR},
-	{"chr-eye", LAYER_CHR_EYE},
-	{"chr-lip", LAYER_CHR_LIP},
-	{"chrc", LAYER_CHRC},
-	{"chrc-eye", LAYER_CHRC_EYE},
-	{"chrc-lip", LAYER_CHRC_LIP},
-	{"chc", LAYER_CHC},
-	{"chc-eye", LAYER_CHC_EYE},
-	{"chc-lip", LAYER_CHC_LIP},
-	{"effect1", LAYER_EFFECT1},
-	{"effect2", LAYER_EFFECT2},
-	{"effect3", LAYER_EFFECT3},
-	{"effect4", LAYER_EFFECT4},
-	{"msg", LAYER_MSG},
-	{"name", LAYER_NAME},
-	{"face", LAYER_CHF},
-	{"text1", LAYER_TEXT1},
-	{"text2", LAYER_TEXT2},
-	{"text3", LAYER_TEXT3},
-	{"text4", LAYER_TEXT4},
-	{"text5", LAYER_TEXT5},
-	{"text6", LAYER_TEXT6},
-	{"text7", LAYER_TEXT7},
-	{"text8", LAYER_TEXT8},
+	{"bg",			S3_LAYER_BG},
+	{"bg_fo",		S3_LAYER_BG_FO},
+	{"bg2",			S3_LAYER_BG2},
+	{"efb1",		S3_LAYER_EFB1},
+	{"efb2",		S3_LAYER_EFB2},
+	{"efb3",		S3_LAYER_EFB3},
+	{"efb4",		S3_LAYER_EFB4},
+	{"chb",			S3_LAYER_CHB},
+	{"chb-eye",		S3_LAYER_CHB_EYE},
+	{"chb-lip",		S3_LAYER_CHB_LIP},
+	{"chb-fo",		S3_LAYER_CHB_FO},
+	{"chl",			S3_LAYER_CHL},
+	{"chl-eye",		S3_LAYER_CHL_EYE},
+	{"chl-lip",		S3_LAYER_CHL_LIP},
+	{"chl-fo",		S3_LAYER_CHL_FO},
+	{"chlc",		S3_LAYER_CHLC},
+	{"chlc-eye",		S3_LAYER_CHLC_EYE},
+	{"chlc-lip",		S3_LAYER_CHLC_LIP},
+	{"chlc-fo",		S3_LAYER_CHLC_FO},
+	{"chr",			S3_LAYER_CHR},
+	{"chr-eye",		S3_LAYER_CHR_EYE},
+	{"chr-lip",		S3_LAYER_CHR_LIP},
+	{"chr-fo",		S3_LAYER_CHR_FO},
+	{"chrc",		S3_LAYER_CHRC},
+	{"chrc-eye",		S3_LAYER_CHRC_EYE},
+	{"chrc-lip",		S3_LAYER_CHRC_LIP},
+	{"chrc-fo",		S3_LAYER_CHRC_FO},
+	{"chc",			S3_LAYER_CHC},
+	{"chc-eye",		S3_LAYER_CHC_EYE},
+	{"chc-lip",		S3_LAYER_CHC_LIP},
+	{"chc-fo",		S3_LAYER_CHC_FO},
+	{"eff1",		S3_LAYER_EFF1},
+	{"eff2",		S3_LAYER_EFF2},
+	{"eff3",		S3_LAYER_EFF3},
+	{"eff4",		S3_LAYER_EFF4},
+	{"msgbox",		S3_LAYER_MSGBOX},
+	{"namebox"	,	S3_LAYER_NAMEBOX},
+	{"choose1-idle",	S3_LAYER_CHOOSE1_IDLE},
+	{"choose1-hover",	S3_LAYER_CHOOSE1_HOVER},
+	{"choose2-idle",	S3_LAYER_CHOOSE2_IDLE},
+	{"choose2-hover",	S3_LAYER_CHOOSE2_HOVER},
+	{"choose3-idle",	S3_LAYER_CHOOSE3_IDLE},
+	{"choose3-hover",	S3_LAYER_CHOOSE3_HOVER},
+	{"choose4-idle",	S3_LAYER_CHOOSE4_IDLE},
+	{"choose4-hover",	S3_LAYER_CHOOSE4_HOVER},
+	{"choose5-idle",	S3_LAYER_CHOOSE5_IDLE},
+	{"choose5-hover",	S3_LAYER_CHOOSE5_HOVER},
+	{"choose6-idle",	S3_LAYER_CHOOSE6_IDLE},
+	{"choose6-hover",	S3_LAYER_CHOOSE6_HOVER},
+	{"choose7-idle",	S3_LAYER_CHOOSE7_IDLE},
+	{"choose7-hover",	S3_LAYER_CHOOSE7_HOVER},
+	{"choose8-idle",	S3_LAYER_CHOOSE8_IDLE},
+	{"choose8-hover",	S3_LAYER_CHOOSE8_HOVER},
+	{"face",		S3_LAYER_CHF},
+	{"face-eye",		S3_LAYER_CHF_EYE},
+	{"face-lip",		S3_LAYER_CHF_LIP},
+	{"face-fo",		S3_LAYER_CHF_FO},
+	{"click",		S3_LAYER_CLICK},
+	{"auto",		S3_LAYER_AUTO},
+	{"skip",		S3_LAYER_SKIP},
+	{"text1",		S3_LAYER_TEXT1},
+	{"text2",		S3_LAYER_TEXT2},
+	{"text3",		S3_LAYER_TEXT3},
+	{"text4",		S3_LAYER_TEXT4},
+	{"text5",		S3_LAYER_TEXT5},
+	{"text6",		S3_LAYER_TEXT6},
+	{"text7",		S3_LAYER_TEXT7},
+	{"text8",		S3_LAYER_TEXT8},
 };
 
 /* Registered Anime Files */
 static char *reg_anime_file[REG_ANIME_COUNT];
 
-/* ロード中の情報 */
+/* Information during anime file loading. */
 static int cur_seq_layer;
 static uint64_t cur_sw;
 static bool *used_layer_tbl;
 
 /*
- * 前方参照
+ * Forward declaration.
  */
 static bool start_sequence(const char *name);
-static bool on_key_value(const char *key, const char *val);
+static bool on_key_value(const char *file, int line, const char *key, const char *val);
 static int layer_name_to_index(const char *name);
 static float calc_pos_x_from(int anime_layer, int index, const char *value);
 static float calc_pos_x_to(int anime_layer, int index, const char *value);
@@ -136,25 +172,26 @@ static bool update_layer_params(int layer);
 static void synthesis_eye_anime(int chpos);
 
 /*
- * アニメーションサブシステムに関する初期化処理を行う
+ * Initialize the anime subsystem.
  */
-bool init_anime(void)
+bool
+init_anime(void)
 {
-#ifdef USE_DLL
-	/* DLLが再利用されたときのために初期化する */
+	/* Cleanup when DLL is reused. */
 	cleanup_anime();
-#endif
+
 	return true;
 }
 
 /*
- * アニメーションサブシステムに関する終了処理を行う
+ * Cleanup the anime subsystem.
  */
-void cleanup_anime(void)
+void
+cleanup_anime(void)
 {
 	int i, j;
 
-	for (i = 0; i < STAGE_LAYERS; i++) {
+	for (i = 0; i < S3_STAGE_LAYERS; i++) {
 		memset(sequence, 0, sizeof(sequence));
 		for (j = 0 ; j < SEQUENCE_COUNT; j++) {
 			sequence[i][j].from_scale_x = 1.0f;
@@ -174,16 +211,20 @@ void cleanup_anime(void)
 }
 
 /*
- * アニメーションファイルを読み込む
+ * Load an anime file.
  */
-bool load_anime_from_file(const char *fname, int reg_index, bool *used_layer)
+bool
+s3_load_anime_from_file(
+	const char *fname,
+	int reg_index,
+	bool *used_layer)
 {
 	/* Load the anime file. */
 	cur_seq_layer = -1;
-	reset_lap_timer(&cur_sw);
+	s3_reset_lap_timer(&cur_sw);
 	used_layer_tbl = used_layer;
 	if (used_layer_tbl != NULL)
-		memset(used_layer_tbl, 0, sizeof(bool) * STAGE_LAYERS);
+		memset(used_layer_tbl, 0, sizeof(bool) * S3_STAGE_LAYERS);
 	if (!load_anime_file(fname))
 		return false;
 
@@ -195,7 +236,7 @@ bool load_anime_from_file(const char *fname, int reg_index, bool *used_layer)
 		}
 		reg_anime_file[reg_index] = strdup(fname);
 		if (reg_anime_file[reg_index] == NULL) {
-			log_memory();
+			s3_log_out_of_memory();
 			return false;
 		}
 	}
@@ -204,9 +245,11 @@ bool load_anime_from_file(const char *fname, int reg_index, bool *used_layer)
 }
 
 /*
- * アニメーションシーケンスをクリアする
+ * Clear the layer anime sequences.
  */
-void clear_layer_anime_sequence(int layer)
+void
+s3_clear_layer_anime_sequence(
+	int layer)
 {
 	int i;
 
@@ -215,12 +258,12 @@ void clear_layer_anime_sequence(int layer)
 	if (context[layer].seq_count > 0) {
 		struct sequence *s;
 		s = &sequence[layer][context[layer].seq_count - 1];
-		set_layer_position(layer, (int)s->to_x, (int)s->to_y);
-		set_layer_scale(layer, s->to_scale_x, s->to_scale_y);
-		set_layer_alpha(layer, (int)s->to_a);
-		set_layer_center(layer, (int)s->center_x, (int)s->center_y);
-		set_layer_rotate(layer, s->to_rotate * (3.14159265f / 180.0f));
-		set_layer_blend(layer, s->blend);
+		s3_set_layer_position(layer, (int)s->to_x, (int)s->to_y);
+		s3_set_layer_scale(layer, s->to_scale_x, s->to_scale_y);
+		s3_set_layer_alpha(layer, (int)s->to_a);
+		s3_set_layer_center(layer, (int)s->center_x, (int)s->center_y);
+		s3_set_layer_rotate(layer, s->to_rotate * (3.14159265f / 180.0f));
+		s3_set_layer_blend(layer, s->blend);
 	}
 
 	context[layer].seq_count = 0;
@@ -243,20 +286,23 @@ void clear_layer_anime_sequence(int layer)
 }
 
 /*
- * アニメーションシーケンスをクリアする
+ * Clear all anime sequences.
  */
-void clear_all_anime_sequence(void)
+void
+s3_clear_all_anime_sequence(void)
 {
 	int i;
 
-	for (i = 0; i < STAGE_LAYERS; i++)
-		clear_layer_anime_sequence(i);
+	for (i = 0; i < S3_STAGE_LAYERS; i++)
+		s3_clear_layer_anime_sequence(i);
 }
 
 /*
- * アニメーションシーケンスを開始する
+ * Begin describing an anime for a layer.
  */
-bool new_anime_sequence(int layer)
+bool
+s3_new_anime_sequence(
+	int layer)
 {
 	struct sequence *s;
 
@@ -284,46 +330,54 @@ bool new_anime_sequence(int layer)
 }
 
 /*
- * アニメーションシーケンスにプロパティを追加する(float)
+ * Add a float property into an anime sequence.
  */
-bool add_anime_sequence_property_f(const char *key, float val)
+bool
+s3_add_anime_sequence_property_f(
+	const char *key,
+	float val)
 {
 	char s[128];
 
 	snprintf(s, sizeof(s), "%f", val);
 
-	if (!on_key_value(key, s))
+	if (!on_key_value("", 0, key, s))
 		return false;
 
 	return true;
 }
 
 /*
- * アニメーションシーケンスにプロパティを追加する(int)
+ * Add an integer property into an anime sequence.
  */
-bool add_anime_sequence_property_i(const char *key, int val)
+bool
+s3_add_anime_sequence_property_i(
+	const char *key,
+	int val)
 {
 	char s[128];
 
 	snprintf(s, sizeof(s), "%d", val);
 
-	if (!on_key_value(key, s))
+	if (!on_key_value("", 0, key, s))
 		return false;
 
 	return true;
 }
 
 /*
- * 指定したレイヤのアニメーションを開始する
+ * Start the anime for a layer.
  */
-bool start_layer_anime(int layer)
+bool
+s3_start_layer_anime(
+	int layer)
 {
 	assert(layer >= 0 && layer < STAGE_LAYERS);
 
 	if (context[layer].seq_count == 0)
 		return true;
 
-	reset_lap_timer(&context[layer].sw);
+	s3_reset_lap_timer(&context[layer].sw);
 	context[layer].is_running = true;
 	context[layer].is_finished = false;
 	context[layer].cur_lap = 0;
@@ -337,13 +391,14 @@ bool start_layer_anime(int layer)
 }
 
 /*
- * 実行中のアニメーションがあるか調べる
+ * Check if there are running animes.
  */
-bool is_anime_running(void)
+bool
+s3_is_anime_running(void)
 {
 	int i;
 
-	for (i = 0; i < STAGE_LAYERS; i++) {
+	for (i = 0; i < S3_STAGE_LAYERS; i++) {
 		if (context[i].is_running)
 			return true;
 	}
@@ -351,13 +406,15 @@ bool is_anime_running(void)
 }
 
 /*
- * 指定したレイヤーの中にアニメが実行中のものがあるか調べる
+ * Check if there are running animes. (with mask)
  */
-bool is_anime_running_with_layer_mask(bool *used_layers)
+bool
+s3_is_anime_running_with_layer_mask(
+	bool *used_layers)
 {
 	int i;
 
-	for (i = 0; i < STAGE_LAYERS; i++) {
+	for (i = 0; i < S3_STAGE_LAYERS; i++) {
 		if (!used_layers[i])
 			continue;
 		if (context[i].is_running)
@@ -367,29 +424,32 @@ bool is_anime_running_with_layer_mask(bool *used_layers)
 }
 
 /*
- * 指定したレイヤーのアニメーションが実行中であるか調べる
+ * Check if the layer anime is finished.
  */
-bool is_anime_finished_for_layer(int layer)
+bool
+s3_is_anime_finished_for_layer(
+	int layer)
 {
 	return context[layer].is_finished;
 }
 
 /*
- * アニメーションのフレーム時刻を更新し、完了したレイヤにフラグをセットする
+ * Update the anime frame.
  */
-void update_anime_frame(void)
+void
+s3_update_anime_frame(void)
 {
 	int i, last_seq;
 	uint64_t lap;
 
-	/* 経過時刻を更新するとともに、アニメの完了を検出する */
-	for (i = 0; i < STAGE_LAYERS; i++) {
+	/* Update the laptime, and detect the anime retirements. */
+	for (i = 0; i < S3_STAGE_LAYERS; i++) {
 		if (!context[i].is_running)
 			continue;
 		if (context[i].is_finished)
 			continue;
 
-		lap = get_lap_timer_millisec(&context[i].sw);
+		lap = s3_get_lap_timer_millisec(&context[i].sw);
 		if (context[i].loop_len > 0 &&
 		    lap > context[i].loop_ofs + context[i].loop_len) {
 			lap -= context[i].loop_ofs;
@@ -408,19 +468,15 @@ void update_anime_frame(void)
 		}
 	}
 
-	/* 各レイヤの描画パラメータを更新する */
-	for (i = 0; i < STAGE_LAYERS; i++) {
-		/* 下記3つのレイヤはアニメレイヤがない */
-		if (i == LAYER_CLICK || i == LAYER_AUTO || i == LAYER_SKIP)
-			continue;
-
-		/* レイヤの情報を更新する */
+	/* For each layer. */
+	for (i = 0; i < S3_STAGE_LAYERS; i++) {
+		/* Update layer params. */
 		update_layer_params(i);
 	}
 }
 
 /*
- * レイヤのパラメータを取得する
+ * Update layer params.
  */
 static bool update_layer_params(int layer)
 {
@@ -429,13 +485,13 @@ static bool update_layer_params(int layer)
 	int i, x, y, alpha;
 	float scale_x, scale_y, rotate;
 
-	assert(layer >= 0 && layer < STAGE_LAYERS);
+	assert(layer >= 0 && layer < S3_STAGE_LAYERS);
 
-	/* シーケンスが定義されていない場合 */
+	/* If no sequence. */
 	if (context[layer].seq_count == 0)
 		return true;
 
-	/* すでに完了している場合 */
+	/* If already finished. */
 	if (context[layer].is_finished &&
 	    context[layer].seq_count > 0) {
 		s = &sequence[layer][context[layer].seq_count - 1];
@@ -443,24 +499,24 @@ static bool update_layer_params(int layer)
 		y = (int)s->to_y;
 		alpha = (int)s->to_a;
 		rotate = s->to_rotate;
-		set_layer_position(layer, (int)s->to_x, (int)s->to_y);
-		set_layer_scale(layer, s->to_scale_x, s->to_scale_y);
-		set_layer_alpha(layer, alpha);
-		set_layer_center(layer, (int)s->center_x, (int)s->center_y);
-		set_layer_rotate(layer, rotate * (3.14159265f / 180.0f));
-		set_layer_blend(layer, s->blend);
-		if (layer == LAYER_MSG && s->hide_special)
-			show_msgbox(false);
-		if (layer == LAYER_MSG && s->show_special)
-			show_msgbox(true);
-		if (layer == LAYER_NAME && s->hide_special)
-			show_namebox(false);
-		if (layer == LAYER_NAME && s->show_special)
-			show_namebox(true);
+		s3_set_layer_position(layer, (int)s->to_x, (int)s->to_y);
+		s3_set_layer_scale(layer, s->to_scale_x, s->to_scale_y);
+		s3_set_layer_alpha(layer, alpha);
+		s3_set_layer_center(layer, (int)s->center_x, (int)s->center_y);
+		s3_set_layer_rotate(layer, rotate * (3.14159265f / 180.0f));
+		s3_set_layer_blend(layer, s->blend);
+		if (layer == S3_LAYER_MSGBOX && s->hide_special)
+			s3_show_msgbox(false);
+		if (layer == S3_LAYER_MSGBOX && s->show_special)
+			s3_show_msgbox(true);
+		if (layer == S3_LAYER_NAMEBOX && s->hide_special)
+			s3_show_namebox(false);
+		if (layer == S3_LAYER_NAMEBOX && s->show_special)
+			s3_show_namebox(true);
 		return true;
 	}
 
-	/* 補間を行う */
+	/* Interpolate. */
 	for (i = 0; i < context[layer].seq_count; i++) {
 		s = &sequence[layer][i];
 		if (context[layer].cur_lap < s->start_time)
@@ -469,13 +525,13 @@ static bool update_layer_params(int layer)
 		    context[layer].cur_lap > s->end_time)
 			continue;
 
-		/* 進捗率を計算する */
+		/* Calculate the progress. */
 		progress = (context[layer].cur_lap - s->start_time) /
 			(s->end_time - s->start_time);
 		if (progress > 1.0f)
 			progress = 1.0f;
 
-		/* 加速を処理する */
+		/* Caclulate the acceleration. */
 		switch (s->accel) {
 		case ANIME_ACCEL_UNIFORM:
 			break;
@@ -490,28 +546,28 @@ static bool update_layer_params(int layer)
 			break;
 		}
 
-		/* パラメータを計算する */
+		/* Calculate the params. */
 		x = (int)(s->from_x + (s->to_x - s->from_x) * progress);
 		y = (int)(s->from_y + (s->to_y - s->from_y) * progress);
 		scale_x = s->from_scale_x + (s->to_scale_x - s->from_scale_x) * progress;
 		scale_y = s->from_scale_y + (s->to_scale_y - s->from_scale_y) * progress;
 		rotate = s->from_rotate + (s->to_rotate - s->from_rotate) * progress;
 		alpha = (int)(s->from_a + (s->to_a - s->from_a) * progress);
-		set_layer_position(layer, x, y);
-		set_layer_center(layer, (int)s->center_x, (int)s->center_y);
-		set_layer_alpha(layer, alpha);
-		set_layer_scale(layer, scale_x, scale_y);
-		set_layer_rotate(layer, rotate * (3.14159265f / 180.0f));
-		set_layer_blend(layer, s->blend);
-		set_layer_frame(layer, s->frame);
-		if (layer == LAYER_MSG && s->hide_special)
-			show_msgbox(false);
-		if (layer == LAYER_MSG && s->show_special)
-			show_msgbox(true);
-		if (layer == LAYER_NAME && s->hide_special)
-			show_namebox(false);
-		if (layer == LAYER_NAME && s->show_special)
-			show_namebox(true);
+		s3_set_layer_position(layer, x, y);
+		s3_set_layer_center(layer, (int)s->center_x, (int)s->center_y);
+		s3_set_layer_alpha(layer, alpha);
+		s3_set_layer_scale(layer, scale_x, scale_y);
+		s3_set_layer_rotate(layer, rotate * (3.14159265f / 180.0f));
+		s3_set_layer_blend(layer, s->blend);
+		s3_set_layer_frame(layer, s->frame);
+		if (layer == S3_LAYER_MSGBOX && s->hide_special)
+			s3_show_msgbox(false);
+		if (layer == S3_LAYER_MSGBOX && s->show_special)
+			s3_show_msgbox(true);
+		if (layer == S3_LAYER_NAMEBOX && s->hide_special)
+			s3_show_namebox(false);
+		if (layer == S3_LAYER_NAMEBOX && s->show_special)
+			s3_show_namebox(true);
 		break;
 	}
 
@@ -519,47 +575,54 @@ static bool update_layer_params(int layer)
 }
 
 /*
- * アニメーションファイルの読み込み
+ * Anime File Loading
  */
 
-/* シーケンス(ブロック)が開始されたときに呼び出される */
-static bool start_sequence(const char *name)
+/* Called when a sequence is opened. */
+static bool
+start_sequence(
+	const char *name)
 {
 	UNUSED_PARAMETER(name);
 	cur_seq_layer = -1;
 	return true;
 }
 
-/* キーバリューペアが出現したときに呼び出される */
-static bool on_key_value(const char *key, const char *val)
+/* Called when a key-value pair is established. */
+static bool
+on_key_value(
+	const char *file,
+	int line,
+	const char *key,
+	const char *val)
 {
 	struct sequence *s;
 	int top;
 
-	/* 最初にレイヤのキーが指定される必要がある */
+	/* Layer must be specified first. */
 	if (strcmp(key, "layer") == 0) {
-		/* レイヤを求める */
+		/* Get the layer. */
 		cur_seq_layer = layer_name_to_index(val);
 		if (cur_seq_layer == -1) {
-			log_invalid_layer_name(val);
+			s3_log_error(S3_TR("Invalid layer name %s while parsing anime file %s:%d"), val, file, line + 1);
 			return false;
 		}
 
-		/* レイヤの最初のシーケンスであれば、シーケンスをクリアする */
+		/* Clear sequences if this is the first sequence of the layer. */
 		if (used_layer_tbl != NULL) {
 			if (!used_layer_tbl[cur_seq_layer])
-				clear_layer_anime_sequence(cur_seq_layer);
+				s3_clear_layer_anime_sequence(cur_seq_layer);
 			used_layer_tbl[cur_seq_layer] = true;
 		}
 
-		/* トップのシーケンスを求めて、スケールを1.0fにする */
+		/* Get the top sequence, and set scales to 1.0f. */
 		s = &sequence[cur_seq_layer][context[cur_seq_layer].seq_count];
 		s->from_scale_x = 1.0f;
 		s->from_scale_y = 1.0f;
 		s->to_scale_x = 1.0f;
 		s->to_scale_y = 1.0f;
 
-		/* レイヤの実行状態を設定する */
+		/* Set the layer context. */
 		context[cur_seq_layer].seq_count++;
 		context[cur_seq_layer].sw = cur_sw;
 		context[cur_seq_layer].is_running = true;
@@ -570,20 +633,20 @@ static bool on_key_value(const char *key, const char *val)
 		return true;
 	}
 	if (cur_seq_layer == -1) {
-		log_anime_layer_not_specified(key);
+		s3_log_error(S3_TR("Layer not specifed while parsing anime file %s:%d"), file, line + 1);
 		return false;
 	}
 
-	/* レイヤのシーケンス長をチェックする */
+	/* Check the sequence length of the layer. */
 	top = context[cur_seq_layer].seq_count - 1;
 	if (top == SEQUENCE_COUNT) {
-		log_anime_long_sequence();
+		s3_log_error(S3_TR("Sequecen too long while parsing anime file %s:%d"), file, line + 1);
 		return false;
 	}
 	assert(top >= 0);
 	assert(top < SEQUENCE_COUNT);
 
-	/* その他のキーのとき */
+	/* Other keys. */
 	s = &sequence[cur_seq_layer][top];
 	if (strcmp(key, "start") == 0) {
 		s->start_time = (float)atof(val);
@@ -639,14 +702,14 @@ static bool on_key_value(const char *key, const char *val)
 	} else if (strcmp(key, "show-special") == 0) {
 		s->show_special = true;
 	} else {
-		log_anime_unknown_key(key);
+		s3_log_error(S3_TR("Unkwon key %s while parsing anime file %s:%d"), key, file, line + 1);
 		return false;
 	}
 
 	return true;
 }
 
-/* レイヤ名をレイヤインデックスに変換する */
+/* Convert a layer name to a layer index. */
 static int layer_name_to_index(const char *name)
 {
 	int i;
@@ -660,7 +723,7 @@ static int layer_name_to_index(const char *name)
 	return -1;
 }
 
-/* 座標を計算する */
+/* Calculate a position. (x from) */
 static float calc_pos_x_from(int layer, int index, const char *value)
 {
 	float ret;
@@ -669,7 +732,7 @@ static float calc_pos_x_from(int layer, int index, const char *value)
 
 	if (value[0] == '+') {
 		if (index == 0)
-			ret = (float)get_layer_x(layer);
+			ret = (float)s3_get_layer_x(layer);
 		else
 			ret = sequence[layer][index - 1].to_x;
 		ret += (float)atoi(value + 1);
@@ -680,7 +743,7 @@ static float calc_pos_x_from(int layer, int index, const char *value)
 	return ret;
 }
 
-/* 座標を計算する */
+/* Caculate a position. (x to) */
 static float calc_pos_x_to(int layer, int index, const char *value)
 {
 	float ret;
@@ -695,7 +758,7 @@ static float calc_pos_x_to(int layer, int index, const char *value)
 	return ret;
 }
 
-/* 座標を計算する */
+/* Calculate a positoin. (y from) */
 static float calc_pos_y_from(int anime_layer, int index, const char *value)
 {
 	float ret;
@@ -704,7 +767,7 @@ static float calc_pos_y_from(int anime_layer, int index, const char *value)
 
 	if (value[0] == '+') {
 		if (index == 0)
-			ret = (float)get_layer_y(anime_layer);
+			ret = (float)s3_get_layer_y(anime_layer);
 		else
 			ret = sequence[anime_layer][index - 1].to_y;
 		ret += (float)atoi(value + 1);
@@ -715,7 +778,7 @@ static float calc_pos_y_from(int anime_layer, int index, const char *value)
 	return ret;
 }
 
-/* 座標を計算する */
+/* Calculate a positoin. (y to) */
 static float calc_pos_y_to(int anime_layer, int index, const char *value)
 {
 	float ret;
@@ -731,7 +794,7 @@ static float calc_pos_y_to(int anime_layer, int index, const char *value)
 }
 
 /*
- * ループアニメの登録を解除する
+ * Unregister a looped anime.
  */
 void unregister_anime(int reg_index)
 {
@@ -740,7 +803,7 @@ void unregister_anime(int reg_index)
 }
 
 /*
- * ループアニメファイル名を取得する
+ * Get a looped anime file name.
  */
 const char *get_reg_anime_file_name(int reg_index)
 {
@@ -748,27 +811,27 @@ const char *get_reg_anime_file_name(int reg_index)
 }
 
 /*
- * 目パチ
+ * Eye Blinking
  */
 
 /*
- * 目パチ画像をロードする
+ * Load an eye blinking image.
  */
 bool load_eye_image_if_exists(int chpos, const char *fname)
 {
 	char eye_fname[1024], *slash, *dot;
-	struct image *eye_img;
+	struct s3_image *eye_img;
 	int eye_layer;
 
 	/* Firstly, disable the eye layer. */
-	eye_layer = chpos_to_eye_layer(chpos);
-	set_layer_file_name(eye_layer, NULL);
-	set_layer_image(eye_layer, NULL);
+	eye_layer = s3_chpos_to_eye_layer(chpos);
+	s3_set_layer_file_name(eye_layer, NULL);
+	s3_set_layer_image(eye_layer, NULL);
 
 	/* In case that we erase the character. */
 	if (fname == NULL || strcmp(fname, "none") == 0 || strcmp(fname, U8("消去")) == 0) {
 		/* Finish the existing eye anime. */
-		clear_layer_anime_sequence(eye_layer);
+		s3_clear_layer_anime_sequence(eye_layer);
 		return true;
 	}
 
@@ -794,7 +857,7 @@ bool load_eye_image_if_exists(int chpos, const char *fname)
 	dot = strstr(eye_fname, ".");
 	if (dot != NULL) {
 		/* There is an extension. */
-		if (!check_file_exist(CH_DIR, eye_fname)) {
+		if (!pf_check_file_exists(eye_fname)) {
 			/* No such file. */
 			return true;
 		}
@@ -805,13 +868,13 @@ bool load_eye_image_if_exists(int chpos, const char *fname)
 
 			strcpy(tmp, eye_fname);
 			strcat(tmp, ".png");
-			if (check_file_exist(CH_DIR, tmp)) {
+			if (pf_check_file_exists(tmp)) {
 				strcpy(eye_fname, tmp);
 				break;
 			}
 			strcpy(tmp, eye_fname);
 			strcat(tmp, ".webp");
-			if (check_file_exist(CH_DIR, tmp)) {
+			if (pf_check_file_exists(tmp)) {
 				strcpy(eye_fname, tmp);
 				break;
 			}
@@ -822,17 +885,17 @@ bool load_eye_image_if_exists(int chpos, const char *fname)
 	}
 
 	/* Load an image. */
-	eye_img = create_image_from_file(CH_DIR, eye_fname);
+	eye_img = s3_create_image_from_file(eye_fname);
 	if (eye_img == NULL) {
-		log_script_exec_footer();
+		s3_log_script_exec_footer();
 		return false;
 	}
 
 	/* Initialize the layer. */
-	set_layer_file_name(eye_layer, eye_fname);
-	set_layer_image(eye_layer, eye_img);
-	set_layer_alpha(eye_layer, 0);
-	set_layer_scale(eye_layer, 1.0f, 1.0f);
+	s3_set_layer_file_name(eye_layer, eye_fname);
+	s3_set_layer_image(eye_layer, eye_img);
+	s3_set_layer_alpha(eye_layer, 0);
+	s3_set_layer_scale(eye_layer, 1.0f, 1.0f);
 
 	/* Make an eye anime. */
 	synthesis_eye_anime(chpos);
@@ -841,118 +904,118 @@ bool load_eye_image_if_exists(int chpos, const char *fname)
 }
 
 /*
- * 目パチアニメを再ロードする
+ * Reload an eye blinking image.
  */
 bool reload_eye_anime(int chpos)
 {
 	int eye_layer;
 
-	/* キャラがない場合 */
-	eye_layer = chpos_to_eye_layer(chpos);
-	if (get_layer_image(eye_layer) == NULL)
+	/* If no character. */
+	eye_layer = s3_chpos_to_eye_layer(chpos);
+	if (s3_get_layer_image(eye_layer) == NULL)
 		return true;
 
-	/* 目パチのアニメを合成する */
+	/* Synthesis the eye anime. */
 	synthesis_eye_anime(chpos);
 
 	return true;
 }
 
-/* 目パチのアニメを合成する */
+/* Synthesis the eye anime. */
 static void synthesis_eye_anime(int chpos)
 {
 	float ofs_time, base_time;
 	int x, y, i, frame_count, repeat_count;
 	int base_layer, eye_layer;
 
-	base_layer = chpos_to_layer(chpos);
-	eye_layer = chpos_to_eye_layer(chpos);
+	base_layer = s3_chpos_to_layer(chpos);
+	eye_layer = s3_chpos_to_eye_layer(chpos);
 
-	if (get_layer_image(base_layer) == NULL)
+	if (s3_get_layer_image(base_layer) == NULL)
 		return;
-	if (get_layer_image(eye_layer) == NULL)
+	if (s3_get_layer_image(eye_layer) == NULL)
 		return;
 
-	/* キャラの座標を取得する */
-	x = get_layer_x(base_layer);
-	y = get_layer_y(base_layer);
+	/* Get the character position. */
+	x = s3_get_layer_x(base_layer);
+	y = s3_get_layer_y(base_layer);
 
-	/* 目パチレイヤーの位置を設定する */
-	set_layer_position(eye_layer, x, y);
+	/* Set the eye layer position. */
+	s3_set_layer_position(eye_layer, x, y);
 
-	/* 目パチのアニメを開始する */
-	frame_count = get_layer_image(eye_layer)->width / get_layer_image(base_layer)->width;
+	/* Describe the eye anime. */
+	frame_count = s3_get_layer_image(eye_layer)->width / s3_get_layer_image(base_layer)->width;
 	base_time = conf_character_eyeblink_interval + conf_character_eyeblink_interval * 0.3f * (2.0f * (float)rand() / (float)RAND_MAX - 1.0f);
 	ofs_time = base_time;
-	clear_layer_anime_sequence(eye_layer);
-	new_anime_sequence(eye_layer);
-	add_anime_sequence_property_f("start",	0);
-	add_anime_sequence_property_f("end",	ofs_time);
-	add_anime_sequence_property_i("from-x",	x);
-	add_anime_sequence_property_i("from-y",	y);
-	add_anime_sequence_property_i("to-x",	x);
-	add_anime_sequence_property_i("to-y",	y);
+	s3_clear_layer_anime_sequence(eye_layer);
+	s3_new_anime_sequence(eye_layer);
+	s3_add_anime_sequence_property_f("start",	0);
+	s3_add_anime_sequence_property_f("end",	ofs_time);
+	s3_add_anime_sequence_property_i("from-x",	x);
+	s3_add_anime_sequence_property_i("from-y",	y);
+	s3_add_anime_sequence_property_i("to-x",	x);
+	s3_add_anime_sequence_property_i("to-y",	y);
 	for (repeat_count = 10; repeat_count > 0; repeat_count--) {
 		int blink_times;
 
-		/* 10回に2回程度は2回まばたき、それ以外は1回まばたきする */
+		/* Dual blink for p=2/10, single blink for p=8/10. */
 		for (blink_times = rand() % 10 >= 2 ? 1 : 2; blink_times > 0; blink_times--) {
 			for (i = 0; i < frame_count; i++) {
-				new_anime_sequence(eye_layer);
-				add_anime_sequence_property_f("start",	ofs_time);
+				s3_new_anime_sequence(eye_layer);
+				s3_add_anime_sequence_property_f("start",	ofs_time);
 				ofs_time += conf_character_eyeblink_frame * (float)(i + 1);
-				add_anime_sequence_property_f("end",	ofs_time);
-				add_anime_sequence_property_i("from-x",	x);
-				add_anime_sequence_property_i("from-y",	y);
-				add_anime_sequence_property_i("from-a",	255);
-				add_anime_sequence_property_i("to-x",	x);
-				add_anime_sequence_property_i("to-y",	y);
-				add_anime_sequence_property_i("to-a",	255);
-				add_anime_sequence_property_i("frame",	i);
+				s3_add_anime_sequence_property_f("end",	ofs_time);
+				s3_add_anime_sequence_property_i("from-x",	x);
+				s3_add_anime_sequence_property_i("from-y",	y);
+				s3_add_anime_sequence_property_i("from-a",	255);
+				s3_add_anime_sequence_property_i("to-x",	x);
+				s3_add_anime_sequence_property_i("to-y",	y);
+				s3_add_anime_sequence_property_i("to-a",	255);
+				s3_add_anime_sequence_property_i("frame",	i);
 			}
 		}
 
-		/* 目を開ける */
+		/* Open eyes. */
 		if (repeat_count != 1) {
-			new_anime_sequence(eye_layer);
-			add_anime_sequence_property_f("start",	ofs_time);
+			s3_new_anime_sequence(eye_layer);
+			s3_add_anime_sequence_property_f("start",	ofs_time);
 			ofs_time += base_time;
-			add_anime_sequence_property_f("end",	ofs_time);
-			add_anime_sequence_property_i("from-x",	x);
-			add_anime_sequence_property_i("from-y",	y);
-			add_anime_sequence_property_i("to-x",	x);
-			add_anime_sequence_property_i("to-y",	y);
-			add_anime_sequence_property_i("frame",	0);
+			s3_add_anime_sequence_property_f("end",	ofs_time);
+			s3_add_anime_sequence_property_i("from-x",	x);
+			s3_add_anime_sequence_property_i("from-y",	y);
+			s3_add_anime_sequence_property_i("to-x",	x);
+			s3_add_anime_sequence_property_i("to-y",	y);
+			s3_add_anime_sequence_property_i("frame",	0);
 		}
 	}
-	add_anime_sequence_property_i("loop", 0);
+	s3_add_anime_sequence_property_i("loop", 0);
 
-	/* アニメを開始する */
-	start_layer_anime(eye_layer);
+	/* Start the eye anime. */
+	s3_start_layer_anime(eye_layer);
 }
 
 /*
- * 口パク
+ * Lip Synchronization
  */
 
 /*
- * 口パク画像をロードする
+ * Load a lip synchronization image.
  */
 bool load_lip_image_if_exists(int chpos, const char *fname)
 {
 	char lip_fname[1024], *slash, *dot;
-	struct image *lip_img;
+	struct s3_image *lip_img;
 	int lip_layer;
 
 	/* Firstly, disable the lip layer. */
-	lip_layer = chpos_to_lip_layer(chpos);
-	set_layer_file_name(lip_layer, NULL);
-	set_layer_image(lip_layer, NULL);
+	lip_layer = s3_chpos_to_lip_layer(chpos);
+	s3_set_layer_file_name(lip_layer, NULL);
+	s3_set_layer_image(lip_layer, NULL);
 
 	/* In case that we erase the character. */
 	if (fname == NULL || strcmp(fname, "none") == 0 || strcmp(fname, U8("消去")) == 0) {
 		/* Finish the existing lip anime. */
-		clear_layer_anime_sequence(lip_layer);
+		s3_clear_layer_anime_sequence(lip_layer);
 		return true;
 	}
 
@@ -978,7 +1041,7 @@ bool load_lip_image_if_exists(int chpos, const char *fname)
 	dot = strstr(lip_fname, ".");
 	if (dot != NULL) {
 		/* There is an extension. */
-		if (!check_file_exist(CH_DIR, lip_fname)) {
+		if (!pf_check_file_exists(lip_fname)) {
 			/* No such file. */
 			return true;
 		}
@@ -989,13 +1052,13 @@ bool load_lip_image_if_exists(int chpos, const char *fname)
 
 			strcpy(tmp, lip_fname);
 			strcat(tmp, ".png");
-			if (check_file_exist(CH_DIR, tmp)) {
+			if (pf_check_file_exists(tmp)) {
 				strcpy(lip_fname, tmp);
 				break;
 			}
 			strcpy(tmp, lip_fname);
 			strcat(tmp, ".webp");
-			if (check_file_exist(CH_DIR, tmp)) {
+			if (pf_check_file_exists(tmp)) {
 				strcpy(lip_fname, tmp);
 				break;
 			}
@@ -1006,23 +1069,23 @@ bool load_lip_image_if_exists(int chpos, const char *fname)
 	}
 
 	/* Load an image. */
-	lip_img = create_image_from_file(CH_DIR, lip_fname);
+	lip_img = s3_create_image_from_file(lip_fname);
 	if (lip_img == NULL) {
-		log_script_exec_footer();
+		s3_log_script_exec_footer();
 		return false;
 	}
 
-	/* レイヤを設定する */
-	set_layer_file_name(lip_layer, lip_fname);
-	set_layer_image(lip_layer, lip_img);
-	set_layer_alpha(lip_layer, 0);
-	set_layer_scale(lip_layer, 1.0f, 1.0f);
+	/* Set the layer. */
+	s3_set_layer_file_name(lip_layer, lip_fname);
+	s3_set_layer_image(lip_layer, lip_img);
+	s3_set_layer_alpha(lip_layer, 0);
+	s3_set_layer_scale(lip_layer, 1.0f, 1.0f);
 
 	return true;
 }
 
 /*
- * 口パクのアニメを実行する
+ * Run a lip synchronization anime.
  */
 void run_lip_anime(int chpos, const char *msg)
 {
@@ -1030,30 +1093,30 @@ void run_lip_anime(int chpos, const char *msg)
 	int i, x, y, base_layer, lip_layer, frame_count, word_count;
 	int WORD_COUNT;
 
-	base_layer = chpos_to_layer(chpos);
-	lip_layer = chpos_to_lip_layer(chpos);
+	base_layer = s3_chpos_to_layer(chpos);
+	lip_layer = s3_chpos_to_lip_layer(chpos);
 
-	if (get_layer_image(base_layer) == NULL)
+	if (s3_get_layer_image(base_layer) == NULL)
 		return;
-	if (get_layer_image(lip_layer) == NULL)
+	if (s3_get_layer_image(lip_layer) == NULL)
 		return;
 
-	/* キャラの座標を取得する */
-	x = get_layer_x(base_layer);
-	y = get_layer_y(base_layer);
+	/* Get the character position. */
+	x = s3_get_layer_x(base_layer);
+	y = s3_get_layer_y(base_layer);
 
-	/* 口パクレイヤーの位置を設定する */
-	set_layer_position(lip_layer, x, y);
+	/* Set the lip layer position. */
+	s3_set_layer_position(lip_layer, x, y);
 
-	/* 何文字ごとに口パクするかを決める */
+	/* Determine how many characters to lip-sync per characters. */
 	WORD_COUNT = conf_character_lipsync_chars == 0 ? 3 : conf_character_lipsync_chars;
 
-	/* 口パクのアニメを開始する */
-	frame_count = get_layer_image(lip_layer)->width / get_layer_image(base_layer)->width;
+	/* Describe the lip anime. */
+	frame_count = s3_get_layer_image(lip_layer)->width / s3_get_layer_image(base_layer)->width;
 	base_time = conf_character_lipsync_frame == 0 ? 0.02f : conf_character_lipsync_frame;
 	ofs_time = 0;
 	word_count = WORD_COUNT;
-	clear_layer_anime_sequence(lip_layer);
+	s3_clear_layer_anime_sequence(lip_layer);
 	while (msg) {
 		uint32_t wc;
 		int n;
@@ -1063,93 +1126,93 @@ void run_lip_anime(int chpos, const char *msg)
 			break;
 		msg += n;
 
-		if (wc == U32_C('、', 0x3001) || wc == U32_C('。', 0x3002)) {
+		if (wc == U32C('、', 0x3001) || wc == U32C('。', 0x3002)) {
 			ofs_time += base_time * 10;
 			word_count = WORD_COUNT;
 			continue;
 		}
 
-		if (wc == U32_C('、', 0x3001) || wc == U32_C('。', 0x3002) ||
-		    wc == U32_C('！', 0xff01) || wc == U32_C('？', 0xff1f) ||
-		    wc == U32_C('・', 0x30fb) || wc == U32_C('…', 0x2026) ||
-		    wc == U32_C('―', 0x2015)) {
+		if (wc == U32C('、', 0x3001) || wc == U32C('。', 0x3002) ||
+		    wc == U32C('！', 0xff01) || wc == U32C('？', 0xff1f) ||
+		    wc == U32C('・', 0x30fb) || wc == U32C('…', 0x2026) ||
+		    wc == U32C('―', 0x2015)) {
 			ofs_time += base_time * 20;
 			word_count = WORD_COUNT;
 			continue;
 		}
 
-		/* (WORD_COUNT)文字ごとに口パクする */
+		/* Do lip-sync per (WORD_COUNT) characters. */
 		if (word_count == 0)
 			word_count = WORD_COUNT;
 		if (word_count-- != WORD_COUNT)
 			continue;
 
-		/* 正順で口パクを表示する */
+		/* Display lip sync in the right order. */
 		for (i = 0; i < frame_count; i++) {
-			new_anime_sequence(lip_layer);
-			add_anime_sequence_property_f("start",	ofs_time);
+			s3_new_anime_sequence(lip_layer);
+			s3_add_anime_sequence_property_f("start",	ofs_time);
 			ofs_time += base_time;
-			add_anime_sequence_property_f("end",	ofs_time);
-			add_anime_sequence_property_i("from-x",	x);
-			add_anime_sequence_property_i("from-y",	y);
-			add_anime_sequence_property_i("from-a",	255);
-			add_anime_sequence_property_i("to-x",	x);
-			add_anime_sequence_property_i("to-y",	y);
-			add_anime_sequence_property_i("to-a",	255);
-			add_anime_sequence_property_i("frame",	i);
+			s3_add_anime_sequence_property_f("end",	ofs_time);
+			s3_add_anime_sequence_property_i("from-x",	x);
+			s3_add_anime_sequence_property_i("from-y",	y);
+			s3_add_anime_sequence_property_i("from-a",	255);
+			s3_add_anime_sequence_property_i("to-x",	x);
+			s3_add_anime_sequence_property_i("to-y",	y);
+			s3_add_anime_sequence_property_i("to-a",	255);
+			s3_add_anime_sequence_property_i("frame",	i);
 			ofs_time += base_time;
 		}
 
-		/* 3フレーム以上ある場合、逆順で口パクを表示する */
+		/* Display lip sync in the reversed order if there are 3+ frames. */
 		if (frame_count > 2) {
 			for (i = frame_count - 1; i >= 0; i--) {
-				new_anime_sequence(lip_layer);
-				add_anime_sequence_property_f("start",	ofs_time);
+				s3_new_anime_sequence(lip_layer);
+				s3_add_anime_sequence_property_f("start",	ofs_time);
 				ofs_time += base_time;
-				add_anime_sequence_property_f("end",	ofs_time);
-				add_anime_sequence_property_i("from-x",	x);
-				add_anime_sequence_property_i("from-y",	y);
-				add_anime_sequence_property_i("from-a",	255);
-				add_anime_sequence_property_i("to-x",	x);
-				add_anime_sequence_property_i("to-y",	y);
-				add_anime_sequence_property_i("to-a",	255);
-				add_anime_sequence_property_i("frame",	i);
+				s3_add_anime_sequence_property_f("end",	ofs_time);
+				s3_add_anime_sequence_property_i("from-x",	x);
+				s3_add_anime_sequence_property_i("from-y",	y);
+				s3_add_anime_sequence_property_i("from-a",	255);
+				s3_add_anime_sequence_property_i("to-x",	x);
+				s3_add_anime_sequence_property_i("to-y",	y);
+				s3_add_anime_sequence_property_i("to-a",	255);
+				s3_add_anime_sequence_property_i("frame",	i);
 				ofs_time += base_time;
 			}
 		}
 	}
 
-	/* 口パクを非表示にする */
-	new_anime_sequence(lip_layer);
-	add_anime_sequence_property_f("start",	ofs_time);
+	/* Close lips. */
+	s3_new_anime_sequence(lip_layer);
+	s3_add_anime_sequence_property_f("start",	ofs_time);
 	ofs_time += base_time;
-	add_anime_sequence_property_f("end",	ofs_time);
-	add_anime_sequence_property_i("from-x",	x);
-	add_anime_sequence_property_i("from-y",	y);
-	add_anime_sequence_property_i("from-a",	0);
-	add_anime_sequence_property_i("to-x",	x);
-	add_anime_sequence_property_i("to-y",	y);
-	add_anime_sequence_property_i("to-a",	0);
-	add_anime_sequence_property_i("frame",	0);
+	s3_add_anime_sequence_property_f("end",	ofs_time);
+	s3_add_anime_sequence_property_i("from-x",	x);
+	s3_add_anime_sequence_property_i("from-y",	y);
+	s3_add_anime_sequence_property_i("from-a",	0);
+	s3_add_anime_sequence_property_i("to-x",	x);
+	s3_add_anime_sequence_property_i("to-y",	y);
+	s3_add_anime_sequence_property_i("to-a",	0);
+	s3_add_anime_sequence_property_i("frame",	0);
 
-	/* アニメを開始する */
-	start_layer_anime(lip_layer);
+	/* Start the lip anime. */
+	s3_start_layer_anime(lip_layer);
 }
 
 /*
- * 口パクのアニメを停止する
+ * Stop a lip synchronization anime.
  */
 void stop_lip_anime(int chpos)
 {
 	int lip_layer;
 
-	lip_layer = chpos_to_lip_layer(chpos);
+	lip_layer = s3_chpos_to_lip_layer(chpos);
 
-	clear_layer_anime_sequence(lip_layer);
+	s3_clear_layer_anime_sequence(lip_layer);
 }
 
 /*
- * アニメファイルのパース
+ * Anime File Parse
  */
 
 /* アニメーションファイルをロードする */
@@ -1166,64 +1229,45 @@ static bool load_anime_file(const char *file)
 		ST_ERROR
 	};
 
+	char *file_buf;
+	size_t file_size;
 	char word[256], key[256];
 	struct rfile *rf;
-	char *buf;
-	size_t fsize, pos;
+	size_t pos;
 	int st, len, line;
 	char c;
 	bool is_comment;
 
 	assert(file != NULL);
 
-	/* ファイルをオープンする */
-	rf = open_rfile(ANIME_DIR, file, false);
-	if (rf == NULL)
+	/* Get the file content. */
+	if (!pf_read_file_content(file, &file_buf, &file_size))
 		return false;
 
-	/* ファイルサイズを取得する */
-	fsize = get_rfile_size(rf);
-
-	/* メモリを確保する */
-	buf = malloc(fsize);
-	if (buf == NULL) {
-		log_memory();
-		close_rfile(rf);
-		return false;
-	}
-
-	/* ファイルを読み込む */
-	if (read_rfile(rf, buf, fsize) < fsize) {
-		log_file_read(GUI_DIR, file);
-		close_rfile(rf);
-		free(buf);
-		return false;
-	}
-
-	/* コメントをスペースに変換する */
+	/* Fill comments by spaces. */
 	is_comment = false;
-	for (pos = 0; pos < fsize; pos++) {
+	for (pos = 0; pos < file_size; pos++) {
 		if (!is_comment) {
-			if (buf[pos] == '#') {
-				buf[pos] = ' ';
+			if (file_buf[pos] == '#') {
+				file_buf[pos] = ' ';
 				is_comment = true;
 			}
 		} else {
-			if (buf[pos] == '\n')
+			if (file_buf[pos] == '\n')
 				is_comment = false;
 			else
-				buf[pos] = ' ';
+				file_buf[pos] = ' ';
 		}
 	}
 
-	/* ファイルをパースする */
+	/* Parse the file. */
 	st = ST_SCOPE;
 	line = 0;
 	len = 0;
 	pos = 0;
-	while (pos < fsize) {
+	while (pos < file_size) {
 		/* 1文字読み込む */
-		c = buf[pos++];
+		c = file_buf[pos++];
 
 		/* ステートに応じて解釈する */
 		switch (st) {
@@ -1235,13 +1279,13 @@ static bool load_anime_file(const char *file)
 					break;
 				}
 				if (c == ':' || c == '{' || c == '}') {
-					log_anime_parse_char(c);
+					s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
 					st = ST_ERROR;
 					break;
 				}
 			}
 			if (c == '}' || c == ':') {
-				log_anime_parse_char(c);
+				s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
 				st = ST_ERROR;
 				break;
 			}
@@ -1261,7 +1305,7 @@ static bool load_anime_file(const char *file)
 				break;
 			}
 			if (len == sizeof(word) - 1) {
-				log_anime_parse_long_word();
+				s3_log_error(S3_TR("Too long word while parsing anime file %s:%d"), file, line + 1);
 				st = ST_ERROR;
 				break;
 			}
@@ -1278,7 +1322,7 @@ static bool load_anime_file(const char *file)
 				len = 0;
 				break;
 			}
-			log_anime_parse_char(c);
+			s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
 			st = ST_ERROR;
 			break;
 		case ST_KEY:
@@ -1289,7 +1333,7 @@ static bool load_anime_file(const char *file)
 					break;
 				}
 				if (c == ':') {
-					log_anime_parse_char(c);
+					s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
 					st = ST_ERROR;
 					break;
 				}
@@ -1299,7 +1343,7 @@ static bool load_anime_file(const char *file)
 				}
 			}
 			if (c == '{' || c == '}') {
-				log_anime_parse_char(c);
+				s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
 				st = ST_ERROR;
 				break;
 			}
@@ -1318,7 +1362,7 @@ static bool load_anime_file(const char *file)
 				break;
 			}
 			if (len == sizeof(word) - 1) {
-				log_anime_parse_long_word();
+				s3_log_error(S3_TR("Too long word while parsing anime file %s:%d"), file, line + 1);
 				st = ST_ERROR;
 				break;
 			}
@@ -1335,7 +1379,7 @@ static bool load_anime_file(const char *file)
 				len = 0;
 				break;
 			}
-			log_anime_parse_char(c);
+			s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
 			st = ST_ERROR;
 			break;
 		case ST_VALUE:
@@ -1351,14 +1395,14 @@ static bool load_anime_file(const char *file)
 				}
 			}
 			if (c == ':' || c == '{') {
-				log_anime_parse_char(c);
+				s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
 				st = ST_ERROR;
 				break;
 			}
 			if (c == ' ' || c == '\t' || c == '\r' || c == '\n' ||
 			    c == ';' || c == '}') {
 				word[len] = '\0';
-				if (!on_key_value(key, word)) {
+				if (!on_key_value(file, line, key, word)) {
 					st = ST_ERROR;
 					break;
 				}
@@ -1372,7 +1416,7 @@ static bool load_anime_file(const char *file)
 				break;
 			}
 			if (len == sizeof(word) - 1) {
-				log_anime_parse_long_word();
+				s3_log_error(S3_TR("Too long word while parsing anime file %s:%d"), file, line + 1);
 				st = ST_ERROR;
 				break;
 			}
@@ -1382,7 +1426,7 @@ static bool load_anime_file(const char *file)
 		case ST_VALUE_DQ:
 			if (c == '\"') {
 				word[len] = '\0';
-				if (!on_key_value(key, word)) {
+				if (!on_key_value(file, line, key, word)) {
 					st = ST_ERROR;
 					break;
 				}
@@ -1391,12 +1435,12 @@ static bool load_anime_file(const char *file)
 				break;
 			}
 			if (c == '\r' || c == '\n') {
-				log_anime_parse_char(c);
+				s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
 				st = ST_ERROR;
 				break;
 			}
 			if (len == sizeof(word) - 1) {
-				log_anime_parse_long_word();
+				s3_log_error(S3_TR("Too long word while parsing anime file %s:%d"), file, line + 1);
 				st = ST_ERROR;
 				break;
 			}
@@ -1418,32 +1462,27 @@ static bool load_anime_file(const char *file)
 				len = 0;
 				break;
 			}
-			log_anime_parse_char(c);
+			s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
 			st = ST_ERROR;
 			break;
 		}
 
-		/* エラー時 */
+		/* On error. */
 		if (st == ST_ERROR)
 			break;
 
-		/* FIXME: '\r'のみの改行を処理する */
+		/* FIXME: support '\r' only line feed. */
 		if (c == '\n')
 			line++;
 	}
 
-	/* エラーが発生した場合 */
-	if (st == ST_ERROR) {
-		log_anime_parse_footer(file, line);
-	} else if (st != ST_SCOPE || len > 0) {
-		log_anime_parse_invalid_eof();
+	/* On error. */
+	if (st != ST_SCOPE || len > 0) {
+		s3_log_error(S3_TR("Invalid EOF while parsing anime file %s"), file);
 	}
 
-	/* バッファを解放する */
-	free(buf);
-
-	/* ファイルをクローズする */
-	close_rfile(rf);
+	/* Free the buffer. */
+	free(file_buf);
 
 	return st != ST_ERROR;
 }

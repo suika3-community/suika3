@@ -1022,59 +1022,210 @@ s3_is_quoted_serif(
  */
 
 /* Set the BGM file name. */
-bool s3_set_bgm_file_name(const char *file);
+bool
+s3_set_bgm_file_name(
+	const char *file);
 
 /* Get the BGM file name. */
-const char *s3_get_bgm_file_name(void);
+const char *
+s3_get_bgm_file_name(void);
 
 /* Set the SE file name. */
-bool s3_set_se_file_name(const char *file);
+bool
+s3_set_se_file_name(
+	const char *file);
 
 /* Get the SE file name. (only when loopback-playing) */
-const char *s3_get_se_file_name(void);
+const char *
+s3_get_se_file_name(void);
 
 /* Play a sound file on a mixer track. */
-void s3_set_mixer_input_file(int track, const char *file);
+void
+s3_set_mixer_input_file(
+	int track,
+	const char *file);
 
 /* Set the volume for a mixer track. */
-void s3_set_mixer_volume(int track, float vol, float span);
+void
+s3_set_mixer_volume(
+	int track,
+	float vol,
+	float span);
 
 /* Get the volume for a mixer track. */
-float s3_get_mixer_volume(int n);
+float
+s3_get_mixer_volume(
+	int track);
 
 /* Set the master volume. */
-void s3_set_master_volume(float vol);
+void
+s3_set_master_volume(
+	float vol);
 
 /* Get the master volume. */
-float s3_get_master_volume(void);
+float
+s3_get_master_volume(void);
 
 /* Set the global volume for a track. */
-void s3_set_mixer_global_volume(int track, float vol);
+void
+s3_set_mixer_global_volume(
+	int track,
+	float vol);
 
 /* Get the global volume for a track. */
-float s3_get_mixer_global_volume(int track);
+float
+s3_get_mixer_global_volume(
+	int track);
 
 /* Set the character volume. */
-void s3_set_character_volume(int ch_index, float vol);
+void
+s3_set_character_volume(
+	int ch_index,
+	float vol);
 
 /* Get the character volume. */
-float s3_get_character_volume(int ch_index);
+float
+s3_get_character_volume(
+	int ch_index);
 
 /* Check if the track playback is finished. */
-bool s3_is_mixer_sound_finished(int track);
+bool
+s3_is_mixer_sound_finished(
+	int track);
+
+/*
+ * Lap Timer (game.c)
+ */
+
+/*
+ * Reset a lap timer and initializes it with a current time.
+ */
+void
+s3_reset_lap_timer(
+	uint64_t *origin);
+
+/*
+ * Get a lap time in milliseconds.
+ */
+uint64_t
+s3_get_lap_timer_millisec(
+	uint64_t *origin);
 
 /*
  * Tag File (tag.c)
  */
 
 /* Move to a tag file. */
-bool s3_move_to_tag_file(const char *file);
+bool
+s3_move_to_tag_file(
+	const char *file);
 
 /* Move to a next tag. */
-bool s3_move_to_next_tag(void);
+bool
+s3_move_to_next_tag(void);
 
 /* Move to a label. */
-bool s3_move_to_label(const char *label);
+bool
+s3_move_to_label(
+	const char *label);
+
+/*
+ * Anime (anime.c)
+ */
+
+/* Load an anime file. */
+bool
+s3_load_anime_from_file(
+	const char *fname,
+	int reg_index,
+	bool *used_layer);
+
+/* Clear the layer anime sequences. */
+void
+s3_clear_layer_anime_sequence(
+	int layer);
+
+/* Clear all anime sequences. */
+void
+s3_clear_all_anime_sequence(void);
+
+/* Begin describing an anime for a layer. */
+bool
+s3_new_anime_sequence(
+	int layer);
+
+/* Add a float property into an anime sequence. */
+bool
+s3_add_anime_sequence_property_f(
+	const char *key,
+	float val);
+
+/* Add an integer property into an anime sequence. */
+bool
+s3_add_anime_sequence_property_i(
+	const char *key,
+	int val);
+
+/* Start the anime for a layer. */
+bool
+s3_start_layer_anime(
+	int layer);
+
+/* Check if there are running animes. */
+bool
+s3_is_anime_running(void);
+
+/* Check if there are running animes. (with mask) */
+bool
+s3_is_anime_running_with_layer_mask(
+	bool *used_layers);
+
+/* Check if the layer anime is finished. */
+bool
+s3_is_anime_finished_for_layer(
+	int layer);
+
+/* Update the anime frame. */
+void
+s3_update_anime_frame(void);
+
+/* Unregister a looped anime. */
+void
+s3_unregister_anime(
+	int reg_index);
+
+/* Get a looped anime file name. */
+const char *
+s3_get_reg_anime_file_name(
+	int reg_index);
+
+/* Load an eye blinking image. */
+bool
+s3_load_eye_image_if_exists(
+	int chpos,
+	const char *fname);
+
+/* Reload an eye blinking image. */
+bool
+s3_reload_eye_anime(
+	int chpos);
+
+/* Load a lip synchronization image. */
+bool
+s3_load_lip_image_if_exists(
+	int chpos,
+	const char *fname);
+
+/* Run a lip synchronization anime. */
+void
+s3_run_lip_anime(
+	int chpos,
+	const char *msg);
+
+/* Stop a lip synchronization anime. */
+void
+s3_stop_lip_anime(
+	int chpos);
 
 /*
  * Logging (game.c)
@@ -1109,5 +1260,11 @@ s3_log_error(
  */
 void
 s3_log_out_of_memory(void);
+
+/*
+ * Print a log footer for execution error.
+ */
+void
+s3_log_script_exec_footer(void);
 
 #endif

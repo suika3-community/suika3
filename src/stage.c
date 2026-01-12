@@ -1325,7 +1325,7 @@ void
 s3_render_stage(void)
 {
 	/* Update an anime frame. */
-	update_anime_frame();
+	s3_update_anime_frame();
 
 	/* Render stage layers. */
 	render_layer(S3_LAYER_BG);

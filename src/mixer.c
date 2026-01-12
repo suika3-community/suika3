@@ -80,7 +80,7 @@ bool init_mixer(void)
 		vol_local[track] = 1.0f;
 		is_fading[track] = false;
 
-		pf_set_volume(track, vol_master * vol_global[track]);
+		pf_set_sound_volume(track, vol_master * vol_global[track]);
 	}
 
 	for (track = 0; track < S3_CH_VOL_SLOTS; track++)
@@ -366,6 +366,6 @@ void process_sound_fading(void)
 
 		/* Set the volume. */
 		vol_cur[track] = vol;
-		pf_set_volume(track, vol_global[track] * vol_cur[track] * vol_master);
+		pf_set_sound_volume(track, vol_global[track] * vol_cur[track] * vol_master);
 	}
 }

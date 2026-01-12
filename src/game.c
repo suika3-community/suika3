@@ -904,6 +904,30 @@ bool s3_is_bgvoice_playing(void)
 }
 
 /*
+ * Lap Timer
+ */
+
+/*
+ * Reset a lap timer and initializes it with a current time.
+ */
+void
+s3_reset_lap_timer(
+	uint64_t *origin)
+{
+	pf_reset_lap_timer(origin);
+}
+
+/*
+ * Get a lap time in milliseconds.
+ */
+uint64_t
+s3_get_lap_timer_millisec(
+	uint64_t *origin)
+{
+	pf_get_lap_timer_millisec(origin);
+}
+
+/*
  * Logging
  */
 
@@ -968,6 +992,15 @@ void
 s3_log_out_of_memory(void)
 {
 	pf_log_error("Out-of-memory.");
+}
+
+/*
+ * Print a log footer for execution error.
+ */
+void
+s3_log_script_exec_footer(void)
+{
+	/* TODO */
 }
 
 /*
