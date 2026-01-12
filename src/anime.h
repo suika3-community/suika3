@@ -30,10 +30,16 @@ enum anime_accel {
 	ANIME_ACCEL_DEACCEL,
 };
 
-/* Initialiez the anime subsystem. */
-bool init_anime(void);
+/*
+ * Initialiez the anime subsystem.
+ */
+bool
+s3i_init_anime(void);
 
-/* Cleanup the anime subsystem. */
-void cleanup_anime(void);
+/*
+ * Cleanup the anime subsystem.
+ */
+void
+s3i_cleanup_anime(void);
 
 #endif

@@ -15,104 +15,122 @@
 #include <suika3/suika3.h>
 
 /*
- * グローバルセーブファイル
+ * File name for the global save data.
  */
 #define GLOBAL_SAVE_FILE	"g000.sav"
 
 /*
- * クイックセーブファイル
+ * File name for the quick save data.
  */
 #define QUICK_SAVE_FILE		"q000.sav"
 
 /*
- * クイックセーブファイル(extra)
+ * File name for the quick save data. (extra)
  */
 #define QUICK_SAVE_EXTRA_FILE	"q001.sav"
 
 /*
- * セーブデータ数
+ * Numbers of the save slots.
  */
-#define SAVE_SLOTS		(100)
+#define ALL_SAVE_SLOTS		(101)
+#define NORMAL_SAVE_SLOTS	(100)
+#define QUICK_SAVE_INDEX	(100)
 
-/* セーブデータに関する初期化処理を行う */
-bool init_save(void);
+/*
+ * Initialize the save subsystem.
+ */
+bool
+s3i_init_save(void);
 
-/* セーブデータに関する終了処理を行う */
-void cleanup_save(void);
+/*
+ * Cleanup the save subsystem.
+ */
+void
+s3i_cleanup_save(void);
 
-/* ロードが終了した直後であるかを調べる */
-bool check_load_flag(void);
+/*
+ * Check if right after load.
+ */
+bool
+s3_check_if_right_after_load(void);
 
-/* セーブを実行する */
-bool execute_save(int index);
+/*
+ * Execute a save.
+ */
+bool
+s3_execute_save(
+	int index);
 
-/* ロードを実行する */
-bool execute_load(int index);
+/*
+ * Execute a load.
+ */
+bool
+s3_execute_load(
+	int index);
 
-/* グローバルデータを保存する */
-void save_global_data(void);
+/*
+ * Execute a global save.
+ */
+void
+s3_execute_save_global(void);
 
-/* クイックセーブデータがあるか */
-bool have_quick_save_data(void);
+/*
+ * Check if the quick save data exist.
+ */
+bool
+s3_check_save_exists(
+	int index);
 
-/* クイックセーブを行う */
-bool quick_save(bool extra);
+/*
+ * Delete a save data.
+ */
+void
+s3_delete_save(int index);
 
-/* クイックロードを行う */
-bool quick_load(bool extra);
+/*
+ * Delete the global save data.
+ */
+void
+s3_delete_global_save(void);
 
-/* ローカルセーブデータの削除を行う */
-void delete_local_save(int index);
+/*
+ * Get the timestamp of a save data.
+ */
+time_t
+s3_get_save_date(
+	int index);
 
-/* グローバルセーブデータの削除を行う */
-void delete_global_save(void);
+/*
+ * Get the latest save index.
+ */
+int
+s3_get_latest_save_index(void);
 
-/* セーブデータの日付を取得する */
-time_t get_save_date(int index);
+/*
+ * Get the chapter title of a save data.
+ */
+const char *
+s3_get_save_chapter_name(
+	int index);
 
-/* 最新のセーブデータの番号を取得する */
-int get_latest_save_index(void);
+/*
+ * Get the last message of a save data.
+ */
+const char *
+s3_get_save_last_message(
+	int index);
 
-/* セーブデータの章タイトルを取得する */
-const char *get_save_chapter_name(int index);
+/*
+ * Get the thumbnail of a save data.
+ */
+struct s3_image *
+s3_get_save_thumbnail(
+	int index);
 
-/* セーブデータの最後のメッセージを取得する */
-const char *get_save_last_message(int index);
-
-/* セーブデータのサムネイルを取得する */
-struct image *get_save_thumbnail(int index);
-
-/* 章題を設定する */
-bool set_chapter_name(const char *name);
-
-/* 章題を取得する */
-const char *get_chapter_name(void);
-
-/* 最後のメッセージを設定する */
-bool set_last_message(const char *msg, bool is_append);
-
-/* テキストレイヤのテキストを設定する */
-bool set_layer_text(int text_layer_index, const char *msg);
-
-/* テキストスピードを設定する */
-void set_text_speed(float val);
-
-/* テキストスピードを取得する */
-float get_text_speed(void);
-
-/* オートスピードを設定する */
-void set_auto_speed(float val);
-
-/* オートスピードを取得する */
-float get_auto_speed(void);
-
-/* 最後の+en+コマンドの位置を記録する */
-void set_last_en_command(void);
-
-/* 最後の+en+コマンドの位置を消去する */
-void clear_last_en_command(void);
-
-/* ロード直後のメッセージボックスの内容を取得する */
-char *get_pending_message(void);
+/*
+ * Get the pending message (message box content right after load)
+ */
+char *
+get_pending_message(void);
 
 #endif

@@ -12,7 +12,12 @@
 #include <suika3/suika3.h>
 #include "command.h"
 
-bool command_bg(void *p)
+/*
+ * The bg command.
+ */
+bool
+s3i_command_bg(
+	void *p)
 {
 	return true;
 }

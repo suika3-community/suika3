@@ -18,6 +18,7 @@
  * Command Implementation
  */
 
-bool command_bg(void *p);
+/* The bg command. */
+bool s3i_command_bg(void *p);
 
 #endif

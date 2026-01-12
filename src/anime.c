@@ -24,10 +24,14 @@
 
 #define INVALID_ACCEL_TYPE	(0)
 
-/* Maximum number of the anime sequences per a layer. */
+/*
+ * Maximum number of the anime sequences per a layer.
+ */
 #define SEQUENCE_COUNT		(1024)
 
-/* Anime sequence. */
+/*
+ * Anime sequence.
+ */
 struct sequence {
 	int layer;
 	float start_time;
@@ -46,7 +50,7 @@ struct sequence {
 	float center_y;
 	float from_rotate;
 	float to_rotate;
-	int frame;	/* 目パチ用 */
+	int frame;	/* for eye/lip */
 	int blend;
 	int accel;
 	bool loop;
@@ -55,7 +59,9 @@ struct sequence {
 };
 static struct sequence sequence[S3_STAGE_LAYERS][SEQUENCE_COUNT];
 
-/* Context of a layer anime. */
+/*
+ * Context of a layer anime.
+ */
 struct layer_context {
 	/* props */
 	int seq_count;
@@ -73,7 +79,9 @@ struct layer_context {
 };
 static struct layer_context context[S3_STAGE_LAYERS];
 
-/* Mapping from a layer name to a layer index. */
+/*
+ * Mapping from a layer name to a layer index.
+ */
 struct layer_name_map {
 	const char *name;
 	int index;
@@ -149,13 +157,17 @@ static struct layer_name_map layer_name_map[] = {
 	{"text8",		S3_LAYER_TEXT8},
 };
 
-/* Registered Anime Files */
+/*
+ * Registered anime file.
+ */
 static char *reg_anime_file[REG_ANIME_COUNT];
 
-/* Information during anime file loading. */
-static int cur_seq_layer;
-static uint64_t cur_sw;
-static bool *used_layer_tbl;
+/*
+ * Information during anime file loading.
+ */
+static int cur_seq_layer;	/* Current sequece's layer. */
+static uint64_t cur_sw;		/* Current lap time origin. */
+static bool *used_layer_tbl;	/* Cuurent detected layer in use. */
 
 /*
  * Forward declaration.
@@ -175,7 +187,7 @@ static void synthesis_eye_anime(int chpos);
  * Initialize the anime subsystem.
  */
 bool
-init_anime(void)
+s3i_init_anime(void)
 {
 	/* Cleanup when DLL is reused. */
 	cleanup_anime();
@@ -187,7 +199,7 @@ init_anime(void)
  * Cleanup the anime subsystem.
  */
 void
-cleanup_anime(void)
+s3i_cleanup_anime(void)
 {
 	int i, j;
 

@@ -15,83 +15,59 @@
 #include <suika3/suika3.h>
 #include "save.h"
 
-/* セーブデータの互換性バージョン */
+/* Save data compatibility version. */
 #define SAVE_VER	(0x00000001)
-
-#ifdef OPENNOVEL_TARGET_WASM
-#include <emscripten/emscripten.h>
-#endif
 
 /* False assertion */
 #define CONFIG_TYPE_ERROR	(0)
 
-/* クイックセーブデータのインデックス */
+/* Index for the quick save data. */
 #define QUICK_SAVE_INDEX	(SAVE_SLOTS)
 
-/* コンフィグの終端記号 */
+/* Terminator of the config. */
 #define END_OF_CONFIG		"eoc"
 
-/* ロードされた直後であるかのフラグ */
+/* Flag to show if right after load. */
 static bool load_flag;
 
 /*
- * このモジュールで保持する設定値
+ * Save data that are loaded onto the memory.
  */
 
-/* 章題*/
-static char *chapter_name;
-
-/* 最後のメッセージ */
-static char *last_message;
-
-/* 最後のメッセージ(最後の継続部分を除く) */
-static char *prev_last_message;
-
-/* ロード直後に復元されるメッセージ */
-static char *pending_message;
-
-/* テキストの表示スピード */
-static float msg_text_speed;
-
-/* オートモードの待ち時間の長さ */
-static float msg_auto_speed;
-
-/*
- * メモリ上に読み込んだセーブデータ
- */
-
-/* セーブデータの日付 (0のときデータなし) */
+/* Timestamp of the save data. (0 for no data) */
 static time_t save_time[SAVE_SLOTS];
 
-/* 最後にセーブされたセーブデータ番号 */
+/* Index of the last saved. */
 static int latest_index;
 
-/* セーブデータの章タイトル */
+/* Chapter title of the save data. */
 static char *save_title[SAVE_SLOTS];
 
-/* セーブデータのメッセージ */
+/* Last message of the save data. */
 static char *save_message[SAVE_SLOTS];
 
-/* セーブデータのサムネイル */
-static struct image *save_thumb[SAVE_SLOTS];
+/* Thumbnail of the save data. */
+static struct s3_image *save_thumb[SAVE_SLOTS];
 
-/* クイックセーブデータの日付 */
+/* Timestamp of the quick save data. */
 static time_t quick_save_time;
 
-/* 最後の+en+コマンドの位置 */
-static int last_en_command = -1;
+/* Message to restored right after load. */
+static char *pending_message;
 
 /*
- * 作業用バッファ
+ * Temporary Buffers
  */
 
-/* 文字列読み込み用バッファ */
+/* Buffer for string read. */
 static char tmp_str[4096];
 
-/* サムネイル読み書き用バッファ */
+/* Buffer for thumbnail read and write. */
 static unsigned char *tmp_pixels;
 
-/* 前方参照 */
+/*
+ * Forward declaration.
+ */
 static void load_basic_save_data(void);
 static void load_basic_save_data_file(struct rfile *rf, int index);
 static bool serialize_all(const char *fname, uint64_t *timestamp, int index);
@@ -120,13 +96,13 @@ static bool deserialize_config_common(struct rfile *rf);
 static void load_global_data(void);
 
 /*
- * 初期化
+ * Initialization
  */
 
 /*
- * セーブデータに関する初期化処理を行う
+ * Initialize the save subsystem.
  */
-bool init_save(void)
+bool s3i_init_save(void)
 {
 	int i;
 
@@ -230,7 +206,7 @@ void cleanup_save(void)
 /*
  * ロードが終了した直後であるかを調べる
  */
-bool check_load_flag(void)
+bool check_if_right_after_load(void)
 {
 	if (load_flag) {
 		load_flag = false;
@@ -1658,133 +1634,8 @@ void delete_global_save(void)
 }
 
 /*
- * 章題と最後のメッセージ
+ * Get the pending message (message box content right after load)
  */
-
-/*
- * 章題を設定する
- */
-bool set_chapter_name(const char *name)
-{
-	free(chapter_name);
-
-	chapter_name = strdup(name);
-	if (chapter_name == NULL) {
-		log_memory();
-		return false;
-	}
-
-	return true;
-}
-
-/*
- * 章題を取得する
- */
-const char *get_chapter_name(void)
-{
-	if (chapter_name == NULL)
-		return "";
-
-	return chapter_name;
-}
-
-/*
- * 最後のメッセージを設定する
- */
-bool set_last_message(const char *msg, bool is_append)
-{
-	/* 継続行のとき */
-	if (is_append) {
-		char *new_text;
-		size_t prev_len = 0, next_len = 0;
-		if (last_message != NULL)
-			prev_len = strlen(last_message);
-		next_len = strlen(msg);
-		new_text = malloc(prev_len + next_len + 1);
-		if (new_text == NULL) {
-			log_memory();
-			return false;
-		}
-		if (last_message != NULL) {
-			strcpy(new_text, last_message);
-			prev_last_message = last_message;
-			last_message = NULL;
-			strcat(new_text, msg);
-		} else {
-			strcpy(new_text, msg);
-		}
-		last_message = new_text;
-		return true;
-	}
-
-	/* 継続行でないとき */
-	free(last_message);
-	last_message = strdup(msg);
-	if (last_message == NULL) {
-		log_memory();
-		return false;
-	}
-	free(prev_last_message);
-	prev_last_message = NULL;
-
-	return true;
-}
-
-/*
- * テキストスピードを設定する
- */
-void set_text_speed(float val)
-{
-	assert(val >= 0 && val <= 1.0f);
-
-	msg_text_speed = val;
-}
-/*
- * テキストスピードを取得する
- */
-float get_text_speed(void)
-{
-	return msg_text_speed;
-}
-
-/*
- * オートスピードを設定する
- */
-void set_auto_speed(float val)
-{
-	assert(val >= 0 && val <= 1.0f);
-
-	msg_auto_speed = val;
-}
-
-/*
- * オートスピードを取得する
- */
-float get_auto_speed(void)
-{
-	return msg_auto_speed;
-}
-
-/*
- * 最後の+en+コマンドの位置を記録する
- */
-void set_last_en_command(void)
-{
-	last_en_command = get_command_index();
-}
-
-/*
- * 最後の+en+コマンドの位置を消去する
- */
-void clear_last_en_command(void)
-{
-	last_en_command = -1;
-}
-
-/*
- * メッセージボックスのテキスト
- */
-
 char *get_pending_message(void)
 {
 	char *ret;

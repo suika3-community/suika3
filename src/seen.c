@@ -1,179 +1,136 @@
 /* -*- coding: utf-8; tab-width: 8; indent-tabs-mode: t; -*- */
 
 /*
- * OpenNovel
- * Copyright (c) 2001-2024, OpenNovel.org. All rights reserved.
+ * Suika3
+ * Copyright (C) 2001-2026 The Suika3 Authors
  */
 
 /*
- * [Changes]
- *  - 2021-07-31 Created.
- *  - 2024-04-11 OpenNovel
+ * Seen Flag
  */
 
-#include "opennovel.h"
+#include <suika3/suika3.h>
 
-/* 既読フラグ */
-#ifndef USE_EDITOR
-static bool seen_flag[SCRIPT_CMD_SIZE];
-#endif
+#include <stdio.h>
+#include <string.h>
+#include <assert.h>
 
-/* 初期化済みか */
+/* Maximum seen flags per tag file. */
+#define SEEN_COUNT	(8192)
+
+/*
+ * Seen flag.
+ *  - Each flag indicates a text or a choose.
+ *  - For a text, a flag must be 0 (unseen) or 1 (seen).
+ *  - For a choose, the bit N of a flag indicates whether the option N was chosen (1) or not (0).
+ */
+static uint8_t seen_flag[SEEN_COUNT / 8];
+
+/* Is initialized. */
 static bool is_initialized;
 
-/* 前方参照 */
-#ifndef USE_EDITOR
+/* Forward declarations. */
 static const char *hash(const char *file);
 static char hex(int c);
-#endif
 
 /*
- * 既読フラグ管理を初期化する
+ * Initialize the seen subsystem.
  */
-bool init_seen(void)
+bool
+s3i_init_seen(void)
 {
-	/* 既読フラグをロードする */
-	load_seen();
-
-	is_initialized = true;
+	is_initialized = false;
+	memset(seen_flag, 0, sizeof(seen_flag));
 
 	return true;
 }
 
 /*
- * 既読フラグ管理の終了処理を行う
+ * Cleanup the seen subsystem.
  */
-void cleanup_seen(void)
+void
+s3i_cleanup_seen(void)
 {
 	if (is_initialized) {
-		/* 既読フラグをセーブする */
-		save_seen();
-
 		is_initialized = false;
+		memset(seen_flag, 0, sizeof(seen_flag));
 	}
 }
 
 /*
- * 現在のスクリプトに対応する既読フラグをロードする
+ * Load the seen file for the current tag file.
  */
-bool load_seen(void)
+bool
+s3_load_seen(void)
 {
-#ifdef USE_EDITOR
-	return true;
-#else
-	struct rfile *rf;
-	const char *fname;
-	bool success;
+	char key[128];
+	size_t file_size;
 
-	/* 読み込む前に全部未読にする */
+	/* Clear all flags. */
 	memset(seen_flag, 0, sizeof(seen_flag));
 
-	/* ファイル名を求める */
-	fname = hash(get_script_file_name());
+	/* Get the save data key. */
+	snprintf(key, sizeof(key), "s-%s", hash(s3_get_tag_file()));
 
-	/* ファイルを開く */
-	rf = open_rfile(SAVE_DIR, fname, true);
-	if (rf == NULL)
+	/* Read the save data. */
+	if (!s3_read_save_data(key, &seen_flag, sizeof(seen_flag), &file_size))
 		return false;
 
-	success = false;
-	do {
-		/* 既読フラグを読み込む */
-		if (read_rfile(rf, &seen_flag, sizeof(seen_flag)) <
-		    sizeof(seen_flag))
-			break;
-
-		/* 成功 */
-		success = true;
-	} while (0);
-
-	/* ファイルをクローズする */
-	close_rfile(rf);
-
-	/* 読み込みに失敗した場合全部未読にする */
-	if (!success)
-		memset(seen_flag, 0, sizeof(seen_flag));
-
-	return success;
-#endif
+	return true;
 }
 
 /*
- * 現在のスクリプトに対応する既読フラグをセーブする
+ * Save the seen file for the current tag file.
  */
-bool save_seen(void)
+bool
+s3_save_seen(void)
 {
-#ifdef USE_EDITOR
-	return true;
-#else
-	struct wfile *wf;
+	char key[128];
 	const char *fname;
-	bool success;
+	size_t write_size;
 
-	/* セーブディレクトリを作成する */
-	make_sav_dir();
+	/* Get the save data key. */
+	snprintf(key, sizeof(key), "s-%s", hash(s3_get_tag_file()));
 
-	/* ファイル名を求める */
-	fname = hash(get_script_file_name());
-
-	/* ファイルを開く */
-	wf = open_wfile(SAVE_DIR, fname);
-	if (wf == NULL)
+	/* Write the save data. */
+	if (!s3_write_save_data(key, &seen_flag, sizeof(seen_flag)))
+		return false;
+	if (write_size != sizeof(seen_flag))
 		return false;
 
-	success = false;
-	do {
-		/* 既読フラグを書き込む */
-		if (write_wfile(wf, &seen_flag, sizeof(seen_flag)) <
-		    sizeof(seen_flag))
-			break;
-
-		/* 成功 */
-		success = true;
-	} while (0);
-
-	/* ファイルをクローズする */
-	close_wfile(wf);
-
-	return success;
-#endif
-}
-
-/*
- * 現在のコマンドが既読かを返す
- */
-bool get_seen(void)
-{
-#ifdef USE_EDITOR
 	return true;
-#else
-	int index;
-
-	index = get_command_index();
-	assert(index >= 0 && index < SCRIPT_CMD_SIZE);
-
-	return seen_flag[index];
-#endif
 }
 
 /*
- * 現在のコマンドを既読にする
+ * Get the seen flags for the current tag.
  */
-void set_seen(void)
+int
+s3_get_seen_flags(void)
 {
-#ifndef USE_EDITOR
 	int index;
 
-	index = get_command_index();
-	assert(index >= 0 && index < SCRIPT_CMD_SIZE);
-
-	seen_flag[index] = true;
-#endif
+	index = s3_get_tag_index();
+	if (index < SEEN_COUNT)
+		return seen_flag[index];
+	return false;
 }
 
-#ifndef USE_EDITOR
-/* スクリプトファイル名からハッシュを求める */
-static const char *hash(const char *file)
+/*
+ * Set the seen flags for the current tag.
+ */
+void
+s3_set_seen_flags(int flag)
+{
+	int index;
+
+	index = s3_get_tag_index();
+	if (index < SEEN_COUNT)
+		seen_flag[index] = flag;
+}
+
+/* Get a hash string from a tag file name. */
+static const char *
+hash(const char *file)
 {
 	static char h[129];
 	int len, i;
@@ -192,7 +149,7 @@ static const char *hash(const char *file)
 	return h;
 }
 
-/* 十六進文字を取得する */
+/* Get a hex code. */
 static char hex(int c)
 {
 	assert(c >= 0 && c <= 15);
@@ -202,4 +159,3 @@ static char hex(int c)
 	else
 		return (char)('a' + (char)(c - 10));
 }
-#endif

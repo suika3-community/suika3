@@ -243,7 +243,7 @@ struct s3_fade_desc {
  */
 
 /*
- * Context for message drawing.
+ * Context for message drawing. (text.c)
  */
 struct draw_msg_context;
 
@@ -252,106 +252,234 @@ struct draw_msg_context;
  */
 
 /*
- * Argument Access (game.c)
+ * Config (conf.c)
  */
 
-/* Check if an argument exists. */
-bool s3_check_arg(const char *name);
+/*
+ * Overwrite a config.
+ */
+bool
+s3_overwrite_config(
+	const char *key,
+	const char *val);
 
-/* Get an integer argument. */
-int s3_get_arg_int(const char *name);
+/*
+ * Get a config key for index.
+ */
+const char *
+s3_get_config_key(
+	int index);
 
-/* Get a float argument. */
-float s3_get_arg_float(const char *name);
+/*
+ * Check if config key is stored to global save data.
+ */
+bool
+s3_is_config_key_global(
+	const char *key);
 
-/* Get a string argument. */
-const char *s3_get_arg_string(const char *name);
+/*
+ * Get a config value type. ('s', 'b', 'i', 'f')
+ */
+char
+s3_get_config_type_for_key(
+	const char *key);
+
+/*
+ * Get a string config value.
+ */
+const char *
+s3_get_string_config_value(
+	const char *key);
+
+/*
+ * Get a boolean config value.
+ */
+bool
+s3_get_bool_config_value(
+	const char *key);
+
+/*
+ * Get an integer config value.
+ */
+int
+s3_get_int_config_value(
+	const char *key);
+
+/*
+ * Get a float config value.
+ */
+float
+s3_get_float_config_value(
+	const char *key);
+
+/*
+ * Check the locale.
+ */
+bool
+s3_compare_locale(
+	const char *s);
 
 /*
  * Input State (game.c)
  */
 
-/* Get the mouse X position. */
-int s3_get_mouse_pos_x(void);
+/*
+ * Get the mouse X position.
+ */
+int
+s3_get_mouse_pos_x(void);
 
-/* Get the mouse Y position. */
-int s3_get_mouse_pos_y(void);
+/*
+ * Get the mouse Y position.
+ */
+int
+s3_get_mouse_pos_y(void);
 
-/* Check if mouse left button is pressed. */
-bool s3_is_mouse_left_pressed(void);
+/*
+ * Check if mouse left button is pressed.
+ */
+bool
+s3_is_mouse_left_pressed(void);
 
-/* Check if mouse right button is pressed. */
-bool s3_is_mouse_right_pressed(void);
+/*
+ * Check if mouse right button is pressed.
+ */
+bool
+s3_is_mouse_right_pressed(void);
 
-/* Check if mouse left button is pressed then released. */
-bool s3_is_mouse_left_clicked(void);
+/*
+ * Check if mouse left button is pressed then released.
+ */
+bool
+s3_is_mouse_left_clicked(void);
 
-/* Check if mouse right button is pressed then released. */
-bool s3_is_mouse_right_clicked(void);
+/*
+ * Check if mouse right button is pressed then released.
+ */
+bool
+s3_is_mouse_right_clicked(void);
 
-/* Check if mouse is dragging. */
-bool s3_is_mouse_dragging(void);
+/*
+ * Check if mouse is dragging.
+ */
+bool
+s3_is_mouse_dragging(void);
 
-/* Check if return key is pressed. */
-bool s3_is_return_key_pressed(void);
+/*
+ * Check if return key is pressed.
+ */
+bool
+s3_is_return_key_pressed(void);
 
 /* Check if space key is pressed. */
-bool s3_is_space_key_pressed(void);
+bool
+s3_is_space_key_pressed(void);
 
-/* Check if escape key is pressed. */
-bool s3_is_escape_key_pressed(void);
+/*
+ * Check if escape key is pressed.
+ */
+bool
+s3_is_escape_key_pressed(void);
 
-/* Check if up key is pressed. */
-bool s3_is_up_key_pressed(void);
+/*
+ * Check if up key is pressed.
+ */
+bool
+s3_is_up_key_pressed(void);
 
-/* Check if down key is pressed. */
-bool s3_is_down_key_pressed(void);
+/*
+ * Check if down key is pressed.
+ */
+bool
+s3_is_down_key_pressed(void);
 
-/* Check if left key is pressed. */
-bool s3_is_left_key_pressed(void);
+/*
+ * Check if left key is pressed.
+ */
+bool
+s3_is_left_key_pressed(void);
 
-/* Check if right key is pressed. */
-bool s3_is_right_key_pressed(void);
+/*
+ * Check if right key is pressed.
+ */
+bool
+s3_is_right_key_pressed(void);
 
-/* Check if pageup key is pressed. */
-bool s3_is_pageup_key_pressed(void);
+/*
+ * Check if pageup key is pressed.
+ */
+bool
+s3_is_pageup_key_pressed(void);
 
-/* Check if pagedown key is pressed. */
-bool s3_is_pagedown_key_pressed(void);
+/*
+ * Check if pagedown key is pressed.
+ */
+bool
+s3_is_pagedown_key_pressed(void);
 
-/* Check if control key is pressed. */
-bool s3_is_control_key_pressed(void);
+/*
+ * Check if control key is pressed.
+ */
+bool
+s3_is_control_key_pressed(void);
 
-/* Check if S key is pressed. */
-bool s3_is_s_key_pressed(void);
+/*
+ * Check if S key is pressed.
+ */
+bool
+s3_is_s_key_pressed(void);
 
-/* Check if L key is pressed. */
-bool s3_is_l_key_pressed(void);
+/*
+ * Check if L key is pressed.
+ */
+bool
+s3_is_l_key_pressed(void);
 
-/* Check if H key is pressed. */
-bool s3_is_h_key_pressed(void);
+/*
+ * Check if H key is pressed.
+ */
+bool
+s3_is_h_key_pressed(void);
 
-/* Check if touch is canceled. */
-bool s3_is_touch_canceled(void);
+/*
+ * Check if touch is canceled.
+ */
+bool
+s3_is_touch_canceled(void);
 
-/* Check if swiped. */
-bool s3_is_swiped(void);
+/*
+ * Check if swiped.
+ */
+bool
+s3_is_swiped(void);
 
-/* Clear input states to avoid further input processing in the current frame. */
-void s3_clear_input_state(void);
+/*
+ * Clear input states to avoid further input processing in the current frame.
+ */
+void
+s3_clear_input_state(void);
 
 /*
  * Multiple-Frame Command State (game.c)
  */
 
-/* Start a multiple-frame command execution. */
-void s3_start_command_repetition(void);
+/*
+ * Start a multiple-frame command execution.
+ */
+void
+s3_start_command_repetition(void);
 
-/* Stop a multiple-frame command execution. */
-void s3_stop_command_repetition(void);
+/*
+ * Stop a multiple-frame command execution.
+ */
+void
+s3_stop_command_repetition(void);
 
-/* Check whether we are in a multiple-frame command execution or not. */
-bool s3_is_in_command_repetition(void);
+/*
+ * Check whether we are in a multiple-frame command execution or not.
+ */
+bool
+s3_is_in_command_repetition(void);
 
 /*
  * Message Showing State (game.c)
@@ -360,140 +488,328 @@ bool s3_is_in_command_repetition(void);
  *  - Cleared when move to a next command or loaded a save file.
  */
 
-/* Set the message showing state. */
-void s3_set_message_active(void);
+/*
+ * Set the message showing state.
+ */
+void
+s3_set_message_active(void);
 
-/* Reset the message showing state. */
-void s3_clear_message_active(void);
+/*
+ * Reset the message showing state.
+ */
+void
+s3_clear_message_active(void);
 
-/* Check whether the message showing state is set or not. */
-bool s3_is_message_active(void);
+/*
+ * Check whether the message showing state is set or not.
+ */
+bool
+s3_is_message_active(void);
 
 /*
  * Auto-Mode State (game.c)
  */
 
-/* Start the auto-mode. */
-void s3_start_auto_mode(void);
+/*
+ * Start the auto-mode.
+ */
+void
+s3_start_auto_mode(void);
 
-/* Stop the auto-mode. */
-void s3_stop_auto_mode(void);
+/*
+ * Stop the auto-mode.
+ */
+void
+s3_stop_auto_mode(void);
 
-/* Check whether we are in the auto-mode or not. */
-bool s3_is_auto_mode(void);
+/*
+ * Check whether we are in the auto-mode or not.
+ */
+bool
+s3_is_auto_mode(void);
 
 /*
  * Skip-Mode State (game.c)
  */
 
-/* Start the skip-mode. */
-void s3_start_skip_mode(void);
+/*
+ * Start the skip-mode.
+ */
+void
+s3_start_skip_mode(void);
 
-/* Stop the skip-mode. */
-void s3_stop_skip_mode(void);
+/*
+ * Stop the skip-mode.
+ */
+void
+s3_stop_skip_mode(void);
 
-/* Check whether we are in the skip-mode or not. */
-bool s3_is_skip_mode(void);
+/*
+ * Check whether we are in the skip-mode or not.
+ */
+bool
+s3_is_skip_mode(void);
 
 /*
  * Save/Load Enable State (game.c)
  */
 
-/* Set the save/load enable setting. */
-void s3_set_save_load(bool enable);
+/*
+ * Set the save/load enable setting.
+ */
+void
+s3_set_save_load(bool enable);
 
-/* Get the save/load enable setting. */
-bool s3_is_save_load_enabled(void);
+/*
+ * Get the save/load enable setting.
+ */
+bool
+s3_is_save_load_enabled(void);
 
 /*
  * Non-Interruptible State (game.c)
  */
 
-/* Set the non-interruptible mode setting. */
-void s3_set_non_interruptible(bool mode);
+/*
+ * Set the non-interruptible mode setting.
+ */
+void
+s3_set_non_interruptible(
+	bool mode);
 
-/* Get the non-interruptible mode setting. */
-bool s3_is_non_interruptible(void);
+/*
+ * Get the non-interruptible mode setting.
+ */
+bool
+s3_is_non_interruptible(void);
 
 /*
  * Pen State (game.c)
  */
 
-/* Set the pen position. */
-void s3_set_pen_position(int x, int y);
+/*
+ * Set the pen position.
+ */
+void
+s3_set_pen_position(
+	int x,
+	int y);
 
-/* Get the pen X position. */
-int s3_get_pen_position_x(void);
+/*
+ * Get the pen X position.
+ */
+int
+s3_get_pen_position_x(void);
 
-/* Get the pen Y position. */
-int s3_get_pen_position_y(void);
+/*
+ * Get the pen Y position.
+ */
+int
+s3_get_pen_position_y(void);
 
 /*
  * Call Arguments (game.c)
  */
 
-/* Set a calling argument. */
-bool s3_set_call_argument(int index, const char *val);
+/*
+ * Set a calling argument.
+ */
+bool
+s3_set_call_argument(
+	int index,
+	const char *val);
 
-/* Get a calling argument. */
-const char *s3_get_call_argument(int index);
+/*
+ * Get a calling argument.
+ */
+const char *
+s3_get_call_argument(
+	int index);
 
 /*
  * Page Mode (game.c)
  */
 
-/* Set the script page mode. */
-bool s3_is_page_mode(void);
+/*
+ * Set the script page mode.
+ */
+bool
+s3_is_page_mode(void);
 
-/* Append a string to the page mode buffer string. */
-bool s3_append_buffered_message(const char *msg);
+/*
+ * Append a string to the page mode buffer string.
+ */
+bool
+s3_append_buffered_message(
+	const char *msg);
 
-/* Get the page mode buffer string. */
-const char *s3_get_buffered_message(void);
+/*
+ * Get the page mode buffer string.
+ */
+const char *
+s3_get_buffered_message(void);
 
-/* Clear the page mode buffer string. */
-void s3_clear_buffered_message(void);
+/*
+ * Clear the page mode buffer string.
+ */
+void
+s3_clear_buffered_message(void);
 
-/* Reset the message line count in a page. */
-void s3_reset_page_line(void);
+/*
+ * Reset the message line count in a page.
+ */
+void
+s3_reset_page_line(void);
 
-/* Increment the line count in a page. */
-void s3_inc_page_line(void);
+/*
+ * Increment the line count in a page.
+ */
+void
+s3_inc_page_line(void);
 
-/* Check we are at the first line in a page. */
-bool s3_is_page_top(void);
+/*
+ * Check we are at the first line in a page.
+ */
+bool
+s3_is_page_top(void);
 
 /*
  * BGVoice (game.c)
  */
 
-/* Register a BGVoice. */
-bool s3_register_bgvoice(const char *file);
+/*
+ * Register a BGVoice.
+ */
+bool
+s3_register_bgvoice(
+	const char *file);
 
-/* Get the BGVoice. */
-const char *s3_get_bgvoice(void);
+/*
+ * Get the BGVoice.
+ */
+const char *
+s3_get_bgvoice(void);
 
-/* Set the BGVoice state playing. */
-void s3_set_bgvoice_playing(bool is_playing);
+/*
+ * Set the BGVoice state playing.
+ */
+void
+s3_set_bgvoice_playing(
+	bool is_playing);
 
-/* Check whether the BGVoice is playing or not. */
-bool s3_is_bgvoice_playing(void);
+/*
+ * Check whether the BGVoice is playing or not.
+ */
+bool
+s3_is_bgvoice_playing(void);
+
+/*
+ * Chapter Title (game.c)
+ */
+
+/*
+ * Set the chapter name.
+ */
+bool
+s3_set_chapter_name(
+	const char *name);
+
+/*
+ * Get the chapter name.
+ */
+const char *
+s3_get_chapter_name(void);
+
+/*
+ * Last Message (game.c)
+ */
+
+/*
+ * Set the last message.
+ */
+bool
+s3_set_last_message(
+	const char *msg,
+	bool is_append);
+
+/*
+ * Get the last message.
+ */
+const char *
+s3_get_last_message(
+	bool prev);
+
+/*
+ * Text Speed (game.c)
+ */
+
+/*
+ * Set the text speed.
+ */
+void
+set_text_speed(
+	float val);
+
+/*
+ * Get the text speed.
+ */
+float
+get_text_speed(void);
+
+/*
+ * Auto Speed (game.c)
+ */
+
+/*
+ * Set the auto speed.
+ */
+void
+set_auto_speed(
+	float val);
+
+/*
+ * Get the auto speed.
+ */
+float
+get_auto_speed(void);
+
+/*
+ * Last English Index (game.c)
+ */
+
+/*
+ * Mark the last English index.
+ */
+void
+mark_last_en_index(void);
+
+/*
+ * Clear the last English index.
+ */
+void
+clear_last_en_index(void);
 
 /*
  * Image Management (image.c)
  */
 
-/* Load an image from a file. */
+/*
+ * Load an image from a file.
+ */
 struct s3_image *
 s3_create_image_from_file(
 	const char *file);
 
-/* Create an image. */
+/*
+ * Create an image.
+ */
 struct s3_image *
 s3_create_image(int width,
 		int height);
 
-/* Load a glyph image. */
+/*
+ * Load a glyph image.
+ */
 struct s3_image *
 s3_load_glyph_image(
 	int slot,
@@ -503,11 +819,15 @@ s3_load_glyph_image(
 	int outline_width,
 	s3_pixel_t outline_color);
 
-/* Destroy an image. */
+/*
+ * Destroy an image.
+ */
 void s3_destroy_image(
 	struct s3_image *image);
 
-/* Copy an image to an image. */
+/*
+ * Copy an image to an image.
+ */
 void s3_draw_image_copy(
 	struct s3_image *dst,
 	int dst_left,
@@ -518,7 +838,9 @@ void s3_draw_image_copy(
 	int src_left,
 	int src_top);
 
-/* Draw an image to an image with alpha blending. */
+/*
+ * Draw an image to an image with alpha blending.
+ */
 void s3_draw_image_alpha(
 	struct s3_image *dst,
 	int dst_left,
@@ -530,7 +852,9 @@ void s3_draw_image_alpha(
 	int src_top,
 	int alpha);
 
-/* Draw an image to an image with add blending. */
+/*
+ * Draw an image to an image with add blending.
+ */
 void s3_draw_image_add(
 	struct s3_image *dst,
 	int dst_left,
@@ -542,7 +866,9 @@ void s3_draw_image_add(
 	int src_top,
 	int alpha);
 
-/* Draw an image to an image with sub blending. */
+/*
+ * Draw an image to an image with sub blending.
+ */
 void s3_draw_image_sub(
 	struct s3_image *dst,
 	int dst_left,
@@ -554,7 +880,9 @@ void s3_draw_image_sub(
 	int src_top,
 	int alpha);
 
-/* Draw an image to an image with sub blending. */
+/*
+ * Draw an image to an image with sub blending.
+ */
 void s3_draw_image_dim(
 	struct s3_image *dst,
 	int dst_left,
@@ -566,7 +894,9 @@ void s3_draw_image_dim(
 	int src_top,
 	int alpha);
 
-/* Draw a glyph image to an image. */
+/*
+ * Draw a glyph image to an image.
+ */
 void
 s3_draw_image_glyph(
 	struct s3_image *dst,
@@ -579,7 +909,9 @@ s3_draw_image_glyph(
 	int src_top,
 	int alpha);
 
-/* Draw an emoji image to an image. */
+/*
+ * Draw an emoji image to an image.
+ */
 void
 s3_draw_image_emoji(
 	struct s3_image *dst,
@@ -592,7 +924,9 @@ s3_draw_image_emoji(
 	int src_top,
 	int alpha);
 
-/* Draw an image with scaling. */
+/*
+ * Draw an image with scaling.
+ */
 void
 s3_draw_image_scale(
 	struct s3_image *dst,
@@ -602,7 +936,9 @@ s3_draw_image_scale(
 	int virtual_dst_top,
 	struct s3_image *src);
 
-/* Make a pixel value. */
+/*
+ * Make a pixel value.
+ */
 s3_pixel_t
 s3_make_pixel(
 	int r,
@@ -610,7 +946,9 @@ s3_make_pixel(
 	int b,
 	int a);
 
-/* Fill a rectangle on an image */
+/*
+ * Fill a rectangle on an image.
+ */
 void
 s3_fill_image_rect(
 	struct s3_image *image,
@@ -624,219 +962,418 @@ s3_fill_image_rect(
  * Stage Layer Management (stage.c)
  */
 
-/* Reload the stage images by the config. */
-bool s3_reload_stage_images(void);
+/*
+ * Reload the stage images by the config.
+ */
+bool
+s3_reload_stage_images(void);
 
-/* Reload the stage positions by the config. */
-void s3_reload_stage_positions(void);
+/*
+ * Reload the stage positions by the config.
+ */
+void
+s3_reload_stage_positions(void);
 
-/* Get the layer X position. */
-int s3_get_layer_x(int layer);
+/*
+ * Get the layer X position.
+ */
+int
+s3_get_layer_x(
+	int layer);
 
-/* Get the layer Y position. */
-int s3_get_layer_y(int layer);
+/*
+ * Get the layer Y position.
+ */
+int
+s3_get_layer_y(
+	int layer);
 
-/* Set the layer position. */
-void s3_set_layer_position(int layer, int x, int y);
+/*
+ * Set the layer position.
+ */
+void
+s3_set_layer_position(
+	int layer,
+	int x,
+	int y);
 
-/* Set the layer scale. */
-void s3_set_layer_scale(int layer, float scale_x, float scale_y);
+/*
+ * Set the layer scale.
+ */
+void
+s3_set_layer_scale(
+	int layer,
+	float scale_x,
+	float scale_y);
 
-/* Get the layer image width. */
-int s3_get_layer_width(int layer);
+/*
+ * Get the layer image width.
+ */
+int
+s3_get_layer_width(
+	int layer);
 
-/* Get the layer image height. */
-int s3_get_layer_height(int layer);
+/*
+ * Get the layer image height.
+ */
+int
+s3_get_layer_height(
+	int layer);
 
-/* Get the layer alpha. */
-int s3_get_layer_alpha(int layer);
+/*
+ * Get the layer alpha.
+ */
+int
+s3_get_layer_alpha(
+	int layer);
 
-/* Set the layer alpha. */
-void s3_set_layer_alpha(int layer, int alpha);
+/*
+ * Set the layer alpha.
+ */
+void
+s3_set_layer_alpha(
+	int layer,
+	int alpha);
 
-/* Set the layer belnd mode. */
-void s3_set_layer_blend(int layer, int blend);
+/*
+ * Set the layer belnd mode.
+ */
+void
+s3_set_layer_blend(
+	int layer,
+	int blend);
 
-/* Set the layer center coordinate. */
-void s3_set_layer_center(int layer, int x, int y);
+/*
+ * Set the layer center coordinate.
+ */
+void
+s3_set_layer_center(
+	int layer,
+	int x,
+	int y);
 
-/* Set the layer rotation. */
-void s3_set_layer_rotate(int layer, float rad);
+/*
+ * Set the layer rotation.
+ */
+void
+s3_set_layer_rotate(
+	int layer,
+	float rad);
 
-/* Get the layer file name. */
-const char *s3_get_layer_file_name(int layer);
+/*
+ * Get the layer file name.
+ */
+const char *
+s3_get_layer_file_name(
+	int layer);
 
-/* Set the layer file name. */
-bool s3_set_layer_file_name(int layer, const char *file_name);
+/*
+ * Set the layer file name.
+ */
+bool
+s3_set_layer_file_name(
+	int layer,
+	const char *file_name);
 
-/* Get the layer image for a glyph drawing. */
-struct s3_image *s3_get_layer_image(int layer);
+/*
+ * Get the layer image for a glyph drawing.
+ */
+struct s3_image *
+s3_get_layer_image(
+	int layer);
 
-/* Set the layer image for a load.*/
-void s3_set_layer_image(int layer, struct s3_image *img);
+/*
+ * Set the layer image for a load.
+ */
+void
+s3_set_layer_image(
+	int layer,
+	struct s3_image *img);
 
-/* Set the layer frame for eye blinking and lip synchronization. */
+/*
+ * Set the layer frame for eye blinking and lip synchronization.
+ */
 void s3_set_layer_frame(int layer, int frame);
 
-/* Get the text layer string. */
+/*
+ * Get the text layer string.
+ */
 const char *
 s3_get_layer_text(
 	int text_layer_index);
 
-/* Set the text layer string. */
+/*
+ * Set the text layer string.
+ */
 bool
 s3_set_layer_text(
 	int textlayer_index,
 	const char *msg);
 
-/* Get the sysbtn idle image. */
+/*
+ * Get the sysbtn idle image.
+ */
 struct s3_image *
 s3_get_sysbtn_idle_image(void);
 
-/* Get the sysbtn hover image. */
+/*
+ * Get the sysbtn hover image.
+ */
 struct s3_image *
 s3_get_sysbtn_hover_image(void);
 
-/* Clear the basic layers. */
-void s3_clear_stage_basic(void);
+/*
+ * Clear the basic layers.
+ */
+void
+s3_clear_stage_basic(void);
 
-/* Clear the stage and make it initial state. */
-void s3_clear_stage(void);
+/*
+ * Clear the stage and make it initial state.
+ */
+void
+s3_clear_stage(void);
 
 /*
  * Conversion of Layer Index and Character Position (stage.c)
  */
 
-/* Convert a character position to a stage layer index. */
-int s3_chpos_to_layer(int chpos);
+/*
+ * Convert a character position to a stage layer index.
+ */
+int
+s3_chpos_to_layer(
+	int chpos);
 
-/* Convert a character position to a stage layer index (character eye). */
-int s3_chpos_to_eye_layer(int chpos);
+/*
+ * Convert a character position to a stage layer index (character eye).
+ */
+int
+s3_chpos_to_eye_layer(
+	int chpos);
 
-/* Convert a character position to a stage layer index (character lip). */
-int s3_chpos_to_lip_layer(int chpos);
+/*
+ * Convert a character position to a stage layer index (character lip).
+ */
+int
+s3_chpos_to_lip_layer(
+	int chpos);
 
-/* Convert a stage layer index to a character position. */
-int s3_layer_to_chpos(int chpos);
+/*
+ * Convert a stage layer index to a character position.
+ */
+int
+s3_layer_to_chpos(
+	int chpos);
 
 /*
  * Stage Rendering (stage.c)
  */
 
-/* Render the stage with all stage layers. */
-void s3_render_stage(void);
+/*
+ * Render the stage with all stage layers.
+ */
+void
+s3_render_stage(void);
 
 /*
  * Save Data Thumbnail Drawing (stage.c)
  */
 
-/* Draw entire stage into the save data thumbnail. */
-void s3_draw_stage_to_thumb(void);
+/*
+ * Draw entire stage into the save data thumbnail.
+ */
+void
+s3_draw_stage_to_thumb(void);
 
-/* Get the image of the save data thumbnail */
-struct s3_image *get_thumb_image(void);
+/*
+ * Get the image of the save data thumbnail.
+ */
+struct s3_image *
+s3_get_thumb_image(void);
 
 /*
  * Fading Control (stage.c)
  */
 
-/* Get a fading method from a string. */
+/*
+ * Get a fading method from a string.
+ */
 int
 s3_get_fade_method(
 	const char *method);
 
-/* Start a fading. */
+/*
+ * Start a fading.
+ */
 bool s3_start_fade(
 	struct s3_fade_desc *desc,
 	int method,
 	struct s3_image *rule_img);
 
-/* Set the fading progress. */
-void s3_set_fade_progress(float progress);
+/*
+ * Set the fading progress.
+ */
+void
+s3_set_fade_progress(
+	float progress);
 
-/* Set the offset for the shake command. */
-void s3_set_shake_offset(int x, int y);
+/*
+ * Set the offset for the shake command.
+ */
+void
+s3_set_shake_offset(
+	int x,
+	int y);
 
-/* End the fading. */
-void s3_finish_fade(void);
+/*
+ * End the fading.
+ */
+void
+s3_finish_fade(void);
 
 /*
  * Character Control (stage.c)
  */
 
-/* Specify a character index for a character position. */
-void s3_set_ch_name_mapping(int chpos, int ch_name_index);
-
-/* Set the talker character name index. (-1 for no speaker) */
-void s3_set_ch_talking(int ch_name_index);
-
-/* Get the talker character position. */
-int s3_get_talking_chpos(void);
-
-/* Update the character dimming automatically. */
-void s3_update_ch_dim_by_talking_ch(void);
-
-/* Update the character dimming manually. */
-void s3_force_ch_dim(int chpos, bool is_dim);
+/*
+ * Specify a character index for a character position.
+ */
+void
+s3_set_ch_name_mapping(
+	int chpos,
+	int ch_name_index);
 
 /*
- * Name Box Control
+ * Set the talker character name index. (-1 for no speaker)
  */
-
-/* Fill the name box by the name box image. */
-void s3_fill_namebox(void);
-
-/* Show or hides the name box. */
-void s3_show_namebox(bool show);
+void
+s3_set_ch_talking(
+	int ch_name_index);
 
 /*
- * Message Box Control
+ * Get the talker character position.
  */
-
-/* Fill the message box by the message box image. */
-void s3_fill_msgbox(void);
-
-/* Show or hides the message box. */
-void s3_show_msgbox(bool show);
+int
+s3_get_talking_chpos(void);
 
 /*
- * Click Animation Control
+ * Update the character dimming automatically.
  */
-
-/* Set the position of the click animation. */
-void s3_set_click_position(int x, int y);
-
-/* Show or hides the click animation. */
-void s3_show_click(bool show);
-
-/* Set the click animation frame index. */
-void s3_set_click_index(int index);
+void
+s3_update_ch_dim_by_talking_ch(void);
 
 /*
- * Choose Box Control
+ * Update the character dimming manually.
  */
-
-/* Fill the choose box by the choose box bg image. */
-void s3_fill_cbox_idle_image(int index);
-
-/* Fill the choose box by the choose box fg image. */
-void s3_fill_cbox_hover_image(int index);
+void
+s3_force_ch_dim(
+	int chpos,
+	bool is_dim);
 
 /*
- * Banner Control
+ * Name Box Control (stage.c)
  */
 
-/* Show or hides the auto mode banner. */
-void s3_show_automode_banner(bool show);
+/*
+ * Fill the name box by the name box image.
+ */
+void
+s3_fill_namebox(void);
 
-/* Show or hides the skip mode banner. */
-void s3_show_skipmode_banner(bool show);
+/*
+ * Show or hides the name box.
+ */
+void
+s3_show_namebox(
+	bool show);
+
+/*
+ * Message Box Control (stage.c)
+ */
+
+/*
+ * Fill the message box by the message box image.
+ */
+void
+s3_fill_msgbox(void);
+
+/*
+ * Show or hides the message box.
+ */
+void
+s3_show_msgbox(
+	bool show);
+
+/*
+ * Click Animation Control (stage.c)
+ */
+
+/*
+ * Set the position of the click animation.
+ */
+void
+s3_set_click_position(
+	int x,
+	int y);
+
+/*
+ * Show or hides the click animation.
+ */
+void
+s3_show_click(
+	bool show);
+
+/*
+ * Set the click animation frame index.
+ */
+void
+s3_set_click_index(
+	int index);
+
+/*
+ * Choose Box Control (stage.c)
+ */
+
+/*
+ * Fill the choose box by the choose box bg image.
+ */
+void
+s3_fill_cbox_idle_image(
+	int index);
+
+/*
+ * Fill the choose box by the choose box fg image.
+ */
+void
+s3_fill_cbox_hover_image(
+	int index);
+
+/*
+ * Banner Control (stage.c)
+ */
+
+/*
+ * Show or hides the auto mode banner.
+ */
+void
+s3_show_automode_banner(
+	bool show);
+
+/*
+ * Show or hides the skip mode banner.
+ */
+void
+s3_show_skipmode_banner(
+	bool show);
 
 /*
  * GUI Rendering (stage.c)
  */
 
-/* Render an image. */
+/*
+ * Render an image.
+ */
 void
 s3_render_image(
 	int dst_left,
@@ -850,7 +1387,9 @@ s3_render_image(
 	int src_height,
 	int alpha);
 
-/* Render a image with free transform. */
+/*
+ * Render a image with free transform.
+ */
 void
 s3_render_image_3d(
 	float x1,
@@ -872,24 +1411,34 @@ s3_render_image_3d(
  * System Button (sysbtn.c)
  */
 
-/* Show or hide the system button. */
+/*
+ * Show or hide the system button.
+ */
 bool
 s3_show_sysbtn(
 	bool is_visible);
 
-/* Check if the system button is visible. */
+/*
+ * Check if the system button is visible.
+ */
 bool
 s3_is_sysbtn_visible(void);
 
-/* Update the system button's pointed state by the mouse position. */
+/*
+ * Update the system button's pointed state by the mouse position.
+ */
 void
 s3_update_sysbtn_state(void);
 
-/* Check if the system bytton is pointed. */
+/*
+ * Check if the system bytton is pointed.
+ */
 bool
 s3_is_sysbtn_pointed(void);
 
-/* Check if the system bytton is clicked. */
+/*
+ * Check if the system bytton is clicked.
+ */
 bool
 s3_is_sysbtn_clicked(void);
 
@@ -897,46 +1446,60 @@ s3_is_sysbtn_clicked(void);
  * Glyph (glyph.c)
  */
 
-/* Convert the top character of a utf-8 string to utf-32. */
+/*
+ * Convert the top character of a utf-8 string to utf-32.
+ */
 int
 s3_utf8_to_utf32(
 	const char *mbs,
 	uint32_t *wc);
 
-/* Count the characters of a utf-8 string. */
+/*
+ * Count the characters of a utf-8 string.
+ */
 int
 s3_count_utf8_chars(
 	const char *mbs);
 
-/* Get the glyph width. */
+/*
+ * Get the glyph width.
+ */
 int
 s3_get_glyph_width(
 	int font_type,
 	int font_size,
 	uint32_t codepoint);
 
-/* Get the glyph height. */
+/*
+ * Get the glyph height.
+ */
 int
 s3_get_glyph_height(
 	int font_type,
 	int font_size,
 	uint32_t codepoint);
 
-/* Get the string width. */
+/*
+ * Get the string width.
+ */
 int
 s3_get_string_width(
 	int font_type,
 	int font_size,
 	const char *mbs);
 
-/* Get the string height. */
+/*
+ * Get the string height.
+ */
 int
 s3_get_string_height(
 	int font_type,
 	int font_size,
 	const char *mbs);
 
-/* Draw a glyph. */
+/*
+ * Draw a glyph.
+ */
 bool
 s3_draw_glyph(
 	struct s3_image *img,
@@ -957,7 +1520,9 @@ s3_draw_glyph(
  * Message Drawing (glyph.c)
  */
 
-/* Initialize a message drawing context. */
+/*
+ * Initialize a message drawing context.
+ */
 void
 s3_construct_draw_msg_context(
 	struct draw_msg_context *context,
@@ -994,25 +1559,33 @@ s3_construct_draw_msg_context(
 	void (*inline_wait_hook)(float),
 	bool use_tategaki);
 
-/* Count the remaining characters excluding escape sequences. */
+/*
+ * Count the remaining characters excluding escape sequences.
+ */
 int
 s3_count_chars_common(
 	struct draw_msg_context *context, int *width);
 
-/* Draw characters in a message up to (max_chars) characters. */
+/*
+ * Draw characters in a message up to (max_chars) characters.
+ */
 int
 s3_draw_msg_common(
 	struct draw_msg_context *context,
 	int max_chars);
 
-/* Get a pen position. */
+/*
+ * Get a pen position.
+ */
 void
 s3_get_pen_position_common(
 	struct draw_msg_context *context,
 	int *pen_x,
 	int *pen_y);
 
-/* Check if a message is a quoted serif. (TODO: delete) */
+/*
+ * Check if a message is a quoted serif. (TODO: delete)
+ */
 bool
 s3_is_quoted_serif(
 	const char *msg);
@@ -1021,80 +1594,294 @@ s3_is_quoted_serif(
  * Mixer (mixer.c)
  */
 
-/* Set the BGM file name. */
-bool
-s3_set_bgm_file_name(
-	const char *file);
-
-/* Get the BGM file name. */
-const char *
-s3_get_bgm_file_name(void);
-
-/* Set the SE file name. */
-bool
-s3_set_se_file_name(
-	const char *file);
-
-/* Get the SE file name. (only when loopback-playing) */
-const char *
-s3_get_se_file_name(void);
-
-/* Play a sound file on a mixer track. */
+/*
+ * Play a sound file on a mixer track.
+ */
 void
 s3_set_mixer_input_file(
 	int track,
 	const char *file);
 
-/* Set the volume for a mixer track. */
+/*
+ * Set the volume for a mixer track.
+ */
 void
 s3_set_mixer_volume(
 	int track,
 	float vol,
 	float span);
 
-/* Get the volume for a mixer track. */
+/*
+ * Get the volume for a mixer track.
+ */
 float
 s3_get_mixer_volume(
 	int track);
 
-/* Set the master volume. */
+/*
+ * Set the master volume.
+ */
 void
 s3_set_master_volume(
 	float vol);
 
-/* Get the master volume. */
+/*
+ * Get the master volume.
+ */
 float
 s3_get_master_volume(void);
 
-/* Set the global volume for a track. */
+/*
+ * Set the global volume for a track.
+ */
 void
 s3_set_mixer_global_volume(
 	int track,
 	float vol);
 
-/* Get the global volume for a track. */
+/*
+ * Get the global volume for a track.
+ */
 float
 s3_get_mixer_global_volume(
 	int track);
 
-/* Set the character volume. */
+/*
+ * Set the character volume.
+ */
 void
 s3_set_character_volume(
 	int ch_index,
 	float vol);
 
-/* Get the character volume. */
+/*
+ * Get the character volume.
+ */
 float
 s3_get_character_volume(
 	int ch_index);
 
-/* Check if the track playback is finished. */
+/*
+ * Check if the track playback is finished.
+ */
 bool
 s3_is_mixer_sound_finished(
 	int track);
 
 /*
- * Lap Timer (game.c)
+ * Get the BGM file name.
+ */
+const char *
+s3_get_bgm_file_name(void);
+
+/*
+ * Get the SE file name. (only when loopback-playing)
+ */
+const char *
+s3_get_se_file_name(void);
+
+/*
+ * Tag File (tag.c)
+ */
+
+/*
+ * Move to a tag file.
+ */
+bool
+s3_move_to_tag_file(
+	const char *file);
+
+/*
+ * Move to a next tag.
+ */
+bool
+s3_move_to_next_tag(void);
+
+/*
+ * Move to a label.
+ */
+bool
+s3_move_to_label(
+	const char *label);
+
+/*
+ * Get the current tag file name.
+ */
+const char *
+s3_get_tag_file(void);
+
+/*
+ * Get the command index of the current tag.
+ */
+int
+s3_get_tag_index(void);
+
+/*
+ * Get the line number of the current tag.
+ */
+int
+s3_get_tag_line(void);
+
+/*
+ * Tag Argument Access (tag.c)
+ */
+
+/*
+ * Check if a tag argument exists.
+ */
+bool s3_check_tag_arg(const char *name);
+
+/*
+ * Get an integer tag argument.
+ */
+int s3_get_tag_arg_int(const char *name);
+
+/*
+ * Get a float tag argument.
+ */
+float s3_get_tag_arg_float(const char *name);
+
+/*
+ * Get a string tag argument.
+ */
+const char *s3_get_tag_arg_string(const char *name);
+
+/*
+ * Anime (anime.c)
+ */
+
+/*
+ * Load an anime file.
+ */
+bool
+s3_load_anime_from_file(
+	const char *fname,
+	int reg_index,
+	bool *used_layer);
+
+/*
+ * Clear the layer anime sequences.
+ */
+void
+s3_clear_layer_anime_sequence(
+	int layer);
+
+/*
+ * Clear all anime sequences.
+ */
+void
+s3_clear_all_anime_sequence(void);
+
+/*
+ * Begin describing an anime for a layer.
+ */
+bool
+s3_new_anime_sequence(
+	int layer);
+
+/*
+ * Add a float property into an anime sequence.
+ */
+bool
+s3_add_anime_sequence_property_f(
+	const char *key,
+	float val);
+
+/*
+ * Add an integer property into an anime sequence.
+ */
+bool
+s3_add_anime_sequence_property_i(
+	const char *key,
+	int val);
+
+/*
+ * Start the anime for a layer.
+ */
+bool
+s3_start_layer_anime(
+	int layer);
+
+/*
+ * Check if there are running animes.
+ */
+bool
+s3_is_anime_running(void);
+
+/*
+ * Check if there are running animes. (with mask)
+ */
+bool
+s3_is_anime_running_with_layer_mask(
+	bool *used_layers);
+
+/*
+ * Check if the layer anime is finished.
+ */
+bool
+s3_is_anime_finished_for_layer(
+	int layer);
+
+/*
+ * Update the anime frame.
+ */
+void
+s3_update_anime_frame(void);
+
+/*
+ * Unregister a looped anime.
+ */
+void
+s3_unregister_anime(
+	int reg_index);
+
+/*
+ * Get a looped anime file name.
+ */
+const char *
+s3_get_reg_anime_file_name(
+	int reg_index);
+
+/*
+ * Load an eye blinking image.
+ */
+bool
+s3_load_eye_image_if_exists(
+	int chpos,
+	const char *fname);
+
+/*
+ * Reload an eye blinking image.
+ */
+bool
+s3_reload_eye_anime(
+	int chpos);
+
+/*
+ * Load a lip synchronization image.
+ */
+bool
+s3_load_lip_image_if_exists(
+	int chpos,
+	const char *fname);
+
+/*
+ * Run a lip synchronization anime.
+ */
+void
+s3_run_lip_anime(
+	int chpos,
+	const char *msg);
+
+/*
+ * Stop a lip synchronization anime.
+ */
+void
+s3_stop_lip_anime(
+	int chpos);
+
+/*
+ * Lap Timer (hal.c)
  */
 
 /*
@@ -1112,123 +1899,99 @@ s3_get_lap_timer_millisec(
 	uint64_t *origin);
 
 /*
- * Tag File (tag.c)
+ * Raw File I/O (hal.c)
  */
-
-/* Move to a tag file. */
-bool
-s3_move_to_tag_file(
-	const char *file);
-
-/* Move to a next tag. */
-bool
-s3_move_to_next_tag(void);
-
-/* Move to a label. */
-bool
-s3_move_to_label(
-	const char *label);
 
 /*
- * Anime (anime.c)
+ * Check if a file exists.
+ */
+bool
+s3_check_file_exists(
+	const char *fname);
+
+/*
+ * Read a file.
+ */
+bool
+s3_read_file_content(
+	const char *fname,
+	char **buf,
+	size_t *len);
+
+/*
+ * Save Data (hal.c)
  */
 
-/* Load an anime file. */
+/*
+ * Write save data.
+ */
 bool
-s3_load_anime_from_file(
-	const char *fname,
-	int reg_index,
-	bool *used_layer);
-
-/* Clear the layer anime sequences. */
-void
-s3_clear_layer_anime_sequence(
-	int layer);
-
-/* Clear all anime sequences. */
-void
-s3_clear_all_anime_sequence(void);
-
-/* Begin describing an anime for a layer. */
-bool
-s3_new_anime_sequence(
-	int layer);
-
-/* Add a float property into an anime sequence. */
-bool
-s3_add_anime_sequence_property_f(
+s3_write_save_data(
 	const char *key,
-	float val);
+	const void *data,
+	size_t size);
 
-/* Add an integer property into an anime sequence. */
+/*
+ * Read save data.
+ */
 bool
-s3_add_anime_sequence_property_i(
+s3_read_save_data(
 	const char *key,
+	void *data,
+	size_t size,
+	size_t *ret);
+
+/*
+ * Check whether save data exist or not.
+ */
+bool
+s3_check_save_data(
+	const char *key);
+
+/*
+ * VM Access (hal.c)
+ */
+
+/*
+ * Set a VM integer variable.
+ */
+bool
+s3_set_vm_int(
+	const char *name,
 	int val);
 
-/* Start the anime for a layer. */
+/*
+ * Set a VM float variable.
+ */
 bool
-s3_start_layer_anime(
-	int layer);
-
-/* Check if there are running animes. */
-bool
-s3_is_anime_running(void);
-
-/* Check if there are running animes. (with mask) */
-bool
-s3_is_anime_running_with_layer_mask(
-	bool *used_layers);
-
-/* Check if the layer anime is finished. */
-bool
-s3_is_anime_finished_for_layer(
-	int layer);
-
-/* Update the anime frame. */
-void
-s3_update_anime_frame(void);
-
-/* Unregister a looped anime. */
-void
-s3_unregister_anime(
-	int reg_index);
-
-/* Get a looped anime file name. */
-const char *
-s3_get_reg_anime_file_name(
-	int reg_index);
-
-/* Load an eye blinking image. */
-bool
-s3_load_eye_image_if_exists(
-	int chpos,
-	const char *fname);
-
-/* Reload an eye blinking image. */
-bool
-s3_reload_eye_anime(
-	int chpos);
-
-/* Load a lip synchronization image. */
-bool
-s3_load_lip_image_if_exists(
-	int chpos,
-	const char *fname);
-
-/* Run a lip synchronization anime. */
-void
-s3_run_lip_anime(
-	int chpos,
-	const char *msg);
-
-/* Stop a lip synchronization anime. */
-void
-s3_stop_lip_anime(
-	int chpos);
+s3_set_vm_float(
+	const char *name,
+	float val);
 
 /*
- * Logging (game.c)
+ * Set a VM string variable.
+ */
+bool
+s3_set_vm_string(
+	const char *name,
+	const char *val);
+
+/*
+ * Call a VM function.
+ */
+bool
+s3_call_vm_function(
+	const char *name);
+
+/*
+ * Call a VM function that corresponds to the current tag.
+ */
+bool
+s3_call_vm_tag_function(
+	bool *tag_end);
+
+/*
+ * Logging (hal.c)
  */
 
 /*
@@ -1262,7 +2025,7 @@ void
 s3_log_out_of_memory(void);
 
 /*
- * Print a log footer for execution error.
+ * Print a log footer for execution error. (TODO: move)
  */
 void
 s3_log_script_exec_footer(void);

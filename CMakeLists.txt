@@ -204,17 +204,22 @@ endif()
 
 # Base Source
 set(SUIKA_BASE_SOURCES
-  src/game.c
+  src/anime.c
   src/api.c
   src/conf.c
+  src/game.c
+  src/gui.c
+  src/hal.c
   src/image.c
+  src/mixer.c
+  src/save.c
+  src/seen.c
   src/stage.c
   src/sysbtn.c
-  src/mixer.c
+  src/tag.c
   src/text.c
-  src/anime.c
-  src/command_bg.c
   src/translation.c
+  src/command_bg.c
 )
 
 # I18N Source

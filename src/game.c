@@ -17,8 +17,6 @@
 #include "mixer.h"
 #include "tag.h"
 
-#include <playfield/playfield.h>
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -92,7 +90,27 @@ static int page_line;
 static char *bgvoice;
 static bool flag_bgvoice_playing;
 
-/* Forward declarations. */
+/* Chapter title. */
+static char *chapter_name;
+
+/* Last message. */
+static char *last_message;
+
+/* Previous last message. */
+static char *prev_last_message;
+
+/* Speed of showing text. */
+static float msg_text_speed;
+
+/* Speed of the auto mode. */
+static float msg_auto_speed;
+
+/* Index of the last English tag. */
+static int last_en_index = -1;
+
+/*
+ * Forward declaration.
+ */
 static bool dispatch_update(bool *should_continue);
 static bool dispatch_render(void);
 
@@ -176,18 +194,18 @@ bool on_game_update(void)
 	/* Call update functions. */
 	while (1) {
 		/* Clear the continue flag. */
-		pf_set_vm_int("s3Continue", 0);
+		s3_set_vm_int("s3Continue", 0);
 
 		/* Call the tag function. */
-		pf_call_vm_tag_function(&tag_end);
+		s3_call_vm_tag_function(&tag_end);
 		if (tag_end) {
 			/* Stop the game after the next rendering. */
-			pf_set_vm_int("exitFlag", 1);
+			s3_set_vm_int("exitFlag", 1);
 			break;
 		}
 
 		/* Check the continue flag. */
-		pf_get_vm_int("s3Continue", &s3_continue);
+		s3_get_vm_int("s3Continue", &s3_continue);
 		if (s3_continue) {
 			/* Process the next tag. */
 			continue;
@@ -226,112 +244,6 @@ bool on_game_render(void)
 	s3_render_stage();
 
 	return true;
-}
-
-/*
- * Argument Access
- */
-
-/*
- * Check if an argument exists.
- */
-bool s3_check_arg(const char *name)
-{
-	int i, count;
-	const char *prop_name;
-
-	count = pf_get_tag_property_count();
-
-	for (i = 0; i < count; i++) {
-		prop_name = pf_get_tag_property_name(i);
-		if (strcmp(name, prop_name) == 0)
-			return true;
-	}
-
-	return false;
-}
-
-/*
- * Get an integer argument.
- */
-int s3_get_arg_int(const char *name)
-{
-	int i, count;
-	const char *prop_name;
-	const char *prop_value;
-	int val;
-
-	count = pf_get_tag_property_count();
-
-	for (i = 0; i < count; i++) {
-		prop_name = pf_get_tag_property_name(i);
-		if (strcmp(name, prop_name) == 0)
-			break;
-	}
-	if (i == count) {
-		/* Not found, return the default value. */
-		return 0;
-	}
-
-	prop_value = pf_get_tag_property_value(i);
-	val = atoi(prop_value);
-
-	return val;
-}
-
-/*
- * Get a float argument.
- */
-float s3_get_arg_float(const char *name)
-{
-	int i, count;
-	const char *prop_name;
-	const char *prop_value;
-	float val;
-
-	count = pf_get_tag_property_count();
-
-	for (i = 0; i < count; i++) {
-		prop_name = pf_get_tag_property_name(i);
-		if (strcmp(name, prop_name) == 0)
-			break;
-	}
-	if (i == count) {
-		/* Not found, return the default value. */
-		return 0;
-	}
-
-	prop_value = pf_get_tag_property_value(i);
-	val = (float)atof(prop_value);
-
-	return val;
-}
-
-/*
- * Get a string argument.
- */
-const char *s3_get_arg_string(
-	const char *name)
-{
-	int i, count;
-	const char *prop_name;
-	const char *prop_value;
-
-	count = pf_get_tag_property_count();
-
-	for (i = 0; i < count; i++) {
-		prop_name = pf_get_tag_property_name(i);
-		if (strcmp(name, prop_name) == 0)
-			break;
-	}
-	if (i == count) {
-		/* Not found, return the default value. */
-		return 0;
-	}
-
-	prop_value = pf_get_tag_property_value(i);
-
-	return prop_value;
 }
 
 /*
@@ -904,103 +816,171 @@ bool s3_is_bgvoice_playing(void)
 }
 
 /*
- * Lap Timer
+ * Chapter Title
  */
 
 /*
- * Reset a lap timer and initializes it with a current time.
+ * Set the chapter name.
  */
-void
-s3_reset_lap_timer(
-	uint64_t *origin)
+bool
+s3_set_chapter_name(
+	const char *name)
 {
-	pf_reset_lap_timer(origin);
+	free(chapter_name);
+
+	chapter_name = strdup(name);
+	if (chapter_name == NULL) {
+		log_memory();
+		return false;
+	}
+
+	return true;
 }
 
 /*
- * Get a lap time in milliseconds.
+ * Get the chapter name.
  */
-uint64_t
-s3_get_lap_timer_millisec(
-	uint64_t *origin)
+const char *
+s3_get_chapter_name(void);
 {
-	pf_get_lap_timer_millisec(origin);
+	if (chapter_name == NULL)
+		return "";
+
+	return chapter_name;
 }
 
 /*
- * Logging
+ * Last Message (game.c)
  */
 
 /*
- * Print a debug message.
+ * Set the last message.
  */
-void
-s3_log_info(
+bool
+s3_set_last_message(
 	const char *msg,
-	...)
+	bool is_append)
 {
-	char buf[4096];
-	va_list ap;
+	/* If a continued line. */
+	if (is_append) {
+		char *new_text;
+		size_t prev_len = 0, next_len = 0;
+		if (last_message != NULL)
+			prev_len = strlen(last_message);
+		next_len = strlen(msg);
+		new_text = malloc(prev_len + next_len + 1);
+		if (new_text == NULL) {
+			log_memory();
+			return false;
+		}
+		if (last_message != NULL) {
+			strcpy(new_text, last_message);
+			prev_last_message = last_message;
+			last_message = NULL;
+			strcat(new_text, msg);
+		} else {
+			strcpy(new_text, msg);
+		}
+		last_message = new_text;
+		return true;
+	}
 
-	va_start(ap, msg);
-	vsnprintf(buf, sizeof(buf), msg, ap);
-	va_end(ap);
+	/* Otherwise. */
+	free(last_message);
+	last_message = strdup(msg);
+	if (last_message == NULL) {
+		log_memory();
+		return false;
+	}
+	free(prev_last_message);
+	prev_last_message = NULL;
 
-	log_info(buf);
+	return true;
 }
 
 /*
- * Print a warning message.
+ * Get the last message.
  */
-void
-s3_log_warn(
-	const char *msg,
-	...)
+const char *
+s3_get_last_message(
+	bool prev)
 {
-	char buf[4096];
-	va_list ap;
+	if (prev)
+		return prev_last_message;
 
-	va_start(ap, msg);
-	vsnprintf(buf, sizeof(buf), msg, ap);
-	va_end(ap);
-
-	log_warn(buf);
+	return last_message;
 }
 
 /*
- * Print an error message.
+ * Text Speed (game.c)
+ */
+
+/*
+ * Set the text speed.
  */
 void
-s3_log_error(
-	const char *msg,
-	...)
+set_text_speed(
+	float val)
 {
-	char buf[4096];
-	va_list ap;
+	assert(val >= 0 && val <= 1.0f);
 
-	va_start(ap, msg);
-	vsnprintf(buf, sizeof(buf), msg, ap);
-	va_end(ap);
-
-	log_error(buf);
+	msg_text_speed = val;
 }
 
 /*
- * Print an out-of-memory error message.
+ * Get the text speed.
  */
-void
-s3_log_out_of_memory(void)
+float
+get_text_speed(void)
 {
-	pf_log_error("Out-of-memory.");
+	return msg_text_speed;
 }
 
 /*
- * Print a log footer for execution error.
+ * Auto Speed (game.c)
+ */
+
+/*
+ * Set the auto speed.
  */
 void
-s3_log_script_exec_footer(void)
+set_auto_speed(
+	float val)
 {
-	/* TODO */
+	assert(val >= 0 && val <= 1.0f);
+
+	msg_auto_speed = val;
+}
+
+/*
+ * Get the auto speed.
+ */
+float
+get_auto_speed(void)
+{
+	return msg_auto_speed;
+}
+
+/*
+ * Last English Index (game.c)
+ */
+
+/*
+ * Mark the last English index.
+ */
+void
+mark_last_en_index(void)
+{
+	last_en_index = s3_get_tag_index();
+}
+
+/*
+ * Clear the last English index.
+ */
+void
+clear_last_en_index(void)
+{
+	last_en_index = -1;
 }
 
 /*

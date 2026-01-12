@@ -394,40 +394,21 @@ extern int conf_menu_save_last_page;
  * Functions
  */
 
-/* Initialize the config subsystem. */
-bool init_conf(void);
+/*
+ * Initialize the config subsystem.
+ */
+bool
+s3i_init_conf(void);
 
-/* Cleanup the config subsystem. */
-void cleanup_conf(void);
+/*
+ * Cleanup the config subsystem.
+ */
+void
+s3i_cleanup_conf(void);
 
-/* Initialize various settings by config values. */
-bool apply_initial_values(void);
-
-/* Overwrite a config. */
-bool overwrite_config(const char *key, const char *val);
-
-/* Get a config key for index. */
-const char *get_config_key(int index);
-
-/* Check if config key is stored to global save data. */
-bool is_config_key_global(const char *key);
-
-/* Get a config value type. ('s', 'b', 'i', 'f') */
-char get_config_type_for_key(const char *key);
-
-/* Get a string config value. */
-const char *get_string_config_value_for_key(const char *key);
-
-/* Get a boolean config value. */
-bool get_bool_config_value_for_key(const char *key);
-
-/* Get an integer config value. */
-int get_int_config_value_for_key(const char *key);
-
-/* Get an integer config value. */
-float get_float_config_value_for_key(const char *key);
-
-/* Check the locale. */
-bool compare_locale(const char *s);
+/*
+ * Initialize various settings by config values.
+ */
+bool s3i_apply_initial_values(void);
 
 #endif

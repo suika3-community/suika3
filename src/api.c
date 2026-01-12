@@ -33,7 +33,11 @@ static struct api_func api_func[] = {
 	{"Tag_bg", command_bg},
 };
 
-bool install_s3_api(void)
+/*
+ * Install the API.
+ */
+bool
+s3i_install_api(void)
 {
 	const char *params[] = {"param"};
 	const int tbl_size = sizeof(api_func) / sizeof(struct api_func);
@@ -48,6 +52,7 @@ bool install_s3_api(void)
 	return 0;
 }
 
+/* suikaStart() */
 static bool api_suika_start(void *p)
 {
 	if (!on_game_start())
@@ -56,6 +61,7 @@ static bool api_suika_start(void *p)
 	return true;
 }
 
+/* suikaUpdate() */
 static bool api_suika_update(void *p)
 {
 	if (!on_game_update())
@@ -64,6 +70,7 @@ static bool api_suika_update(void *p)
 	return true;
 }
 
+/* suikaRender() */
 static bool api_suika_render(void *p)
 {
 	if (!on_game_render())
