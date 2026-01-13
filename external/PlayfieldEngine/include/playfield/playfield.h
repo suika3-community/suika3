@@ -268,7 +268,9 @@ pf_draw_texture_dim(
 	int src_top,
 	int alpha);
 
-/* Draw a texture image  on a texture image with scaling. */
+/*
+ * Draw a texture image  on a texture image with scaling.
+ */
 void
 pf_draw_texture_scale(
 	int dst_tex_id,
@@ -278,7 +280,9 @@ pf_draw_texture_scale(
 	int virtual_dst_top,
 	int src_tex_id);
 
-/* Fill a rectangle on a texture image. */
+/*
+ * Fill a rectangle on a texture image.
+ */
 void
 pf_fill_texture_rect(
 	int tex_id,
@@ -287,6 +291,13 @@ pf_fill_texture_rect(
 	int width,
 	int height,
 	pixel_t color);
+
+/*
+ * Get a raw pixel pointer.
+ */
+pixel_t *
+pf_get_texture_pixels(
+	int tex_id);
 
 /*
  * Rendering
