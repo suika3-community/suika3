@@ -2,11 +2,37 @@
 
 /*
  * Suika3
- * Copyright (C) 2001-2026 The Suika3 Authors
+ * Public C Interface
  */
 
-/*
- * Public C API
+/*-
+ * SPDX-License-Identifier: Zlib
+ *
+ * Copyright (c) 2026 The Suika3 Community
+ * Copyright (c) 2025-2026 The Playfield Engine Project
+ * Copyright (c) 2025-2026 The NoctVM Project
+ * Copyright (c) 2025-2026 Awe Morris
+ * Copyright (c) 2016-2024 The Suika2 Development Team
+ * Copyright (c) 1996-2024 Keiichi Tabata
+ *
+ * This software is derived from the codebase of Playfield Engine, NoctLang,
+ * Suika2, Suika Studio, Wind Game Lib, and 98/AT Game Lib.
+ *
+ * This software is provided 'as-is', without any express or implied
+ * warranty. In no event will the authors be held liable for any damages
+ * arising from the use of this software.
+ *
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
+ *
+ * 1. The origin of this software must not be misrepresented; you must not
+ *    claim that you wrote the original software. If you use this software
+ *    in a product, an acknowledgment in the product documentation would be
+ *    appreciated but is not required.
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ *    misrepresented as being the original software.
+ * 3. This notice may not be removed or altered from any source distribution.
  */
 
 #ifndef SUIKA3_SUIKA3_H
@@ -19,17 +45,26 @@
  */
 
 /*
- * Name of the first tag file. (game.c)
+ * Basic Paths
+ */
+
+/*
+ * Name of the first tag file.
  */
 #define S3_FIRST_TAG_FILE	"start.s3"
 
 /*
- * Name of the config file (conf.c)
+ * Name of the config file.
  */
 #define S3_CONFIG_FILE		"config.ini"
 
+
 /*
- * Stage layers. (stage.c)
+ * Constants for Stage Subsystem (stage.c)
+ */
+
+/*
+ * Stage layers.
  */
 #define S3_LAYER_BG		(0)	/* Background */
 #define S3_LAYER_BG_FO		(1)	/*   Fade-Out */
@@ -102,27 +137,27 @@
 #define S3_STAGE_LAYERS		(68)	/* Total layers */
 
 /*
- * Number of the text layers. (stage.c)
+ * Number of the text layers.
  */
 #define S3_TEXT_LAYERS		(8)
 
 /*
- * Number of the effect layers. (stage.c)
+ * Number of the effect layers.
  */
 #define S3_EFFECT_LAYERS	(4)
 
 /*
- * Maximum number of the click animation frames (stage.c)
+ * Maximum number of the click animation frames.
  */
 #define S3_CLICK_FRAMES		(16)
 
 /*
- * Number of the choose box
+ * Number of the choose box.
  */
 #define S3_CHOOSE_COUNT		(8)
 
 /*
- * Character positions. (stage.c)
+ * Character positions.
  */
 #define S3_CH_BACK		(0)
 #define S3_CH_LEFT		(1)
@@ -135,7 +170,7 @@
 #define S3_CH_ALL_LAYERS	(7)	/* Including S3_CH_FACE */
 
 /*
- * Fading methods. (stage.c)
+ * Fading methods.
  */
 #define S3_FADE_INVALID		(0)
 #define S3_FADE_NORMAL		(1)
@@ -143,14 +178,14 @@
 #define S3_FADE_MELT		(3)
 
 /*
- * Blending mode. (stage.c)
+ * Blending mode.
  */
 #define S3_BLEND_ALPHA		(0)
 #define S3_BLEND_ADD		(1)
 #define S3_BLEND_SUB		(2)
 
 /*
- * Fading Descriptor Index
+ * Fading descriptor index.
  */
 #define S3_FADE_DESC_BG		(0)
 #define S3_FADE_DESC_CHB	(1)
@@ -163,12 +198,17 @@
 #define S3_FADE_DESC_COUNT	(8)
 
 /*
- * Kira Kira Effect Frames
+ * Kira Kira Effect frames.
  */
 #define S3_KIRAKIRA_FRAMES	(16)
 
+
 /*
- * Mixer Tracks
+ * Constants for Mixer Subsystem (mixer.c)
+ */
+
+/*
+ * Mixer tracks.
  */
 #define S3_MIXER_TRACKS		(4)
 #define S3_TRACK_BGM		(0)
@@ -177,28 +217,23 @@
 #define S3_TRACK_SYS		(3)
 
 /*
- * Character Volume Slots
+ * Per-Character volume slots.
  */
 #define S3_CH_VOL_SLOTS		(33)
 #define S3_CH_VOL_SLOT_DEFAULT	(0)
 
 /*
- * Character Map Count
+ * Character map count.
  */
 #define S3_CHARACTER_MAP_COUNT	(32)
 
-/*
- * Emoji Count
- */
-#define S3_EMOJI_COUNT		(32)
 
 /*
- * Call Arguments for GUI and Anime
+ * Constants for Text Subsystem (text.c)
  */
-#define S3_CALL_ARGS		(32)
 
 /*
- * Fonts
+ * Font selection.
  */
 #define S3_FONT_SELECT1		(0)
 #define S3_FONT_SELECT2		(1)
@@ -207,22 +242,46 @@
 #define S3_FONT_COUNT		(4)
 
 /*
+ * Emoji count.
+ */
+#define S3_EMOJI_COUNT		(32)
+
+
+/*
+ * Constants for Game Subsystem (game.c)
+ */
+
+/*
+ * Call Arguments (For GUI and anime)
+ */
+#define S3_CALL_ARGS		(32)
+
+
+/*
  * Types
  */
 
 /*
- * Pixel (image.c)
+ * Types for Image Subsystem (image.c)
  */
 
+/*
+ * Pixel.
+ */
 typedef uint32_t s3_pixel_t;
 
 /*
- * Image (image.c)
+ * Image.
  */
 struct s3_image;
 
+
 /*
- * Fade Descriptor (stage.c)
+ * Types for Stage Subsystem (stage.c)
+ */
+
+/*
+ * Fade descriptor.
  */
 struct s3_fade_desc {
 	bool stay;
@@ -238,21 +297,23 @@ struct s3_fade_desc {
 	float rotate;
 };
 
+
 /*
- * Message Drawing
+ * Types for Text Subsystem (text.c)
  */
 
 /*
- * Context for message drawing. (text.c)
+ * Context for message drawing.
  */
 struct draw_msg_context;
+
 
 /*
  * Functions
  */
 
 /*
- * Config (conf.c)
+ * Functions for Config Subsystem (conf.c)
  */
 
 /*
@@ -319,8 +380,9 @@ bool
 s3_compare_locale(
 	const char *s);
 
+
 /*
- * Input State (game.c)
+ * Functions for Input State (game.c)
  */
 
 /*
@@ -459,8 +521,9 @@ s3_is_swiped(void);
 void
 s3_clear_input_state(void);
 
+
 /*
- * Multiple-Frame Command State (game.c)
+ * Functions for Game Subsystem. (game.c)
  */
 
 /*
@@ -482,14 +545,10 @@ bool
 s3_is_in_command_repetition(void);
 
 /*
- * Message Showing State (game.c)
+ * Set the message showing state.
  *  - Set active when a message shown.
  *  - Keep active when move to a GUI.
  *  - Cleared when move to a next command or loaded a save file.
- */
-
-/*
- * Set the message showing state.
  */
 void
 s3_set_message_active(void);
@@ -505,10 +564,6 @@ s3_clear_message_active(void);
  */
 bool
 s3_is_message_active(void);
-
-/*
- * Auto-Mode State (game.c)
- */
 
 /*
  * Start the auto-mode.
@@ -529,10 +584,6 @@ bool
 s3_is_auto_mode(void);
 
 /*
- * Skip-Mode State (game.c)
- */
-
-/*
  * Start the skip-mode.
  */
 void
@@ -551,10 +602,6 @@ bool
 s3_is_skip_mode(void);
 
 /*
- * Save/Load Enable State (game.c)
- */
-
-/*
  * Set the save/load enable setting.
  */
 void
@@ -565,10 +612,6 @@ s3_set_save_load(bool enable);
  */
 bool
 s3_is_save_load_enabled(void);
-
-/*
- * Non-Interruptible State (game.c)
- */
 
 /*
  * Set the non-interruptible mode setting.
@@ -582,10 +625,6 @@ s3_set_non_interruptible(
  */
 bool
 s3_is_non_interruptible(void);
-
-/*
- * Pen State (game.c)
- */
 
 /*
  * Set the pen position.
@@ -608,10 +647,6 @@ int
 s3_get_pen_position_y(void);
 
 /*
- * Call Arguments (game.c)
- */
-
-/*
  * Set a calling argument.
  */
 bool
@@ -625,10 +660,6 @@ s3_set_call_argument(
 const char *
 s3_get_call_argument(
 	int index);
-
-/*
- * Page Mode (game.c)
- */
 
 /*
  * Set the script page mode.
@@ -674,10 +705,6 @@ bool
 s3_is_page_top(void);
 
 /*
- * BGVoice (game.c)
- */
-
-/*
  * Register a BGVoice.
  */
 bool
@@ -704,10 +731,6 @@ bool
 s3_is_bgvoice_playing(void);
 
 /*
- * Chapter Title (game.c)
- */
-
-/*
  * Set the chapter name.
  */
 bool
@@ -719,10 +742,6 @@ s3_set_chapter_name(
  */
 const char *
 s3_get_chapter_name(void);
-
-/*
- * Last Message (game.c)
- */
 
 /*
  * Set the last message.
@@ -740,10 +759,6 @@ s3_get_last_message(
 	bool prev);
 
 /*
- * Text Speed (game.c)
- */
-
-/*
  * Set the text speed.
  */
 void
@@ -755,10 +770,6 @@ set_text_speed(
  */
 float
 get_text_speed(void);
-
-/*
- * Auto Speed (game.c)
- */
 
 /*
  * Set the auto speed.
@@ -774,10 +785,6 @@ float
 get_auto_speed(void);
 
 /*
- * Last English Index (game.c)
- */
-
-/*
  * Mark the last English index.
  */
 void
@@ -789,8 +796,9 @@ mark_last_en_index(void);
 void
 clear_last_en_index(void);
 
+
 /*
- * Image Management (image.c)
+ * Functions for Image Subsystem (image.c)
  */
 
 /*
@@ -958,8 +966,9 @@ s3_fill_image_rect(
 	int height,
 	s3_pixel_t color);
 
+
 /*
- * Stage Layer Management (stage.c)
+ * Stage Subsystem (stage.c)
  */
 
 /*
@@ -1135,10 +1144,6 @@ void
 s3_clear_stage(void);
 
 /*
- * Conversion of Layer Index and Character Position (stage.c)
- */
-
-/*
  * Convert a character position to a stage layer index.
  */
 int
@@ -1167,18 +1172,10 @@ s3_layer_to_chpos(
 	int chpos);
 
 /*
- * Stage Rendering (stage.c)
- */
-
-/*
  * Render the stage with all stage layers.
  */
 void
 s3_render_stage(void);
-
-/*
- * Save Data Thumbnail Drawing (stage.c)
- */
 
 /*
  * Draw entire stage into the save data thumbnail.
@@ -1191,10 +1188,6 @@ s3_draw_stage_to_thumb(void);
  */
 struct s3_image *
 s3_get_thumb_image(void);
-
-/*
- * Fading Control (stage.c)
- */
 
 /*
  * Get a fading method from a string.
@@ -1233,10 +1226,6 @@ void
 s3_finish_fade(void);
 
 /*
- * Character Control (stage.c)
- */
-
-/*
  * Specify a character index for a character position.
  */
 void
@@ -1272,10 +1261,6 @@ s3_force_ch_dim(
 	bool is_dim);
 
 /*
- * Name Box Control (stage.c)
- */
-
-/*
  * Fill the name box by the name box image.
  */
 void
@@ -1289,10 +1274,6 @@ s3_show_namebox(
 	bool show);
 
 /*
- * Message Box Control (stage.c)
- */
-
-/*
  * Fill the message box by the message box image.
  */
 void
@@ -1304,10 +1285,6 @@ s3_fill_msgbox(void);
 void
 s3_show_msgbox(
 	bool show);
-
-/*
- * Click Animation Control (stage.c)
- */
 
 /*
  * Set the position of the click animation.
@@ -1332,10 +1309,6 @@ s3_set_click_index(
 	int index);
 
 /*
- * Choose Box Control (stage.c)
- */
-
-/*
  * Fill the choose box by the choose box bg image.
  */
 void
@@ -1350,10 +1323,6 @@ s3_fill_cbox_hover_image(
 	int index);
 
 /*
- * Banner Control (stage.c)
- */
-
-/*
  * Show or hides the auto mode banner.
  */
 void
@@ -1366,10 +1335,6 @@ s3_show_automode_banner(
 void
 s3_show_skipmode_banner(
 	bool show);
-
-/*
- * GUI Rendering (stage.c)
- */
 
 /*
  * Render an image.
@@ -1407,8 +1372,9 @@ s3_render_image_3d(
 	int src_height,
 	int alpha);
 
+
 /*
- * System Button (sysbtn.c)
+ * Functions for System Button Subsystem (sysbtn.c)
  */
 
 /*
@@ -1442,8 +1408,9 @@ s3_is_sysbtn_pointed(void);
 bool
 s3_is_sysbtn_clicked(void);
 
+
 /*
- * Glyph (glyph.c)
+ * Functions for Text Subsystem (text.c)
  */
 
 /*
@@ -1517,10 +1484,6 @@ s3_draw_glyph(
 	bool is_dim);
 
 /*
- * Message Drawing (glyph.c)
- */
-
-/*
  * Initialize a message drawing context.
  */
 void
@@ -1590,8 +1553,9 @@ bool
 s3_is_quoted_serif(
 	const char *msg);
 
+
 /*
- * Mixer (mixer.c)
+ * Functions for Mixer Subsystem (mixer.c)
  */
 
 /*
@@ -1680,8 +1644,9 @@ s3_get_bgm_file_name(void);
 const char *
 s3_get_se_file_name(void);
 
+
 /*
- * Tag File (tag.c)
+ * Tag Subsystem (tag.c)
  */
 
 /*
@@ -1723,10 +1688,6 @@ int
 s3_get_tag_line(void);
 
 /*
- * Tag Argument Access (tag.c)
- */
-
-/*
  * Check if a tag argument exists.
  */
 bool s3_check_tag_arg(const char *name);
@@ -1746,8 +1707,9 @@ float s3_get_tag_arg_float(const char *name);
  */
 const char *s3_get_tag_arg_string(const char *name);
 
+
 /*
- * Anime (anime.c)
+ * Functions for Anime Subsystem (anime.c)
  */
 
 /*
@@ -1880,8 +1842,226 @@ void
 s3_stop_lip_anime(
 	int chpos);
 
+
 /*
- * Lap Timer (hal.c)
+ * Functions for Variable Subsystem (vars.c)
+ */
+
+/*
+ * Set an integer value to a variable.
+ */
+bool
+s3_set_variable_int(
+	const char *name,
+	int val);
+
+/*
+ * Set a float value to a variable.
+ */
+bool
+s3_set_variable_float(
+	const char *name,
+	float val);
+
+/*
+ * Set a string value to a variable.
+ */
+bool
+s3_set_variable_string(
+	const char *name,
+	const char* val);
+
+/*
+ * Unset a variable.
+ */
+bool
+s3_unset_variable(
+	const char *name);
+
+/*
+ * Set a variable global.
+ */
+bool
+s3_make_variable_global(
+	const char *name,
+	bool is_global);
+
+/*
+ * Get an integer value from a variable.
+ */
+bool
+s3_get_variable_int(
+	const char *name,
+	int *val);
+
+/*
+ * Get a float value from a variable.
+ */
+bool
+s3_get_variable_float(
+	const char *name,
+	float *val);
+
+/*
+ * Get a string value from a variable.
+ */
+bool
+s3_get_variable_string(
+	const char *name,
+	const char **val);
+
+/*
+ * Check if a variable exists for a name.
+ */
+bool
+s3_check_variable_exists(
+	const char *name);
+
+
+/*
+ * Check if a variable is global.
+ */
+bool
+s3_check_variable_global(
+	const char *name,
+	bool is_global);
+
+/*
+ * Expand a string that may contain variable references.
+ */
+char *
+s3_expand_string_with_variable(
+	const char *msg);
+
+/*
+ * Get the numbers of the variables.
+ */
+int
+s3_get_variable_count(void);
+
+/*
+ * Get the name of the variable at an index.
+ */
+const char *
+s3_get_variable_name(
+	int index);
+
+
+/*
+ * Functions for Save Subsystem (save.c)
+ */
+
+/*
+ * Check if right after load.
+ */
+bool
+s3_check_if_right_after_load(void);
+
+/*
+ * Execute a save.
+ */
+bool
+s3_execute_save(
+	int index);
+
+/*
+ * Execute a load.
+ */
+bool
+s3_execute_load(
+	int index);
+
+/*
+ * Execute a global save.
+ */
+void
+s3_execute_save_global(void);
+
+/*
+ * Check if the quick save data exist.
+ */
+bool
+s3_check_save_exists(
+	int index);
+
+/*
+ * Delete a save data.
+ */
+void
+s3_delete_save(int index);
+
+/*
+ * Delete the global save data.
+ */
+void
+s3_delete_global_save(void);
+
+/*
+ * Get the timestamp of a save data.
+ */
+uint64_t
+s3_get_save_date(
+	int index);
+
+/*
+ * Get the latest save index.
+ */
+int
+s3_get_latest_save_index(void);
+
+/*
+ * Get the chapter title of a save data.
+ */
+const char *
+s3_get_save_chapter_name(
+	int index);
+
+/*
+ * Get the last message of a save data.
+ */
+const char *
+s3_get_save_last_message(
+	int index);
+
+/*
+ * Get the thumbnail of a save data.
+ */
+struct s3_image *
+s3_get_save_thumbnail(
+	int index);
+
+
+/*
+ * Functions for Seen Subsystem (seen.c)
+ */
+
+/*
+ * Load the seen file for the current tag file.
+ */
+bool
+s3_load_seen(void);
+
+/*
+ * Save the seen file for the current tag file.
+ */
+bool
+s3_save_seen(void);
+
+/*
+ * Get the seen flags for the current tag.
+ */
+int
+s3_get_seen_flags(void);
+
+/*
+ * Set the seen flags for the current tag.
+ */
+void
+s3_set_seen_flags(int flag);
+
+
+/*
+ * Functions of Wrapper APIs (hal.c)
  */
 
 /*
@@ -1899,10 +2079,6 @@ s3_get_lap_timer_millisec(
 	uint64_t *origin);
 
 /*
- * Raw File I/O (hal.c)
- */
-
-/*
  * Check if a file exists.
  */
 bool
@@ -1917,10 +2093,6 @@ s3_read_file_content(
 	const char *fname,
 	char **buf,
 	size_t *len);
-
-/*
- * Save Data (hal.c)
- */
 
 /*
  * Write save data.
@@ -1947,10 +2119,6 @@ s3_read_save_data(
 bool
 s3_check_save_data(
 	const char *key);
-
-/*
- * VM Access (hal.c)
- */
 
 /*
  * Set a VM integer variable.
@@ -1989,10 +2157,6 @@ s3_call_vm_function(
 bool
 s3_call_vm_tag_function(
 	bool *tag_end);
-
-/*
- * Logging (hal.c)
- */
 
 /*
  * Print a debug message.

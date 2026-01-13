@@ -2,15 +2,38 @@
 
 /*
  * Suika3
- * Copyright (C) 2001-2026 The Suika3 Authors
- */
-
-/*
  * Save Subsystem
  */
 
-#ifndef SUIKA3_SAVE_H
-#define SUIKA3_SAVE_H
+/*-
+ * SPDX-License-Identifier: Zlib
+ *
+ * Copyright (c) 2026 The Suika3 Community
+ * Copyright (c) 2025-2026 The Playfield Engine Project
+ * Copyright (c) 2025-2026 The NoctVM Project
+ * Copyright (c) 2025-2026 Awe Morris
+ * Copyright (c) 2016-2024 The Suika2 Development Team
+ * Copyright (c) 1996-2024 Keiichi Tabata
+ *
+ * This software is derived from the codebase of Playfield Engine, NoctLang,
+ * Suika2, Suika Studio, Wind Game Lib, and 98/AT Game Lib.
+ *
+ * This software is provided 'as-is', without any express or implied
+ * warranty. In no event will the authors be held liable for any damages
+ * arising from the use of this software.
+ *
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
+ *
+ * 1. The origin of this software must not be misrepresented; you must not
+ *    claim that you wrote the original software. If you use this software
+ *    in a product, an acknowledgment in the product documentation would be
+ *    appreciated but is not required.
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ *    misrepresented as being the original software.
+ * 3. This notice may not be removed or altered from any source distribution.
+ */
 
 #include <suika3/suika3.h>
 #include "save.h"
@@ -20,9 +43,6 @@
 
 /* False assertion */
 #define CONFIG_TYPE_ERROR	(0)
-
-/* Index for the quick save data. */
-#define QUICK_SAVE_INDEX	(SAVE_SLOTS)
 
 /* Terminator of the config. */
 #define END_OF_CONFIG		"eoc"
@@ -35,22 +55,22 @@ static bool load_flag;
  */
 
 /* Timestamp of the save data. (0 for no data) */
-static time_t save_time[SAVE_SLOTS];
+static uint64_t save_time[ALL_SAVE_SLOTS];
 
 /* Index of the last saved. */
 static int latest_index;
 
 /* Chapter title of the save data. */
-static char *save_title[SAVE_SLOTS];
+static char *save_title[ALL_SAVE_SLOTS];
 
 /* Last message of the save data. */
-static char *save_message[SAVE_SLOTS];
+static char *save_message[ALL_SAVE_SLOTS];
 
 /* Thumbnail of the save data. */
-static struct s3_image *save_thumb[SAVE_SLOTS];
+static struct s3_image *save_thumb[ALL_SAVE_SLOTS];
 
 /* Timestamp of the quick save data. */
-static time_t quick_save_time;
+static uint64_t quick_save_time;
 
 /* Message to restored right after load. */
 static char *pending_message;
@@ -102,16 +122,13 @@ static void load_global_data(void);
 /*
  * Initialize the save subsystem.
  */
-bool s3i_init_save(void)
+bool
+s3i_init_save(void)
 {
 	int i;
 
-	/* 再利用時のための初期化を行う */
-	msg_text_speed = 0.5f;
-	msg_auto_speed = 0.5f;
-
-	/* セーブスロットを初期化する */
-	for (i = 0; i < SAVE_SLOTS; i++) {
+	/* Clear the save slots. */
+	for (i = 0; i < ALL_SAVE_SLOTS; i++) {
 		save_time[i] = 0;
 		if (save_title[i] != NULL) {
 			free(save_title[i]);
@@ -127,51 +144,30 @@ bool s3i_init_save(void)
 		}
 	}
 
-	/* 文字列を初期化する */
-	if (chapter_name != NULL) {
-		free(chapter_name);
-		chapter_name = NULL;
-	}
-	if (last_message != NULL) {
-		free(last_message);
-		last_message = NULL;
-	}
-	if (prev_last_message != NULL) {
-		free(prev_last_message);
-		prev_last_message = NULL;
-	}
-	chapter_name = strdup("");
-	last_message = strdup("");
-	if (chapter_name == NULL || last_message == NULL) {
-		log_memory();
-		return false;
-	}
-
-	/* サムネイルの読み書きのためのヒープを確保する */
+	/* Allocate the buffer for reading/writing thubnail data. */
 	if (tmp_pixels != NULL)
 		free(tmp_pixels);
 	tmp_pixels = malloc((size_t)(conf_save_data_thumb_width *
 				     conf_save_data_thumb_height * 3));
 	if (tmp_pixels == NULL) {
-		log_memory();
+		s3_log_out_of_memory();
 		return false;
 	}
 
-	/* セーブデータから基本情報を取得する */
+	/* Load the basic data from the local save files. */
 	load_basic_save_data();
 
-	/* グローバルデータのロードを行う */
+	/* Load the global save file. */
 	load_global_data();
-
-	last_en_command = -1;
 
 	return true;
 }
 
 /*
- * セーブデータに関する終了処理を行う
+ * Cleanup the save subsystem.
  */
-void cleanup_save(void)
+void
+s3i_cleanup_save(void)
 {
 	int i;
 
@@ -190,23 +186,17 @@ void cleanup_save(void)
 		}
 	}
 
-	free(chapter_name);
-	chapter_name = NULL;
-
-	free(last_message);
-	last_message = NULL;
-
 	free(tmp_pixels);
 	tmp_pixels = NULL;
 
-	/* グローバル変数のセーブを行う */
 	save_global_data();
 }
 
 /*
- * ロードが終了した直後であるかを調べる
+ * Check if right after load.
  */
-bool check_if_right_after_load(void)
+bool
+s3_check_if_right_after_load(void)
 {
 	if (load_flag) {
 		load_flag = false;
@@ -216,33 +206,34 @@ bool check_if_right_after_load(void)
 }
 
 /*
- * GUIからの問い合わせ
+ * Get the timestamp of a save data.
  */
-
-/*
- * セーブデータの日付を取得する
- */
-time_t get_save_date(int index)
+uint64_t
+s3_get_save_date(
+	int index)
 {
 	assert(index >= 0);
-	if (index >= SAVE_SLOTS)
+	if (index >= ALL_SAVE_SLOTS)
 		return 0;
 
 	return save_time[index];
 }
 
 /*
- * 最新のセーブデータの番号を取得する
+ * Get the latest save index.
  */
-int get_latest_save_index(void)
+int
+s3_get_latest_save_index(void)
 {
 	return latest_index;
 }
 
 /*
- * セーブデータの章タイトルを取得する
+ * Get the chapter title of a save data.
  */
-const char *get_save_chapter_name(int index)
+const char *
+s3_get_save_chapter_name(
+	int index)
 {
 	assert(index >= 0);
 	if (index >= SAVE_SLOTS)
@@ -252,9 +243,11 @@ const char *get_save_chapter_name(int index)
 }
 
 /*
- * セーブデータの最後のメッセージを取得する
+ * Get the last message of a save data.
  */
-const char *get_save_last_message(int index)
+const char *
+s3_get_save_last_message(
+	int index)
 {
 	assert(index >= 0);
 	if (index >= SAVE_SLOTS)
@@ -264,9 +257,11 @@ const char *get_save_last_message(int index)
 }
 
 /*
- * セーブデータのサムネイルを取得する
+ * Get the thumbnail of a save data.
  */
-struct image *get_save_thumbnail(int index)
+struct s3_image *
+s3_get_save_thumbnail(
+	int index)
 {
 	assert(index >= 0);
 	if (index >= SAVE_SLOTS)
@@ -276,201 +271,135 @@ struct image *get_save_thumbnail(int index)
 }
 
 /*
- * セーブの実際の処理
+ * Execute a save.
  */
-
-/*
- * クイックセーブを行う
- */
-bool quick_save(bool extra)
-{
-	const char *fname;
-	uint64_t timestamp;
-
-	/*
-	 * サムネイルを作成する
-	 *  - GUIを経由しないのでここで作成する
-	 *  - ただし、現状ではクイックセーブデータのサムネイルは未使用
-	 */
-	/*
-	  In message command, use draw_stage_to_thumb().
-	  In switch command, use draw_stage_fo_thumb().
-	*/
-
-	fname = !extra ? QUICK_SAVE_FILE : QUICK_SAVE_EXTRA_FILE;
-
-	/* ローカルデータのシリアライズを行う */
-	if (!serialize_all(fname, &timestamp, -1))
-		return false;
-
-	/* 既読フラグのセーブを行う */
-	save_seen();
-
-	/* グローバル変数のセーブを行う */
-	save_global_data();
-
-	/* クイックセーブの時刻を更新する */
-	quick_save_time = (time_t)timestamp;
-
-#ifdef OPENNOVEL_TARGET_WASM
-	EM_ASM_({
-		if (window.navigator.userAgent.indexOf('iPad') != -1 || window.navigator.userAgent.indexOf('iPhone') != -1) {
-			FS.syncfs(function (err) {});
-		} else {
-			FS.syncfs(function (err) { alert('Saved!'); });
-		}
-	});
-#endif
-	return true;
-}
-
-/*
- * セーブを実行する
- */
-bool execute_save(int index)
+bool
+s3_execute_save(
+	int index)
 {
 	char s[128];
 	uint64_t timestamp;
 
-	/* ファイル名を求める */
+	/* Save the seen flags for the current tag file. */
+	s3_save_seen();
+
+	/* Save the global save data. */
+	s3_execute_save_global();
+
+	/* Get the file name for the local save data. */
 	snprintf(s, sizeof(s), "%03d.sav", index);
 
-	/* ローカルデータのシリアライズを行う */
+	/* Serialize the local save data. */
 	if (!serialize_all(s, &timestamp, index))
 		return false;
 
-	/* 既読フラグのセーブを行う */
-	save_seen();
+	/* Store the timestamp. */
+	save_time[index] = timestamp;
 
-	/* グローバル変数のセーブを行う */
-	save_global_data();
-
-	/* 時刻を保存する */
-	save_time[index] = (time_t)timestamp;
-
-#ifdef OPENNOVEL_TARGET_WASM
-	EM_ASM_({
-		if (window.navigator.userAgent.indexOf('iPad') != -1 || window.navigator.userAgent.indexOf('iPhone') != -1) {
-			FS.syncfs(function (err) {});
-		} else {
-			FS.syncfs(function (err) { alert('Saved!'); });
-		}
-	});
-#endif
-
+	/* Update the latest index. */
 	latest_index = index;
 
 	return true;
 }
 
-/* すべてのシリアライズを行う */
-static bool serialize_all(const char *fname, uint64_t *timestamp, int index)
+/* Serialize the local save data. */
+static bool
+serialize_all(
+	const char *fname,
+	uint64_t *timestamp,
+	int index)
 {
-	struct wfile *wf;
 	uint64_t t;
 	uint32_t ver;
 	bool success;
 
-	/* セーブディレクトリを作成する */
-	make_sav_dir();
-
-	/* ファイルを開く */
-	wf = open_wfile(SAVE_DIR, fname);
-	if (wf == NULL)
+	/* Open a buffer for streaming. */
+	if (!open_write_stream())
 		return false;
 
 	success = false;
 	t = 0;
 	do {
-		/* セーブデータバージョンを書き込む */
+		/* Write the save format version. */
 		ver = (uint32_t)SAVE_VER;
-		if (write_wfile(wf, &ver, sizeof(ver)) < sizeof(ver))
+		if (!write32(&ver))
 			break;
 
-		/* 日付を書き込む */
+		/* Write the timestamp. */
 		t = (uint64_t)time(NULL);
-		if (write_wfile(wf, &t, sizeof(t)) < sizeof(t))
+		if (!write64(&t, sizeof(t)))
 			break;
 
-		/* 章題のシリアライズを行う */
-		if (!serialize_title(wf, index))
+		/* Write the chapter name. */
+		if (!write_string(s3_get_chapter_name()))
 			break;
 
-		/* メッセージのシリアライズを行う */
-		if (!serialize_message(wf, index))
+		/* Write the last message. */
+		if (!write_string(s3_get_last_message(false)))
+		return false;
+
+		/* Write the previous last message. */
+		if (!write_string(s3_get_last_message(true)))
+		return false;
+
+		/* Serialize the thumbnail. */
+		if (!serialize_thumb(index))
 			break;
 
-		/* サムネイルのシリアライズを行う */
-		if (!serialize_thumb(wf, index))
+		/* Serialize the command position. */
+		if (!serialize_command())
 			break;
 
-		/* コマンド位置のシリアライズを行う */
-		if (!serialize_command(wf))
+		/* Serialize the stage. */
+		if (!serialize_stage())
 			break;
 
-		/* ステージのシリアライズを行う */
-		if (!serialize_stage(wf))
+		/* Serialize the anime. */
+		if (!serialize_anime())
 			break;
 
-		/* アニメのシリアライズを行う */
-		if (!serialize_anime(wf))
+		/* Serialize the sound. */
+		if (!serialize_sound())
 			break;
 
-		/* サウンドのシリアライズを行う */
-		if (!serialize_sound(wf))
+		/* Serialize the variables. */
+		if (!serialize_vars())
 			break;
 
-		/* ボリュームのシリアライズを行う */
-		if (!serialize_volumes(wf))
-			break;
+		/* Serialize the temporary stage of Ciel. */
+		/*
+		 * if (!ciel_serialize_hook(wf))
+		 *      break;
+		 */
 
-		/* 変数のシリアライズを行う */
-		if (!serialize_vars(wf))
-			break;
-
-		/* 名前変数のシリアライズを行う */
-		if (!serialize_name_vars(wf))
-			break;
-
-		/* Cielの仮ステージのシリアライズを行う */
-		if (!ciel_serialize_hook(wf))
-			break;
-
-		/* コンフィグのシリアライズを行う */
+		/* Serialize the config. */
 		if (!serialize_local_config(wf))
 			break;
 
-		/* 成功 */
+		/* Succeeded. */
 		success = true;
 	} while (0);
 
-	/* ファイルをクローズする */
-	close_wfile(wf);
+	/* Close the stream. */
+	close_write_stream(fname);
 
-	/* 時刻を保存する */
+	/* Store the timestamp. */
 	*timestamp = t;
 
 	if (!success)
-		log_file_write(fname);
+		s3_log_error(S3_TR("Failed to write save data."));
 
 	return success;
 }
 
-/* 章題のシリアライズを行う */
-static bool serialize_title(struct wfile *wf, int index)
+/* Serialize the chapter title. */
+static bool
+serialize_title(int index)
 {
 	size_t len;
 
-	/* 文字列を準備する */
-	strncpy(tmp_str, chapter_name, sizeof(tmp_str));
-	tmp_str[sizeof(tmp_str) - 1] = '\0';
 
-	/* 書き出す */
-	len = strlen(tmp_str) + 1;
-	if (write_wfile(wf, tmp_str, len) < len)
-		return false;
-
-	/* 章題を保存する */
+	/* Save章題を保存する */
 	if (index != -1) {
 		if (save_title[index] != NULL)
 			free(save_title[index]);
@@ -484,55 +413,14 @@ static bool serialize_title(struct wfile *wf, int index)
 	return true;
 }
 
-/* メッセージのシリアライズを行う */
-static bool serialize_message(struct wfile *wf, int index)
-{
-	const char *t;
-	size_t len;
-
-	/* メッセージを書き出す */
-	t = last_message != NULL ? last_message : "";
-	len = strlen(t) + 1;
-	if (write_wfile(wf, t, len) < len)
-		return false;
-
-	/* メッセージを保存する */
-	if (index != -1) {
-		if (save_message[index] != NULL)
-			free(save_message[index]);
-		save_message[index] = strdup(t);
-		if (save_message[index] == NULL) {
-			log_memory();
-			return false;
-		}
-	}
-
-	/* 継続行用のメッセージを書き出す */
-	t = prev_last_message != NULL ? prev_last_message : "";
-	len = strlen(t) + 1;
-	if (write_wfile(wf, t, len) < len)
-		return false;
-
-	return true;
-}
-
-/* サムネイルのシリアライズを行う */
-static bool serialize_thumb(struct wfile *wf, int index)
+/* Serialize the thumbnail. */
+static bool
+serialize_thumb(struct wfile *wf, int index)
 {
 	pixel_t *src, pix;
 	unsigned char *dst;
 	size_t len;
 	int x, y;
-
-	/* クイックセーブの場合 */
-	if (index == -1) {
-		/* 内容は気にせず書き出す */
-		len = (size_t)(conf_save_data_thumb_width *
-			       conf_save_data_thumb_height * 3);
-		if (write_wfile(wf, tmp_pixels, len) < len)
-			return false;
-		return true;
-	}
 
 	/* stage.cのサムネイルをsave.cのイメージにコピーする */
 	if (save_thumb[index] == NULL) {
@@ -680,6 +568,8 @@ static bool serialize_anime(struct wfile *wf)
 static bool serialize_sound(struct wfile *wf)
 {
 	const char *s;
+	float vol;
+	int n;
 
 	/* BGMをシリアライズする */
 	s = get_bgm_file_name();
@@ -695,15 +585,7 @@ static bool serialize_sound(struct wfile *wf)
 	if (write_wfile(wf, s, strlen(s) + 1) < strlen(s) + 1)
 		return false;
 
-	return true;
-}
-
-/* ボリュームをシリアライズする */
-static bool serialize_volumes(struct wfile *wf)
-{
-	float vol;
-	int n;
-
+	/* Serialize the volumes. */
 	for (n = 0; n < MIXER_STREAMS; n++) {
 		vol = get_mixer_volume(n);
 		if (write_wfile(wf, &vol, sizeof(vol)) < sizeof(vol))
@@ -1653,4 +1535,42 @@ char *get_pending_message(void)
 	}
 
 	return ret;
+}
+
+/* */
+static bool
+open_write_buffer(void)
+{
+}
+
+static bool
+close_write_buffer(
+	const char *file)
+{
+}
+
+static bool
+write_to_buffer(
+	const void *data,
+	size_t size)
+{
+}
+
+/* */
+static bool
+open_read_buffer(
+	const char *file)
+{
+}
+
+static bool
+close_read_buffer(void)
+{
+}
+
+static bool
+read_from_buffer(
+	void *data,
+	size_t size)
+{
 }

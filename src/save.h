@@ -2,11 +2,37 @@
 
 /*
  * Suika3
- * Copyright (C) 2001-2026 The Suika3 Authors
+ * Save Subsystem
  */
 
-/*
- * Save Subsystem
+/*-
+ * SPDX-License-Identifier: Zlib
+ *
+ * Copyright (c) 2026 The Suika3 Community
+ * Copyright (c) 2025-2026 The Playfield Engine Project
+ * Copyright (c) 2025-2026 The NoctVM Project
+ * Copyright (c) 2025-2026 Awe Morris
+ * Copyright (c) 2016-2024 The Suika2 Development Team
+ * Copyright (c) 1996-2024 Keiichi Tabata
+ *
+ * This software is derived from the codebase of Playfield Engine, NoctLang,
+ * Suika2, Suika Studio, Wind Game Lib, and 98/AT Game Lib.
+ *
+ * This software is provided 'as-is', without any express or implied
+ * warranty. In no event will the authors be held liable for any damages
+ * arising from the use of this software.
+ *
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
+ *
+ * 1. The origin of this software must not be misrepresented; you must not
+ *    claim that you wrote the original software. If you use this software
+ *    in a product, an acknowledgment in the product documentation would be
+ *    appreciated but is not required.
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ *    misrepresented as being the original software.
+ * 3. This notice may not be removed or altered from any source distribution.
  */
 
 #ifndef SUIKA3_SAVE_H
@@ -49,88 +75,9 @@ void
 s3i_cleanup_save(void);
 
 /*
- * Check if right after load.
- */
-bool
-s3_check_if_right_after_load(void);
-
-/*
- * Execute a save.
- */
-bool
-s3_execute_save(
-	int index);
-
-/*
- * Execute a load.
- */
-bool
-s3_execute_load(
-	int index);
-
-/*
- * Execute a global save.
- */
-void
-s3_execute_save_global(void);
-
-/*
- * Check if the quick save data exist.
- */
-bool
-s3_check_save_exists(
-	int index);
-
-/*
- * Delete a save data.
- */
-void
-s3_delete_save(int index);
-
-/*
- * Delete the global save data.
- */
-void
-s3_delete_global_save(void);
-
-/*
- * Get the timestamp of a save data.
- */
-time_t
-s3_get_save_date(
-	int index);
-
-/*
- * Get the latest save index.
- */
-int
-s3_get_latest_save_index(void);
-
-/*
- * Get the chapter title of a save data.
- */
-const char *
-s3_get_save_chapter_name(
-	int index);
-
-/*
- * Get the last message of a save data.
- */
-const char *
-s3_get_save_last_message(
-	int index);
-
-/*
- * Get the thumbnail of a save data.
- */
-struct s3_image *
-s3_get_save_thumbnail(
-	int index);
-
-/*
  * Get the pending message (message box content right after load)
  */
 char *
-get_pending_message(void);
+s3i_get_pending_message(void);
 
 #endif
