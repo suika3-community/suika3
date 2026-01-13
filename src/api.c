@@ -30,7 +30,7 @@ static struct api_func api_func[] = {
 	{"suikaRender", api_suika_render},
 
 	/* Commands */
-	{"Tag_bg", command_bg},
+	{"Tag_bg", s3i_command_bg},
 };
 
 /*

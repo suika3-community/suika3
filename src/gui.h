@@ -14,46 +14,88 @@
 
 #include <suika3/suika3.h>
 
-/* GUIに関する初期化処理を行う */
-bool init_gui(void);
+/*
+ * Initialize the GUI subsystem.
+ */
+bool
+s3i_init_gui(void);
 
-/* GUIに関する終了処理を行う */
-void cleanup_gui(void);
+/*
+ * Cleanup the GUI subsytem.
+ */
+void
+s3i_cleanup_gui(void);
 
-/* GUIから復帰した直後かどうかを確認する */
-bool check_gui_flag(void);
+/*
+ * Check if right after returned from a GUI.
+ */
+bool
+s3_check_if_right_after_gui(void);
 
-/* GUIを準備する */
-bool prepare_gui_mode(const char *file, bool sys);
+/*
+ * Load a GUI file and prepare for a start.
+ */
+bool
+s3_load_gui_file(const char *file, bool sys);
 
-/* GUIを開始する */
-void start_gui_mode(void);
+/*
+ * Start the loaded GUI.
+ */
+void
+s3_start_gui(void);
 
-/* GUIを停止する */
-void stop_gui_mode(void);
+/*
+ * Stop the running GUI.
+ */
+void
+s3_stop_gui(void);
 
-/* GUIが有効であるかを返す */
-bool is_gui_mode(void);
+/*
+ * Check if a GUI is running.
+ */
+bool
+s3_is_gui_running(void);
 
-/* GUIがオーバレイであるかを返す */
-bool is_gui_overlay(void);
+/*
+ * Run a GUI frame update.
+ */
+bool
+s3i_run_gui_update(void);
 
-/* GUIを実行する */
-bool run_gui_mode(void);
+/*
+ * Run a GUI frame rendering.
+ */
+bool
+s3i_run_gui_render(void);
 
-/* GUIの実行結果のジャンプ先ラベルを取得する */
-const char *get_gui_result_label(void);
+/*
+ * Get the label of the selected button.
+ */
+const char *
+s3_get_gui_result_label(void);
 
-/* GUIの実行結果がタイトルへ戻るであるかを調べる */
-bool is_gui_result_title(void);
+/*
+ * Check if the selected GUI button is "back to title".
+ */
+bool
+s3_is_gui_result_title(void);
 
-/* GUIの実行結果が終了であるかを取得する */
-bool is_gui_result_exit(void);
+/*
+ * Check if the selected GUI button is "exit".
+ */
+bool
+s3_is_gui_result_exit(void);
 
-/* GUIでセーブされたか */
-bool is_gui_saved(void);
+/*
+ * Check if any save is issued in the current GUI.
+ */
+bool
+s3_check_if_saved_in_gui(void);
 
-/* GUIでロードされたか */
-bool is_gui_loaded(void);
+/*
+ * Check if a load is issued in the current GUI.
+ */
+bool
+s3_check_if_loaded_in_gui(void);
 
 #endif
