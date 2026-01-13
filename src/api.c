@@ -579,6 +579,21 @@ pf_fill_texture_rect(
 }
 
 /*
+ * Get a raw pixel pointer.
+ */
+pixel_t *
+pf_get_texture_pixels(
+	int tex_id)
+{
+	assert(tex_id >= 0);
+	assert(tex_id < TEXTURE_COUNT);
+	assert(tex_tbl[tex_id].is_used);
+	assert(tex_tbl[tex_id].img != NULL);
+
+	return tex_tbl[tex_id].img->pixels;
+}
+
+/*
  * Rendering
  */
 
