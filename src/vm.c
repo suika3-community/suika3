@@ -167,10 +167,10 @@ static bool call_setup(char **title, int *width, int *height, bool *fullscreen)
 		if (fullscreen != NULL) {
 			bool fullscreen_exist;
 			if (!noct_check_dict_key(env, &ret, "fullscreen", &fullscreen_exist))
-				return false;
+				break;
 			if (fullscreen_exist) {
 				if (!noct_get_dict_elem(env, &ret, "fullscreen", &fullscreen_val))
-					return false;
+					break;
 				*fullscreen = fullscreen_val.val.i;
 			} else {
 				*fullscreen = false;
@@ -1120,7 +1120,7 @@ bool install_api(NoctEnv *env)
 		const char *field;
 		const char *name;
 	} funcs[] = {
-#define RTFUNC(name) {Engine_##name, #name, "Engine_" # name}
+#define RTFUNC(name) {Engine_##name, #name, "Engine." # name}
 		{print, NULL, "print"},
 		{import, NULL, "import"},
 		RTFUNC(moveToTagFile),
