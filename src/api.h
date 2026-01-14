@@ -44,6 +44,6 @@
  * Install the API.
  */
 bool
-s3i_install_api(void);
+s3i_install_default_api(void);
 
 #endif

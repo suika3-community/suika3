@@ -38,6 +38,26 @@
 #include <suika3/suika3.h>
 #include "save.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+
+#define FREE(x) \
+	do { \
+		if (x != NULL) { \
+			free(x); \
+			x = NULL; \
+		} \
+	} while (0)
+
+#define STRDUP(x, y) \
+	do { \
+		x = strdup(y); \
+		if (x == NULL) { \
+			s3_log_out_of_memory(); \
+			return false;\
+		} \
+	} while (0)
+
 /* Save data compatibility version. */
 #define SAVE_VER	(0x00000001)
 
@@ -55,25 +75,22 @@ static bool is_right_after_load;
  */
 
 /* Timestamp of the save data. (0 for no data) */
-static uint64_t save_time[ALL_SAVE_SLOTS];
+static uint64_t save_time[S3_ALL_SAVE_SLOTS];
 
 /* Index of the last saved. */
 static int latest_index;
 
 /* Chapter title of the save data. */
-static char *save_title[ALL_SAVE_SLOTS];
+static char *save_title[S3_ALL_SAVE_SLOTS];
 
 /* Last message of the save data. */
-static char *save_message[ALL_SAVE_SLOTS];
+static char *save_message[S3_ALL_SAVE_SLOTS];
 
 /* Thumbnail of the save data. */
-static struct s3_image *save_thumb[ALL_SAVE_SLOTS];
+static struct s3_image *save_thumb[S3_ALL_SAVE_SLOTS];
 
 /* Timestamp of the quick save data. */
 static uint64_t quick_save_time;
-
-/* Message to restored right after load. */
-static char *pending_message;
 
 /*
  * Temporary Buffers
@@ -81,38 +98,31 @@ static char *pending_message;
 
 /* Buffer for the buffered stream. */
 static char *stream_buf;
-size_t stream_buf_alloc_size;
-size_t stream_buf_pos;
+static size_t stream_buf_alloc_size;
+static size_t stream_buf_pos;
+static char sbuf[1024];
 
 /*
  * Forward declaration.
  */
-static void load_basic_save_data(void);
-static void load_basic_save_data_file(struct rfile *rf, int index);
-static bool serialize_all(const char *fname, uint64_t *timestamp, int index);
-static bool serialize_title(struct wfile *wf, int index);
-static bool serialize_message(struct wfile *wf, int index);
-static bool serialize_thumb(struct wfile *wf, int index);
-static bool serialize_command(struct wfile *wf);
-static bool serialize_stage(struct wfile *wf);
-static bool serialize_anime(struct wfile *wf);
-static bool serialize_sound(struct wfile *wf);
-static bool serialize_volumes(struct wfile *wf);
-static bool serialize_vars(struct wfile *wf);
-static bool serialize_name_vars(struct wfile *wf);
-static bool serialize_local_config(struct wfile *wf);
-static bool serialize_config_helper(struct wfile *wf, bool is_global);
-static bool deserialize_all(const char *fname);
-static bool deserialize_message(struct rfile *rf);
-static bool deserialize_command(struct rfile *rf);
-static bool deserialize_stage(struct rfile *rf);
-static bool deserialize_anime(struct rfile *rf);
-static bool deserialize_sound(struct rfile *rf);
-static bool deserialize_volumes(struct rfile *rf);
-static bool deserialize_vars(struct rfile *rf);
-static bool deserialize_name_vars(struct rfile *rf);
-static bool deserialize_config_common(struct rfile *rf);
-static void load_global_data(void);
+static bool load_basic_save_info_all(void);
+static bool load_basic_save_info(int index);
+static bool open_write_stream(void);
+static bool write_u32(uint32_t val);
+static bool write_u64(uint64_t val);
+static bool write_f32(float val);
+static bool write_string(const char *val);
+static bool write_data(const void *data, size_t size);
+static bool resize_buffer(size_t inc_size);
+static bool close_write_buffer(const char *file, ...);
+static bool open_read_stream(const char *file, ...);
+static bool read_u32(uint32_t *ret);
+static bool read_u64(uint64_t *ret);
+static bool read_f32(float *ret);
+static bool read_string(char **val, size_t size);
+static bool read_data(void *data, size_t size);
+static bool close_read_buffer(void);
+
 
 /*
  * Initialization
@@ -127,27 +137,21 @@ s3i_init_save(void)
 	int i;
 
 	/* Clear the save slots. */
-	for (i = 0; i < ALL_SAVE_SLOTS; i++) {
+	for (i = 0; i < S3_ALL_SAVE_SLOTS; i++) {
 		save_time[i] = 0;
-		if (save_title[i] != NULL) {
-			free(save_title[i]);
-			save_title[i] = NULL;
-		}
-		if (save_message[i] != NULL) {
-			free(save_message[i]);
-			save_message[i] = NULL;
-		}
+		FREE(save_title[i]);
+		FREE(save_message[i]);
 		if (save_thumb[i] != NULL) {
-			destroy_image(save_thumb[i]);
+			s3_destroy_image(save_thumb[i]);
 			save_thumb[i] = NULL;
 		}
 	}
 
 	/* Load the basic data from the local save files. */
-	load_basic_save_data();
+	load_basic_save_info_all();
 
 	/* Load the global save file. */
-	load_global_data();
+	s3_execute_load_global();
 
 	return true;
 }
@@ -160,33 +164,28 @@ s3i_cleanup_save(void)
 {
 	int i;
 
-	for (i = 0; i < SAVE_SLOTS; i++) {
-		if (save_title[i] != NULL) {
-			free(save_title[i]);
-			save_title[i] = NULL;
-		}
-		if (save_message[i] != NULL) {
-			free(save_message[i]);
-			save_message[i] = NULL;
-		}
+	for (i = 0; i < S3_ALL_SAVE_SLOTS; i++) {
+		FREE(save_title[i]);
+		FREE(save_message[i]);
 		if (save_thumb[i] != NULL) {
-			destroy_image(save_thumb[i]);
+			s3_destroy_image(save_thumb[i]);
 			save_thumb[i] = NULL;
 		}
 	}
 
-	save_global_data();
+	s3_execute_save_global();
 }
 
 /*
  * Execute a global save.
  */
 void
-s3_execute_save_global(void);
+s3_execute_save_global(void)
 {
 	uint32_t ver;
 	float f;
 	int i;
+	int count;
 	bool success;
 
 	success = false;
@@ -617,7 +616,7 @@ s3_execute_load_local(
 		/* Read the previous last message. */
 		if (!read_string())
 			break;
-		if (!se_set_pending_message(sbuf))
+		if (!se_set_last_message(sbuf, false))
 			break;
 
 		/* Skip the thumbnail. */

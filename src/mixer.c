@@ -81,11 +81,8 @@ static float vol_character[S3_CH_VOL_SLOTS];
 /* Which character to apply the volume. */
 static int ch_vol_index;
 
-/* BGM file name. */
-static char *bgm_file_name;
-
-/* SE file name. (if looped) */
-static char *se_file_name;
+/* Track file name. */
+static char *track_file_name[S3_MIXER_TRACKS];
 
 /*
  * Initialize the mixer subsystem.
@@ -105,7 +102,11 @@ bool init_mixer(void)
 		vol_cur[track] = 1.0f;
 		vol_local[track] = 1.0f;
 		is_fading[track] = false;
-
+		if (track_file_name[track] != NULL) {
+			free(track_file_name[track]);
+			track_file_name[track] = NULL;
+		}
+		pf_stop_sound(track);
 		pf_set_sound_volume(track, vol_master * vol_global[track]);
 	}
 
@@ -126,13 +127,13 @@ void cleanup_mixer(void)
 
 	for (track = 0; track < S3_MIXER_TRACKS; track++) {
 		pf_stop_sound(track);
-		if (is_playing[track]) {
+		if (is_playing[track])
 			is_playing[track] = false;
+		if (track_file_name[track] != NULL) {
+			free(track_file_name[track]);
+			track_file_name[track] = NULL;
 		}
 	}
-
-	free(bgm_file_name);
-	bgm_file_name = NULL;
 }
 
 /*
@@ -170,7 +171,7 @@ s3_set_mixer_input_file(
 		pf_play_sound(track, file);
 		is_playing[track] = true;
 
-		if (is_looped)
+		if (is_looped) {
 			track_file_name[track] = strdup(file);
 			if (track_file_name[track] == NULL) {
 				s3_log_out_of_memory();
@@ -179,7 +180,7 @@ s3_set_mixer_input_file(
 		}
 	}
 
-return true;
+	return true;
 }
 
 /*

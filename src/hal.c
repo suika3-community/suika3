@@ -41,6 +41,7 @@
 #include <playfield/playfield.h>
 #include <noct/noct.h>
 
+#include <stdio.h>
 #include <stdarg.h>
 
 /*
@@ -133,60 +134,112 @@ s3_check_save_data(
  */
 
 /*
- * Set a VM integer variable.
+ * Install an API function.
  */
 bool
-s3_set_vm_int_variable(
+s3_install_api(
+	const char *name,
+	bool (*func)(void *))
+{
+	const char *params[] = {"param"};
+	char full_name[256];
+	NoctEnv *env;
+	NoctValue dict;
+	NoctValue funcval;
+
+	env = pf_get_vm_env();
+
+	/* If the "Suika" variable does not exist. */
+	if (!noct_check_global(env, "Suika")) {
+		/* Make a global variable "Suika". */
+		if (!noct_make_empty_dict(env, &dict))
+			return false;
+		if (!noct_set_global(env, "Suika", &dict))
+			return false;
+	} else {
+		if (!noct_get_global(env, "Suika", &dict))
+			return false;
+	}
+
+	/* Register a cfunc. */
+	snprintf(full_name, sizeof(full_name), "Suika.%s", name);
+	if (!noct_register_cfunc(env, full_name, 1, params, (void *)func, NULL))
+		return false;
+
+	/* Get a function value. */
+	if (!noct_get_global(env, full_name, &funcval))
+		return false;
+
+	/* Add to the "Suika" API dictionary. */
+	if (!noct_set_dict_elem(env, &dict, name, &funcval))
+		return false;
+}
+
+/*
+ * Set a VM integer. (Suika.*)
+ */
+bool
+s3_set_vm_int(
 	const char *name,
 	int val)
 {
 	NoctEnv *env;
+	NoctValue dict;
 	NoctValue value;
 
 	env = pf_get_vm_env();
+
+	if (!noct_get_global(env, "Suika", &dict))
+			return false;
 	if (!noct_make_int(env, &value, val))
 		return false;
-	if (!noct_set_global(env, name, &value))
+	if (!noct_set_dict_elem(env, &dict, name, &value))
 		return false;
 
 	return true;
 }
 
 /*
- * Set a VM float variable.
+ * Set a VM float variable. (Suika.*)
  */
 bool
-s3_set_vm_float_variable(
+s3_set_vm_float(
 	const char *name,
 	float val)
 {
 	NoctEnv *env;
+	NoctValue dict;
 	NoctValue value;
 
 	env = pf_get_vm_env();
+	if (!noct_get_global(env, "Suika", &dict))
+			return false;
 	if (!noct_make_float(env, &value, val))
 		return false;
-	if (!noct_set_global(env, name, &value))
+	if (!noct_set_dict_elem(env, &dict, name, &value))
 		return false;
 
 	return true;
 }
 
 /*
- * Set a VM string variable.
+ * Set a VM string variable. (Suika.*)
  */
 bool
-s3_set_vm_string_variable(
+s3_set_vm_string(
 	const char *name,
 	const char *val)
 {
 	NoctEnv *env;
+	NoctValue dict;
 	NoctValue value;
 
 	env = pf_get_vm_env();
+	if (!noct_get_global(env, "Suika", &dict))
+			return false;
 	if (!noct_make_string(env, &value, val))
 		return false;
-	if (!noct_set_global(env, name, &value))
+	if (!noct_set_dict_elem(env, &dict, name, &value))
 		return false;
 
 	return true;

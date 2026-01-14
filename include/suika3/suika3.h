@@ -258,6 +258,18 @@
 
 
 /*
+ * Constants for Save Subsystem (save.c)
+ */
+
+/*
+ * Numbers of the save slots, and the special save index.
+ */
+#define S3_ALL_SAVE_SLOTS	(101)
+#define S3_NORMAL_SAVE_SLOTS	(100)
+#define S3_QUICK_SAVE_INDEX	(100)
+
+
+/*
  * Types
  */
 
@@ -761,7 +773,8 @@ s3_get_chapter_name(void);
  */
 bool
 s3_set_last_message(
-	const char *msg);
+	const char *msg,
+	bool is_append);
 
 /*
  * Get the last message.
@@ -769,19 +782,6 @@ s3_set_last_message(
 const char *
 s3_get_last_message(
 	bool prev);
-
-/*
- * Clear the pending message.
- */
-bool
-s3_clear_pending_message(void);
-
-/*
- * Append to the pending message.
- */
-bool
-s3_append_pending_message(
-	const char *msg);
 
 /*
  * Set the text speed.
@@ -1943,12 +1943,24 @@ s3_get_variable_string(
 	const char **val);
 
 /*
+ * Get the numbers of the variables.
+ */
+int
+s3_get_variable_count(void);
+
+/*
+ * Get the name of the variable at an index.
+ */
+const char *
+s3_get_variable_name(
+	int index);
+
+/*
  * Check if a variable exists for a name.
  */
 bool
 s3_check_variable_exists(
 	const char *name);
-
 
 /*
  * Check if a variable is global.
@@ -1965,19 +1977,6 @@ char *
 s3_expand_string_with_variable(
 	const char *msg);
 
-/*
- * Get the numbers of the variables.
- */
-int
-s3_get_variable_count(void);
-
-/*
- * Get the name of the variable at an index.
- */
-const char *
-s3_get_variable_name(
-	int index);
-
 
 /*
  * Functions for Save Subsystem (save.c)
@@ -1993,7 +1992,7 @@ s3_execute_save_global(void);
  * Execute a global load.
  */
 void
-s3_execute_save_load(void);
+s3_execute_load_global(void);
 
 /*
  * Execute a local save.
@@ -2160,7 +2159,7 @@ s3_check_save_data(
 	const char *key);
 
 /*
- * Set a VM integer variable.
+ * Set a VM integer. (Suika.*)
  */
 bool
 s3_set_vm_int(
@@ -2168,7 +2167,7 @@ s3_set_vm_int(
 	int val);
 
 /*
- * Set a VM float variable.
+ * Set a VM float variable. (Suika.*)
  */
 bool
 s3_set_vm_float(
@@ -2176,7 +2175,7 @@ s3_set_vm_float(
 	float val);
 
 /*
- * Set a VM string variable.
+ * Set a VM string variable. (Suika.*)
  */
 bool
 s3_set_vm_string(

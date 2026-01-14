@@ -40,6 +40,9 @@
 
 #include <playfield/playfield.h>
 
+#include <stdlib.h>
+#include <string.h>
+
 /*
  * Initialize the tag subsystem.
  */

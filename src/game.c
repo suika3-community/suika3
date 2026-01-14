@@ -52,6 +52,23 @@
 #include <time.h>
 #include <assert.h>
 
+#define FREE(x) \
+	do { \
+		if (x != NULL) { \
+			free(x); \
+			x = NULL; \
+		} \
+	} while (0)
+
+#define STRDUP(x, y) \
+	do { \
+		x = strdup(y); \
+		if (x == NULL) { \
+			s3_log_out_of_memory(); \
+			return false;\
+		} \
+	} while (0)
+
 /*
  * Input States
  */
@@ -124,7 +141,7 @@ static char *chapter_name;
 /* Last message. */
 static char *last_message;
 
-/* Previous last message. */
+/* Previous last message. (last_message minus the latest continued message) */
 static char *prev_last_message;
 
 /* Speed of showing text. */
@@ -147,10 +164,10 @@ static bool dispatch_render(void);
  */
 bool playfield_init_hook(void)
 {
-	/* Install the API. */
-	if (!s3i_install_api())
+	/* Install the default API. */
+	if (!s3i_install_default_api())
 		return false;
-		
+
 	return 0;
 }
 
@@ -159,6 +176,8 @@ bool playfield_init_hook(void)
  */
 bool s3i_on_game_start(void)
 {
+	int i;
+
 	/* Initialize the pseudo random number. */
 	srand((unsigned int)time(NULL));
 
@@ -190,37 +209,18 @@ bool s3i_on_game_start(void)
 	flag_non_interruptible = false;
 	saved_pen_x = false;
 	saved_pen_y = false;
-	for (i = 0; i < S3_CALL_ARGS; i++) {
-		if (call_arg[i] != NULL) {
-			free(call_arg[i]);
-			call_arg[i] = NULL;
-		}
-	}
-	if (buffered_message != NULL) {
-		free(buffered_message);
-		buffered_message = NULL;
-	}
 	page_line = 0;
-	if (bgvoice != NULL) {
-		free(bgvoice);
-		bgvoice = NULL;
-	}
-	flag_bgvoice_playing= false;
-	if (chapter_name != NULL) {
-		free(chapter_name);
-		chapter_name = NULL;
-	}
-	if (last_message != NULL) {
-		free(last_message);
-		last_message = NULL;
-	}
-	if (prev_last_message != NULL) {
-		free(prev_last_message);
-		prev_last_message = NULL;
-	}
+	flag_bgvoice_playing = false;
 	msg_text_speed = 0.5f;
 	msg_auto_speed = 0.5f;
 	last_en_index = -1;
+	FREE(buffered_message);
+	FREE(bgvoice);
+	FREE(chapter_name);
+	FREE(last_message);
+	FREE(prev_last_message);
+	for (i = 0; i < S3_CALL_ARGS; i++)
+		FREE(call_arg[i]);
 
 	/* Clear the input states. */
 	mouse_pos_x = 0;
@@ -711,13 +711,9 @@ bool s3_set_call_argument(int index, const char *val)
 {
 	assert(index < CALL_ARGS);
 
-	if (call_arg[index] != NULL)
-		free(call_arg[index]);
-	call_arg[index] = strdup(val);
-	if (call_arg[index] == NULL) {
-		s3_log_out_of_memory();
-		return false;
-	}
+	FREE(call_arg[index]);
+	STRDUP(call_arg[index], val);
+
 	return true;
 }
 
@@ -770,8 +766,8 @@ bool s3_append_buffered_message(const char *msg)
 		strcat(s, buffered_message);
 	strcat(s, msg);
 
-	if (buffered_message != NULL)
-	    free(buffered_message);
+	FREE(buffered_message);
+
 	buffered_message = s;
 
 	return true;
@@ -793,10 +789,7 @@ const char *s3_get_buffered_message(void)
  */
 void s3_clear_buffered_message(void)
 {
-	if (buffered_message != NULL) {
-	    free(buffered_message);
-	    buffered_message = NULL;
-	}
+	FREE(buffered_message);
 }
 
 /*
@@ -835,18 +828,10 @@ bool s3_is_page_top(void)
  */
 bool s3_register_bgvoice(const char *file)
 {
-	if (bgvoice != NULL) {
-		free(bgvoice);
-		bgvoice = NULL;
-	}
+	FREE(bgvoice);
 
-	if (file != NULL) {
-		bgvoice = strdup(file);
-		if (bgvoice == NULL) {
-			s3_log_out_of_memory();
-			return false;
-		}
-	}
+	if (file != NULL)
+		STRDUP(bgvoice, file);
 
 	return true;
 }
@@ -888,11 +873,7 @@ s3_set_chapter_name(
 {
 	free(chapter_name);
 
-	chapter_name = strdup(name);
-	if (chapter_name == NULL) {
-		s3_log_out_of_memory();
-		return false;
-	}
+	STRDUP(chapter_name, name);
 
 	return true;
 }
@@ -921,39 +902,31 @@ s3_set_last_message(
 	const char *msg,
 	bool is_append)
 {
+	FREE(prev_last_message);
+
 	/* If a continued line. */
-	if (is_append) {
+	if (is_append && last_message != NULL) {
 		char *new_text;
-		size_t prev_len = 0, next_len = 0;
-		if (last_message != NULL)
-			prev_len = strlen(last_message);
-		next_len = strlen(msg);
-		new_text = malloc(prev_len + next_len + 1);
+		size_t new_len = 0;
+		size_t next_len = 0;
+
+		new_len = strlen(last_message) + strlen(msg);
+		new_text = malloc(new_len + 1);
 		if (new_text == NULL) {
-			log_memory();
+			s3_log_out_of_memory();
 			return false;
 		}
-		if (last_message != NULL) {
-			strcpy(new_text, last_message);
-			prev_last_message = last_message;
-			last_message = NULL;
-			strcat(new_text, msg);
-		} else {
-			strcpy(new_text, msg);
-		}
+		strcpy(new_text, last_message);
+		strcpy(new_text, msg);
+
+		prev_last_message = last_message;
 		last_message = new_text;
 		return true;
 	}
 
 	/* Otherwise. */
-	free(last_message);
-	last_message = strdup(msg);
-	if (last_message == NULL) {
-		log_memory();
-		return false;
-	}
-	free(prev_last_message);
-	prev_last_message = NULL;
+	FREE(last_message);
+	STRDUP(last_message, msg);
 
 	return true;
 }

@@ -45,15 +45,15 @@ struct api_func {
 	bool (*func)(void *);
 };
 
-static bool api_suika_start(void *p);
-static bool api_suika_update(void *p);
-static bool api_suika_render(void *p);
+static bool Suika_start(void *p);
+static bool Suika_update(void *p);
+static bool Suika_render(void *p);
 
 static struct api_func api_func[] = {
 	/* Skeleton */
-	{"suikaStart",  api_suika_start},
-	{"suikaUpdate", api_suika_update},
-	{"suikaRender", api_suika_render},
+	{"Suika.start",  Suika_start},
+	{"Suika.update", Suika_update},
+	{"Suika.render", Suika_render},
 
 	/* Commands */
 	{"Tag_bg", s3i_command_bg},
@@ -63,7 +63,7 @@ static struct api_func api_func[] = {
  * Install the API.
  */
 bool
-s3i_install_api(void)
+s3i_install_default_api(void)
 {
 	const char *params[] = {"param"};
 	const int tbl_size = sizeof(api_func) / sizeof(struct api_func);
@@ -79,27 +79,33 @@ s3i_install_api(void)
 }
 
 /* suikaStart() */
-static bool api_suika_start(void *p)
+static bool
+Suika_start(
+	void *p)
 {
-	if (!on_game_start())
+	if (!s3i_on_game_start())
 		return false;
 
 	return true;
 }
 
 /* suikaUpdate() */
-static bool api_suika_update(void *p)
+static bool
+Suika_update(
+	void *p)
 {
-	if (!on_game_update())
+	if (!s3i_on_game_update())
 		return false;
 
 	return true;
 }
 
 /* suikaRender() */
-static bool api_suika_render(void *p)
+static bool
+Suika_render(
+	void *p)
 {
-	if (!on_game_render())
+	if (!s3i_on_game_render())
 		return false;
 
 	return true;

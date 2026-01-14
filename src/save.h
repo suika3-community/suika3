@@ -56,13 +56,6 @@
 #define QUICK_SAVE_EXTRA_FILE	"q001.sav"
 
 /*
- * Numbers of the save slots.
- */
-#define ALL_SAVE_SLOTS		(101)
-#define NORMAL_SAVE_SLOTS	(100)
-#define QUICK_SAVE_INDEX	(100)
-
-/*
  * Initialize the save subsystem.
  */
 bool
