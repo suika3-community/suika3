@@ -87,7 +87,7 @@ This software is released under the `zlib License`.
 
 ```
 Suika3
-Copyright (c) 2026 The Suika3 Authors
+Copyright (c) 2026 The Suika3 Community
 ```
 
 ## Community

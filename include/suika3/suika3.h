@@ -647,6 +647,19 @@ int
 s3_get_pen_position_y(void);
 
 /*
+ * Set the tag index for return destination.
+ */
+void
+s3_set_return_index(
+	int index);
+
+/*
+ * Get the tag index for return destination.
+ */
+int
+s3_get_return_index(void);
+
+/*
  * Set a calling argument.
  */
 bool
@@ -748,8 +761,7 @@ s3_get_chapter_name(void);
  */
 bool
 s3_set_last_message(
-	const char *msg,
-	bool is_append);
+	const char *msg);
 
 /*
  * Get the last message.
@@ -757,6 +769,19 @@ s3_set_last_message(
 const char *
 s3_get_last_message(
 	bool prev);
+
+/*
+ * Clear the pending message.
+ */
+bool
+s3_clear_pending_message(void);
+
+/*
+ * Append to the pending message.
+ */
+bool
+s3_append_pending_message(
+	const char *msg);
 
 /*
  * Set the text speed.
@@ -788,13 +813,13 @@ get_auto_speed(void);
  * Mark the last English index.
  */
 void
-mark_last_en_index(void);
+mark_last_english_tag_index(void);
 
 /*
  * Clear the last English index.
  */
 void
-clear_last_en_index(void);
+clear_last_english_tag_index(void);
 
 
 /*
@@ -966,6 +991,12 @@ s3_fill_image_rect(
 	int height,
 	s3_pixel_t color);
 
+/*
+ * Get the raw pixel pointer of an image.
+ */
+s3_pixel_t
+s3_get_image_pixels(
+	struct s3_image *image);
 
 /*
  * Stage Subsystem (stage.c)
@@ -1564,7 +1595,8 @@ s3_is_quoted_serif(
 void
 s3_set_mixer_input_file(
 	int track,
-	const char *file);
+	const char *file,
+	bool is_looped);
 
 /*
  * Set the volume for a mixer track.
@@ -1952,30 +1984,30 @@ s3_get_variable_name(
  */
 
 /*
- * Check if right after load.
- */
-bool
-s3_check_if_right_after_load(void);
-
-/*
- * Execute a save.
- */
-bool
-s3_execute_save(
-	int index);
-
-/*
- * Execute a load.
- */
-bool
-s3_execute_load(
-	int index);
-
-/*
  * Execute a global save.
  */
 void
 s3_execute_save_global(void);
+
+/*
+ * Execute a global load.
+ */
+void
+s3_execute_save_load(void);
+
+/*
+ * Execute a local save.
+ */
+bool
+s3_execute_save_local(
+	int index);
+
+/*
+ * Execute a local load.
+ */
+bool
+s3_execute_load_local(
+	int index);
 
 /*
  * Check if the quick save data exist.
@@ -1985,10 +2017,11 @@ s3_check_save_exists(
 	int index);
 
 /*
- * Delete a save data.
+ * Delete a local save data.
  */
 void
-s3_delete_save(int index);
+s3_delete_local_save(
+	int index);
 
 /*
  * Delete the global save data.
@@ -1997,10 +2030,16 @@ void
 s3_delete_global_save(void);
 
 /*
+ * Check if right after load.
+ */
+bool
+s3_check_right_after_load(void);
+
+/*
  * Get the timestamp of a save data.
  */
 uint64_t
-s3_get_save_date(
+s3_get_save_timestamp(
 	int index);
 
 /*

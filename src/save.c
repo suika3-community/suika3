@@ -48,7 +48,7 @@
 #define END_OF_CONFIG		"eoc"
 
 /* Flag to show if right after load. */
-static bool load_flag;
+static bool is_right_after_load;
 
 /*
  * Save data that are loaded onto the memory.
@@ -79,11 +79,10 @@ static char *pending_message;
  * Temporary Buffers
  */
 
-/* Buffer for string read. */
-static char tmp_str[4096];
-
-/* Buffer for thumbnail read and write. */
-static unsigned char *tmp_pixels;
+/* Buffer for the buffered stream. */
+static char *stream_buf;
+size_t stream_buf_alloc_size;
+size_t stream_buf_pos;
 
 /*
  * Forward declaration.
@@ -144,16 +143,6 @@ s3i_init_save(void)
 		}
 	}
 
-	/* Allocate the buffer for reading/writing thubnail data. */
-	if (tmp_pixels != NULL)
-		free(tmp_pixels);
-	tmp_pixels = malloc((size_t)(conf_save_data_thumb_width *
-				     conf_save_data_thumb_height * 3));
-	if (tmp_pixels == NULL) {
-		s3_log_out_of_memory();
-		return false;
-	}
-
 	/* Load the basic data from the local save files. */
 	load_basic_save_data();
 
@@ -186,20 +175,685 @@ s3i_cleanup_save(void)
 		}
 	}
 
-	free(tmp_pixels);
-	tmp_pixels = NULL;
-
 	save_global_data();
+}
+
+/*
+ * Execute a global save.
+ */
+void
+s3_execute_save_global(void);
+{
+	uint32_t ver;
+	float f;
+	int i;
+	bool success;
+
+	success = false;
+	do {
+		/* Open the stream. */
+		if (!open_write_stream())
+			break;
+
+		/* セーブデータのバージョンを書き出す */
+		if (!write_u32(SAVE_VER))
+			break;
+		
+		/* Write the global variables. */
+		count = s3_get_variable_count();
+		if (!write_u32(count))
+			break;
+		for (i = 0; i < count; i++) {
+			const char *name = s3_get_variable_name(i);
+			if (s3_is_global_variable(name)) {
+				if (!write_string(name))
+					break;
+				if (!write_string(s3_get_variable_string(name)))
+					break;
+			} else {
+				if (!write_string("#l"))
+					break;
+			}
+		}
+		if (i != count)
+			break;	/* Error. */
+
+		/* Write the master volume. */
+		if (!write_f32(s3_get_master_volume()))
+		    break;
+
+		/* Write the global volumes. */
+		for (i = 0; i < S3_MIXER_TRACKS; i++) {
+			if (!write_f32(s3_get_mixer_global_volume(i)))
+				break;
+		}
+		if (i == 0)
+			break;	/* Error. */
+
+		/* Write the character volumes. */
+		for (i = 0; i < S3_CH_VOL_SLOTS; i++) {
+			if (!write_f32(s3_get_character_volume(i)))
+				break;
+		}
+		if (i == 0)
+			break;	/* Error. */
+
+		/* Write the text speed. */
+		if (!write_f32(s3_get_text_speed()))
+			break;
+
+		/* Write the auto speed. */
+		if (!write_f32(s3_get_auto_speed()))
+			break;
+
+		/* Write the global config. */
+		count = s3_get_config_count();
+		if (!write_u32(count))
+			break;
+		for (i = 0; i < count; i++) {
+			const char *key = s3_get_config_key(i);
+			if (!s3_is_config_global(key))
+				continue;
+			if (!write_string(s3_get_config_as_string(key)))
+				break;
+		}
+
+		/* Close the stream. */
+		if (!close_write_stream(GLOBAL_SAVE_FILE))
+			break;
+
+		success = true;
+	} while (0);
+
+	if (!success)
+		return false;
+
+	return true;
+}
+
+/* Execute a global load. */
+void
+execute_load_global(void)
+{
+	uint32_t ver;
+	float f;
+	int i;
+	bool success;
+
+	success = false;
+	do {
+		/* Open the stream. */
+		if (!open_read_stream(GLOBAL_SAVE_FILE))
+			break;
+
+		/* Read the save format version. */
+		if (!read_u32(&ver))
+			break;
+		if (ver != SAVE_VER) {
+			s3_log_error(S3_TR("Save data version mismatched."));
+			break;
+		}
+		
+		/* Read the global variables. */
+		if (!read_u32(&count))
+			break;
+		for (i = 0; i < count; i++) {
+			if (!read_string(key))
+				break;
+			if (strcmp(key, "#l") != 0) {
+				if (!read_string(sbuf))
+					break;
+				if (!s3_set_variable_string(key, sbuf))
+					break;
+			}
+		}
+		if (i != count)
+			break;	/* Error. */
+
+		/* Read the master volume. */
+		if (!read_f32(&f))
+		    break;
+		s3_set_master_volume(f);
+
+		/* Write the global volumes. */
+		for (i = 0; i < S3_MIXER_TRACKS; i++) {
+			if (!read_f32(&f))
+				break;
+			s3_set_mixer_global_volume(i, f);
+		}
+		if (i == 0)
+			break;	/* Error. */
+
+		/* Read the character volumes. */
+		for (i = 0; i < S3_CH_VOL_SLOTS; i++) {
+			if (!read_f32(&f))
+				break;
+			s3_set_character_volume(i, f);
+		}
+		if (i == 0)
+			break;	/* Error. */
+
+		/* Read the text speed. */
+		if (!read_f32(&f))
+			break;
+		s3_set_text_speed(f);
+
+		/* Read the auto speed. */
+		if (!read_f32(&f))
+			break;
+		s3_set_auto_speed(f);
+
+		/* Read the global config. */
+		if (!read_u32(&count))
+			break;
+		for (i = 0; i < count; i++) {
+			if (!read_string(&key, sizeof(key)))
+				break;
+			if (strcmp(key, "#l") != 0) {
+				if (!read_string(sbuf, sizeof(sbuf)))
+					break;
+				if (!s3_overwrite_config(key, sbuf))
+					break;
+			}
+		}
+		if (i != count)
+			break;	/* Error. */
+
+		/* Close the stream. */
+		if (!close_read_stream())
+			break;
+
+		success = true;
+	} while (0);
+
+	if (!success)
+		return false;
+
+	return true;
+}
+
+/*
+ * Execute a local save.
+ */
+bool
+s3_execute_save_local(
+	int index)
+{
+	uint64_t timestamp;
+
+	success = false;
+	do {
+		/* Save the seen flags for the current tag file. */
+		s3_save_seen();
+
+		/* Save the global save data. */
+		s3_execute_save_global();
+
+		/* Open a buffer for streaming. */
+		if (!open_write_stream())
+			return false;
+
+		/* Write the save format version. */
+		ver = (uint32_t)SAVE_VER;
+		if (!write32(&ver))
+			break;
+
+		/* Write the timestamp. */
+		timestamp = (uint64_t)time(NULL);
+		if (!write_u64(timestamp))
+			break;
+
+		/* Write the chapter name. */
+		if (!write_string(s3_get_chapter_name()))
+			break;
+
+		/* Write the last message. */
+		if (!write_string(s3_get_last_message(false)))
+			break;
+
+		/* Write the previous last message. */
+		if (!write_string(s3_get_last_message(true)))
+			break;
+
+		/* Write the thumbnail. */
+		if (!write_data(s3_get_image_pixels(s3_get_thumb_image()),
+				(size_t)(conf_save_data_thumb_width * conf_save_data_thumb_height * 4)))
+			break;
+
+		/* Write the tag file name. */
+		if (!write_string(s3_get_tag_file()))
+			break;
+
+		/* Write the tag index. */
+		if (!write_u32(s3_get_tag_index()))
+			break;
+		if (!write_u32(s3_get_last_english_tag_index()))
+			break;
+
+		/* Write the gosub return index. */
+		if (!write_u32(s3_get_return_index()))
+			break;
+
+		/* Write the stage. */
+		for (i = 0; i < STAGE_LAYERS; i++) {
+			if (i == S3_LAYER_BG    || i == S3_LAYER_BG2 ||
+			    i == S3_LAYER_EFB1  || i == S3_LAYER_EFB2 ||
+			    i == S3_LAYER_EFB3  || i == S3_LAYER_EFB4 ||
+			    i == S3_LAYER_CHB   || i == S3_LAYER_CHL ||
+			    i == S3_LAYER_CHLC  || i == S3_LAYER_CHR ||
+			    i == S3_LAYER_CHRC  ||i == S3_LAYER_CHC ||
+			    i == S3_LAYER_EFF1  ||i == S3_LAYER_EFF2 ||
+			    i == S3_LAYER_EFF3  ||i == S3_LAYER_EFF4 ||
+			    i == S3_LAYER_CHF   ||i == S3_LAYER_TEXT1 ||
+			    i == S3_LAYER_TEXT2 ||i == S3_LAYER_TEXT3 ||
+			    i == S3_LAYER_TEXT4) {
+				if (!write_string(s3_get_layer_file_name(i)))
+					break;
+				if (!write_uint32(s3_get_layer_x(i)))
+					break;
+				if (!write_uint32(s3_get_layer_y(i)))
+					break;
+				if (!write_uint32(s3_get_layer_alpha(i)))
+					break;
+				if (!write_uint32(s3_get_layer_scale_x(i)))
+					break;
+				if (!write_uint32(s3_get_layer_scale_y(i)))
+					break;
+				if (!write_uint32(s3_get_layer_center_x(i)))
+					break;
+				if (!write_uint32(s3_get_layer_center_y(i)))
+					break;
+				if (!write_uint32(s3_get_layer_rotate(i)))
+					break;
+				if (i >= LAYER_TEXT1 && i <= LAYER_TEXT8) {
+					if (!write_string(s3_get_layer_text(i)))
+						break;
+				}
+			}
+		}
+		if (i != S3_STAGE_LAYERS)
+			break; /* Error. */
+
+		/* Serialize the anime. */
+		for (i = 0; i < S3_REG_ANIME_COUNT; i++) {
+			if (!write_string(s3_get_reg_anime_file_name(i)))
+				break;
+		}
+		if (i != S3_REG_ANIME_COUNT)
+			break;	/* Error. */
+
+		/* Write the sound tracks. */
+		for (i = 0; i < S3_MIXER_TRACKS; i++) {
+			if (!write_f32(s3_get_mixer_volume(i)))
+				break;
+			if (!write_string(s3_get_track_file_name(i)))
+				break;
+		}
+
+		/* Write the variables. */
+		count = s3_get_variable_count();
+		if (!write_u32(count))
+			break;
+		for (i = 0; i < count; i++) {
+			const char *name = s3_get_variable_name(i);
+			if (!s3_is_global_variable(name)) {
+				if (!write_string(name))
+					break;
+				if (!write_string(s3_get_variable_string(name)))
+					break;
+			} else {
+				if (!write_string("#g"))
+					break;
+			}
+		}
+		if (i != count)
+			break;	/* Error. */
+
+		/* TODO: Serialize the temporary stage of Ciel. */
+
+		/* Write the non-global config. */
+		count = s3_get_config_count();
+		if (!write_u32(count))
+			break;
+		for (i = 0; i < count; i++) {
+			const char *key = s3_get_config_key(i);
+			if (s3_is_config_global(key))
+				continue;
+			if (!write_string(s3_get_config_as_string(key)))
+				break;
+		}
+		if (i != count)
+			break;	/* Error. */
+
+		/* Close the stream. */
+		if (!close_write_stream("%03d.sav", index)) {
+			s3_log_error(S3_TR("Failed to write save data."));
+			return false;
+		}
+
+		/* Store the timestamp. */
+		save_time[index] = timestamp;
+
+		/* Update the latest index. */
+		latest_index = index;
+
+		/* Update the basic information. */
+		load_basic_save_info(index);
+
+		/* Succeeded. */
+		success = true;
+	} while (0);
+
+	if (!success) {
+		s3_log_error(S3_TR("Failed to write save data."));
+		close_write_stream(NULL);
+		return false;
+	}
+
+	return true;
+}
+
+/*
+ * Execute a local load.
+ */
+bool
+s3_execute_load_local(
+	int index)
+{
+	char key[128];
+	uint64_t timestamp;
+	int x, y;
+	float f;
+
+	success = false;
+	do {
+		/* Save the seen flags for the current tag file. */
+		s3_save_seen();
+
+		/* Save the global save data. */
+		s3_execute_save_global();
+
+		/* Stop the anime. */
+		cleanup_anime();
+
+		/* Clear the stage. */
+		s3_clear_stage();
+
+		/* Clear the history. */
+		clear_history();
+
+		/* Clear the message status. */
+		if (is_message_active())
+			clear_message_active();
+
+		/* Open a buffer for streaming. */
+		if (!open_read_stream("%03d.sav", index))
+			break;
+
+		/* Read the save format version. */
+		if (!read_u32(&ver))
+			break;
+		if (ver != SAVE_VER) {
+			s3_log_error(S3_TR("Save data version mismatched."));
+			break;
+		}
+
+		/* Skip the timestamp. */
+		if (!read_u64(&timestamp))
+			break;
+
+		/* Read the chapter title. */
+		if (!read_string())
+			break;
+		if (!s3_set_chapter_name(sbuf))
+			break;
+
+		/* Read the last message. */
+		if (!read_string())
+			break;
+		if (!s3_set_last_message(sbuf))
+			break;
+
+		/* Read the previous last message. */
+		if (!read_string())
+			break;
+		if (!se_set_pending_message(sbuf))
+			break;
+
+		/* Skip the thumbnail. */
+		if (!read_skip((size_t)(conf_save_thumb_width * conf_save_thumb_height * 4)))
+			break;
+
+		/* Read the tag file name. */
+		if (!read_string())
+			break;
+		if (!s3_move_to_tag_file(sbuf))
+			break;
+
+		/* Read the tag index. */
+		if (!read_u32(&u))
+			break;
+		if (!s3_move_to_tag_index(u))
+			break;
+
+		/* Read the gosub return index. */
+		if (!read_u32(&u))
+			break;
+		if (!s3_set_return_index(u))
+			break;
+
+		/* Read the stage. */
+		for (i = 0; i < S3_STAGE_LAYERS; i++) {
+			if (i == S3_LAYER_BG    || i == S3_LAYER_BG2 ||
+			    i == S3_LAYER_EFB1  || i == S3_LAYER_EFB2 ||
+			    i == S3_LAYER_EFB3  || i == S3_LAYER_EFB4 ||
+			    i == S3_LAYER_CHB   || i == S3_LAYER_CHL ||
+			    i == S3_LAYER_CHLC  || i == S3_LAYER_CHR ||
+			    i == S3_LAYER_CHRC  ||i == S3_LAYER_CHC ||
+			    i == S3_LAYER_EFF1  ||i == S3_LAYER_EFF2 ||
+			    i == S3_LAYER_EFF3  ||i == S3_LAYER_EFF4 ||
+			    i == S3_LAYER_CHF   ||i == S3_LAYER_TEXT1 ||
+			    i == S3_LAYER_TEXT2 ||i == S3_LAYER_TEXT3 ||
+			    i == S3_LAYER_TEXT4) {
+				/* Read the file name. */
+				if (!read_string())
+					break;
+				if (strcmp(sbuf, "") != 0) {
+					img = s3_create_image_from_file(sbuf);
+					if (img == NULL)
+						break;
+					if (!s3_set_layer_file_name(i, fname))
+						break;
+					s3_set_layer_image(i, img);
+				}
+
+				/* Read the position. */
+				if (!read_u32(&x))
+					break;
+				if (!read_u32(&y))
+					break;
+				s3_set_layer_position(i, x, y);
+
+				/* Read the alpha. */
+				if (!read_u32(&u))
+					break;
+				s3_set_layer_alpha(i, u);
+
+				/* Read the scale. */
+				if (!read_f32(&f))
+					break;
+				s3_set_layer_scale_x(i, f);
+				if (!read_f32(&f))
+					break;
+				s3_set_layer_scale_y(i, f);
+
+				/* Read the center. */
+				if (!read_u32(&x))
+					break;
+				if (!read_u32(&y))
+					break;
+				s3_set_layer_center(i, x, y);
+
+				/* Read the text. */
+				if (i >= LAYER_TEXT1 && i <= LAYER_TEXT8) {
+					if (!read_string())
+						break;
+					if (!s3_set_layer_text(i, sbuf))
+						break;
+				}
+			}
+
+		}
+		if (i != S3_STAGE_LAYERS)
+			break; /* Error. */
+
+		/* Start the eyes and lips animes. */
+		for (i = 0; i < S3_CH_ALL_LAYERS; i++) {
+			int layer = s3_chpos_to_layer(i);
+			const char *fname = s3_get_layer_file_name(layer);
+			if (!s3_load_eye_image_if_exists(i, fname))
+				break;
+			if (!s3_load_lip_image_if_exists(i, fname))
+				break;
+		}
+		if (i != S3_CH_ALL_LAYERS)
+			break; /* Error. */
+
+		/* Read the anime. */
+		for (i = 0; i < S3_REG_ANIME_COUNT; i++) {
+			if (!read_string(sbuf))
+				break;
+			if (strcmp(sbuf, "") != 0) {
+				if (!s3_load_anime_from_file(text, i, NULL))
+					break;
+			}
+		}
+		if (i != S3_REG_ANIME_COUNT)
+			break;
+
+		/* Read the sound tracks. */
+		for (i = 0; i < S3_MIXER_TRACKS; i++) {
+			if (!read_f32(&f))
+				break;
+			s3_set_mixer_volume(i, f);
+
+			if (!read_string(sbuf))
+				break;
+			set_mixer_input(i, sbuf);
+		}
+		if (i != S3_MIXER_TRACKS)
+			break;	/* Error. */
+
+		/* Read the variables. */
+		if (!read_u32(&count))
+			break;
+		for (i = 0; i < count; i++) {
+			if (!read_string(key))
+				break;
+			if (strcmp(key, "#g") != 0) {
+				if (!read_string(sbuf))
+					break;
+				if (!s3_set_variable_string(key, sbuf))
+					break;
+			}
+		}
+		if (i != count)
+			break;	/* Error. */
+
+		/* TODO: Ciel temporary stage. */
+
+		/* Read the config. */
+		if (!read_u32(&count))
+			break;
+		for (i = 0; i < count; i++) {
+			if (!read_string(key))
+				break;
+			if (!read_string(sbuf))
+				break;
+			if (!s3_overwrite_config(key, sbuf))
+				break;
+		}
+		if (i != count)
+			break;	/* Error. */
+
+		/* Close the read stream. */
+		close_read_stream();
+
+		/* Reload the stage. */
+		if (!reload_stage())
+			return false;
+
+		/* Hide the name box, message box, and choose boxes. */
+		show_namebox(false);
+		show_msgbox(false);
+		show_choosebox(false);
+
+		/* Set the flag. */
+		is_right_after_load = true;
+
+		/* Succeeded. */
+		success = true;
+	} while (0);
+
+	if (!success) {
+		close_read_stream();
+		return false;
+	}
+
+	return true;
+}
+
+/*
+ * Check if the save data exist.
+ */
+bool
+s3_check_save_exists(
+	int index)
+{
+	assert(index >= 0);
+	if (index >= ALL_SAVE_SLOTS)
+		return false;
+
+	if (save_time[index] == 0)
+		return false;
+
+	return true;
+}
+
+/*
+ * Delete a save data.
+ */
+void
+s3_delete_local_save(
+	int index)
+{
+/*
+ * Delete a save data.
+ */
+void
+s3_delete_save(
+	       int index)
+{
+	/* TODO */
+}
+
+/*
+ * Delete the global save data.
+ */
+void
+s3_delete_global_save(void)
+{
+	/* TODO */
 }
 
 /*
  * Check if right after load.
  */
 bool
-s3_check_if_right_after_load(void)
+s3_check_right_after_load(void)
 {
-	if (load_flag) {
-		load_flag = false;
+	if (is_right_after_load) {
+		is_right_after_load = false;
 		return true;
 	}
 	return false;
@@ -209,7 +863,7 @@ s3_check_if_right_after_load(void)
  * Get the timestamp of a save data.
  */
 uint64_t
-s3_get_save_date(
+s3_get_save_timestamp(
 	int index)
 {
 	assert(index >= 0);
@@ -270,1307 +924,393 @@ s3_get_save_thumbnail(
 	return save_thumb[index];
 }
 
-/*
- * Execute a save.
- */
-bool
-s3_execute_save(
-	int index)
+/* Load the basic information from all local save files. */
+static void
+load_basic_save_info_all(void)
 {
-	char s[128];
-	uint64_t timestamp;
+	int i;
 
-	/* Save the seen flags for the current tag file. */
-	s3_save_seen();
+	latest_index = 0;
 
-	/* Save the global save data. */
-	s3_execute_save_global();
-
-	/* Get the file name for the local save data. */
-	snprintf(s, sizeof(s), "%03d.sav", index);
-
-	/* Serialize the local save data. */
-	if (!serialize_all(s, &timestamp, index))
-		return false;
-
-	/* Store the timestamp. */
-	save_time[index] = timestamp;
-
-	/* Update the latest index. */
-	latest_index = index;
-
-	return true;
+	/* For each save slot. */
+	for (i = 0; i < ALL_SAVE_SLOTS; i++)
+		load_basic_save_info(i);
 }
 
-/* Serialize the local save data. */
-static bool
-serialize_all(
-	const char *fname,
-	uint64_t *timestamp,
+/* Load the basic information from all local save files. */
+static void
+load_basic_save_info(
 	int index)
 {
-	uint64_t t;
 	uint32_t ver;
 	bool success;
 
-	/* Open a buffer for streaming. */
-	if (!open_write_stream())
-		return false;
-
 	success = false;
-	t = 0;
 	do {
-		/* Write the save format version. */
-		ver = (uint32_t)SAVE_VER;
-		if (!write32(&ver))
+		/* Open a buffer for streaming. */
+		if (!open_read_stream("%03d.sav", index))
+			continue;
+
+		/* Read the save format version. */
+		if (!read_u32(&ver))
+			continue;
+		if (ver != SAVE_VER)
+			continue;
+
+		/* Skip the timestamp. */
+		if (!read_u64(&save_time[i]))
+			break;
+		if (save_time[i] > save_time[latest_index])
+			latest_index = i;
+
+		/* Read the chapter title. */
+		if (!read_string(sbuf))
+			break;
+		save_title[i] = strdup(sbuf);
+		if (save_title[i] == NULL) {
+			s3_log_out_of_memory();
+			break;
+		}
+
+		/* Skip the last message. */
+		if (!read_string(sbuf))
+			break;
+		save_message[i] = strdup(sbuf);
+		if (save_message[i] == NULL) {
+			s3_log_out_of_memory();
+			break;
+		}
+
+		/* Skip the previous last message. */
+		if (!read_string(sbuf))
 			break;
 
-		/* Write the timestamp. */
-		t = (uint64_t)time(NULL);
-		if (!write64(&t, sizeof(t)))
+		/* Read the thumbnail. */
+		if (!read_data(s3_get_image_pixels(save_thumb[i], (size_t)(conf_save_thumb_width * conf_save_thumb_height * 4))))
 			break;
+		s3_notify_image_update(save_thumb[i]);
 
-		/* Write the chapter name. */
-		if (!write_string(s3_get_chapter_name()))
-			break;
+		/* Close the stream. */
+		close_read_stream();
 
-		/* Write the last message. */
-		if (!write_string(s3_get_last_message(false)))
-		return false;
-
-		/* Write the previous last message. */
-		if (!write_string(s3_get_last_message(true)))
-		return false;
-
-		/* Serialize the thumbnail. */
-		if (!serialize_thumb(index))
-			break;
-
-		/* Serialize the command position. */
-		if (!serialize_command())
-			break;
-
-		/* Serialize the stage. */
-		if (!serialize_stage())
-			break;
-
-		/* Serialize the anime. */
-		if (!serialize_anime())
-			break;
-
-		/* Serialize the sound. */
-		if (!serialize_sound())
-			break;
-
-		/* Serialize the variables. */
-		if (!serialize_vars())
-			break;
-
-		/* Serialize the temporary stage of Ciel. */
-		/*
-		 * if (!ciel_serialize_hook(wf))
-		 *      break;
-		 */
-
-		/* Serialize the config. */
-		if (!serialize_local_config(wf))
-			break;
-
-		/* Succeeded. */
 		success = true;
 	} while (0);
 
-	/* Close the stream. */
-	close_write_stream(fname);
+	if (!success) {
+		close_read_stream();
+		return false;
+	}
 
-	/* Store the timestamp. */
-	*timestamp = t;
-
-	if (!success)
-		s3_log_error(S3_TR("Failed to write save data."));
-
-	return success;
+	return true;
 }
 
-/* Serialize the chapter title. */
+/*
+ * Helpers
+ */
+
+/* Open the write stream. */
 static bool
-serialize_title(int index)
+open_write_stream(void)
 {
-	size_t len;
+	const int START_SIZE = 1 * 1024 * 1024; /* 1 MB */
 
+	assert(stream_buf == NULL);
+	if (stream_buf != NULL)
+		return fasle;
 
-	/* Save章題を保存する */
-	if (index != -1) {
-		if (save_title[index] != NULL)
-			free(save_title[index]);
-		save_title[index] = strdup(tmp_str);
-		if (save_title[index] == NULL) {
-			log_memory();
-			return false;
-		}
+	stream_buf = malloc(START_SIZE);
+	if (start_size == NULL) {
+		s3_log_out_of_memory();
+		return false;
 	}
+
+	stream_buf_alloc_size = START_SIZE;
+	stream_buf_pos = 0;
 
 	return true;
 }
 
-/* Serialize the thumbnail. */
+/* Write u32 to the stream. */
 static bool
-serialize_thumb(struct wfile *wf, int index)
+write_u32(
+	uint32_t val)
 {
-	pixel_t *src, pix;
-	unsigned char *dst;
-	size_t len;
-	int x, y;
-
-	/* stage.cのサムネイルをsave.cのイメージにコピーする */
-	if (save_thumb[index] == NULL) {
-		save_thumb[index] = create_image(conf_save_data_thumb_width,
-						 conf_save_data_thumb_height);
-		if (save_thumb[index] == NULL)
-			return false;
-	}
-	draw_image_copy(save_thumb[index], 0, 0, get_thumb_image(),
-			conf_save_data_thumb_width, conf_save_data_thumb_height, 0, 0);
-	notify_image_update(save_thumb[index]);
-
-	/* ピクセル列を準備する */
-	src = get_thumb_image()->pixels;
-	dst = tmp_pixels;
-	for (y = 0; y < conf_save_data_thumb_height; y++) {
-		for (x = 0; x < conf_save_data_thumb_width; x++) {
-			pix = *src++;
-			*dst++ = (unsigned char)get_pixel_r(pix);
-			*dst++ = (unsigned char)get_pixel_g(pix);
-			*dst++ = (unsigned char)get_pixel_b(pix);
-		}
-	}
-
-	/* 書き出す */
-	len = (size_t)(conf_save_data_thumb_width * conf_save_data_thumb_height * 3);
-	if (write_wfile(wf, tmp_pixels, len) < len)
+	if (resize_buffer(4))
 		return false;
+
+	stream_buf[stream_buf_pos + 0] = (uint8_t)(val & 0xff);
+	stream_buf[stream_buf_pos + 1] = (uint8_t)((val >> 8) & 0xff);
+	stream_buf[stream_buf_pos + 2] = (uint8_t)((val >> 16) & 0xff);
+	stream_buf[stream_buf_pos + 3] = (uint8_t)((val >> 24) & 0xff);
+
+	stream_buf_pos += 4;
 
 	return true;
 }
 
-/* コマンド位置をシリアライズする */
-static bool serialize_command(struct wfile *wf)
-{
-	const char *s;
-	int n, m;
-
-	/* スクリプトファイル名を取得してシリアライズする */
-	s = get_script_file_name();
-	if (write_wfile(wf, s, strlen(s) + 1) < strlen(s) + 1)
-		return false;
-
-	/* コマンドインデックスを取得してシリアライズする */
-	n = get_command_index();
-	if (last_en_command != -1 &&
-	    n >= last_en_command && n < last_en_command + 10)
-		n = last_en_command;
-	if (write_wfile(wf, &n, sizeof(n)) < sizeof(n))
-		return false;
-
-	/* '@gosub'のリターンポイントを取得してシリアライズする */
-	m = get_return_point();
-	if (write_wfile(wf, &m, sizeof(m)) < sizeof(m))
-		return false;
-
-	return true;
-}
-
-/* ステージをシリアライズする */
-static bool serialize_stage(struct wfile *wf)
-{
-	const char *file, *text;
-	size_t len;
-	int i, x, y, alpha;
-
-	for (i = 0; i < STAGE_LAYERS; i++) {
-		/* Exclude the following layers. */
-		switch (i) {
-		case LAYER_MSG: continue;
-		case LAYER_NAME: continue;
-		case LAYER_CLICK: continue;
-		case LAYER_AUTO: continue;
-		case LAYER_SKIP: continue;
-		case LAYER_CHB_EYE: continue;
-		case LAYER_CHL_EYE: continue;
-		case LAYER_CHLC_EYE: continue;
-		case LAYER_CHR_EYE: continue;
-		case LAYER_CHRC_EYE: continue;
-		case LAYER_CHC_EYE: continue;
-		case LAYER_CHF_EYE: continue;
-		case LAYER_CHB_LIP: continue;
-		case LAYER_CHL_LIP: continue;
-		case LAYER_CHLC_LIP: continue;
-		case LAYER_CHR_LIP: continue;
-		case LAYER_CHRC_LIP: continue;
-		case LAYER_CHC_LIP: continue;
-		case LAYER_CHF_LIP: continue;
-		default: break;
-		}
-
-		file = get_layer_file_name(i);
-		if (file == NULL)
-			file = "none";
-		if (strcmp(file, "") == 0)
-			file = "none";
-		if (write_wfile(wf, file, strlen(file) + 1) < strlen(file) + 1)
-			return false;
-
-		x = get_layer_x(i);
-		y = get_layer_y(i);
-		if (write_wfile(wf, &x, sizeof(x)) < sizeof(x))
-			return false;
-		if (write_wfile(wf, &y, sizeof(y)) < sizeof(y))
-			return false;
-
-		alpha = get_layer_alpha(i);
-		if (write_wfile(wf, &alpha, sizeof(alpha)) < sizeof(alpha))
-			return false;
-
-		if (i >= LAYER_TEXT1 && i <= LAYER_TEXT8) {
-			text = get_layer_text(i);
-			if (text == NULL)
-				text = "";
-
-			len = strlen(text) + 1;
-			if (write_wfile(wf, text, len) < len)
-				return false;
-		}
-	}
-
-	return true;
-}
-
-/* アニメをシリアライズする */
-static bool serialize_anime(struct wfile *wf)
-{
-	const char *file;
-	int i;
-
-	for (i = 0; i < REG_ANIME_COUNT; i++) {
-		file = get_reg_anime_file_name(i);
-		if (file == NULL)
-			file = "none";
-		if (strcmp(file, "") == 0)
-			file = "none";
-		if (write_wfile(wf, file, strlen(file) + 1) < strlen(file) + 1)
-			return false;
-	}
-
-	return true;
-}
-
-/* サウンドをシリアライズする */
-static bool serialize_sound(struct wfile *wf)
-{
-	const char *s;
-	float vol;
-	int n;
-
-	/* BGMをシリアライズする */
-	s = get_bgm_file_name();
-	if (s == NULL)
-		s = "none";
-	if (write_wfile(wf, s, strlen(s) + 1) < strlen(s) + 1)
-		return false;
-
-	/* SEをシリアライズする(ループ再生時のみ) */
-	s = get_se_file_name();
-	if (s == NULL)
-		s = "none";
-	if (write_wfile(wf, s, strlen(s) + 1) < strlen(s) + 1)
-		return false;
-
-	/* Serialize the volumes. */
-	for (n = 0; n < MIXER_STREAMS; n++) {
-		vol = get_mixer_volume(n);
-		if (write_wfile(wf, &vol, sizeof(vol)) < sizeof(vol))
-			return false;
-	}
-
-	return true;
-}
-
-/* ローカル変数をシリアライズする */
-static bool serialize_vars(struct wfile *wf)
-{
-	size_t len;
-
-	len = LOCAL_VAR_SIZE * sizeof(int32_t);
-	if (write_wfile(wf, get_local_variables_pointer(), len) < len)
-		return false;
-
-	return true;
-}
-
-/* 名前変数をシリアライズする */
-static bool serialize_name_vars(struct wfile *wf)
-{
-	size_t len;
-	const char *name;
-	int i;
-
-	for (i = 0; i < NAME_VAR_SIZE; i++) {
-		name = get_name_variable(i);
-		assert(name != NULL);
-
-		len = strlen(name) + 1;
-		if (write_wfile(wf, name, len) < len)
-			return false;
-	}
-
-	return true;
-}
-
-/* ローカルコンフィグをシリアライズする */
-static bool serialize_local_config(struct wfile *wf)
-{
-	if (!serialize_config_helper(wf, false))
-		return false;
-
-	return true;
-}
-
-/* コンフィグをシリアライズする */
-static bool serialize_config_helper(struct wfile *wf, bool is_global)
-{
-	char val[1024];
-	const char *key, *val_s;
-	size_t len;
-	int key_index;
-
-	/* 保存可能なキーを列挙してループする */
-	key_index = 0;
-	while (1) {
-		/* セーブするキーを取得する */
-		key = get_config_key_for_save_data(key_index++);
-		if (key == NULL) {
-			/* キー列挙が終了した */
-			break;
-		}
-
-		/* グローバル/ローカルの対象をチェックする */
-		if (!is_global) {
-			if (is_config_key_global(key))
-				continue;
-		} else {
-			if (!is_config_key_global(key))
-				continue;
-		}
-
-		/* キーを出力する */
-		len = strlen(key) + 1;
-		if (write_wfile(wf, key, len) < len)
-			return false;
-
-		/* 型ごとに値を出力する */
-		switch (get_config_type_for_key(key)) {
-		case 's':
-			val_s = get_string_config_value_for_key(key);
-			if (val_s == NULL)
-				val_s = "";
-			len = strlen(val_s) + 1;
-			if (write_wfile(wf, val_s, len) < len)
-				return false;
-			break;
-		case 'i':
-			snprintf(val, sizeof(val), "%d", get_int_config_value_for_key(key));
-			len = strlen(val) + 1;
-			if (write_wfile(wf, &val, len) < len)
-				return false;
-			break;
-		case 'b':
-			if (get_bool_config_value_for_key(key))
-				snprintf(val, sizeof(val), "yes");
-			else
-				snprintf(val, sizeof(val), "no");
-			len = strlen(val) + 1;
-			if (write_wfile(wf, &val, len) < len)
-				return false;
-			break;
-		case 'f':
-			snprintf(val, sizeof(val), "%f",
-				 get_float_config_value_for_key(key));
-			len = strlen(val) + 1;
-			if (write_wfile(wf, &val, len) < len)
-				return false;
-			break;
-		default:
-			assert(CONFIG_TYPE_ERROR);
-			break;
-		}
-	}
-
-	/* 終端記号を出力する */
-	len = strlen(END_OF_CONFIG);
-	if (write_wfile(wf, END_OF_CONFIG, len) < len)
-		return false;
-
-	return true;
-}
-
-/*
- * ロードの実際の処理
- */
-
-/*
- * クイックセーブデータがあるか
- */
-bool have_quick_save_data(void)
-{
-	if (quick_save_time == 0)
-		return false;
-
-	return true;
-}
-
-/*
- * クイックロードを行う Do quick load
- */
-bool quick_load(bool extra)
-{
-	const char *fname;
-
-	/* 既読フラグのセーブを行う */
-	save_seen();
-
-	/* グローバル変数のセーブを行う */
-	save_global_data();
-
-	/* ステージをクリアする */
-	clear_stage();
-
-	/* アニメを停止する */
-	cleanup_anime();
-
-	/* ローカルデータのデシリアライズを行う */
-	fname = !extra ? QUICK_SAVE_FILE : QUICK_SAVE_EXTRA_FILE;
-	if (!deserialize_all(fname))
-		return false;
-
-	/* ステージを初期化する */
-	if (!reload_stage())
-		abort();
-
-	/* 名前ボックス、メッセージボックス、選択ボックスを非表示とする */
-	show_namebox(false);
-	show_msgbox(false);
-
-	/* オートモードを解除する */
-	if (is_auto_mode())
-		stop_auto_mode();
-
-	/* スキップモードを解除する */
-	if (is_skip_mode())
-		stop_skip_mode();
-
-#ifdef USE_EDITOR
-	clear_variable_changed();
-	on_load_script();
-	on_change_position();
-#endif
-
-	load_flag = true;
-
-	if (is_message_active())
-		clear_message_active();
-
-	/* ロード画面から戻ったという状態をクリアする */
-	(void)is_return_from_sysmenu_gosub();
-
-	return true;
-}
-
-/*
- * ロードを処理する
- */
-bool execute_load(int index)
-{
-	char s[128];
-
-	/* ファイル名を求める */
-	snprintf(s, sizeof(s), "%03d.sav", index);
-
-	/* 既読フラグのセーブを行う */
-	save_seen();
-
-	/* グローバル変数のセーブを行う */
-	save_global_data();
-
-	/* ステージをクリアする */
-	clear_stage();
-
-	/* アニメを停止する */
-	cleanup_anime();
-
-	/* ローカルデータのデシリアライズを行う */
-	if (!deserialize_all(s))
-		return false;
-
-	/* ステージを初期化する */
-	if (!reload_stage())
-		abort();
-
-	/* 名前ボックス、メッセージボックス、選択ボックスを非表示とする */
-	show_namebox(false);
-	show_msgbox(false);
-
-#ifdef USE_EDITOR
-	clear_variable_changed();
-	on_load_script();
-	on_change_position();
-#endif
-
-	load_flag = true;
-
-	if (is_message_active())
-		clear_message_active();
-
-	/* ロード画面から戻ったという状態をクリアする */
-	(void)is_return_from_sysmenu_gosub();
-
-	return true;
-}
-
-/* すべてをデシリアライズする */
-static bool deserialize_all(const char *fname)
-{
-	struct rfile *rf;
-	uint64_t t;
-	size_t img_size;
-	uint32_t ver;
-	bool success;
-
-	/* ファイルを開く */
-	rf = open_rfile(SAVE_DIR, fname, true);
-	if (rf == NULL)
-		return false;
-
-	success = false;
-	do {
-		/* セーブデータバージョンを読み込む */
-		if (read_rfile(rf, &ver, sizeof(ver)) < sizeof(ver))
-			break;
-		if (ver != SAVE_VER) {
-			log_save_ver();
-			break;
-		}
-
-		/* 日付を読み込む (読み飛ばす) */
-		if (read_rfile(rf, &t, sizeof(t)) < sizeof(t))
-			break;
-
-		/* 章題を読み込む */
-		if (gets_rfile(rf, tmp_str, sizeof(tmp_str)) != NULL)
-			if (!set_chapter_name(tmp_str))
-				break;
-
-		/* メッセージを読み込む */
-		if (!deserialize_message(rf))
-			break;
-
-		/* 直前の継続メッセージを読み込む */
-		gets_rfile(rf, tmp_str, sizeof(tmp_str));
-		if (strcmp(tmp_str, "") != 0) {
-			pending_message = strdup(tmp_str);
-			if (pending_message == NULL) {
-				log_memory();
-				break;
-			}
-		} else {
-			if (pending_message != NULL)
-				free(pending_message);
-			pending_message = NULL;
-		}
-
-		/* サムネイルを読み込む (読み飛ばす) */
-		img_size = (size_t)(conf_save_data_thumb_width *
-				    conf_save_data_thumb_height * 3);
-		if (read_rfile(rf, tmp_pixels, img_size) < img_size)
-			break;
-
-		/* コマンド位置のデシリアライズを行う */
-		if (!deserialize_command(rf))
-			break;
-
-		/* ステージのデシリアライズを行う */
-		if (!deserialize_stage(rf))
-			break;
-
-		/* アニメのデシリアライズを行う */
-		if (!deserialize_anime(rf))
-			break;
-
-		/* サウンドのデシリアライズを行う */
-		if (!deserialize_sound(rf))
-			break;
-
-		/* ボリュームのデシリアライズを行う */
-		if (!deserialize_volumes(rf))
-			break;
-
-		/* 変数のデシリアライズを行う */
-		if (!deserialize_vars(rf))
-			break;
-		
-		/* 名前変数のデシリアライズを行う */
-		if (!deserialize_name_vars(rf))
-			break;
-
-		/* Cielの仮ステージのデシリアライズを行う */
-		if (!ciel_deserialize_hook(rf))
-			break;
-
-		/* コンフィグのデシリアライズを行う */
-		if (!deserialize_config_common(rf))
-			break;
-
-		/* ヒストリをクリアする */
-		clear_history();
-
-		/* 成功 */
-		success = true;
-	} while (0);
-
-	/* ファイルをクローズする */
-	close_rfile(rf);
-
-	return success;
-}
-
-/* メッセージのデシリアライズを行う */
-static bool deserialize_message(struct rfile *rf)
-{
-	if (gets_rfile(rf, tmp_str, sizeof(tmp_str)) == NULL)
-		return false;
-
-	return true;
-}
-
-/* コマンド位置のデシリアライズを行う */
-static bool deserialize_command(struct rfile *rf)
-{
-	char s[1024];
-	int n, m;
-
-	if (gets_rfile(rf, s, sizeof(s)) == NULL)
-		return false;
-
-	if (!load_script(s))
-		return false;
-
-	if (read_rfile(rf, &n, sizeof(n)) < sizeof(n))
-		return false;
-
-	if (read_rfile(rf, &m, sizeof(m)) < sizeof(m))
-		return false;
-
-	if (!move_to_command_index(n))
-		return false;
-
-	if (!set_return_point(m))
-		return false;
-
-	return true;
-}
-
-/* ステージのデシリアライズを行う */
-static bool deserialize_stage(struct rfile *rf)
-{
-	char text[4096];
-	struct image *img;
-	const char *fname;
-	int i, x, y, alpha, layer;
-
-	for (i = 0; i < STAGE_LAYERS; i++) {
-		/* Exclude the following layers. */
-		switch (i) {
-		case LAYER_MSG: continue;
-		case LAYER_NAME: continue;
-		case LAYER_CLICK: continue;
-		case LAYER_AUTO: continue;
-		case LAYER_SKIP: continue;
-		case LAYER_CHB_EYE: continue;
-		case LAYER_CHL_EYE: continue;
-		case LAYER_CHLC_EYE: continue;
-		case LAYER_CHR_EYE: continue;
-		case LAYER_CHRC_EYE: continue;
-		case LAYER_CHC_EYE: continue;
-		case LAYER_CHF_EYE: continue;
-		case LAYER_CHB_LIP: continue;
-		case LAYER_CHL_LIP: continue;
-		case LAYER_CHLC_LIP: continue;
-		case LAYER_CHR_LIP: continue;
-		case LAYER_CHRC_LIP: continue;
-		case LAYER_CHC_LIP: continue;
-		case LAYER_CHF_LIP: continue;
-		default: break;
-		}
-
-		/* File name. */
-		text[0] = '\0';
-		if (gets_rfile(rf, text, sizeof(text)) == NULL)
-			strcpy(text, "none");
-		if (i == LAYER_BG) {
-			if (strcmp(text, "none") == 0 ||
-			    strcmp(text, "") == 0) {
-				fname = NULL;
-				img = create_initial_bg();
-				if (img == NULL)
-					return false;;
-			} else if (text[0] == '#') {
-				fname = &text[0];
-				img = create_image_from_color_string(conf_game_width, conf_game_height, &text[1]);
-				if (img == NULL)
-					return false;
-			} else {
-				fname = &text[0];
-				if (strncmp(text, "image/", 3) == 0) {
-					img = create_image_from_file(CG_DIR, &text[6]);
-				} else {
-					img = create_image_from_file(BG_DIR, text);
-				}
-				if (img == NULL)
-					return false;
-			}
-		} else {
-			const char *dir;
-			switch (i) {
-			case LAYER_BG2:
-				dir = BG_DIR;
-				break;
-			case LAYER_CHB:
-			case LAYER_CHL:
-			case LAYER_CHLC:
-			case LAYER_CHR:
-			case LAYER_CHRC:
-			case LAYER_CHC:
-			case LAYER_CHF:
-				dir = CH_DIR;
-				break;
-			default:
-				dir = CG_DIR;
-				break;
-			}
-
-			if (strcmp(text, "none") == 0 || strcmp(text, "") == 0) {
-				fname = NULL;
-				img = NULL;
-			} else {
-				fname = &text[0];
-				img = create_image_from_file(dir, text);
-				if (img == NULL)
-					return false;
-			}
-		}
-		set_layer_file_name(i, fname);
-		set_layer_image(i, img);
-
-		/* Position. */
-		if (read_rfile(rf, &x, sizeof(x)) < sizeof(x))
-			return false;
-		if (read_rfile(rf, &y, sizeof(y)) < sizeof(y))
-			return false;
-		set_layer_position(i, x, y);
-
-		/* Alpha. */
-		if (read_rfile(rf, &alpha, sizeof(alpha)) < sizeof(alpha))
-			return false;
-		set_layer_alpha(i, alpha);
-
-		/* Text. */
-		if (i >= LAYER_TEXT1 && i <= LAYER_TEXT8) {
-			if (gets_rfile(rf, text, sizeof(text)) != NULL)
-				set_layer_text(i, text);
-			else
-				set_layer_text(i, NULL);
-		}
-	}
-
-	for (i = 0; i < CH_ALL_LAYERS; i++) {
-		layer = chpos_to_layer(i);
-		fname = get_layer_file_name(layer);
-		if (!load_eye_image_if_exists(i, fname))
-			return false;
-		if (!load_lip_image_if_exists(i, fname))
-			return false;
-	}
-
-	return true;
-}
-
-/* アニメをデシリアライズする */
-static bool deserialize_anime(struct rfile *rf)
-{
-	char text[4096];
-	int i;
-
-	for (i = 0; i < REG_ANIME_COUNT; i++) {
-		if (gets_rfile(rf, text, sizeof(text)) == NULL)
-			continue;
-		if (strcmp(text, "none") == 0)
-			continue;
-		if (!load_anime_from_file(text, i, NULL))
-			return false;
-	}
-
-	return true;
-}
-
-/* サウンドをデシリアライズする */
-static bool deserialize_sound(struct rfile *rf)
-{
-	char s[1024];
-	struct wave *w;
-
-	/* BGMをデシリアライズする */
-	if (gets_rfile(rf, s, sizeof(s)) == NULL)
-		return false;
-	if (strcmp(s, "none") == 0) {
-		set_bgm_file_name(NULL);
-		w = NULL;
-	} else {
-		set_bgm_file_name(s);
-		w = create_wave_from_file(BGM_DIR, s, true);
-		if (w == NULL)
-			return false;
-	}
-	set_mixer_input(BGM_STREAM, w);
-
-	/* SEをデシリアライズする */
-	if (gets_rfile(rf, s, sizeof(s)) == NULL)
-		return false;
-	if (strcmp(s, "none") == 0) {
-		set_se_file_name(NULL);
-		w = NULL;
-	} else {
-		set_se_file_name(s);
-		w = create_wave_from_file(SE_DIR, s, true);
-		if (w == NULL)
-			return false;
-	}
-	set_mixer_input(SE_STREAM, w);
-
-	/* VOICEを停止する */
-	set_bgvoice_playing(false);
-	set_mixer_input(VOICE_STREAM, NULL);
-
-	return true;
-}
-
-/* ボリュームをデシリアライズする */
-static bool deserialize_volumes(struct rfile *rf)
-{
-	float vol;
-	int n;
-
-	for (n = 0; n < MIXER_STREAMS; n++) {
-		if (read_rfile(rf, &vol, sizeof(vol)) < sizeof(vol))
-			return false;
-		set_mixer_volume(n, vol, 0);
-	}
-
-	return true;
-}
-
-/* ローカル変数をデシリアライズする */
-static bool deserialize_vars(struct rfile *rf)
-{
-	size_t len;
-
-	len = LOCAL_VAR_SIZE * sizeof(int32_t);
-	if (read_rfile(rf, get_local_variables_pointer(), len) < len)
-		return false;
-
-	return true;
-}
-
-/* 名前変数をデシリアライズする */
-static bool deserialize_name_vars(struct rfile *rf)
-{
-	char name[1024];
-	int i;
-
-	for (i = 0; i < NAME_VAR_SIZE; i++) {
-		if (gets_rfile(rf, name, sizeof(name)) == NULL)
-			return false;
-		set_name_variable(i, name);
-	}
-
-	return true;
-}
-
-/* コンフィグをデシリアライズする */
-static bool deserialize_config_common(struct rfile *rf)
-{
-	char key[1024];
-	char val[1024];
-
-	/* 終端記号が現れるまでループする */
-	while (1) {
-		/* ロードするキーを取得する */
-		if (gets_rfile(rf, key, sizeof(key)) == NULL)
-			return false;
-
-		/* 終端記号の場合はループを終了する */
-		if (strcmp(key, END_OF_CONFIG) == 0)
-			break;
-
-		/* 値を取得する(文字列として保存されている) */
-		if (gets_rfile(rf, val, sizeof(val)) == NULL)
-			return false;
-
-		/* コンフィグを上書きする */
-		if (!overwrite_config(key, val))
-			return false;
-	}
-
-	return true;
-}
-
-/* セーブデータから基本情報を読み込む */
-static void load_basic_save_data(void)
-{
-	struct rfile *rf;
-	char buf[128];
-	uint64_t t;
-	int i;
-
-	latest_index = -1;
-
-	/* セーブスロットごとに読み込む */
-	for (i = 0; i < SAVE_SLOTS; i++) {
-		/* セーブデータファイルを開く */
-		snprintf(buf, sizeof(buf), "%03d.sav", i);
-		rf = open_rfile(SAVE_DIR, buf, true);
-		if (rf != NULL) {
-			/* 読み込む */
-			load_basic_save_data_file(rf, i);
-			close_rfile(rf);
-		}
-	}
-
-	/* セーブデータファイルを開く */
-	rf = open_rfile(SAVE_DIR, QUICK_SAVE_FILE, true);
-	if (rf != NULL) {
-		/* セーブ時刻を取得する */
-		if (read_rfile(rf, &t, sizeof(t)) == sizeof(t))
-			quick_save_time = (time_t)t;
-		close_rfile(rf);
-	}
-}
-
-/* セーブデータファイルから基本情報を読み込む */
-static void load_basic_save_data_file(struct rfile *rf, int index)
-{
-	uint64_t t;
-	size_t img_size;
-	uint32_t ver;
-	pixel_t *dst;
-	const unsigned char *src;
-	uint32_t r, g, b;
-	int x, y;
-
-	/* セーブデータのバージョンを読む */
-	read_rfile(rf, &ver, sizeof(uint32_t));
-	if (ver != SAVE_VER) {
-		/* セーブデータの互換性がないので読み込まない */
-		return;
-	}
-
-	/* セーブ時刻を取得する */
-	if (read_rfile(rf, &t, sizeof(t)) < sizeof(t))
-		return;
-	save_time[index] = (time_t)t;
-	if (latest_index == -1)
-		latest_index = index;
-	else if ((time_t)t > save_time[latest_index])
-		latest_index = index;
-
-	/* 章題を取得する */
-	if (gets_rfile(rf, tmp_str, sizeof(tmp_str)) == NULL)
-		return;
-	save_title[index] = strdup(tmp_str);
-	if (save_title[index] == NULL) {
-		log_memory();
-		return;
-	}
-
-	/* メッセージを取得する */
-	if (gets_rfile(rf, tmp_str, sizeof(tmp_str)) == NULL)
-		return;
-	save_message[index] = strdup(tmp_str);
-	if (save_message[index] == NULL) {
-		log_memory();
-		return;
-	}
-
-	/* 直前の継続メッセージを取得する */
-	if (gets_rfile(rf, tmp_str, sizeof(tmp_str)) == NULL)
-		return;
-
-	/* サムネイルを取得する */
-	img_size = (size_t)(conf_save_data_thumb_width *
-			    conf_save_data_thumb_height * 3);
-	if (read_rfile(rf, tmp_pixels, img_size) < img_size)
-		return;
-
-	/* サムネイルの画像を生成する */
-	save_thumb[index] = create_image(conf_save_data_thumb_width,
-					 conf_save_data_thumb_height);
-	if (save_thumb[index] == NULL)
-		return;
-	dst = save_thumb[index]->pixels;
-	src = tmp_pixels;
-	for (y = 0; y < conf_save_data_thumb_height; y++) {
-		for (x = 0; x < conf_save_data_thumb_width; x++) {
-			r = *src++;
-			g = *src++;
-			b = *src++;
-			*dst++ = make_pixel(0xff, r, g, b);
-		}
-	}
-	notify_image_update(save_thumb[index]);
-}
-
-/*
- * グローバル変数
- */
-
-/* グローバルデータのロードを行う */
-static void load_global_data(void)
-{
-	struct rfile *rf;
-	float f;
-	uint32_t ver;
-	int i;
-
-	/* ファイルを開く */
-	rf = open_rfile(SAVE_DIR, GLOBAL_SAVE_FILE, true);
-	if (rf == NULL)
-		return;
-
-	/* セーブデータのバージョンを読む */
-	read_rfile(rf, &ver, sizeof(uint32_t));
-	if (ver != SAVE_VER) {
-		/* セーブデータの互換性がないので読み込まない */
-		log_save_ver();
-		close_rfile(rf);
-		return;
-	}
-
-	/* グローバル変数をデシリアライズする */
-	read_rfile(rf, get_global_variables_pointer(),
-		   GLOBAL_VAR_SIZE * sizeof(int32_t));
-
-	/*
-	 * load_global_data()はinit_mixer()より後に呼ばれる
-	 */
-
-	/* マスターボリュームをデシリアライズする */
-	if (read_rfile(rf, &f, sizeof(f)) < sizeof(f))
-		return;
-	f = (f < 0 || f > 1.0f) ? 1.0f : f;
-	set_master_volume(f);
-
-	/* グローバルボリュームをデシリアライズする */
-	for (i = 0; i < MIXER_STREAMS; i++) {
-		if (read_rfile(rf, &f, sizeof(f)) < sizeof(f))
-			break;
-		f = (f < 0 || f > 1.0f) ? 1.0f : f;
-		set_mixer_global_volume(i, f);
-	}
-
-	/* キャラクタボリュームをデシリアライズする */
-	for (i = 0; i < CH_VOL_SLOTS; i++) {
-		if (read_rfile(rf, &f, sizeof(f)) < sizeof(f))
-			break;
-		f = (f < 0 || f > 1.0f) ? 1.0f : f;
-		set_character_volume(i, f);
-	}
-
-	/* テキストスピードをデシリアライズする */
-	read_rfile(rf, &msg_text_speed, sizeof(f));
-	msg_text_speed =
-		(msg_text_speed < 0 || msg_text_speed > 10000.0f) ?
-		1.0f : msg_text_speed;
-
-	/* オートモードスピードをデシリアライズする */
-	read_rfile(rf, &msg_auto_speed, sizeof(f));
-	msg_auto_speed =
-		(msg_auto_speed < 0 || msg_auto_speed > 10000.0f) ?
-		1.0f : msg_auto_speed;
-
-	/* コンフィグをデシリアライズする */
-	deserialize_config_common(rf);
-
-	/* ファイルを閉じる */
-	close_rfile(rf);
-}
-
-/*
- * グローバルデータのセーブを行う
- */
-void save_global_data(void)
-{
-	struct wfile *wf;
-	uint32_t ver;
-	float f;
-	int i;
-
-	/* セーブディレクトリを作成する */
-	make_sav_dir();
-
-	/* ファイルを開く */
-	wf = open_wfile(SAVE_DIR, GLOBAL_SAVE_FILE);
-	if (wf == NULL)
-		return;
-
-	/* セーブデータのバージョンを書き出す */
-	ver = SAVE_VER;
-	write_wfile(wf, &ver, sizeof(uint32_t));
-
-	/* グローバル変数をシリアライズする */
-	write_wfile(wf, get_global_variables_pointer(),
-		    GLOBAL_VAR_SIZE * sizeof(int32_t));
-
-	/* マスターボリュームをシリアライズする */
-	f = get_master_volume();
-	if (write_wfile(wf, &f, sizeof(f)) < sizeof(f))
-		return;
-
-	/* グローバルボリュームをシリアライズする */
-	for (i = 0; i < MIXER_STREAMS; i++) {
-		f = get_mixer_global_volume(i);
-		if (write_wfile(wf, &f, sizeof(f)) < sizeof(f))
-			break;
-	}
-
-	/* キャラクタボリュームをシリアライズする */
-	for (i = 0; i < CH_VOL_SLOTS; i++) {
-		f = get_character_volume(i);
-		if (write_wfile(wf, &f, sizeof(f)) < sizeof(f))
-			break;
-	}
-
-	/* テキストスピードをシリアライズする */
-	write_wfile(wf, &msg_text_speed, sizeof(f));
-	
-	/* オートモードスピードをシリアライズする */
-	write_wfile(wf, &msg_auto_speed, sizeof(f));
-
-	/* コンフィグをデシリアライズする */
-	serialize_config_helper(wf, true);
-
-	/* ファイルを閉じる */
-	close_wfile(wf);
-}
-
-/*
- * ローカルセーブデータの削除を行う
- */
-void delete_local_save(int index)
-{
-	char s[128];
-
-	if (index == -1)
-		index = QUICK_SAVE_INDEX;
-
-	/* セーブデータがない場合、何もしない */
-	if (save_time[index] == 0)
-		return;
-
-	/* ファイル名を求める */
-	snprintf(s, sizeof(s), "%03d.sav", index);
-
-	/* セーブファイルを削除する */
-	remove_file(SAVE_DIR, s);
-
-	/* セーブデータを消去する */
-	save_time[index] = 0;
-	if (save_title[index] != NULL) {
-		free(save_title[index]);
-		save_title[index] = NULL;
-	}
-	if (save_message[index] != NULL) {
-		free(save_message[index]);
-		save_message[index] = NULL;
-	}
-	if (save_thumb[index] != NULL) {
-		destroy_image(save_thumb[index]);
-		save_thumb[index] = NULL;
-	}
-}
-
-/*
- * グローバルセーブデータの削除を処理する
- */
-void delete_global_save(void)
-{
-	/* セーブファイルを削除する */
-	remove_file(SAVE_DIR, GLOBAL_SAVE_FILE);
-}
-
-/*
- * Get the pending message (message box content right after load)
- */
-char *get_pending_message(void)
-{
-	char *ret;
-
-	if (pending_message != NULL) {
-		ret = strdup(pending_message);
-		if (ret == NULL) {
-			log_memory();
-			return NULL;
-		}
-		free(pending_message);
-		pending_message = NULL;
-	} else {
-		ret = NULL;
-	}
-
-	return ret;
-}
-
-/* */
+/* Write u64 to the stream. */
 static bool
-open_write_buffer(void)
+write_u64(
+	  uint64_t val)
 {
+	if (resize_buffer(8))
+		return false;
+
+	stream_buf[stream_buf_pos + 0] = (uint8_t)(val & 0xff);
+	stream_buf[stream_buf_pos + 1] = (uint8_t)((val >> 8) & 0xff);
+	stream_buf[stream_buf_pos + 2] = (uint8_t)((val >> 16) & 0xff);
+	stream_buf[stream_buf_pos + 3] = (uint8_t)((val >> 24) & 0xff);
+	stream_buf[stream_buf_pos + 4] = (uint8_t)((val >> 32) & 0xff);
+	stream_buf[stream_buf_pos + 5] = (uint8_t)((val >> 40) & 0xff);
+	stream_buf[stream_buf_pos + 6] = (uint8_t)((val >> 48) & 0xff);
+	stream_buf[stream_buf_pos + 7] = (uint8_t)((val >> 56) & 0xff);
+
+	stream_buf_pos += 8;
+
+	return true;
 }
 
+/* Write foat to the stream. */
 static bool
-close_write_buffer(
-	const char *file)
+write_f32(
+	  float val)
 {
+	uint32_t v;
+
+	if (resize_buffer(4))
+		return false;
+
+	v = *(uint32_t *)&val;
+	stream_buf[stream_buf_pos + 0] = (uint8_t)(v & 0xff);
+	stream_buf[stream_buf_pos + 1] = (uint8_t)((v >> 8) & 0xff);
+	stream_buf[stream_buf_pos + 2] = (uint8_t)((v >> 16) & 0xff);
+	stream_buf[stream_buf_pos + 3] = (uint8_t)((v >> 24) & 0xff);
+
+	stream_buf_pos += 4;
+
+	return true;
 }
 
+/* Write foat to the stream. */
 static bool
-write_to_buffer(
+write_string(
+	const char *val)
+{
+	size_t len, i;
+
+	if (val == NULL)
+		val = "";
+
+	len = strlen(val) + 1;
+	if (resize_buffer(len))
+		return false;
+
+	for (i = 0; i < len; len++)
+		stream_buf[stream_buf_pos++] = val[i];
+
+	stream_buf_pos += len;
+
+	return true;
+}
+
+/* Write foat to the stream. */
+static bool
+write_data(
 	const void *data,
 	size_t size)
 {
+	if (resize_buffer(size))
+		return false;
+
+	memcpy(stream_buf, data, size);
+
+	stream_buf_pos += size;
+
+	return true;
 }
 
-/* */
+/* Resize the write stream buffer. */
 static bool
-open_read_buffer(
-	const char *file)
+resize_buffer(
+	size_t inc_size)
 {
+	if (stream_buf_pos + inc_size < stream_buf_alloc_size)
+		return true;
+
+	stream_buf_alloc_size *= 2;
+	stream_buf = realloc(stream_buf, stream_buf_alloc_size);
+	if (stream_buf == NULL)
+		return false;
+
+	return true;
 }
 
+/* Close the write stream */
 static bool
-close_read_buffer(void)
+close_write_buffer(
+	const char *file,
+	...)
 {
+	char fname[128];
+	va_list ap;
+
+	if (file != NULL) {
+		va_start(ap, file);
+		vsnprintf(fname, sizeof(fname), file, ap);
+		va_end(ap);
+
+		if (!s3_write_save_data(fname, stream_buf, stream_buf_pos))
+			return false;
+	}
+
+	if (stream_buf != NULL) {
+		free(stream_buf);
+		stream_buf = NULL;
+		stream_buf_alloc_size = 0;
+		stream_buf_pos = 0;
+	}
+
+	return true;
 }
 
+/* Open the read stream. */
 static bool
-read_from_buffer(
+open_read_stream(
+	const char *file,
+	...)
+{
+	char fname[128];
+	size_t size;
+	va_list ap;
+
+	assert(stream_buf == NULL);
+	if (stream_buf != NULL)
+		return fasle;
+
+	va_start(ap, file);
+	vsnprintf(fname, sizeof(fname), file, ap);
+	va_end(ap);
+	
+	if (!s3_get_save_data_size(fname))
+		return false;
+
+	stream_buf = malloc(size);
+	if (start_size == NULL) {
+		s3_log_out_of_memory();
+		return false;
+	}
+
+	stream_buf_alloc_size = size;
+	stream_buf_pos = 0;
+
+	return true;
+}
+
+/* Read u32 from the stream. */
+static bool
+read_u32(
+	uint32_t *ret)
+{
+	if (stream_buf_pos + 4 > stream_buf_alloc_size)
+		return false;
+
+	*ret = (stream_buf[stream_buf_pos + 0] |
+		(stream_buf[stream_buf_pos + 1] << 8) |
+		(stream_buf[stream_buf_pos + 2] << 16) |
+		(stream_buf[stream_buf_pos + 3] << 24));
+
+	stream_buf_pos += 4;
+
+	return true;
+}
+
+/* Read u64 from the stream. */
+static bool
+read_u64(
+	uint64_t *ret)
+{
+	if (stream_buf_pos + 8 > stream_buf_alloc_size)
+		return false;
+
+	*ret = (stream_buf[stream_buf_pos + 0] |
+		(stream_buf[stream_buf_pos + 1] << 8) |
+		(stream_buf[stream_buf_pos + 2] << 16) |
+		(stream_buf[stream_buf_pos + 3] << 24) |
+		(stream_buf[stream_buf_pos + 4] << 32) |
+		(stream_buf[stream_buf_pos + 5] << 40) |
+		(stream_buf[stream_buf_pos + 6] << 48) |
+		(stream_buf[stream_buf_pos + 7] << 56));
+
+	stream_buf_pos += 8;
+
+	return true;
+}
+
+/* Read float from the stream. */
+static bool
+read_f32(
+	float *ret)
+{
+	if (stream_buf_pos + 4 > stream_buf_alloc_size)
+		return false;
+
+	*(uint32_t *)ret = (stream_buf[stream_buf_pos + 0] |
+			    (stream_buf[stream_buf_pos + 1] << 8) |
+			    (stream_buf[stream_buf_pos + 2] << 16) |
+			    (stream_buf[stream_buf_pos + 3] << 24));
+
+	stream_buf_pos += 4;
+
+	return true;
+}
+
+/* Read a string to the stream. */
+static bool
+read_string(
+	char **val,
+	size_t size)
+{
+	size_t i;
+
+	i = 0;
+	while (1) {
+		if (i >= size)
+			return false;
+		if (stream_buf_pos + 1 > stream_buf_alloc_size)
+			return false;
+
+		val[i++] = stream_buf[stream_buf_pos++];
+	}
+
+	return true;
+}
+
+/* Write foat to the stream. */
+static bool
+read_data(
 	void *data,
 	size_t size)
 {
+	if (stream_buf_pos + size > stream_buf_alloc_size)
+		return false;
+
+	memcpy(data, stream_buf, size);
+
+	stream_buf_pos += size;
+
+	return true;
+}
+
+/* Close the read stream */
+static bool
+close_read_buffer(void)
+{
+	if (stream_buf != NULL) {
+		free(stream_buf);
+		stream_buf = NULL;
+		stream_buf_alloc_size = 0;
+		stream_buf_pos = 0;
+	}
+
+	return true;
 }

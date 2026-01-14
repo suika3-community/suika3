@@ -56,7 +56,7 @@ s3i_cleanup_gui(void);
  * Check if right after returned from a GUI.
  */
 bool
-s3_check_if_right_after_gui(void);
+s3_check_right_after_gui(void);
 
 /*
  * Load a GUI file and prepare for a start.

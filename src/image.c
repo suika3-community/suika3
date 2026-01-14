@@ -417,3 +417,13 @@ s3_fill_image_rect(
 			     height,
 			     color);
 }
+
+/*
+ * Get the raw pixel pointer of an image.
+ */
+s3_pixel_t
+s3_get_image_pixels(
+	struct s3_image *image)
+{
+	return pf_get_texture_pixels(image->tex_id);
+}

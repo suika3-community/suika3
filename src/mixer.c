@@ -136,66 +136,13 @@ void cleanup_mixer(void)
 }
 
 /*
- * Set the BGM file name.
- */
-bool
-s3_set_bgm_file_name(const char *file)
-{
-	if (bgm_file_name != NULL) {
-		free(bgm_file_name);
-		bgm_file_name = NULL;
-	}
-
-	if (file != NULL) {
-		bgm_file_name = strdup(file);
-		if (bgm_file_name == NULL) {
-			s3_log_out_of_memory();
-			return false;
-		}
-	}
-
-	return true;
-}
-
-/*
- * Get the BGM file name.
- */
-const char *
-s3_get_bgm_file_name(void)
-{
-	return bgm_file_name;
-}
-
-/*
- * Set the SE file name.
- */
-bool
-s3_set_se_file_name(
-	const char *file)
-{
-	if (se_file_name != NULL) {
-		free(se_file_name);
-		se_file_name = NULL;
-	}
-
-	if (file != NULL) {
-		se_file_name = strdup(file);
-		if (se_file_name == NULL) {
-			s3_log_out_of_memory();
-			return false;
-		}
-	}
-
-	return true;
-}
-
-/*
  * Get the SE file name. (only when loopback-playing)
  */
 const char *
-s3_get_se_file_name(void)
+s3_get_track_file_name(
+	int track)
 {
-	return se_file_name;
+	return track_file_name[track];
 }
 
 /*
@@ -204,7 +151,8 @@ s3_get_se_file_name(void)
 void
 s3_set_mixer_input_file(
 	int track,
-	const char *file)
+	const char *file,
+	bool is_looped)
 {
 	assert(n < S3_MIXER_TRACKS);
 
@@ -213,10 +161,25 @@ s3_set_mixer_input_file(
 		is_playing[track] = false;
 	}
 
-	if (file != NULL) {
+	if (track_file_name[track] != NULL) {
+		free(track_file_name[track]);
+		track_file_name[track] = NULL;
+	}
+
+	if (file != NULL && strcmp(file, "") != 0) {
 		pf_play_sound(track, file);
 		is_playing[track] = true;
+
+		if (is_looped)
+			track_file_name[track] = strdup(file);
+			if (track_file_name[track] == NULL) {
+				s3_log_out_of_memory();
+				return false;
+			}
+		}
 	}
+
+return true;
 }
 
 /*
