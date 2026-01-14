@@ -575,6 +575,14 @@ pf_check_save_data(
 	const char *key);
 
 /*
+ * Get the size of save data.
+ */
+bool
+pf_get_save_data_size(
+	const char *key,
+	size_t *ret);
+
+/*
  * Raw File I/O
  */
 
