@@ -1291,6 +1291,44 @@ pf_check_save_data(
 	return ret;
 }
 
+/*
+ * Get the size of save data.
+ */
+bool
+pf_get_save_data_size(
+	const char *key,
+	size_t *ret)
+{
+	char *fname;
+	struct rfile *rf;
+
+	/* Make a save file name. */
+	fname = make_save_file_name(key);
+	if (fname == NULL) {
+		log_error(PPS_TR("Save data key too long."));
+		return false;
+	}
+
+	/* Open a save file. */
+	if (!open_rfile(fname, &rf)) {
+		log_error(PPS_TR("Cannot open a save file."));
+		free(fname);
+		return false;
+	}
+	free(fname);
+
+	/* Get a file size. */
+	if (!get_rfile_size(rf, ret)) {
+		log_error(PPS_TR("Cannot get the size of a save file."));
+		return false;
+	}
+
+	/* Close the save file. */
+	close_rfile(rf);
+
+	return true;
+}
+
 /* Make a save file name correspond to a key string. */
 static char *
 make_save_file_name(
