@@ -83,10 +83,10 @@ static struct s3_image *namebox_image;
 static struct s3_image *click_image[S3_CLICK_FRAMES];
 
 /* Image for the choose box (idle). */
-static struct s3_image *choose_idle_image[S3_CHOOSE_COUNT];
+static struct s3_image *choose_idle_image[S3_CHOOSEBOX_COUNT];
 
 /* Image for the choose box (hover). */
-static struct s3_image *choose_hover_image[S3_CHOOSE_COUNT];
+static struct s3_image *choose_hover_image[S3_CHOOSEBOX_COUNT];
 
 /* Image for the system button (idle). */
 static struct s3_image *sysbtn_idle_image;
@@ -116,6 +116,9 @@ static bool is_msgbox_visible;
 /* Whether to show the name box. */
 static bool is_namebox_visible;
 
+/* Whether to show the choose box. */
+static bool is_choosebox_visible[S3_CHOOSEBOX_COUNT];
+
 /* Whether to show the click animation. */
 static bool is_click_visible;
 
@@ -124,6 +127,7 @@ static bool is_auto_visible;
 
 /* Whether to show the skip mode banner. */
 static bool is_skip_visible;
+
 
 /*
  * Layer Properties
@@ -282,7 +286,7 @@ s3_reload_stage_images(void)
 		return false;
 
 	/* Setup Kira Kira Effect. */
-	if (!s3i_setup_kirakira())
+	if (!setup_kirakira())
 		return false;
 
 	/* Setup the "NEW" image for the save lots. */
@@ -459,7 +463,7 @@ setup_choose(bool is_hover, int index)
 	}
 
 	/* Load the images. */
-	for (i = 0; i < S3_CHOOSE_COUNT; i ++) {
+	for (i = 0; i < S3_CHOOSEBOX_COUNT; i ++) {
 		if (index != -1 && i != index)
 			continue;
 
@@ -831,6 +835,30 @@ s3_set_layer_position(
 }
 
 /*
+ * Get the layer X scale.
+ */
+float
+s3_get_layer_scale_x(
+	int layer)
+{
+	assert(layer >= 0 && layer < S3_STAGE_LAYERS);
+
+	return layer_scale_x[layer];
+}
+
+/*
+ * Get the layer X scale.
+ */
+float
+s3_get_layer_scale_y(
+	int layer)
+{
+	assert(layer >= 0 && layer < S3_STAGE_LAYERS);
+
+	return layer_scale_y[layer];
+}
+
+/*
  * Sets the layer scale.
  */
 void
@@ -848,6 +876,70 @@ s3_set_layer_scale(
 
 	layer_scale_x[layer] = scale_x;
 	layer_scale_y[layer] = scale_y;
+}
+
+/*
+ * Get the layer center X position.
+ */
+int
+s3_get_layer_center_x(
+	int layer)
+{
+	assert(layer >= 0 && layer < S3_STAGE_LAYERS);
+
+	return layer_center_x[layer];
+}
+
+/*
+ * Get the layer center Y position.
+ */
+int
+s3_get_layer_center_y(
+	int layer)
+{
+	assert(layer >= 0 && layer < S3_STAGE_LAYERS);
+
+	return layer_center_y[layer];
+}
+
+/*
+ * Set the layer center position.
+ */
+void
+s3_set_layer_center(
+	int layer,
+	int center_x,
+	int center_y)
+{
+	assert(layer >= 0 && layer < S3_STAGE_LAYERS);
+
+	layer_center_x[layer] = center_x;
+	layer_center_y[layer] = center_y;
+}
+
+/*
+ * Get the layer rotate
+ */
+float
+s3_get_layer_rotate(
+	int layer)
+{
+	assert(layer >= 0 && layer < S3_STAGE_LAYERS);
+
+	return layer_rotate[layer];
+}
+
+/*
+ * Set the layer center position.
+ */
+void
+s3_set_layer_rotate(
+	int layer,
+	float rot)
+{
+	assert(layer >= 0 && layer < S3_STAGE_LAYERS);
+
+	layer_rotate[layer] = rot;
 }
 
 /*
@@ -907,32 +999,6 @@ s3_set_layer_blend(
 {
 	assert(layer >= 0 && layer < S3_STAGE_LAYERS);
 	layer_blend[layer] = blend;
-}
-
-/*
- * Set the layer center coordinate.
- */
-void
-s3_set_layer_center(
-	int layer,
-	int x,
-	int y)
-{
-	assert(layer >= 0 && layer < S3_STAGE_LAYERS);
-	layer_center_x[layer] = (float)x;
-	layer_center_y[layer] = (float)y;
-}
-
-/*
- * Set the layer rotation.
- */
-void
-s3_set_layer_rotate(
-	int layer,
-	float rad)
-{
-	assert(layer >= 0 && layer < S3_STAGE_LAYERS);
-	layer_rotate[layer] = rad;
 }
 
 /*
@@ -2122,7 +2188,7 @@ s3_set_click_index(
  * Fill the choose box by the choose box bg image.
  */
 void
-s3_fill_choose_idle_image(
+s3_fill_choosebox_idle_image(
 	int index)
 {
 	if (choose_idle_image[index] == NULL)
@@ -2142,7 +2208,7 @@ s3_fill_choose_idle_image(
  * Fill the choose box by the choose box fg image.
  */
 void
-s3_fill_choose_hover_image(
+s3_fill_choosebox_hover_image(
 	int index)
 {
 	if (choose_hover_image[index] == NULL)
@@ -2156,6 +2222,24 @@ s3_fill_choose_hover_image(
 			   choose_hover_image[index]->height,
 			   0,
 			   0);
+}
+
+/*
+ * Show or hide the choose box.
+ */
+void
+s3_show_choosebox(
+	bool show,
+	int index)
+{
+	int i;
+
+	if (index == -1) {
+		for (i = 0; i < S3_CHOOSEBOX_COUNT; i++)
+			is_choosebox_visible[i] = show;
+	} else {
+		is_choosebox_visible[index] = show;
+	}
 }
 
 /*

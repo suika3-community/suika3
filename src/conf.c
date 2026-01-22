@@ -42,6 +42,7 @@
 
 #include <playfield/playfield.h>
 
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>	/* NAN */
@@ -214,19 +215,19 @@ char *conf_choose_change_se;
 char *conf_choose_click_se;
 
 /* File names */
-char *conf_choose_idle[S3_CHOOSE_COUNT];
-char *conf_choose_hover[S3_CHOOSE_COUNT];
+char *conf_choose_idle[S3_CHOOSEBOX_COUNT];
+char *conf_choose_hover[S3_CHOOSEBOX_COUNT];
 
 /* Positions */
-int conf_choose_x[S3_CHOOSE_COUNT];
-int conf_choose_y[S3_CHOOSE_COUNT];
+int conf_choose_x[S3_CHOOSEBOX_COUNT];
+int conf_choose_y[S3_CHOOSEBOX_COUNT];
 
 /* Margin */
-int conf_choose_margin_top[S3_CHOOSE_COUNT];
+int conf_choose_margin_top[S3_CHOOSEBOX_COUNT];
 
 /* Anime */
-char *conf_choose_focus_anime[S3_CHOOSE_COUNT];
-char *conf_choose_unfocus_anime[S3_CHOOSE_COUNT];
+char *conf_choose_focus_anime[S3_CHOOSEBOX_COUNT];
+char *conf_choose_unfocus_anime[S3_CHOOSEBOX_COUNT];
 
 /*
  * Save Data Settings
@@ -945,7 +946,323 @@ s3i_cleanup_conf(void)
 	}
 }
 
-/* Read "config.ini" file. */
+/*
+ * Set a config.
+ */
+bool
+s3_set_config(
+	const char *key,
+	const char *val)
+{
+	int i;
+	char *s;
+
+	assert(key != NULL);
+	assert(val != NULL);
+
+	/* Search for a key index. */
+	for (i = 0; i < RULE_TBL_SIZE; i++) {
+		if (strcmp(rule_tbl[i].key, key) == 0)
+			break;	/* Found. */
+	}
+	if (i == RULE_TBL_SIZE)
+		return false;
+
+	/* Ignore a NULL-valued key. */
+	if (rule_tbl[i].var_ptr == NULL)
+		return true;
+
+	/* Assign by the type. */
+	switch (rule_tbl[i].type) {
+	case 'b':
+		/* var_ptr is a pointer to a bool var. */
+		*(bool *)rule_tbl[i].var_ptr = (strcmp(val, "yes") == 0 || strcmp(val, "1") == 0) ? true : false;
+		break;
+	case 'i':
+		/* var_ptr is a pointer to an int var. */
+		*(int *)rule_tbl[i].var_ptr = atoi(val);
+		break;
+	case 'f':
+		/* var_ptr is a pointer to a float var. */
+		*(float *)rule_tbl[i].var_ptr = (float)atof(val);
+		break;
+	case 's':
+		/* Free the previous string. */
+		if (*(char **)rule_tbl[i].var_ptr != NULL) {
+			free(*(char **)rule_tbl[i].var_ptr);
+			*(char **)rule_tbl[i].var_ptr = NULL;
+		}
+
+		/* Duplicate the new string. */
+		if (strcmp(val, "") != 0) {
+			s = strdup(val);
+			if (s == NULL) {
+				s3_log_out_of_memory();
+				return false;
+			}
+
+			/* var_ptr is a pointer to char* var. */
+			*(char **)rule_tbl[i].var_ptr = s;
+		}
+		break;
+	default:
+		assert(INVALID_CONFIG_TYPE);
+		break;
+	}
+
+	/* Update the layer (x, y) positions by config keys. */
+	s3_reload_stage_positions();
+
+	/* Postprocess for image load. */
+	if (strcmp(key, "msgbox.image") == 0)
+		s3i_setup_msgbox();
+	else if (strcmp(key, "namebox.image") == 0)
+		s3i_setup_namebox();
+	else if (strcmp(key, "choose.idle1") == 0)
+		s3i_setup_choose(false, 0);
+	else if (strcmp(key, "choose.hover1") == 0)
+		s3i_setup_choose(false, 0);
+	else if (strcmp(key, "choose.idle2") == 0)
+		s3i_setup_choose(false, 1);
+	else if (strcmp(key, "choose.hover2") == 0)
+		s3i_setup_choose(true, 1);
+	else if (strcmp(key, "choose.idle3") == 0)
+		s3i_setup_choose(false, 2);
+	else if (strcmp(key, "choose.hover3") == 0)
+		s3i_setup_choose(true, 2);
+	else if (strcmp(key, "choose.idl4") == 0)
+		s3i_setup_choose(false, 3);
+	else if (strcmp(key, "choose.hover4") == 0)
+		s3i_setup_choose(true, 3);
+	else if (strcmp(key, "choose.idle5") == 0)
+		s3i_setup_choose(false, 4);
+	else if (strcmp(key, "choose.hover5") == 0)
+		s3i_setup_choose(true, 4);
+	else if (strcmp(key, "choose.idle6") == 0)
+		s3i_setup_choose(false, 5);
+	else if (strcmp(key, "choose.hover6") == 0)
+		s3i_setup_choose(true, 5);
+	else if (strcmp(key, "choose.idle7") == 0)
+		s3i_setup_choose(false, 6);
+	else if (strcmp(key, "choose.hover7") == 0)
+		s3i_setup_choose(true, 6);
+	else if (strcmp(key, "choose.idle8") == 0)
+		s3i_setup_choose(false, 7);
+	else if (strcmp(key, "choose.hover8") == 0)
+		s3i_setup_choose(true, 7);
+
+	return true;
+}
+
+/*
+ * Get the number of the config keys.
+ */
+int
+s3_get_config_count(void)
+{
+	return RULE_TBL_SIZE;
+}
+
+/*
+ * Get a config key for index.
+ */
+const char *
+s3_get_config_key(
+	int index)
+{
+	int i, save_key_count;
+
+	save_key_count = 0;
+	for (i = 0; i < RULE_TBL_SIZE; i++) {
+		if (!rule_tbl[i].save)
+			continue;
+		if (save_key_count == index)
+			return rule_tbl[i].key;
+		save_key_count++;
+	}
+	return NULL;
+}
+
+/*
+ * Check if config key is stored to global save data.
+ */
+bool
+is_config_global(
+	const char *key)
+{
+	int i;
+
+	for (i = 0; i < RULE_TBL_SIZE; i++) {
+		if (strcmp(rule_tbl[i].key, key) == 0)
+			return rule_tbl[i].global;
+	}
+
+	return false;
+}
+
+/*
+ * Get a config value type. ('s', 'b', 'i', 'f')
+ */
+char
+s3_get_config_type(
+	const char *key)
+{
+	int i;
+
+	assert(key != NULL);
+
+	for (i = 0; i < RULE_TBL_SIZE; i++)
+		if (strcmp(rule_tbl[i].key, key) == 0)
+			return rule_tbl[i].type;
+
+	assert(CONFIG_KEY_NOT_FOUND);
+	return '?';
+}
+
+/*
+ * Get a string config value.
+ */
+const char *
+s3_get_config_string(
+	const char *key)
+{
+	int i;
+
+	assert(key != NULL);
+	for (i = 0; i < RULE_TBL_SIZE; i++) {
+		if (strcmp(rule_tbl[i].key, key) == 0) {
+			assert(rule_tbl[i].type == 's');
+			if (rule_tbl[i].var_ptr == NULL)
+				return "";
+			return *(char **)rule_tbl[i].var_ptr;
+		}
+	}
+	assert(CONFIG_KEY_NOT_FOUND);
+	return NULL;
+}
+
+/*
+ * Get a boolean config value.
+ */
+bool
+s3_get_config_bool(
+	const char *key)
+{
+	int i;
+
+	assert(key != NULL);
+	for (i = 0; i < RULE_TBL_SIZE; i++) {
+		if (strcmp(rule_tbl[i].key, key) == 0) {
+			assert(rule_tbl[i].type == 'b');
+			assert(rule_tbl[i].var_ptr != NULL);
+			return *(bool *)rule_tbl[i].var_ptr;
+		}
+	}
+	assert(CONFIG_KEY_NOT_FOUND);
+	return -1;
+}
+
+/*
+ * Get an integer config value.
+ */
+int
+get_config_int(
+	const char *key)
+{
+	int i;
+
+	assert(key != NULL);
+	for (i = 0; i < RULE_TBL_SIZE; i++) {
+		if (strcmp(rule_tbl[i].key, key) == 0) {
+			assert(rule_tbl[i].type == 'i');
+			assert(rule_tbl[i].var_ptr != NULL);
+			return *(int *)rule_tbl[i].var_ptr;
+		}
+	}
+	assert(CONFIG_KEY_NOT_FOUND);
+	return -1;
+}
+
+/*
+ * Get a float config value.
+ */
+float
+get_config_float(
+	const char *key)
+{
+	int i;
+
+	assert(key != NULL);
+	for (i = 0; i < RULE_TBL_SIZE; i++) {
+		if (strcmp(rule_tbl[i].key, key) == 0) {
+			assert(rule_tbl[i].type == 'f');
+			assert(rule_tbl[i].var_ptr != NULL);
+			return *(float *)rule_tbl[i].var_ptr;
+		}
+	}
+	assert(CONFIG_KEY_NOT_FOUND);
+	return 0;
+}
+
+/*
+ * Get a config value as a string.
+ */
+const char *
+s3_get_config_as_string(
+	const char *key)
+{
+	static char buf[128];
+	int i;
+
+	for (i = 0; i < RULE_TBL_SIZE; i++) {
+		if (strcmp(rule_tbl[i].key, key) == 0) {
+			switch (rule_tbl[i].type) {
+			case 'b':
+				if (*(bool *)rule_tbl[i].var_ptr)
+					snprintf(buf, sizeof(buf), "true");
+				else
+					snprintf(buf, sizeof(buf), "false");
+				return buf;
+			case 'i':
+				snprintf(buf, sizeof(buf), "%d", *(int *)rule_tbl[i].var_ptr);
+				return buf;
+			case 'f':
+				snprintf(buf, sizeof(buf), "%f", *(float *)rule_tbl[i].var_ptr);
+				return buf;
+			case 's':
+				return *(char **)rule_tbl[i].var_ptr;
+			default:
+				assert(INVALID_CONFIG_TYPE);
+				break;
+			}
+		}
+	}
+
+	return NULL;
+}
+
+/*
+ * Check if the specified locale is same as the current locale.
+ */
+bool
+s3_compare_locale(const char *s)
+{
+	const char *loc;
+
+	assert(s != NULL);
+
+	if (conf_game_locale != NULL)
+		loc = conf_game_locale;
+	else
+		loc = pf_get_system_language();
+
+	if (strcmp(loc, s) == 0)
+		return true;
+
+	return false;
+}
+
+/* Read the config file. */
 static bool read_conf(void)
 {
 	char *file_buf;
@@ -955,7 +1272,7 @@ static bool read_conf(void)
 	char *k, *v;
 	size_t len;
 
-	if (pf_read_file_content(S3_CONFIG_FILE, &file_buf, &len))
+	if (pf_read_file_content(S3_PATH_CONFIG, &file_buf, &len))
 		return false;
 
 	while (*line_ptr) {
@@ -1072,9 +1389,7 @@ static bool check_conf(void)
 	return true;
 }
 
-/*
- * Initialize various variables by config values.
- */
+/* Initialize various variables by config values. */
 static bool
 apply_initial_values(void)
 {
@@ -1098,260 +1413,4 @@ apply_initial_values(void)
 			break;
 
 	return true;
-}
-
-/*
- * Overwrite a config.
- */
-bool overwrite_config(const char *key, const char *val)
-{
-	int i;
-	char *s;
-
-	assert(key != NULL);
-	assert(val != NULL);
-
-	/* Search for a key index. */
-	for (i = 0; i < RULE_TBL_SIZE; i++) {
-		if (strcmp(rule_tbl[i].key, key) == 0)
-			break;	/* Found. */
-	}
-	if (i == RULE_TBL_SIZE)
-		return false;
-
-	/* Ignore a NULL-valued key. */
-	if (rule_tbl[i].var_ptr == NULL)
-		return true;
-
-	/* Assign by the type. */
-	switch (rule_tbl[i].type) {
-	case 'b':
-		/* var_ptr is a pointer to a bool var. */
-		*(bool *)rule_tbl[i].var_ptr = (strcmp(val, "yes") == 0 || strcmp(val, "1") == 0) ? true : false;
-		break;
-	case 'i':
-		/* var_ptr is a pointer to an int var. */
-		*(int *)rule_tbl[i].var_ptr = atoi(val);
-		break;
-	case 'f':
-		/* var_ptr is a pointer to a float var. */
-		*(float *)rule_tbl[i].var_ptr = (float)atof(val);
-		break;
-	case 's':
-		/* Free the previous string. */
-		if (*(char **)rule_tbl[i].var_ptr != NULL) {
-			free(*(char **)rule_tbl[i].var_ptr);
-			*(char **)rule_tbl[i].var_ptr = NULL;
-		}
-
-		/* Duplicate the new string. */
-		if (strcmp(val, "") != 0) {
-			s = strdup(val);
-			if (s == NULL) {
-				s3_log_out_of_memory();
-				return false;
-			}
-
-			/* var_ptr is a pointer to char* var. */
-			*(char **)rule_tbl[i].var_ptr = s;
-		}
-		break;
-	default:
-		assert(INVALID_CONFIG_TYPE);
-		break;
-	}
-
-	/* Update the layer (x, y) positions by config keys. */
-	s3_reload_stage_positions();
-
-	/* Postprocess for image load. */
-	if (strcmp(key, "msgbox.image") == 0)
-		setup_msgbox();
-	else if (strcmp(key, "namebox.image") == 0)
-		setup_namebox();
-	else if (strcmp(key, "choose.idle1") == 0)
-		setup_choose(false, 0);
-	else if (strcmp(key, "choose.hover1") == 0)
-		setup_choose(false, 0);
-	else if (strcmp(key, "choose.idle2") == 0)
-		setup_choose(false, 1);
-	else if (strcmp(key, "choose.hover2") == 0)
-		setup_choose(true, 1);
-	else if (strcmp(key, "choose.idle3") == 0)
-		setup_choose(false, 2);
-	else if (strcmp(key, "choose.hover3") == 0)
-		setup_choose(true, 2);
-	else if (strcmp(key, "choose.idl4") == 0)
-		setup_choose(false, 3);
-	else if (strcmp(key, "choose.hover4") == 0)
-		setup_choose(true, 3);
-	else if (strcmp(key, "choose.idle5") == 0)
-		setup_choose(false, 4);
-	else if (strcmp(key, "choose.hover5") == 0)
-		setup_choose(true, 4);
-	else if (strcmp(key, "choose.idle6") == 0)
-		setup_choose(false, 5);
-	else if (strcmp(key, "choose.hover6") == 0)
-		setup_choose(true, 5);
-	else if (strcmp(key, "choose.idle7") == 0)
-		setup_choose(false, 6);
-	else if (strcmp(key, "choose.hover7") == 0)
-		setup_choose(true, 6);
-	else if (strcmp(key, "choose.idle8") == 0)
-		setup_choose(false, 7);
-	else if (strcmp(key, "choose.hover8") == 0)
-		setup_choose(true, 7);
-
-	return true;
-}
-
-/*
- * Save-data related
- */
-
-/*
- * Get a config key for index.
- */
-const char *get_config_key(int index)
-{
-	int i, save_key_count;
-
-	save_key_count = 0;
-	for (i = 0; i < RULE_TBL_SIZE; i++) {
-		if (!rule_tbl[i].save)
-			continue;
-		if (save_key_count == index)
-			return rule_tbl[i].key;
-		save_key_count++;
-	}
-	return NULL;
-}
-
-/*
- * Check if config key is stored to global save data.
- */
-bool is_config_key_global(const char *key)
-{
-	int i;
-
-	for (i = 0; i < RULE_TBL_SIZE; i++) {
-		if (strcmp(rule_tbl[i].key, key) == 0)
-			return rule_tbl[i].global;
-	}
-
-	return false;
-}
-
-/*
- * Get a config value type. ('s', 'b', 'i', 'f')
- */
-char get_config_type_for_key(const char *key)
-{
-	int i;
-
-	assert(key != NULL);
-
-	for (i = 0; i < RULE_TBL_SIZE; i++)
-		if (strcmp(rule_tbl[i].key, key) == 0)
-			return rule_tbl[i].type;
-
-	assert(CONFIG_KEY_NOT_FOUND);
-	return '?';
-}
-
-/*
- * Get a string config value.
- */
-const char *get_string_config_value(const char *key)
-{
-	int i;
-
-	assert(key != NULL);
-	for (i = 0; i < RULE_TBL_SIZE; i++) {
-		if (strcmp(rule_tbl[i].key, key) == 0) {
-			assert(rule_tbl[i].type == 's');
-			if (rule_tbl[i].var_ptr == NULL)
-				return "";
-			return *(char **)rule_tbl[i].var_ptr;
-		}
-	}
-	assert(CONFIG_KEY_NOT_FOUND);
-	return NULL;
-}
-
-/*
- * Get a boolean config value.
- */
-bool get_bool_config_value(const char *key)
-{
-	int i;
-
-	assert(key != NULL);
-	for (i = 0; i < RULE_TBL_SIZE; i++) {
-		if (strcmp(rule_tbl[i].key, key) == 0) {
-			assert(rule_tbl[i].type == 'b');
-			assert(rule_tbl[i].var_ptr != NULL);
-			return *(bool *)rule_tbl[i].var_ptr;
-		}
-	}
-	assert(CONFIG_KEY_NOT_FOUND);
-	return -1;
-}
-
-/*
- * Get an integer config value.
- */
-int get_int_config_value(const char *key)
-{
-	int i;
-
-	assert(key != NULL);
-	for (i = 0; i < RULE_TBL_SIZE; i++) {
-		if (strcmp(rule_tbl[i].key, key) == 0) {
-			assert(rule_tbl[i].type == 'i');
-			assert(rule_tbl[i].var_ptr != NULL);
-			return *(int *)rule_tbl[i].var_ptr;
-		}
-	}
-	assert(CONFIG_KEY_NOT_FOUND);
-	return -1;
-}
-
-/*
- * Get a float config value.
- */
-float get_float_config_value(const char *key)
-{
-	int i;
-
-	assert(key != NULL);
-	for (i = 0; i < RULE_TBL_SIZE; i++) {
-		if (strcmp(rule_tbl[i].key, key) == 0) {
-			assert(rule_tbl[i].type == 'f');
-			assert(rule_tbl[i].var_ptr != NULL);
-			return *(float *)rule_tbl[i].var_ptr;
-		}
-	}
-	assert(CONFIG_KEY_NOT_FOUND);
-	return 0;
-}
-
-/*
- * Check the locale.
- */
-bool compare_locale(const char *s)
-{
-	const char *loc;
-
-	assert(s != NULL);
-
-	if (conf_game_locale != NULL)
-		loc = conf_game_locale;
-	else
-		loc = pf_get_system_language();
-
-	if (strcmp(loc, s) == 0)
-		return true;
-
-	return false;
 }

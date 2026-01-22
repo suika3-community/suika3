@@ -41,22 +41,6 @@
 #include <suika3/suika3.h>
 
 /*
- * Maximum amount of registered anime files.
- */
-enum reg_anime_index {
-	REG_ANIME_COUNT = 16,
-};
-
-/*
- * Acceleration
- */
-enum anime_accel {
-	ANIME_ACCEL_UNIFORM,
-	ANIME_ACCEL_ACCEL,
-	ANIME_ACCEL_DEACCEL,
-};
-
-/*
  * Initialiez the anime subsystem.
  */
 bool

@@ -37,9 +37,14 @@
 
 #include <suika3/suika3.h>
 #include "save.h"
+#include "conf.h"
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <stdarg.h>
+#include <time.h>
+#include <assert.h>
 
 #define FREE(x) \
 	do { \
@@ -114,14 +119,15 @@ static bool write_f32(float val);
 static bool write_string(const char *val);
 static bool write_data(const void *data, size_t size);
 static bool resize_buffer(size_t inc_size);
-static bool close_write_buffer(const char *file, ...);
+static bool close_write_stream(const char *file, ...);
 static bool open_read_stream(const char *file, ...);
 static bool read_u32(uint32_t *ret);
 static bool read_u64(uint64_t *ret);
 static bool read_f32(float *ret);
-static bool read_string(char **val, size_t size);
+static bool read_string(char *val, size_t size);
 static bool read_data(void *data, size_t size);
-static bool close_read_buffer(void);
+static bool read_skip(size_t size);
+static bool close_read_stream(void);
 
 
 /*
@@ -179,7 +185,7 @@ s3i_cleanup_save(void)
 /*
  * Execute a global save.
  */
-void
+bool
 s3_execute_save_global(void)
 {
 	uint32_t ver;
@@ -271,13 +277,15 @@ s3_execute_save_global(void)
 }
 
 /* Execute a global load. */
-void
-execute_load_global(void)
+bool
+s3_execute_load_global(void)
 {
 	uint32_t ver;
 	float f;
 	int i;
+	int count;
 	bool success;
+	char key[128];
 
 	success = false;
 	do {
@@ -297,10 +305,10 @@ execute_load_global(void)
 		if (!read_u32(&count))
 			break;
 		for (i = 0; i < count; i++) {
-			if (!read_string(key))
+			if (!read_string((char *)&key[0], sizeof(key)))
 				break;
 			if (strcmp(key, "#l") != 0) {
-				if (!read_string(sbuf))
+				if (!read_string(sbuf, sizeof(sbuf)))
 					break;
 				if (!s3_set_variable_string(key, sbuf))
 					break;
@@ -346,7 +354,7 @@ execute_load_global(void)
 		if (!read_u32(&count))
 			break;
 		for (i = 0; i < count; i++) {
-			if (!read_string(&key, sizeof(key)))
+			if (!read_string(key, sizeof(key)))
 				break;
 			if (strcmp(key, "#l") != 0) {
 				if (!read_string(sbuf, sizeof(sbuf)))
@@ -379,6 +387,10 @@ s3_execute_save_local(
 	int index)
 {
 	uint64_t timestamp;
+	uint32_t ver;
+	int i;
+	int count;
+	bool success;
 
 	success = false;
 	do {
@@ -394,7 +406,7 @@ s3_execute_save_local(
 
 		/* Write the save format version. */
 		ver = (uint32_t)SAVE_VER;
-		if (!write32(&ver))
+		if (!write_u32(ver))
 			break;
 
 		/* Write the timestamp. */
@@ -407,16 +419,16 @@ s3_execute_save_local(
 			break;
 
 		/* Write the last message. */
-		if (!write_string(s3_get_last_message(false)))
+		if (!write_string(s3_get_last_message()))
 			break;
 
 		/* Write the previous last message. */
-		if (!write_string(s3_get_last_message(true)))
+		if (!write_string(s3_get_prev_last_message()))
 			break;
 
 		/* Write the thumbnail. */
 		if (!write_data(s3_get_image_pixels(s3_get_thumb_image()),
-				(size_t)(conf_save_data_thumb_width * conf_save_data_thumb_height * 4)))
+				(size_t)(conf_save_thumb_width * conf_save_thumb_height * 4)))
 			break;
 
 		/* Write the tag file name. */
@@ -434,7 +446,7 @@ s3_execute_save_local(
 			break;
 
 		/* Write the stage. */
-		for (i = 0; i < STAGE_LAYERS; i++) {
+		for (i = 0; i < S3_STAGE_LAYERS; i++) {
 			if (i == S3_LAYER_BG    || i == S3_LAYER_BG2 ||
 			    i == S3_LAYER_EFB1  || i == S3_LAYER_EFB2 ||
 			    i == S3_LAYER_EFB3  || i == S3_LAYER_EFB4 ||
@@ -448,23 +460,23 @@ s3_execute_save_local(
 			    i == S3_LAYER_TEXT4) {
 				if (!write_string(s3_get_layer_file_name(i)))
 					break;
-				if (!write_uint32(s3_get_layer_x(i)))
+				if (!write_u32(s3_get_layer_x(i)))
 					break;
-				if (!write_uint32(s3_get_layer_y(i)))
+				if (!write_u32(s3_get_layer_y(i)))
 					break;
-				if (!write_uint32(s3_get_layer_alpha(i)))
+				if (!write_u32(s3_get_layer_alpha(i)))
 					break;
-				if (!write_uint32(s3_get_layer_scale_x(i)))
+				if (!write_u32(s3_get_layer_scale_x(i)))
 					break;
-				if (!write_uint32(s3_get_layer_scale_y(i)))
+				if (!write_u32(s3_get_layer_scale_y(i)))
 					break;
-				if (!write_uint32(s3_get_layer_center_x(i)))
+				if (!write_u32(s3_get_layer_center_x(i)))
 					break;
-				if (!write_uint32(s3_get_layer_center_y(i)))
+				if (!write_u32(s3_get_layer_center_y(i)))
 					break;
-				if (!write_uint32(s3_get_layer_rotate(i)))
+				if (!write_u32(s3_get_layer_rotate(i)))
 					break;
-				if (i >= LAYER_TEXT1 && i <= LAYER_TEXT8) {
+				if (i >= S3_LAYER_TEXT1 && i <= S3_LAYER_TEXT8) {
 					if (!write_string(s3_get_layer_text(i)))
 						break;
 				}
@@ -561,8 +573,11 @@ s3_execute_load_local(
 {
 	char key[128];
 	uint64_t timestamp;
-	int x, y;
-	float f;
+	uint32_t ver, u;
+	int i, x, y, count;
+	float f, sx, sy;
+	struct s3_image *img;
+	bool success;
 
 	success = false;
 	do {
@@ -573,17 +588,17 @@ s3_execute_load_local(
 		s3_execute_save_global();
 
 		/* Stop the anime. */
-		cleanup_anime();
+		s3_clear_all_anime_sequence();
 
 		/* Clear the stage. */
 		s3_clear_stage();
 
 		/* Clear the history. */
-		clear_history();
+		s3_clear_history();
 
 		/* Clear the message status. */
-		if (is_message_active())
-			clear_message_active();
+		if (s3_is_message_active())
+			s3_clear_message_active();
 
 		/* Open a buffer for streaming. */
 		if (!open_read_stream("%03d.sav", index))
@@ -602,21 +617,21 @@ s3_execute_load_local(
 			break;
 
 		/* Read the chapter title. */
-		if (!read_string())
+		if (!read_string(sbuf, sizeof(sbuf)))
 			break;
 		if (!s3_set_chapter_name(sbuf))
 			break;
 
 		/* Read the last message. */
-		if (!read_string())
+		if (!read_string(sbuf, sizeof(sbuf)))
 			break;
-		if (!s3_set_last_message(sbuf))
+		if (!s3_set_last_message(sbuf, false))
 			break;
 
 		/* Read the previous last message. */
-		if (!read_string())
+		if (!read_string(sbuf, sizeof(sbuf)))
 			break;
-		if (!se_set_last_message(sbuf, false))
+		if (!s3_set_last_message(sbuf, false))
 			break;
 
 		/* Skip the thumbnail. */
@@ -624,7 +639,7 @@ s3_execute_load_local(
 			break;
 
 		/* Read the tag file name. */
-		if (!read_string())
+		if (!read_string(sbuf, sizeof(sbuf)))
 			break;
 		if (!s3_move_to_tag_file(sbuf))
 			break;
@@ -638,8 +653,7 @@ s3_execute_load_local(
 		/* Read the gosub return index. */
 		if (!read_u32(&u))
 			break;
-		if (!s3_set_return_index(u))
-			break;
+		s3_set_return_index(u);
 
 		/* Read the stage. */
 		for (i = 0; i < S3_STAGE_LAYERS; i++) {
@@ -655,13 +669,13 @@ s3_execute_load_local(
 			    i == S3_LAYER_TEXT2 ||i == S3_LAYER_TEXT3 ||
 			    i == S3_LAYER_TEXT4) {
 				/* Read the file name. */
-				if (!read_string())
+				if (!read_string(sbuf, sizeof(sbuf)))
 					break;
 				if (strcmp(sbuf, "") != 0) {
 					img = s3_create_image_from_file(sbuf);
 					if (img == NULL)
 						break;
-					if (!s3_set_layer_file_name(i, fname))
+					if (!s3_set_layer_file_name(i, sbuf))
 						break;
 					s3_set_layer_image(i, img);
 				}
@@ -679,12 +693,11 @@ s3_execute_load_local(
 				s3_set_layer_alpha(i, u);
 
 				/* Read the scale. */
-				if (!read_f32(&f))
+				if (!read_f32(&sx))
 					break;
-				s3_set_layer_scale_x(i, f);
-				if (!read_f32(&f))
+				if (!read_f32(&sy))
 					break;
-				s3_set_layer_scale_y(i, f);
+				s3_set_layer_scale(i, sx, sy);
 
 				/* Read the center. */
 				if (!read_u32(&x))
@@ -694,8 +707,8 @@ s3_execute_load_local(
 				s3_set_layer_center(i, x, y);
 
 				/* Read the text. */
-				if (i >= LAYER_TEXT1 && i <= LAYER_TEXT8) {
-					if (!read_string())
+				if (i >= S3_LAYER_TEXT1 && i <= S3_LAYER_TEXT8) {
+					if (!read_string(sbuf, sizeof(sbuf)))
 						break;
 					if (!s3_set_layer_text(i, sbuf))
 						break;
@@ -720,10 +733,10 @@ s3_execute_load_local(
 
 		/* Read the anime. */
 		for (i = 0; i < S3_REG_ANIME_COUNT; i++) {
-			if (!read_string(sbuf))
+			if (!read_string(sbuf, sizeof(sbuf)))
 				break;
 			if (strcmp(sbuf, "") != 0) {
-				if (!s3_load_anime_from_file(text, i, NULL))
+				if (!s3_load_anime_from_file(sbuf, i, NULL))
 					break;
 			}
 		}
@@ -734,11 +747,11 @@ s3_execute_load_local(
 		for (i = 0; i < S3_MIXER_TRACKS; i++) {
 			if (!read_f32(&f))
 				break;
-			s3_set_mixer_volume(i, f);
+			s3_set_mixer_volume(i, f, 0);
 
-			if (!read_string(sbuf))
+			if (!read_string(sbuf, sizeof(sbuf)))
 				break;
-			set_mixer_input(i, sbuf);
+			s3_set_mixer_input_file(i, sbuf, true);
 		}
 		if (i != S3_MIXER_TRACKS)
 			break;	/* Error. */
@@ -747,10 +760,10 @@ s3_execute_load_local(
 		if (!read_u32(&count))
 			break;
 		for (i = 0; i < count; i++) {
-			if (!read_string(key))
+			if (!read_string(key, sizeof(key)))
 				break;
 			if (strcmp(key, "#g") != 0) {
-				if (!read_string(sbuf))
+				if (!read_string(sbuf, sizeof(sbuf)))
 					break;
 				if (!s3_set_variable_string(key, sbuf))
 					break;
@@ -765,9 +778,9 @@ s3_execute_load_local(
 		if (!read_u32(&count))
 			break;
 		for (i = 0; i < count; i++) {
-			if (!read_string(key))
+			if (!read_string(key, sizeof(key)))
 				break;
-			if (!read_string(sbuf))
+			if (!read_string(sbuf, sizeof(sbuf)))
 				break;
 			if (!s3_overwrite_config(key, sbuf))
 				break;
@@ -779,13 +792,13 @@ s3_execute_load_local(
 		close_read_stream();
 
 		/* Reload the stage. */
-		if (!reload_stage())
+		if (!s3_reload_stage_images())
 			return false;
 
 		/* Hide the name box, message box, and choose boxes. */
-		show_namebox(false);
-		show_msgbox(false);
-		show_choosebox(false);
+		s3_show_namebox(false);
+		s3_show_msgbox(false);
+		s3_show_choosebox(false, -1);
 
 		/* Set the flag. */
 		is_right_after_load = true;
@@ -810,7 +823,7 @@ s3_check_save_exists(
 	int index)
 {
 	assert(index >= 0);
-	if (index >= ALL_SAVE_SLOTS)
+	if (index >= S3_ALL_SAVE_SLOTS)
 		return false;
 
 	if (save_time[index] == 0)
@@ -826,14 +839,6 @@ void
 s3_delete_local_save(
 	int index)
 {
-/*
- * Delete a save data.
- */
-void
-s3_delete_save(
-	       int index)
-{
-	/* TODO */
 }
 
 /*
@@ -866,7 +871,7 @@ s3_get_save_timestamp(
 	int index)
 {
 	assert(index >= 0);
-	if (index >= ALL_SAVE_SLOTS)
+	if (index >= S3_ALL_SAVE_SLOTS)
 		return 0;
 
 	return save_time[index];
@@ -889,7 +894,7 @@ s3_get_save_chapter_name(
 	int index)
 {
 	assert(index >= 0);
-	if (index >= SAVE_SLOTS)
+	if (index >= S3_ALL_SAVE_SLOTS)
 		return 0;
 
 	return save_title[index];
@@ -903,7 +908,7 @@ s3_get_save_last_message(
 	int index)
 {
 	assert(index >= 0);
-	if (index >= SAVE_SLOTS)
+	if (index >= S3_ALL_SAVE_SLOTS)
 		return 0;
 
 	return save_message[index];
@@ -917,14 +922,14 @@ s3_get_save_thumbnail(
 	int index)
 {
 	assert(index >= 0);
-	if (index >= SAVE_SLOTS)
+	if (index >= S3_ALL_SAVE_SLOTS)
 		return NULL;
 
 	return save_thumb[index];
 }
 
 /* Load the basic information from all local save files. */
-static void
+static bool
 load_basic_save_info_all(void)
 {
 	int i;
@@ -932,16 +937,21 @@ load_basic_save_info_all(void)
 	latest_index = 0;
 
 	/* For each save slot. */
-	for (i = 0; i < ALL_SAVE_SLOTS; i++)
-		load_basic_save_info(i);
+	for (i = 0; i < S3_ALL_SAVE_SLOTS; i++) {
+		if (!load_basic_save_info(i))
+			return false;
+	}
+
+	return true;
 }
 
 /* Load the basic information from all local save files. */
-static void
+static bool
 load_basic_save_info(
 	int index)
 {
 	uint32_t ver;
+	int i;
 	bool success;
 
 	success = false;
@@ -963,7 +973,7 @@ load_basic_save_info(
 			latest_index = i;
 
 		/* Read the chapter title. */
-		if (!read_string(sbuf))
+		if (!read_string(sbuf, sizeof(sbuf)))
 			break;
 		save_title[i] = strdup(sbuf);
 		if (save_title[i] == NULL) {
@@ -972,7 +982,7 @@ load_basic_save_info(
 		}
 
 		/* Skip the last message. */
-		if (!read_string(sbuf))
+		if (!read_string(sbuf, sizeof(sbuf)))
 			break;
 		save_message[i] = strdup(sbuf);
 		if (save_message[i] == NULL) {
@@ -981,11 +991,12 @@ load_basic_save_info(
 		}
 
 		/* Skip the previous last message. */
-		if (!read_string(sbuf))
+		if (!read_string(sbuf, sizeof(sbuf)))
 			break;
 
 		/* Read the thumbnail. */
-		if (!read_data(s3_get_image_pixels(save_thumb[i], (size_t)(conf_save_thumb_width * conf_save_thumb_height * 4))))
+		if (!read_data(s3_get_image_pixels(save_thumb[i]),
+			       (size_t)(conf_save_thumb_width * conf_save_thumb_height * 4)))
 			break;
 		s3_notify_image_update(save_thumb[i]);
 
@@ -1015,10 +1026,10 @@ open_write_stream(void)
 
 	assert(stream_buf == NULL);
 	if (stream_buf != NULL)
-		return fasle;
+		return false;
 
 	stream_buf = malloc(START_SIZE);
-	if (start_size == NULL) {
+	if (stream_buf == NULL) {
 		s3_log_out_of_memory();
 		return false;
 	}
@@ -1146,7 +1157,7 @@ resize_buffer(
 
 /* Close the write stream */
 static bool
-close_write_buffer(
+close_write_stream(
 	const char *file,
 	...)
 {
@@ -1184,7 +1195,7 @@ open_read_stream(
 
 	assert(stream_buf == NULL);
 	if (stream_buf != NULL)
-		return fasle;
+		return false;
 
 	va_start(ap, file);
 	vsnprintf(fname, sizeof(fname), file, ap);
@@ -1194,7 +1205,7 @@ open_read_stream(
 		return false;
 
 	stream_buf = malloc(size);
-	if (start_size == NULL) {
+	if (stream_buf == NULL) {
 		s3_log_out_of_memory();
 		return false;
 	}
@@ -1231,14 +1242,14 @@ read_u64(
 	if (stream_buf_pos + 8 > stream_buf_alloc_size)
 		return false;
 
-	*ret = (stream_buf[stream_buf_pos + 0] |
-		(stream_buf[stream_buf_pos + 1] << 8) |
-		(stream_buf[stream_buf_pos + 2] << 16) |
-		(stream_buf[stream_buf_pos + 3] << 24) |
-		(stream_buf[stream_buf_pos + 4] << 32) |
-		(stream_buf[stream_buf_pos + 5] << 40) |
-		(stream_buf[stream_buf_pos + 6] << 48) |
-		(stream_buf[stream_buf_pos + 7] << 56));
+	*ret = ((uint64_t)stream_buf[stream_buf_pos + 0] |
+		((uint64_t)stream_buf[stream_buf_pos + 1] << 8) |
+		((uint64_t)stream_buf[stream_buf_pos + 2] << 16) |
+		((uint64_t)stream_buf[stream_buf_pos + 3] << 24) |
+		((uint64_t)stream_buf[stream_buf_pos + 4] << 32) |
+		((uint64_t)stream_buf[stream_buf_pos + 5] << 40) |
+		((uint64_t)stream_buf[stream_buf_pos + 6] << 48) |
+		((uint64_t)stream_buf[stream_buf_pos + 7] << 56));
 
 	stream_buf_pos += 8;
 
@@ -1266,7 +1277,7 @@ read_f32(
 /* Read a string to the stream. */
 static bool
 read_string(
-	char **val,
+	char *val,
 	size_t size)
 {
 	size_t i;
@@ -1278,13 +1289,18 @@ read_string(
 		if (stream_buf_pos + 1 > stream_buf_alloc_size)
 			return false;
 
-		val[i++] = stream_buf[stream_buf_pos++];
+		val[i++] = stream_buf[stream_buf_pos];
+
+		if (stream_buf[stream_buf_pos] == '\0')
+			break;
+
+		stream_buf_pos++;
 	}
 
 	return true;
 }
 
-/* Write foat to the stream. */
+/* Read foat to the stream. */
 static bool
 read_data(
 	void *data,
@@ -1300,9 +1316,22 @@ read_data(
 	return true;
 }
 
+/* Skip reading from the stream. */
+static bool
+read_skip(
+	size_t size)
+{
+	if (stream_buf_pos + size > stream_buf_alloc_size)
+		return false;
+
+	stream_buf_pos += size;
+
+	return true;
+}
+
 /* Close the read stream */
 static bool
-close_read_buffer(void)
+close_read_stream(void)
 {
 	if (stream_buf != NULL) {
 		free(stream_buf);

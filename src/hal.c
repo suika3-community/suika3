@@ -130,6 +130,21 @@ s3_check_save_data(
 }
 
 /*
+ * Get the size of save data.
+ */
+size_t
+s3_get_save_data_size(
+	const char *key)
+{
+	size_t ret;
+
+	if (!pf_get_save_data_size(key, &ret))
+		return 0;
+
+	return ret;
+}
+
+/*
  * VM Access
  */
 

@@ -182,6 +182,15 @@ s3_destroy_image(
 }
 
 /*
+ * Notify an update of an image.
+ */
+void s3_notify_image_update(
+	struct s3_image *image)
+{
+	pf_notify_texture_update(image->tex_id);
+}
+
+/*
  * Copy an image to an image.
  */
 void
@@ -421,7 +430,7 @@ s3_fill_image_rect(
 /*
  * Get the raw pixel pointer of an image.
  */
-s3_pixel_t
+s3_pixel_t *
 s3_get_image_pixels(
 	struct s3_image *image)
 {

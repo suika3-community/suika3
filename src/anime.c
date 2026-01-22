@@ -186,7 +186,7 @@ static struct layer_name_map layer_name_map[] = {
 /*
  * Registered anime file.
  */
-static char *reg_anime_file[REG_ANIME_COUNT];
+static char *reg_anime_file[S3_REG_ANIME_COUNT];
 
 /*
  * Information during anime file loading.
@@ -216,7 +216,7 @@ bool
 s3i_init_anime(void)
 {
 	/* Cleanup when DLL is reused. */
-	cleanup_anime();
+	s3i_cleanup_anime();
 
 	return true;
 }
@@ -240,7 +240,7 @@ s3i_cleanup_anime(void)
 	}
 	memset(context, 0, sizeof(context));
 
-	for (i = 0; i < REG_ANIME_COUNT; i++) {
+	for (i = 0; i < S3_REG_ANIME_COUNT; i++) {
 		if (reg_anime_file[i] != NULL) {
 			free(reg_anime_file[i]);
 			reg_anime_file[i] = NULL;
@@ -571,12 +571,12 @@ static bool update_layer_params(int layer)
 
 		/* Caclulate the acceleration. */
 		switch (s->accel) {
-		case ANIME_ACCEL_UNIFORM:
+		case S3_ANIME_ACCEL_UNIFORM:
 			break;
-		case ANIME_ACCEL_ACCEL:
+		case S3_ANIME_ACCEL_ACCEL:
 			progress = progress * progress;
 			break;
-		case ANIME_ACCEL_DEACCEL:
+		case S3_ANIME_ACCEL_DEACCEL:
 			progress = sqrtf(progress);
 			break;
 		default:

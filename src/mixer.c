@@ -149,7 +149,7 @@ s3_get_track_file_name(
 /*
  * Play a sound file on a mixer track.
  */
-void
+bool
 s3_set_mixer_input_file(
 	int track,
 	const char *file,

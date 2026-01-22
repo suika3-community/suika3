@@ -203,19 +203,19 @@ extern char *conf_choose_change_se;
 extern char *conf_choose_click_se;
 
 /* File names */
-extern char *conf_choose_idle[S3_CHOOSE_COUNT];
-extern char *conf_choose_hover[S3_CHOOSE_COUNT];
+extern char *conf_choose_idle[S3_CHOOSEBOX_COUNT];
+extern char *conf_choose_hover[S3_CHOOSEBOX_COUNT];
 
 /* Positions */
-extern int conf_choose_x[S3_CHOOSE_COUNT];
-extern int conf_choose_y[S3_CHOOSE_COUNT];
+extern int conf_choose_x[S3_CHOOSEBOX_COUNT];
+extern int conf_choose_y[S3_CHOOSEBOX_COUNT];
 
 /* Margin */
-extern int conf_choose_margin_top[S3_CHOOSE_COUNT];
+extern int conf_choose_margin_top[S3_CHOOSEBOX_COUNT];
 
 /* Anime */
-extern char *conf_choose_focus_anime[S3_CHOOSE_COUNT];
-extern char *conf_choose_unfocus_anime[S3_CHOOSE_COUNT];
+extern char *conf_choose_focus_anime[S3_CHOOSEBOX_COUNT];
+extern char *conf_choose_unfocus_anime[S3_CHOOSEBOX_COUNT];
 
 /*
  * Save Data Settings

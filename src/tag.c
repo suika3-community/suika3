@@ -49,7 +49,7 @@
 bool
 init_tag(void)
 {
-	if (pf_move_to_tag_file(S3_FIRST_TAG_FILE))
+	if (pf_move_to_tag_file(S3_PATH_START_TAG))
 		return false;
 
 	return true;
@@ -69,7 +69,7 @@ cleanup_tag(void)
 bool
 s3_move_to_tag_file(const char *file)
 {
-	if (pf_move_to_tag_file(S3_FIRST_TAG_FILE))
+	if (pf_move_to_tag_file(S3_PATH_START_TAG))
 		return false;
 
 	return true;

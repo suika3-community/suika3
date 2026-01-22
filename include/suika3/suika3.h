@@ -51,12 +51,12 @@
 /*
  * Name of the first tag file.
  */
-#define S3_FIRST_TAG_FILE	"start.s3"
+#define S3_PATH_START_TAG	"start.novelml"
 
 /*
  * Name of the config file.
  */
-#define S3_CONFIG_FILE		"config.ini"
+#define S3_PATH_CONFIG		"config.ini"
 
 
 /*
@@ -154,7 +154,7 @@
 /*
  * Number of the choose box.
  */
-#define S3_CHOOSE_COUNT		(8)
+#define S3_CHOOSEBOX_COUNT	(8)
 
 /*
  * Character positions.
@@ -226,6 +226,23 @@
  * Character map count.
  */
 #define S3_CHARACTER_MAP_COUNT	(32)
+
+
+/*
+ * Constants for Anime Subsystem (anime.c)
+ */
+
+/*
+ * Maximum amount of registered anime files.
+ */
+#define S3_REG_ANIME_COUNT	(16)
+
+/*
+ * Acceleration types.
+ */
+#define S3_ANIME_ACCEL_UNIFORM	(0)
+#define S3_ANIME_ACCEL_ACCEL	(1)
+#define S3_ANIME_ACCEL_DEACCEL	(2)
 
 
 /*
@@ -329,12 +346,18 @@ struct draw_msg_context;
  */
 
 /*
- * Overwrite a config.
+ * Set a config.
  */
 bool
 s3_overwrite_config(
 	const char *key,
 	const char *val);
+
+/*
+ * Get the number of the config keys.
+ */
+int
+s3_get_config_count(void);
 
 /*
  * Get a config key for index.
@@ -347,28 +370,28 @@ s3_get_config_key(
  * Check if config key is stored to global save data.
  */
 bool
-s3_is_config_key_global(
+s3_is_config_global(
 	const char *key);
 
 /*
  * Get a config value type. ('s', 'b', 'i', 'f')
  */
 char
-s3_get_config_type_for_key(
+s3_get_config_type(
 	const char *key);
 
 /*
  * Get a string config value.
  */
 const char *
-s3_get_string_config_value(
+s3_get_config_string(
 	const char *key);
 
 /*
  * Get a boolean config value.
  */
 bool
-s3_get_bool_config_value(
+s3_get_config_bool(
 	const char *key);
 
 /*
@@ -386,7 +409,14 @@ s3_get_float_config_value(
 	const char *key);
 
 /*
- * Check the locale.
+ * Get a config value as a string.
+ */
+const char *
+s3_get_config_as_string(
+	const char *key);
+
+/*
+ * Check if the specified locale is same as the current locale.
  */
 bool
 s3_compare_locale(
@@ -777,49 +807,67 @@ s3_set_last_message(
 	bool is_append);
 
 /*
+ * Set the previous last message.
+ */
+bool
+s3_set_prev_last_message(
+	const char *msg);
+
+/*
  * Get the last message.
  */
 const char *
-s3_get_last_message(
-	bool prev);
+s3_get_last_message(void);
+
+/*
+ * Get the previous last message.
+ */
+const char *
+s3_get_prev_last_message(void);
 
 /*
  * Set the text speed.
  */
 void
-set_text_speed(
+s3_set_text_speed(
 	float val);
 
 /*
  * Get the text speed.
  */
 float
-get_text_speed(void);
+s3_get_text_speed(void);
 
 /*
  * Set the auto speed.
  */
 void
-set_auto_speed(
+s3_set_auto_speed(
 	float val);
 
 /*
  * Get the auto speed.
  */
 float
-get_auto_speed(void);
+s3_get_auto_speed(void);
 
 /*
  * Mark the last English index.
  */
 void
-mark_last_english_tag_index(void);
+s3_mark_last_english_tag_index(void);
+
+/*
+ * Get the last English index.
+ */
+int
+s3_get_last_english_tag_index(void);
 
 /*
  * Clear the last English index.
  */
 void
-clear_last_english_tag_index(void);
+s3_clear_last_english_tag_index(void);
 
 
 /*
@@ -856,6 +904,12 @@ s3_load_glyph_image(
  * Destroy an image.
  */
 void s3_destroy_image(
+	struct s3_image *image);
+
+/*
+ * Notify an update of an image.
+ */
+void s3_notify_image_update(
 	struct s3_image *image);
 
 /*
@@ -994,7 +1048,7 @@ s3_fill_image_rect(
 /*
  * Get the raw pixel pointer of an image.
  */
-s3_pixel_t
+s3_pixel_t *
 s3_get_image_pixels(
 	struct s3_image *image);
 
@@ -1038,6 +1092,20 @@ s3_set_layer_position(
 	int y);
 
 /*
+ * Get the layer X scale.
+ */
+float
+s3_get_layer_scale_x(
+	int layer);
+
+/*
+ * Get the layer X scale.
+ */
+float
+s3_get_layer_scale_y(
+	int layer);
+
+/*
  * Set the layer scale.
  */
 void
@@ -1045,6 +1113,44 @@ s3_set_layer_scale(
 	int layer,
 	float scale_x,
 	float scale_y);
+
+/*
+ * Get the layer center X position.
+ */
+int
+s3_get_layer_center_x(
+	int layer);
+
+/*
+ * Get the layer center Y position.
+ */
+int
+s3_get_layer_center_y(
+	int layer);
+
+/*
+ * Set the layer center position.
+ */
+void
+s3_set_layer_center(
+	int layer,
+	int center_x,
+	int center_y);
+
+/*
+ * Get the layer rotate
+ */
+float
+s3_get_layer_rotate(
+	int layer);
+
+/*
+ * Set the layer center position.
+ */
+void
+s3_set_layer_rotate(
+	int layer,
+	float rot);
 
 /*
  * Get the layer image width.
@@ -1311,7 +1417,7 @@ void
 s3_fill_msgbox(void);
 
 /*
- * Show or hides the message box.
+ * Show or hide the message box.
  */
 void
 s3_show_msgbox(
@@ -1326,7 +1432,7 @@ s3_set_click_position(
 	int y);
 
 /*
- * Show or hides the click animation.
+ * Show or hide the click animation.
  */
 void
 s3_show_click(
@@ -1343,14 +1449,22 @@ s3_set_click_index(
  * Fill the choose box by the choose box bg image.
  */
 void
-s3_fill_cbox_idle_image(
+s3_fill_choosebox_idle_image(
 	int index);
 
 /*
  * Fill the choose box by the choose box fg image.
  */
 void
-s3_fill_cbox_hover_image(
+s3_fill_choosebox_hover_image(
+	int index);
+
+/*
+ * Show or hide the choose box.
+ */
+void
+s3_show_choosebox(
+	bool show,
 	int index);
 
 /*
@@ -1592,7 +1706,7 @@ s3_is_quoted_serif(
 /*
  * Play a sound file on a mixer track.
  */
-void
+bool
 s3_set_mixer_input_file(
 	int track,
 	const char *file,
@@ -1665,20 +1779,15 @@ s3_is_mixer_sound_finished(
 	int track);
 
 /*
- * Get the BGM file name.
+ * Get the track file name.
  */
 const char *
-s3_get_bgm_file_name(void);
-
-/*
- * Get the SE file name. (only when loopback-playing)
- */
-const char *
-s3_get_se_file_name(void);
+s3_get_track_file_name(
+	int track);
 
 
 /*
- * Tag Subsystem (tag.c)
+ * Functions for Tag Subsystem (tag.c)
  */
 
 /*
@@ -1700,6 +1809,13 @@ s3_move_to_next_tag(void);
 bool
 s3_move_to_label(
 	const char *label);
+
+/*
+ * Move to the tag by index.
+ */
+bool
+s3_move_to_tag_index(
+	int index);
 
 /*
  * Get the current tag file name.
@@ -1921,26 +2037,23 @@ s3_make_variable_global(
 /*
  * Get an integer value from a variable.
  */
-bool
+int
 s3_get_variable_int(
-	const char *name,
-	int *val);
+	const char *name);
 
 /*
  * Get a float value from a variable.
  */
-bool
+float
 s3_get_variable_float(
-	const char *name,
-	float *val);
+	const char *name);
 
 /*
  * Get a string value from a variable.
  */
-bool
+const char *
 s3_get_variable_string(
-	const char *name,
-	const char **val);
+	const char *name);
 
 /*
  * Get the numbers of the variables.
@@ -1966,9 +2079,8 @@ s3_check_variable_exists(
  * Check if a variable is global.
  */
 bool
-s3_check_variable_global(
-	const char *name,
-	bool is_global);
+s3_is_global_variable(
+	const char *namel);
 
 /*
  * Expand a string that may contain variable references.
@@ -1976,6 +2088,12 @@ s3_check_variable_global(
 char *
 s3_expand_string_with_variable(
 	const char *msg);
+
+/*
+ * Clear all local variables.
+ */
+bool
+s3_clear_local_variables(void);
 
 
 /*
@@ -1985,13 +2103,13 @@ s3_expand_string_with_variable(
 /*
  * Execute a global save.
  */
-void
+bool
 s3_execute_save_global(void);
 
 /*
  * Execute a global load.
  */
-void
+bool
 s3_execute_load_global(void);
 
 /*
@@ -2070,6 +2188,17 @@ s3_get_save_thumbnail(
 
 
 /*
+ * Functions for History Subsystem (history.c)
+ */
+
+/*
+ * Clear the history.
+ */
+void
+s3_clear_history(void);
+
+
+/*
  * Functions for Seen Subsystem (seen.c)
  */
 
@@ -2096,6 +2225,67 @@ s3_get_seen_flags(void);
  */
 void
 s3_set_seen_flags(int flag);
+
+
+/*
+ * Functions for GUI Subsystem. (gui.c)
+ */
+
+/*
+ * Check if right after returned from a system GUI.
+ */
+bool
+s3_check_right_after_sys_gui(void);
+
+/*
+ * Load a GUI file and prepare for a start.
+ */
+bool
+s3_load_gui_file(
+	const char *file,
+	bool sys);
+
+/*
+ * Start the loaded GUI.
+ */
+void
+s3_start_gui(void);
+
+/*
+ * Stop the running GUI.
+ */
+void
+s3_stop_gui(void);
+
+/*
+ * Check if a GUI is running.
+ */
+bool
+s3_is_gui_running(void);
+
+/*
+ * Get the label of the selected button.
+ */
+const char *
+s3_get_gui_result_label(void);
+
+/*
+ * Check if the selected GUI button is "back to title".
+ */
+bool
+s3_is_gui_result_title(void);
+
+/*
+ * Check if any save is issued in the current GUI.
+ */
+bool
+s3_check_if_saved_in_gui(void);
+
+/*
+ * Check if a load is issued in the current GUI.
+ */
+bool
+s3_check_if_loaded_in_gui(void);
 
 
 /*
@@ -2150,6 +2340,13 @@ s3_read_save_data(
 	void *data,
 	size_t size,
 	size_t *ret);
+
+/*
+ * Get the size of save data.
+ */
+size_t
+s3_get_save_data_size(
+	const char *key);
 
 /*
  * Check whether save data exist or not.
@@ -2231,5 +2428,20 @@ s3_log_out_of_memory(void);
  */
 void
 s3_log_script_exec_footer(void);
+
+/*
+ * Enable/disable message skip by touch move.
+ */
+void s3_set_continuous_swipe_enabled(bool is_enabled);
+
+/*
+ * Returns whether the current HAL supports the "full screen mode".
+ */
+bool s3_is_full_screen_supported(void);
+
+/*
+ * Returns whether the current HAL is in the "full screen mode".
+ */
+bool s3_is_full_screen_mode(void);
 
 #endif

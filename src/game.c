@@ -505,10 +505,6 @@ void s3_clear_input_state(void)
 }
 
 /*
- * Multiple-Frame Command State
- */
-
-/*
  * Start a multiple-frame command execution.
  */
 void s3_start_command_repetition(void)
@@ -535,14 +531,10 @@ bool s3_is_in_command_repetition(void)
 }
 
 /*
- * Message Showing State
+ * Set the message showing state.
  *  - Set active when a message shown.
  *  - Keep active when move to a GUI.
  *  - Cleared when move to a next command or loaded a save file.
- */
-
-/*
- * Set the message showing state.
  */
 void s3_set_message_active(void)
 {
@@ -566,10 +558,6 @@ bool s3_is_message_active(void)
 {
 	return flag_message_active;
 }
-
-/*
- * Auto-Mode State
- */
 
 /*
  * Start the auto-mode.
@@ -600,10 +588,6 @@ bool s3_is_auto_mode(void)
 }
 
 /*
- * Skip-Mode State
- */
-
-/*
  * Start the skip-mode.
  */
 void s3_start_skip_mode(void)
@@ -632,10 +616,6 @@ bool s3_is_skip_mode(void)
 }
 
 /*
- * Save/Load Enable State
- */
-
-/*
  * Set the save/load enable setting.
  */
 void s3_set_save_load(bool enable)
@@ -652,10 +632,6 @@ bool s3_is_save_load_enabled(void)
 }
 
 /*
- * Non-Interruptible State
- */
-
-/*
  * Set the non-interruptible mode setting.
  */
 void s3_set_non_interruptible(bool mode)
@@ -670,10 +646,6 @@ bool s3_is_non_interruptible(void)
 {
 	return flag_non_interruptible;
 }
-
-/*
- * Pen State
- */
 
 /*
  * Set the pen position.
@@ -701,10 +673,6 @@ int s3_get_pen_position_y(void)
 }
 
 /*
- * Call Arguments
- */
-
-/*
  * Set a calling argument.
  */
 bool s3_set_call_argument(int index, const char *val)
@@ -729,10 +697,6 @@ const char *s3_get_call_argument(int index)
 
 	return call_arg[index];
 }
-
-/*
- * Page Mode
- */
 
 /*
  * Set the script page mode.
@@ -820,10 +784,6 @@ bool s3_is_page_top(void)
 }
 
 /*
- * BGVoice
- */
-
-/*
  * Register a BGVoice.
  */
 bool s3_register_bgvoice(const char *file)
@@ -861,10 +821,6 @@ bool s3_is_bgvoice_playing(void)
 }
 
 /*
- * Chapter Title
- */
-
-/*
  * Set the chapter name.
  */
 bool
@@ -889,10 +845,6 @@ s3_get_chapter_name(void)
 
 	return chapter_name;
 }
-
-/*
- * Last Message (game.c)
- */
 
 /*
  * Set the last message.
@@ -932,26 +884,37 @@ s3_set_last_message(
 }
 
 /*
+ * Set the previous last message.
+ */
+bool
+s3_set_prev_last_message(
+	const char *msg)
+{
+	FREE(prev_last_message);
+	STRDUP(prev_last_message, msg);
+}
+
+/*
  * Get the last message.
  */
 const char *
-s3_get_last_message(
-	bool prev)
+s3_get_last_message(void)
 {
-	if (prev) {
-		if (prev_last_message == NULL)
-			return "";
-		return prev_last_message;
-	}
-
 	if (last_message == NULL)
 		return "";
 	return last_message;
 }
 
 /*
- * Text Speed (game.c)
+ * Get the previous last message.
  */
+const char *
+s3_get_prev_last_message(void)
+{
+	if (prev_last_message == NULL)
+		return "";
+	return prev_last_message;
+}
 
 /*
  * Set the text speed.
@@ -1000,16 +963,21 @@ get_auto_speed(void)
 }
 
 /*
- * Last English Index (game.c)
- */
-
-/*
  * Mark the last English index.
  */
 void
 mark_last_en_index(void)
 {
 	last_en_index = s3_get_tag_index();
+}
+
+/*
+ * Get the last English index.
+ */
+int
+s3_get_last_english_tag_index(void)
+{
+	return last_en_index;
 }
 
 /*

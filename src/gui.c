@@ -37,122 +37,126 @@
 
 #include <suika3/suika3.h>
 #include "gui.h"
+#include "text.h"
+#include "conf.h"
 
-/* ボタンの最大数 */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+
+/* Number of the maximum buttons. */
 #define BUTTON_COUNT	(128)
 
-/* ボタンタイプ */
+/* Button types. */
 enum {
-	/* 無効なボタン */
+	/* Invalid button. */
 	TYPE_INVALID = 0,
 
-	/* ラベルにジャンプするボタン */
-	TYPE_GOTO,
+	/* No action. */
+	TYPE_NOACTION,
 
-	/* ギャラリーモードのボタン */
-	TYPE_GALLERY,
+	/* Jump to a label when clicked. */
+	TYPE_LABEL,
 
-	/* ボリュームを設定するボタン */
+	/* Jump to another GUI. */
+	TYPE_GUI,
+
+	/* Script run button. */
+	TYPE_SCRIPT,
+
+	/* For the volumes. */
 	TYPE_MASTERVOL,
 	TYPE_BGMVOL,
 	TYPE_VOICEVOL,
 	TYPE_SEVOL,
 	TYPE_CHARACTERVOL,
 
-	/* テキストスピードを設定するボタン */
+	/* Text speed slider. */
 	TYPE_TEXTSPEED,
 
-	/* オートスピードを設定するボタン */
+	/* Auto mode speed slider. */
 	TYPE_AUTOSPEED,
 
-	/* テキストプレビューを表示するボタン */
+	/* Text preview area. */
 	TYPE_PREVIEW,
 
-	/* フルスクリーンモードにするボタン */
+	/* Full screen mode button. */
 	TYPE_FULLSCREEN,
 
-	/* ウィンドウモードにするボタン */
+	/* For the window mode. */
 	TYPE_WINDOW,
 
-	/* フォントを変更するボタン */
-	TYPE_FONT,
-
-	/* デフォルト値に戻すボタン */
+	/* Default reset button. */
 	TYPE_DEFAULT,
 
-	/* 別のGUIに移動するボタン */
-	TYPE_GUI,
-
-	/* セーブページボタン */
+	/* Save/load page number button. */
 	TYPE_SAVEPAGE,
 
-	/* セーブボタン */
+	/* Save button. */
 	TYPE_SAVE,
 
-	/* ロードボタン */
+	/* Load button. */
 	TYPE_LOAD,
 
-	/* オートボタン */
+	/* Auto mode button. */
 	TYPE_AUTO,
 
-	/* スキップボタン */
+	/* Skip mode button. */
 	TYPE_SKIP,
 
-	/* ヒストリボタン */
+	/* History button. */
 	TYPE_HISTORY,
 
-	/* ヒストリスクロールボタン */
+	/* History scroll bar. */
 	TYPE_HISTORYSCROLL,
 
-	/* 縦書き用ヒストリスクロールボタン */
+	/* History scroll bar (horizontal). */
 	TYPE_HISTORYSCROLL_HORIZONTAL,
 
-	/* タイトルに戻るボタン */
+	/* Title button. */
 	TYPE_TITLE,
 
-	/* GUIを終了するボタン */
+	/* Cancel button. */
 	TYPE_CANCEL,
 
-	/* アプリケーションを終了するボタン */
-	TYPE_QUIT,
-
-	/* 名前変数のプレビューボタン */
+	/* Variable view area. */
 	TYPE_NAMEVAR,
 
-	/* 名前変数に文字列を追加するボタン */
+	/* Variable input button. */
 	TYPE_CHAR,
-
-	/*WMSを実行するボタン*/
-	TYPE_WMS,
 };
 
-/* ボタン */
+/* Button. */
 static struct gui_button {
 	/*
-	 * GUIファイルから設定されるプロパティ
+	 * Properties written in GUI files.
 	 */
 
-	/* ボタンタイプ */
+	/* Button type. */
 	int type;
 
-	/* 座標とサイズ */
+	/* Position and size. */
 	int x;
 	int y;
 	int width;
 	int height;
 
+	/* Common. */
+	bool is_disabled;
+	char *alt;
+	int order;
+	char *clickse;
+	char *pointse;
+
 	/* TYPE_SAVE/TYPE_LOAD */
 	int margin, new_x, new_y;
 
-	/* TYPE_GOTO, TYPE_GALLERY */
+	/* TYPE_LABEL */
 	char *label;
 
-	/* TYPE_MASTERVOL, TYPE_BGMVOL, TYPE_VOICEVOL, TYPE_SEVOL, TYPE_GUI, TYPE_FONT TYPE_WMS */
+	/* TYPE_GUI, TYPE_MASTERVOL, TYPE_BGMVOL, TYPE_VOICEVOL, TYPE_SEVOL */
 	char *file;
-
-	/* すべてのボタン */
-	char *alt;
-	int order;
 
 	/* TYPE_SAVEPAGE, TYPE_LOADPAGE, TYPE_SAVE, TYPE_LOAD, TYPE_CHARACTERVOL */
 	int index;
@@ -161,206 +165,180 @@ static struct gui_button {
 	char *msg;
 
 	/* TYPE_NAMEVAR, TYPE_CHAR */
-	int namevar;
+	char var;
 
 	/* TYPE_CHAR */
 	int max;
 
-	/* TYPE_*VOL以外 */
-	char *clickse;
-
-	/* すべて */
-	char *pointse;
-
 	/* TYPE_HISTORY, TYPE_SAVE, TYPE_LOAD, TYPE_PREVIEW */
 	int clear_r, clear_g, clear_b;
 
-	/* TYPE_GOTO */
-	bool gosub;
-	bool gosub_gui;
-	bool push_stage;
-
-	/* rt.imgを使わないボタンのみ */
-	struct image *img_idle;
-	struct image *img_hover;
-	struct image *img_active;
-
 	/*
-	 * 実行時の情報
+	 * Runtime information.
 	 */
 	struct {
-		/* TYPE_FONT, TYPE_FULLSCREEN, TYPE_WINDOWのときアクティブか */
-		bool is_active;
-
-		/* TYPE_GALLERYのときボタンが無効化されているか */
 		bool is_disabled;
 
-		/* キー入力によりポイントされているか */
+		/* Is pointed by keyboard input? */
 		bool is_selected_by_key;
 
-		/* ドラッグ中か */
+		/* Is dragging? */
 		bool is_dragging;
 
-		/* ボリューム・スピード・スクロールバーのスライダーの値 */
+		/* Slider value. */
 		float slider;
 
-		/* 画像用 */
-		struct image *img;
+		/* Images. */
+		struct s3_image *img_idle;
+		struct s3_image *img_hover;
+		struct s3_image *img_disable;
 
-		/* ヒストリのオフセット */
+		/* Offset for hitstory. */
 		int history_offset;
 
-		/* TYPE_SAVE/TYPE_LOADのときNEWボタンを表示するか */
+		/* Whether to show NEW button for when TYPE_SAVE/TYPE_LOAD. */
 		bool is_new_enabled;
 
 		/*
-		 * テキストプレビューの情報
+		 * Text preview information.
 		 */
 
-		/* オートモードの待ち時間か */
+		/* Is in auto mode wait. */
 		bool is_waiting;
 
-		/* 描画コンテキスト */
+		/* Drawing context. */
 		struct draw_msg_context msg_context;
 
-		/* 描画する文字の総数 */
+		/* Total character to draw. */
 		int total_chars;
 
-		/* 前回までに描画した文字数 */
+		/* Already drawn characters. */
 		int drawn_chars;
 
-		/* メッセージ表示用あるいはオートモード待機用の時計 */
+		/* Stopwatch for message showing and auto mode wait. */
 		uint64_t sw;
 	} rt;
 
 } button[BUTTON_COUNT];
 
-/* GUIのbaseイメージ */
-static struct image *base_image;
+/* Is GUI running? */
+static bool is_gui_running;
 
-/* GUIのidleイメージ */
-static struct image *idle_image;
-
-/* GUIのhoverイメージ */
-static struct image *hover_image;
-
-/* GUIのactiveイメージ */
-static struct image *active_image;
-
-/* GUIモードであるか */
-static bool flag_gui_mode;
-
-/* システムGUIであるか */
+/* Is a system GUI? (Called by the system button) */
 static bool is_sys_gui;
 
-/* 余白のクリックでキャンセルするか */
+/* Is cancel by clicking on the margin? */
 static bool is_click_cancel;
 
-/* エスケープキーでキャンセルするか */
+/* Is cancel by pressing the escape key? */
 static bool is_escape_cancel;
 
-/* 処理中のGUIファイル */
+/* GUI file being processed. */
 static const char *gui_file;
 
-/* キャンセル時のSE */
+/* Cancel sound effect. */
 static char *cancel_se;
 
-/* フェードイン時間 */
+/* Fade-in time */
 static float fade_in_time;
 
-/* フェードアウト時間 */
+/* Fade-out time */
 static float fade_out_time;
 
-/* 終了したか */
+/* Is finished */
 static bool is_finished;
 
-/* ポイントされているボタンのインデックス */
+/* Index of the pointed button */
 static int pointed_index;
 
-/* 前フレームでポイントされていたボタンのインデックス */
+/* Index of the button that was pointed in the previous frame. */
 static int prev_pointed_index;
 
-/* キー入力によりポイントされているか */
+/* Is pointed by keyboard input? */
 static bool is_pointed_by_key;
 
-/* ドラッグが完了したか */
+/* Is dragging finished? */
 static bool is_drag_finished;
 
-/* キー入力によりポイントされたときのマウス座標 */
+/* Mouse coordinates when pointed by keyboard input. */
 static int save_mouse_pos_x, save_mouse_pos_y;
 
-/* ドラッグが開始されたボタンのインデックス */
+/* Index of the button where dragging started. */
 static int dragging_index;
 
-/* 選択結果のボタンのインデックス */
+/* Index of the button that was selected as a result. */
 static int result_index;
 
-/* ドラッグ中のテキストスピード */
+/* Text speed during dragging */
 static float transient_text_speed;
 
-/* ドラッグ中のオートモードスピード */
+/* Auto mode speed during dragging */
 static float transient_auto_speed;
 
-/* セーブ・ロードページのページ番号 */
+/* Page index of the save/load screen. */
 static int save_page;
 
-/* セーブ・ロードページの1ページあたりのスロット数 */
+/* Slot count per page in the save/load screen. */
 static int save_slots;
 
-/* このフレームでセーブされたか */
+/* Is saved in this frame? */
 static bool is_saved_in_this_frame;
 
-/* SEの再生を控えるフレームであるか */
+/* Is a frame to suppress SE playback? */
 static bool suppress_se;
 
-/* SEが再生済みなのでこれ以上の再生を控えるか */
+/* Is SE already played, so suppress further playback? */
 static bool suppress_se_forever;
 
-/* ヒストリの1ページあたりのスロット数 */
+/* Slot count per page in the history. */
 static int history_slots;
 
-/* 表示する先頭のヒストリ番号(index=0のヒストリオフセット番号) */
+/* Index of the top history item to display (history offset number for index=0) */
 static int history_top;
 
-/* ドラッグ中のヒストリのスライダー値 */
+/* Value of the history slider during dragging. */
 static float transient_history_slider;
 
-/* ヒストリボタンの更新が必要か */
+/* Is update of history buttons needed? */
 static bool need_update_history_buttons;
 
-/* ヒストリボタンの更新が必要か */
-static bool need_update_namevar_buttons;
+/* Is update of variable buttons needed? */
+static bool need_update_var_buttons;
 
-/* フェードイン中であるか */
+/* Is fading in? */
 static bool is_fading_in;
 
-/* フェードアウト中であるか */
+/* Is fading out? */
 static bool is_fading_out;
 
-/* フェード用のストップウォッチ */
+/* Stopwatch for fade. */
 static uint64_t fade_sw;
 
-/* 現在のフェードのアルファ */
+/* Current alpha value of the fade. */
 static int cur_alpha;
 
-/* 最初のフレームであるか */
+/* Is first frame? */
 static bool is_first_frame;
 
-/* セーブを行ったか */
+/* Did save? */
 static bool did_save;
 
-/* ロードを行ったか */
+/* Did load? */
 static bool did_load;
 
-/* 制限時間 */
+/* Did chain? */
+static bool did_chain;
+
+/* Time limit. */
 static float bomb_time;
 static uint64_t bomb_sw;
 static bool is_bombed;
 
 /*
- * 前方参照
+ * Forward declarations.
  */
 static void process_input(void);
+static void process_timeout(void);
 static void process_blit(void);
 static void process_render(void);
 static bool process_move(void);
@@ -410,10 +388,10 @@ static void draw_preview_button(int index);
 static void draw_preview_message(int index);
 static int get_frame_chars(int index);
 static int get_wait_time(int index);
-static bool init_namevar_buttons(void);
-static void draw_namevar_buttons(void);
-static void draw_namevar_button(int index);
-static void draw_name(int index);
+static bool init_var_buttons(void);
+static void draw_var_buttons(void);
+static void draw_var_button(int index);
+static void draw_var_value(int index);
 static void process_char(int index);
 static void play_se(const char *file);
 static void play_sys_se(const char *file);
@@ -426,34 +404,30 @@ static bool load_idle_image(const char *file);
 static bool load_hover_image(const char *file);
 static bool load_active_image(const char *file);
 
-/* wms_impl.c */
-bool register_s2_functions(struct wms_runtime *rt);
-bool s2_push_stage(struct wms_runtime *rt);
-bool s2_pop_stage(struct wms_runtime *rt);
-
 /*
- * GUIに関する初期化処理を行う
+ * Initialize the GUI subsystem.
  */
-bool init_gui(void)
+bool
+s3i_init_gui(void)
 {
-#ifdef USE_DLL
-	/* DLLが再利用されたときのために初期化する */
-	cleanup_gui();
-#endif
+	/* Cleanup in case the DLL is reused. */
+	s3i_cleanup_gui();
+
 	return true;
 }
 
 /*
- * GUIに関する終了処理を行う
+ * Cleanup the GUI subsystem.
  */
-void cleanup_gui(void)
+void
+s3i_cleanup_gui(void)
 {
 	int i;
 
-	/* フラグを再初期化する */
-	flag_gui_mode = false;
+	/* Initialize the flags. */
+	is_gui_running = false;
 
-	/* ボタンのメモリを解放する */
+	/* Free button resources. */
 	for (i = 0; i < BUTTON_COUNT; i++) {
 		if (button[i].label != NULL)
 			free(button[i].label);
@@ -465,58 +439,61 @@ void cleanup_gui(void)
 			free(button[i].clickse);
 		if (button[i].pointse != NULL)
 			free(button[i].pointse);
-		if (button[i].img_idle != NULL)
-			destroy_image(button[i].img_idle);
-		if (button[i].img_hover != NULL)
-			destroy_image(button[i].img_hover);
-		if (button[i].img_active != NULL)
-			destroy_image(button[i].img_active);
-		if (button[i].rt.img != NULL)
-			destroy_image(button[i].rt.img);
+		if (button[i].rt.img_idle != NULL)
+			s3_destroy_image(button[i].rt.img_idle);
+		if (button[i].rt.img_hover != NULL)
+			s3_destroy_image(button[i].rt.img_hover);
+		if (button[i].rt.img_disable != NULL)
+			s3_destroy_image(button[i].rt.img_disable);
 	}
 
-	/* ボタンをゼロクリアする */
+	/* Zero out buttons. */
 	memset(button, 0, sizeof(button));
 
-	/* 文字列の解放を行う */
+	/* Free strings. */
 	if (cancel_se != NULL) {
 		free(cancel_se);
 		cancel_se = NULL;
 	}
-	
-	/* base, idle, hover, activeのイメージを破棄する */
-	destroy_gui_images();
 }
 
 /*
- * GUIから復帰した直後かどうかを確認する
+ * Check if right after returned from a GUI.
  */
-bool check_gui_flag(void)
+bool
+s3_check_right_after_sys_gui(void)
 {
 	if (is_sys_gui) {
 		is_sys_gui = false;
 		return true;
 	}
+
 	return false;
 }
 
 /*
- * GUIを準備する
+ * Load a GUI file and prepare for a start.
  */
-bool prepare_gui_mode(const char *file, bool sys)
+bool
+s3_load_gui_file(
+	const char *file,
+	bool sys)
 {
-	assert(!flag_gui_mode);
+	bool success;
 
-	cleanup_gui();
+	assert(!is_gui_running);
 
-	/* プロパティを保存する */
+   	/* Cleanup previous GUI if any. */
+	s3i_cleanup_gui();
+
+	/* Store properties. */
 	gui_file = file;
 	is_sys_gui = sys;
 
-	/* ボタンをゼロクリアする */
+	/* Zero out buttons. */
 	memset(button, 0, sizeof(button));
 
-	/* グローバルプロパティの初期値を設定する */
+	/* Set initial values for global properties. */
 	save_page = conf_menu_save_last_page;
 	save_slots = 0;
 	history_slots = 0;
@@ -525,6 +502,7 @@ bool prepare_gui_mode(const char *file, bool sys)
 	fade_out_time = 0;
 	did_save = false;
 	did_load = false;
+	did_chain = false;
 	is_finished = false;
 	dragging_index = -1;
 	is_drag_finished = false;
@@ -532,50 +510,44 @@ bool prepare_gui_mode(const char *file, bool sys)
 	is_click_cancel = false;
 	is_escape_cancel = false;
 
-	/* GUIファイルを開く */
-	if (!load_gui_file(gui_file)) {
-		cleanup_gui();
+	do {
+		/* Open the GUI file */
+		if (!load_gui_file(gui_file))
+			break;
+
+		/* Initialize TYPE_PREVIEW buttons. */
+		if (!init_preview_buttons())
+			break;
+
+		/* Initialize TYPE_SAVE/TYPE_LOAD buttons. */
+		if (!init_save_buttons())
+			break;
+
+		update_save_buttons();
+
+		/* Initialize TYPE_HISTORY buttons. */
+		if (!init_history_buttons())
+			break;
+
+		draw_history_buttons();
+
+		/* Initialize TYPE_NAMEVAR buttons. */
+		if (!init_var_buttons())
+			break;
+
+		draw_var_buttons();
+
+		success = true;
+	} while (0);
+	if (!success) {
+		s3i_cleanup_gui();
 		return false;
 	}
 
-	/* イメージが揃っているか調べる */
-	if (idle_image == NULL || hover_image == NULL || active_image == NULL) {
-		log_gui_image_not_loaded();
-		cleanup_gui();
-		return false;
-	}
-
-	/* TYPE_PREVIEWのボタンの初期化を行う */
-	if (!init_preview_buttons()) {
-		cleanup_gui();
-		return false;
-	}
-
-	/* TYPE_SAVE/TYPE_LOADのボタンの初期化を行う */
-	if (!init_save_buttons()) {
-		cleanup_gui();
-		return false;
-	}
-	update_save_buttons();
-
-	/* TYPE_HISTORYのボタンの初期化を行う */
-	if (!init_history_buttons()) {
-		cleanup_gui();
-		return false;
-	}
-	draw_history_buttons();
-
-	/* TYPE_NAMEVARのボタンの初期化を行う */
-	if (!init_namevar_buttons()) {
-		cleanup_gui();
-		return false;
-	}
-	draw_namevar_buttons();
-
-	/* ボタンの状態を準備する */
+	/* Prepare the state of buttons. */
 	update_runtime_props(true);
 
-	/* フェードインを行うか */
+	/* Set fade-in if needed. */
 	is_fading_in = fade_in_time > 0;
 	is_fading_out = false;
 
@@ -583,407 +555,364 @@ bool prepare_gui_mode(const char *file, bool sys)
 }
 
 /*
- * GUIのロード時
+ * Start the loaded GUI.
  */
-
-/* グローバルのキーと値を設定する */
-static bool set_global_key_value(const char *key, const char *val)
+void
+s3_start_gui(void)
 {
-	if (strcmp(key, "base") == 0) {
-		if (!load_base_image(val))
-			return false;
-		return true;
-	} else if (strcmp(key, "idle") == 0) {
-		if (!load_idle_image(val))
-			return false;
-		return true;
-	} else if (strcmp(key, "hover") == 0) {
-		if (!load_hover_image(val))
-			return false;
-		return true;
-	} else if (strcmp(key, "active") == 0) {
-		if (!load_active_image(val))
-			return false;
-		return true;
-	} else if (strcmp(key, "saveslots") == 0) {
-		save_slots = atoi(val);
-		return true;
-	} else if (strcmp(key, "historyslots") == 0) {
-		history_slots = atoi(val);
-		return true;
-	} else if (strcmp(key, "cancelse") == 0) {
-		cancel_se = strdup(val);
-		if (cancel_se == NULL) {
-			log_memory();
-			return false;
-		}
-		return true;
-	} else if (strcmp(key, "fadein") == 0) {
-		fade_in_time = (float)atof(val);
-		return true;
-	} else if (strcmp(key, "fadeout") == 0) {
-		fade_out_time = (float)atof(val);
-		return true;
-	} else if (strcmp(key, "timed") == 0) {
-		bomb_time = (float)atof(val);
-		reset_lap_timer(&bomb_sw);
-		return true;
-	} else if (strcmp(key, "clickcancel") == 0) {
-		is_click_cancel = strcmp(val, "yes") == 0 ? true : false;
-		return true;
-	} else if (strcmp(key, "escapecancel") == 0) {
-		is_escape_cancel = strcmp(val, "yes") == 0 ? true : false;
-		return true;
-	} else if (strcmp(key, "alt") == 0) {
-		if (conf_tts)
-			speak(val);
-		return true;
-	}
+	assert(!flag_gui_mode);
 
-	log_gui_unknown_global_key(key);
-	return false;
+	/* Enable GUI mode. */
+	is_gui_running = true;
+	is_first_frame = true;
+	pointed_index = -1;
+	result_index = -1;
+	is_pointed_by_key = false;
+	if (is_fading_in)
+		s3_reset_lap_timer(&fade_sw);
+	is_fading_out = false;
+	is_saved_in_this_frame = false;
+	suppress_se = false;
+	suppress_se_forever = false;
+
+	/* Disable skip action by continuous swipe. */
+	s3_set_continuous_swipe_enabled(false);
 }
-
-/* ボタンを追加する */
-static bool add_button(int index)
+/*
+ * Stop the running GUI.
+ */
+void
+s3_stop_gui(void)
 {
-	/* ボタン数の上限を越えている場合 */
-	if (index >= BUTTON_COUNT) {
-		log_gui_too_many_buttons();
-		return false;
-	}
+	assert(flag_gui_mode);
 
-	/* 特にボタン追加の処理はなく、数を確認しているだけ */
-	return true;
-}
-
-/* ボタンのキーを設定する */
-static bool set_button_key_value(const int index, const char *key, const char *val)
-{
-	struct gui_button *b;
-	int var_val;
-
-	assert(index >= 0 && index < BUTTON_COUNT);
-
-	b = &button[index];
-
-	/* typeキーを処理する */
-	if (strcmp("type", key) == 0) {
-		b->type = get_type_for_name(val);
-		if (b->type == TYPE_INVALID)
-			return false;
-		return true;
-	}
-
-	/* typeが指定されていない場合 */
-	if (b->type == TYPE_INVALID) {
-		log_gui_parse_property_before_type(key);
-		return false;
-	}
-
-	/* type以外のキーを処理する */
-	if (strcmp("x", key) == 0) {
-		b->x = atoi(val);
-	} else if (strcmp("y", key) == 0) {
-		b->y = atoi(val);
-	} else if (strcmp("width", key) == 0) {
-		b->width = atoi(val);
-		if (b->width <= 0)
-			b->width = 1;
-	} else if (strcmp("height", key) == 0) {
-		b->height = atoi(val);
-		if (b->height <= 0)
-			b->height = 1;
-	} else if (strcmp("margin", key) == 0) {
-		b->margin = atoi(val);
-	} else if (strcmp("label", key) == 0) {
-		b->label = strdup(val);
-		if (b->label == NULL) {
-			log_memory();
-			return false;
-		}
-	} else if (strcmp("file", key) == 0) {
-		b->file = strdup(val);
-		if (b->file == NULL) {
-			log_memory();
-			return false;
-		}
-	} else if (strcmp("alt", key) == 0) {
-		b->alt = strdup(val);
-		if (b->alt == NULL) {
-			log_memory();
-			return false;
-		}
-	} else if (strcmp("order", key) == 0) {
-		b->order = atoi(val);
-	} else if (strcmp("var", key) == 0) {
-		if (!get_variable_by_string(val, &var_val))
-			return false;
-		if (var_val == 0)
-			b->rt.is_disabled = true;
-	} else if (strcmp("index", key) == 0) {
-		b->index = atoi(val);
-		if (b->type == TYPE_CHARACTERVOL) {
-			if (b->index < 0)
-				b->index = 0;
-			if (b->index >= CH_VOL_SLOTS)
-				b->index = CH_VOL_SLOTS - 1;
-		}
-		if (b->type == TYPE_HISTORY) {
-			if (b->index >= history_slots)
-				log_warn("history slot index is out-of-range.");
-		}
-		if (b->type == TYPE_SAVE || b->type == TYPE_LOAD) {
-			if (b->index >= save_slots + 1)
-				log_warn("save slot index is out-of-range.");
-		}
-	} else if (strcmp("msg", key) == 0) {
-		b->msg = strdup(val);
-		if (b->msg == NULL) {
-			log_memory();
-			return false;
-		}
-	} else if (strcmp("msg-en", key) == 0) {
-		if (compare_locale("en")) {
-			free(b->msg);
-			b->msg = strdup(val);
-			if (b->msg == NULL) {
-				log_memory();
-				return false;
-			}
-		}
-	} else if (strcmp("msg-fr", key) == 0) {
-		if (compare_locale("fr")) {
-			free(b->msg);
-			b->msg = strdup(val);
-			if (b->msg == NULL) {
-				log_memory();
-				return false;
-			}
-		}
-	} else if (strcmp("msg-de", key) == 0) {
-		if (compare_locale("de")) {
-			free(b->msg);
-			b->msg = strdup(val);
-			if (b->msg == NULL) {
-				log_memory();
-				return false;
-			}
-		}
-	} else if (strcmp("msg-es", key) == 0) {
-		if (compare_locale("es")) {
-			free(b->msg);
-			b->msg = strdup(val);
-			if (b->msg == NULL) {
-				log_memory();
-				return false;
-			}
-		}
-	} else if (strcmp("msg-it", key) == 0) {
-		if (compare_locale("it")) {
-			free(b->msg);
-			b->msg = strdup(val);
-			if (b->msg == NULL) {
-				log_memory();
-				return false;
-			}
-		}
-	} else if (strcmp("msg-el", key) == 0) {
-		if (compare_locale("el")) {
-			free(b->msg);
-			b->msg = strdup(val);
-			if (b->msg == NULL) {
-				log_memory();
-				return false;
-			}
-		}
-	} else if (strcmp("msg-ru", key) == 0) {
-		if (compare_locale("ru")) {
-			free(b->msg);
-			b->msg = strdup(val);
-			if (b->msg == NULL) {
-				log_memory();
-				return false;
-			}
-		}
-	} else if (strcmp("msg-zh", key) == 0) {
-		if (compare_locale("zh")) {
-			free(b->msg);
-			b->msg = strdup(val);
-			if (b->msg == NULL) {
-				log_memory();
-				return false;
-			}
-		}
-	} else if (strcmp("msg-tw", key) == 0) {
-		if (compare_locale("tw")) {
-			free(b->msg);
-			b->msg = strdup(val);
-			if (b->msg == NULL) {
-				log_memory();
-				return false;
-			}
-		}
-	} else if (strcmp("msg-ja", key) == 0) {
-		if (compare_locale("ja")) {
-			free(b->msg);
-			b->msg = strdup(val);
-			if (b->msg == NULL) {
-				log_memory();
-				return false;
-			}
-		}
-	} else if (strcmp("clickse", key) == 0) {
-		b->clickse = strdup(val);
-		if (b->clickse == NULL) {
-			log_memory();
-			return false;
-		}
-	} else if (strcmp("pointse", key) == 0) {
-		b->pointse = strdup(val);
-		if (b->pointse == NULL) {
-			log_memory();
-			return false;
-		}
-	} else if (strcmp("namevar", key) == 0) {
-		if (val[0] != '\0' &&
-		    (val[0] >= 'a' && val[0] <= 'z') &&
-		    val[1] == '\0')
-			b->namevar = val[0] - 'a';
-	} else if (strcmp("max", key) == 0) {
-		b->max = abs(atoi(val));
-	} else if (strcmp("clear-r", key) == 0) {
-		b->clear_r = atoi(val);
-	} else if (strcmp("clear-g", key) == 0) {
-		b->clear_g = atoi(val);
-	} else if (strcmp("clear-b", key) == 0) {
-		b->clear_b = atoi(val);
-	} else if (strcmp("new-x", key) == 0) {
-		b->new_x = atoi(val);
-		b->rt.is_new_enabled = true;
-	} else if (strcmp("new-y", key) == 0) {
-		b->new_y = atoi(val);
-		b->rt.is_new_enabled = true;
-	} else if (strcmp("pushstage", key) == 0) {
-		b->push_stage = true;
-	} else if (strcmp("gosub", key) == 0) {
-		b->gosub = true;
-	} else if (strcmp("gosub-gui", key) == 0) {
-		b->gosub_gui = true;
-	} else if (strcmp("image-idle", key) == 0) {
-		b->img_idle = create_image_from_file(CG_DIR, val);
-		if (b->img_idle == NULL)
-			return false;
-		if (b->width == 0 || b->height == 0) {
-			b->width = b->img_idle->width;
-			b->height = b->img_idle->height;
-		}
-	} else if (strcmp("image-hover", key) == 0) {
-		b->img_hover = create_image_from_file(CG_DIR, val);
-		if (b->img_hover == NULL)
-			return false;
-		if (b->width == 0 || b->height == 0) {
-			b->width = b->img_hover->width;
-			b->height = b->img_hover->height;
-		}
-	} else if (strcmp("image-active", key) == 0) {
-		b->img_active = create_image_from_file(CG_DIR, val);
-		if (b->img_active == NULL)
-			return false;
-		if (b->width == 0 || b->height == 0) {
-			b->width = b->img_active->width;
-			b->height = b->img_active->height;
-		}
-	} else {
-		log_gui_unknown_button_property(key);
-		return false;
-	}
-
-	return true;
-}
-
-/* タイプ名に対応する整数値を取得する */
-static int get_type_for_name(const char *name)
-{
-	struct {
-		const char *name;
-		int value;
-	} type_array[] = {
-		{"goto", TYPE_GOTO},
-		{"gallery", TYPE_GALLERY},
-		{"mastervol", TYPE_MASTERVOL},
-		{"bgmvol", TYPE_BGMVOL},
-		{"voicevol", TYPE_VOICEVOL},
-		{"sevol", TYPE_SEVOL},
-		{"charactervol", TYPE_CHARACTERVOL},
-		{"textspeed", TYPE_TEXTSPEED},
-		{"autospeed", TYPE_AUTOSPEED},
-		{"preview", TYPE_PREVIEW},
-		{"fullscreen", TYPE_FULLSCREEN},
-		{"window", TYPE_WINDOW},
-		{"font", TYPE_FONT},
-		{"menu", TYPE_GUI},
-		{"gui", TYPE_GUI},
-		{"savepage", TYPE_SAVEPAGE},
-		{"save", TYPE_SAVE},
-		{"load", TYPE_LOAD},
-		{"history", TYPE_HISTORY},
-		{"auto", TYPE_AUTO},
-		{"skip", TYPE_SKIP},
-		{"historyscroll", TYPE_HISTORYSCROLL},
-		{"historyscroll-tategaki", TYPE_HISTORYSCROLL_HORIZONTAL},
-		{"default", TYPE_DEFAULT},
-		{"title", TYPE_TITLE},
-		{"cancel", TYPE_CANCEL},
-		{"quit", TYPE_QUIT},
-		{"namevar", TYPE_NAMEVAR},
-		{"char", TYPE_CHAR},
-		{"wms", TYPE_WMS},
-	};
-
-	size_t i;
-
-	/* タイプ名を検索する */
-	for (i = 0; i < sizeof(type_array) / sizeof(type_array[0]); i++)
-		if (strcmp(name, type_array[i].name) == 0)
-			return type_array[i].value;
-
-	/* みつからなかった場合 */
-	log_gui_unknown_button_type(name);
-	return TYPE_INVALID;
+	/* Disable GUI mode. */
+	is_gui_running = false;
 }
 
 /*
- * 実行時プロパティの更新
+ * Check if a GUI is running.
+ */
+bool
+s3_is_gui_running(void)
+{
+	return is_gui_running;
+}
+
+/*
+ * Run a GUI frame update.
+ */
+bool
+s3i_run_gui_update(void)
+{
+	/* If not in GUI mode. */
+	if (!is_gui_running)
+		return true;
+
+	/* If first frame, reset the first frame flag. */
+	if (is_first_frame) {
+		is_first_frame = false;
+	}
+
+	/* Handle time limit. */
+	process_timeout();
+
+	/* Process input. */
+	process_input();
+	if (did_load)
+		return true;
+
+	/* If returning to the title. */
+	if (!is_bombed &&
+	    result_index != -1 &&
+	    button[result_index].type == TYPE_TITLE)
+		return move_to_title();
+
+	/* Process image updates. */
+	process_blit();
+
+	/* Process chaining. */
+	did_chain = false;
+	if (result_index != -1 && button[result_index].type == TYPE_GUI) {
+		did_chain = true;
+		process_se();
+	}
+
+	is_first_frame = false;
+
+	return true;
+}
+
+/*
+ * Run a GUI frame rendering.
+ */
+bool
+s3i_run_gui_render(void)
+{
+	assert(is_gui_running);
+
+	if (did_load)
+		return true;
+
+	process_render();
+}
+
+/*
+ * Run a GUI postprocess.
+ */
+bool
+s3i_run_gui_postprocess(void)
+{
+	assert(is_gui_running);
+
+	if (did_load)
+		return true;
+
+	/* Process transition. */
+	if (!process_move())
+		return false;
+
+	return true;
+}
+
+/*
+ * Get the label of the selected button.
+ */
+const char *
+s3_get_gui_result_label(void)
+{
+	struct gui_button *b;
+
+	if (is_fading_in)
+		return NULL;
+
+	if (result_index == -1)
+		return NULL;
+
+	b = &button[result_index];
+
+	if (b->type != TYPE_LABEL)
+		return NULL;
+
+	return b->label;
+}
+
+/*
+ * Check if the selected GUI button is "back to title".
+ */
+bool
+s3_is_gui_result_title(void)
+{
+	struct gui_button *b;
+
+	if (is_fading_in)
+		return false;
+
+	if (result_index == -1)
+		return false;
+
+	b = &button[result_index];
+
+	if (b->type != TYPE_TITLE)
+		return false;
+
+	return true;
+}
+
+/*
+ * Check if any save is issued in the current GUI.
+ */
+bool
+s3_check_if_saved_in_gui(void)
+{
+	if (did_save)
+		return true;
+
+	return false;
+}
+
+/*
+ * Check if a load is issued in the current GUI.
+ */
+bool
+s3_check_if_loaded_in_gui(void)
+{
+	if (did_load)
+		return true;
+
+	return false;
+}
+
+/*
+ * Update
  */
 
-/* ボタンの状態を更新する */
-static void update_runtime_props(bool is_first_time)
+/* Process timeout. */
+static void
+process_timeout(void)
+{
+	if (bomb_time == 0)
+		return;
+
+	if ((float)s3_get_lap_timer_millisec(&bomb_sw) >= bomb_time * 1000.0f) {
+		is_bombed = true;
+		result_index = -1;
+		if (fade_out_time > 0) {
+			is_fading_out = true;
+			s3_reset_lap_timer(&fade_sw);
+		} else {
+			is_finished = true;
+			s3_clear_input_state();
+		}
+	}
+}
+
+/* Process input. */
+static void process_input(void)
 {
 	int i;
 
-	/* 初回呼び出しの場合 */
-	if (is_first_time) {
-		transient_text_speed = get_text_speed();
-		transient_auto_speed = 1.0f - get_auto_speed();
+	/* Do not accept input during fade. */
+	if (is_fading_in || is_fading_out)
+		return;
+
+	/* Do not accept input when time limit is reached. */
+	if (is_bombed)
+		return;
+
+	result_index = -1;
+	prev_pointed_index = pointed_index;
+	need_update_history_buttons = false;
+
+	/* Process left and right arrow keys. */
+	process_left_right_arrow_keys();
+
+	/* Process scrolling by mouse wheel, up/down keys, or swipe. */
+	if (s3_is_down_key_pressed()) {
+		if (s3_is_swiped())
+			process_history_scroll_up();
+		else
+			process_history_scroll_down();
+		update_runtime_props(false);
+	} else if (s3_is_up_key_pressed()) {
+		if (s3_is_swiped())
+			process_history_scroll_down();
+		else
+			process_history_scroll_up();
+		update_runtime_props(false);
 	}
 
+	/* Process each button. */
+	is_drag_finished = false;
+	for (i = 0; i < BUTTON_COUNT; i++) {
+		if (!is_fading_in && !is_fading_out) {
+			/* Update pointed state. */
+			process_button_point(i, false);
+
+			/* Update drag state. */
+			process_button_drag(i);
+
+			/* Get click result. */
+			process_button_click(i);
+		}
+	}
+
+	/* Process after drag is finished. */
+	if (is_drag_finished) {
+		for (i = 0; i < BUTTON_COUNT; i++)
+			process_button_point(i, false);
+		is_drag_finished = false;
+	}
+
+	/* If a button is chosen, exit. */
+	if (result_index != -1) {
+		if (fade_out_time > 0 &&
+		    (button[result_index].type != TYPE_GUI &&
+		     button[result_index].type != TYPE_TITLE)) {
+			is_fading_out = true;
+			s3_reset_lap_timer(&fade_sw);
+		} else {
+			is_finished = true;
+		}
+	}
+
+	/* If cancel is possible by clicking on the margin. */
+	if (is_click_cancel && pointed_index == -1 && s3_is_mouse_left_clicked() && !is_first_frame) {
+		/* Perform fade out or finish processing. */
+		if (fade_out_time > 0) {
+			is_fading_out = true;
+			s3_reset_lap_timer(&fade_sw);
+		} else {
+			is_finished = true;
+			s3_clear_input_state();
+		}
+	}
+
+	/* If cancel is possible by pressing the escape key. */
+	if (is_escape_cancel && s3_is_escape_key_pressed()) {
+		/* Perform fade out or finish processing. */
+		if (fade_out_time > 0) {
+			is_fading_out = true;
+			s3_reset_lap_timer(&fade_sw);
+		} else {
+			is_finished = true;
+			s3_clear_input_state();
+		}
+	}
+
+	/* Avoid affecting subsequent command execution. */
+	s3_clear_input_state();
+}
+
+/* Process image drawing. */
+static void
+process_image_blit(void)
+{
+	/* Update history buttons if needed. */
+	if (need_update_history_buttons) {
+		draw_history_buttons();
+		need_update_history_buttons = false;
+	}
+
+	/* Update name variable buttons if needed. */
+	if (need_update_var_buttons) {
+		draw_var_buttons();
+		need_update_var_buttons = false;
+	}
+
+	/* Update preview buttons if needed. */
+	draw_preview_buttons();
+}
+
+/* Update the state of buttons. */
+static void
+update_runtime_props(bool is_first_time)
+{
+	int i;
+
+	/* If this is the first call. */
+	if (is_first_time) {
+		transient_text_speed = s3_get_text_speed();
+		transient_auto_speed = 1.0f - s3_get_auto_speed();
+	}
+
+	/* Update each button. */
 	for (i = 0; i < BUTTON_COUNT; i++) {
 		switch (button[i].type) {
 		case TYPE_MASTERVOL:
-			button[i].rt.slider = get_master_volume();
+			button[i].rt.slider = s3_get_master_volume();
 			break;
 		case TYPE_BGMVOL:
-			button[i].rt.slider = get_mixer_global_volume(BGM_STREAM);
+			button[i].rt.slider = s3_get_mixer_global_volume(S3_TRACK_BGM);
 			break;
 		case TYPE_VOICEVOL:
-			button[i].rt.slider = get_mixer_global_volume(VOICE_STREAM);
+			button[i].rt.slider = s3_get_mixer_global_volume(S3_TRACK_VOICE);
 			break;
 		case TYPE_SEVOL:
-			button[i].rt.slider = get_mixer_global_volume(SE_STREAM);
+			button[i].rt.slider = s3_get_mixer_global_volume(S3_TRACK_SE);
 			break;
 		case TYPE_CHARACTERVOL:
-			button[i].rt.slider = get_character_volume(button[i].index);
+			button[i].rt.slider = s3_get_character_volume(button[i].index);
 			break;
 		case TYPE_TEXTSPEED:
 			button[i].rt.slider = transient_text_speed;
@@ -991,29 +920,21 @@ static void update_runtime_props(bool is_first_time)
 		case TYPE_AUTOSPEED:
 			button[i].rt.slider = transient_auto_speed;
 			break;
-		case TYPE_FONT:
-			if (button[i].file == NULL)
-				break;
-			if (strcmp(button[i].file, conf_font_ttf[0]) == 0)
-				button[i].rt.is_active = true;
-			else
-				button[i].rt.is_active = false;
-			break;
 		case TYPE_FULLSCREEN:
-			if (!is_full_screen_supported())
+			if (!s3_is_full_screen_supported())
 				break;
-			button[i].rt.is_active = is_full_screen_mode();
+			button[i].rt.is_disabled = s3_is_full_screen_mode();
 			break;
 		case TYPE_WINDOW:
-			if (!is_full_screen_supported())
+			if (!s3_is_full_screen_supported())
 				break;
-			button[i].rt.is_active = !is_full_screen_mode();
+			button[i].rt.is_disabled = !s3_is_full_screen_mode();
 			break;
 		case TYPE_SAVEPAGE:
 			if (button[i].index == save_page)
-				button[i].rt.is_active = true;
+				button[i].rt.is_disabled = false;
 			else
-				button[i].rt.is_active = false;
+				button[i].rt.is_disabled = true;
 			break;
 		case TYPE_HISTORYSCROLL:
 		case TYPE_HISTORYSCROLL_HORIZONTAL:
@@ -1026,378 +947,76 @@ static void update_runtime_props(bool is_first_time)
 	}
 }
 
-/*
- * GUIの実行
- */
-
-/*
- * GUIを開始する
- */
-void start_gui_mode(void)
-{
-	assert(!flag_gui_mode);
-
-	/* GUIモードを有効にする */
-	flag_gui_mode = true;
-	is_first_frame = true;
-	pointed_index = -1;
-	result_index = -1;
-	is_pointed_by_key = false;
-	if (is_fading_in)
-		reset_lap_timer(&fade_sw);
-	is_fading_out = false;
-	is_saved_in_this_frame = false;
-	suppress_se = false;
-	suppress_se_forever = false;
-
-	/* 連続スワイプによるスキップ動作を無効にする */
-	set_continuous_swipe_enabled(false);
-}
-
-/*
- * GUIを停止する
- */
-void stop_gui_mode(void)
-{
-	assert(flag_gui_mode);
-
-	/* GUIモードを無効にする */
-	flag_gui_mode = false;
-}
-
-/*
- * GUIが有効であるかを返す
- */
-bool is_gui_mode(void)
-{
-	return flag_gui_mode;
-}
-
-/*
- * GUIを実行する
- */
-bool run_gui_mode(void)
-{
-	bool chain;
-
-	/* 時間制限を処理する */
-	if (bomb_time > 0) {
-		if ((float)get_lap_timer_millisec(&bomb_sw) >= bomb_time * 1000.0f) {
-			is_bombed = true;
-			result_index = -1;
-			if (fade_out_time > 0) {
-				is_fading_out = true;
-				reset_lap_timer(&fade_sw);
-			} else {
-				is_finished = true;
-				clear_input_state();
-			}
-		}
-	}
-
-	/* 入力を処理する */
-	process_input();
-
-	/* タイトルへ戻る場合 */
-	if (!did_load && !is_bombed) {
-		if (result_index != -1 &&
-		    button[result_index].type == TYPE_TITLE)
-			return move_to_title();
-	}
-
-	/* 画像の更新を処理する */
-	if (!did_load) {
-		process_blit();
-	}
-
-	/*
-	 * レンダリングを行う
-	 *  - ただしGUIのチェインを行う場合を除く
-	 *  - 理由は、チェインイ先のGUIの読み込みでblitが発生するから
-	 *  - Metalではrender後にblitができない
-	 */
-	chain = false;
-	if (!did_load) {
-		if (result_index != -1 && button[result_index].type == TYPE_GUI) {
-			chain = true;
-			process_se();
-		} else {
-			process_render();
-		}
-	}
-
-	/* コマンドやGUIの移動を処理する */
-	if (!did_load) {
-		if (!process_move())
-			return false;
-	}
-
-	/* チェイン時のレンダリングを行う */
-	if (chain)
-		process_render();
-
-	/* SEを再生する */
-	process_se();
-
-	is_first_frame = false;
-	return true;
-}
-
-/* 入力を処理する */
-static void process_input(void)
-{
-	int i;
-
-	/* フェード中の場合は入力を受け付けない */
-	if (is_fading_in || is_fading_out)
-		return;
-
-	/* 制限時間に達した場合は入力を受け付けない */
-	if (is_bombed)
-		return;
-
-	result_index = -1;
-	prev_pointed_index = pointed_index;
-	need_update_history_buttons = false;
-
-	/* 左右キーを処理する */
-	process_left_right_arrow_keys();
-
-	/* マウスホイールか上下キーかスワイプによるスクロールを処理する */
-	if (is_down_pressed) {
-		if (is_swiped)
-			process_history_scroll_up();
-		else
-			process_history_scroll_down();
-		update_runtime_props(false);
-	} else if (is_up_pressed) {
-		if (is_swiped)
-			process_history_scroll_down();
-		else
-			process_history_scroll_up();
-		update_runtime_props(false);
-	}
-
-	/* 各ボタンについて処理する */
-	is_drag_finished = false;
-	for (i = 0; i < BUTTON_COUNT; i++) {
-		if (!is_fading_in && !is_fading_out) {
-			/* ポイント状態を更新する */
-			process_button_point(i, false);
-
-			/* ドラッグ状態を更新する */
-			process_button_drag(i);
-
-			/* クリック結果を取得する */
-			process_button_click(i);
-		}
-	}
-
-	/* ドラッグ終了後の処理を行う */
-	if (is_drag_finished) {
-		for (i = 0; i < BUTTON_COUNT; i++)
-			process_button_point(i, false);
-		is_drag_finished = false;
-	}
-
-	/* ボタンが決定された場合は終了する */
-	if (result_index != -1) {
-		if (fade_out_time > 0 &&
-		    (button[result_index].type != TYPE_GUI &&
-		     button[result_index].type != TYPE_TITLE)) {
-			is_fading_out = true;
-			reset_lap_timer(&fade_sw);
-		} else {
-			is_finished = true;
-		}
-	}
-
-	/* 余白のクリックでキャンセル可能な場合 */
-	if (is_click_cancel && pointed_index == -1 && is_left_clicked && !is_first_frame) {
-		/* フェードアウトか終了処理を行う */
-		if (fade_out_time > 0) {
-			is_fading_out = true;
-			reset_lap_timer(&fade_sw);
-		} else {
-			is_finished = true;
-			clear_input_state();
-		}
-	}
-
-	/* エスケープキーでキャンセル可能な場合 */
-	if (is_escape_cancel && is_escape_pressed) {
-		/* フェードアウトか終了処理を行う */
-		if (fade_out_time > 0) {
-			is_fading_out = true;
-			reset_lap_timer(&fade_sw);
-		} else {
-			is_finished = true;
-			clear_input_state();
-		}
-	}
-
-	/* 続くコマンド実行に影響を与えないようにする */
-	clear_input_state();
-}
-
-/* 画像の描画を処理する */
-static void process_blit(void)
-{
-	/* ヒストリボタンの更新が必要な場合 */
-	if (need_update_history_buttons) {
-		draw_history_buttons();
-		need_update_history_buttons = false;
-	}
-
-	/* 名前変数ボタンの更新を行う */
-	if (need_update_namevar_buttons) {
-		draw_namevar_buttons();
-		need_update_namevar_buttons = false;
-	}
-
-	/* プレビューボタンの更新を行う */
-	draw_preview_buttons();
-}
-
-/* 描画を処理する */
-static void process_render(void)
-{
-	float progress;
-	int i;
-
-	/* フェードイン・フェードアウト中のアルファ値を計算する */
-	cur_alpha = 255;
-	if (is_fading_in) {
-		/* フェードインを処理する */
-		progress = (float)get_lap_timer_millisec(&fade_sw) / 1000.0f / fade_in_time;
-		if (progress < 1.0f) {
-			/* フェードインを継続する */
-			cur_alpha = (int)(progress * 255.0f);
-		} else {
-			/* フェードインを終了する */
-			is_fading_in = false;
-			cur_alpha = 255;
-		}
-	} else if (is_fading_out) {
-		/* フェードアウトを処理する */
-		progress = (float)get_lap_timer_millisec(&fade_sw) / 1000.0f / fade_out_time;
-		if (progress < 1.0f) {
-			/* フェードアウトを継続する */
-			cur_alpha = 255 - (int)(progress * 255.0f);
-		} else {
-			/* フェードアウトを終了する */
-			is_fading_out = false;
-			is_finished = true;
-			cur_alpha = 0;
-		}
-	}
-
-	/* ステージをレンダリングする */
-	render_stage();
-
-	/* baseをレンダリングする */
-	if (base_image != NULL)
-		render_image_normal(0, 0, -1, -1, base_image, 0, 0, -1, -1, cur_alpha);
-
-	/* 各ボタンの状態に合わせてレンダリングする */
-	for (i = 0; i < BUTTON_COUNT; i++)
-		process_button_render(i);
-}
-
-/* 他のコマンドやGUIへの遷移を処理する */
-static bool process_move(void)
+/* Process transition to other commands or GUIs. */
+static bool
+process_move(void)
 {
 	if (!is_finished)
 		return true;
 	if (is_fading_in || is_fading_out)
 		return true;
 
-	/* 他のGUIに移動する場合 */
+	/* If moving to another GUI */
 	if (result_index != -1 &&
 	    button[result_index].type == TYPE_GUI)
 		return move_to_other_gui();
 
-	/* キャンセルの場合 */
+	/* If cancel. */
 	if (result_index != -1 &&
 	    button[result_index].type == TYPE_CANCEL) {
-		/* ここでは何もしないが、@guiコマンドの場合はcmd_gui.cで後処理を行う。 */
+		/* Do nothing here, but post-processing is done in cmd_gui.c for @gui commands. */
 	}
 
-	/* オートモードを開始する場合 */
+	/* If starting auto mode. */
 	if (result_index != -1 && button[result_index].type == TYPE_AUTO) {
-		show_automode_banner(true);
-		start_auto_mode();
+		s3_show_automode_banner(true);
+		s3_start_auto_mode();
 	}
 
-	/* スキップモードを開始する場合 */
+	/* If starting skip mode. */
 	if (result_index != -1 && button[result_index].type == TYPE_SKIP) {
-		show_skipmode_banner(true);
-		start_skip_mode();
+		s3_show_skipmode_banner(true);
+		s3_start_skip_mode();
 	}
 
-	/*
-	 * ラベルへジャンプする場合:
-	 *  - gosubの準備をここで行う
-	 *  - システムGUIの場合はここでジャンプもする
-	 */
-	if (result_index != -1 &&
-	    (button[result_index].type == TYPE_GOTO ||
-	     button[result_index].type == TYPE_GALLERY) &&
-	    (button[result_index].gosub ||
-	     button[result_index].gosub_gui)) {
-		if (is_message_active())
-			clear_message_active();
-		if (button[result_index].push_stage)
-			s2_push_stage(NULL);
-		if (button[result_index].gosub)
-			set_deep_return_point(get_command_index() - 1);
-		if (button[result_index].gosub_gui)
-			push_return_gui(gui_file);
-
-		/* @guiコマンドでない(=システムGUIである)場合、ここでジャンプする */
-		if (is_sys_gui) {
-			if (!move_to_label(button[result_index].label))
-				return false;
-		}
-	}
-
-	/* GUIモードを終了する */
-	stop_gui_mode();
+	/* End GUI mode. */
+	s3_stop_gui();
 
 	return true;
 }
 
-/* SEの再生を処理する */
-static void process_se(void)
+/* Process SE playback. */
+static void
+process_se(void)
 {
-	/* 初回フレームの場合は再生しない */
+	/* Do not play on the first frame. */
 	if (is_first_frame)
 		return;
 
-	/* SEを抑止するフレームの場合は再生しない */
+	/* Do not play on frames where SE is suppressed. */
 	if (suppress_se) {
 		suppress_se = false;
 		return;
 	}
 
-	/* セーブされたフレームの場合は再生しない */
+	/* Do not play on frames that have been saved. */
 	if (is_saved_in_this_frame) {
 		suppress_se = true;
 		is_saved_in_this_frame = false;
 		return;
 	}
 
-	/* ボタンが選択された場合 */
+	/* If a button is selected. */
 	if (!suppress_se_forever) {
 		if (result_index == -1 && (is_fading_out || is_finished)) {
-			/* キャンセルの場合 */
+			/* If cancel. */
 			play_sys_se(cancel_se);
 
-			/* これ以上SEを再生しない */
+			/* Do not play SE anymore. */
 			suppress_se_forever = true;
 			return;
 		} else if (result_index != -1) {
-			/* 音量系のボタンの場合、SEは再生しない */
+			/* Do not play SE for volume-related buttons. */
 			if (button[result_index].type == TYPE_MASTERVOL ||
 			    button[result_index].type == TYPE_BGMVOL ||
 			    button[result_index].type == TYPE_VOICEVOL ||
@@ -1405,39 +1024,40 @@ static void process_se(void)
 			    button[result_index].type == TYPE_CHARACTERVOL)
 				return;
 
-			/* クリック音を再生する */
+			/* Play click sound. */
 			play_sys_se(button[result_index].clickse);
 
-			/* これ以上SEを再生しない */
+			/* Do not play SE anymore. */
 			if (is_fading_out || is_finished)
 				suppress_se_forever = true;
 			return;
 		}
 	}
 
-	/* 前フレームとは異なるボタンがポイントされた場合 */
-    if (pointed_index != prev_pointed_index && pointed_index != -1)
-        play_sys_se(button[pointed_index].pointse);
+	/* If a different button was pointed at compared to the previous frame. */
+	if (pointed_index != prev_pointed_index && pointed_index != -1)
+		play_sys_se(button[pointed_index].pointse);
 }
 
-/* 左右キーを処理する */
-static void process_left_right_arrow_keys(void)
+/* Process left and right arrow keys. */
+static void
+process_left_right_arrow_keys(void)
 {
 	int i, search_start;
 
 	search_start = -1;
 
-	/* 右キーを処理する */
-	if (is_right_arrow_pressed) {
-		/* 選択されているボタンを求める */
+	/* Process right arrow key. */
+	if (s3_is_right_key_pressed()) {
+		/* Find the selected button. */
 		search_start = pointed_index + 1;
 
-		/* 選択するボタンを探す */
+		/* Search for a button to select. */
 		for (i = search_start; i < BUTTON_COUNT; i++)
 			if (process_button_point(i, true))
 				return;
 
-		/* 検索をラップする */
+		/* Wrap the search. */
 		if (search_start == 0)
 			return;
 		for (i = 0; i < search_start; i++)
@@ -1446,20 +1066,20 @@ static void process_left_right_arrow_keys(void)
 		return;
 	}
 
-	/* 左キーを処理する */
-	if (is_left_arrow_pressed) {
-		/* 選択されているボタンを求める */
+	/* Process left arrow key. */
+	if (s3_is_left_key_pressed()) {
+		/* Find the selected button. */
 		if (pointed_index == -1 || pointed_index == 0)
 			search_start = BUTTON_COUNT - 1;
 		else
 			search_start = pointed_index - 1;
 
-		/* 選択するボタンを探す */
+		/* Search for a button to select. */
 		for (i = search_start; i >= 0; i--)
 			if (process_button_point(i, true))
 				return;
 
-		/* 検索をラップする */
+		/* Wrap the search. */
 		if (search_start == BUTTON_COUNT -1)
 			return;
 		for (i = BUTTON_COUNT - 1; i > search_start; i--)
@@ -1468,93 +1088,94 @@ static void process_left_right_arrow_keys(void)
 	}
 }
 
-/* 他のGUIに移動する */
-static bool move_to_other_gui(void)
+/* Move to another GUI. */
+static bool
+move_to_other_gui(void)
 {
 	char *file;
 
-	/* ファイル名をコピーする(cleanup_gui()によって参照不能となるため) */
+	/* Copy the file name. (it becomes inaccessible due to cleanup_gui()) */
 	file = strdup(button[result_index].file);
 	if (file == NULL) {
-		log_memory();
-		cleanup_gui();
+		s3_log_out_of_memory();
+		s3i_cleanup_gui();
 		return false;
 	}
 
-	/* GUIを停止する */
-	stop_gui_mode();
+	/* Stop GUI mode. */
+	s3_stop_gui();
 
-	/* 現在のGUIを破棄する */
-	cleanup_gui();
+	/* Destroy the current GUI. */
+	s3i_cleanup_gui();
 
-	/* GUIをロードする */
-	if (!prepare_gui_mode(file, is_sys_gui)) {
+	/* Load the GUI. */
+	if (!s3_load_gui_file(file, is_sys_gui)) {
 		free(file);
 		return false;
 	}
 	free(file);
 
-	/* GUIを開始する */
-	start_gui_mode();
+	/* Start the GUI. */
+	s3_start_gui();
 
 	return true;
 }
 
-/* タイトルに移動する */
-static bool move_to_title(void)
+/* Move to title. */
+static bool
+move_to_title(void)
 {
 	const char *file;
 	int i;
 
 	file = button[result_index].file;
 
-	/* ファイルが指定されていない場合 */
+	/* If the file is not specified. */
 	if (file == NULL)
 		return true;
 
-	/* 現在のスクリプトに対応する既読フラグをセーブする */
-	if (!save_seen())
+	/* Save the read flag corresponding to the current script. */
+	if (!s3_save_seen())
 		return false;
 
-	/* ステージをクリアする */
-	clear_stage();
+	/* Clear the stage. */
+	s3_clear_stage();
 
-	/* Cielの状態をクリアする */
-	ciel_clear_hook();
+	/* Clear the state of Ciel. */
+	//ciel_clear_hook();
 
-	/* ローカル変数をクリアする */
-	for (i = 0; i < LOCAL_VAR_SIZE; i++)
-		set_variable(i, 0);
+	/* Clear local variables. */
+	s3_clear_local_variables();
 
-	/* スクリプトをロードする */
-	if (!load_script(file))
+	/* Load the script. */
+	if (!s3_load_tag_file(file))
 		return false;
 
-	/* @guiコマンドを実行中の場合はキャンセルする */
+	/* Cancel if the @gui command is being executed. */
 	if (is_in_command_repetition())
 		stop_command_repetition();
 
 	/*
-	 * メッセージか選択肢の最中に呼ばれた場合
-	 *  - この場合はシステムGUIから戻ったという扱いにしない
+	 * If called during a message or choice
+	 *  - In this case, it is not treated as returning from the system GUI.
 	 */
 	if (is_sys_gui)
 		is_sys_gui = false;
 
-	/* メッセージをアクティブでなくする */
+	/* Deactivate the message. */
 	if (is_message_active())
 		clear_message_active();
 
-	/* GUIを終了する */
+	/* Stop the GUI. */
 	stop_gui_mode();
 
-	/* 現在のGUIを破棄する */
+	/* Destroy the current GUI. */
 	cleanup_gui();
 
-	/* ステージをクリアする */
+	/* Clear the stage. */
 	clear_stage();
 
-	/* 音声を停止する */
+	/* Stop the audio. */
 	for (i = 0; i < MIXER_STREAMS; i++) {
 		if (i != SYS_STREAM)
 			set_mixer_input(i, NULL);
@@ -1565,108 +1186,100 @@ static bool move_to_title(void)
 	return true;
 }
 
-/*
- * ボタンのポイント
- */
-
-/* ボタンのポイント状態の変化を処理する */
+/* Process changes in button pointing state. */
 static bool process_button_point(int index, bool key)
 {
 	struct gui_button *b;
 
 	b = &button[index];
 
-	/* TYPE_INVALIDのときポイントできない(ボタンがない) */
+	/* If the button is TYPE_INVALID, it cannot be pointed at. (no button) */
 	if (b->type == TYPE_INVALID)
 		return false;
 
-	/* TYPE_LOADのときセーブデータがないとポイントできない */
+	/* If the button is TYPE_LOAD and there is no save data, it cannot be pointed at. */
 	if (b->type == TYPE_LOAD && !b->rt.is_active)
 		return false;
 
-	/* TYPE_GALLERYのとき、ボタンが無効であればポイントできない */
+	/* If the button is TYPE_GALLERY and the button is disabled, it cannot be pointed at. */
 	if (b->rt.is_disabled)
 		return false;
 
-	/* TYPE_FULLSCREENのとき、ボタンがアクティブならポイントできない */
+	/* If the button is TYPE_FULLSCREEN and the button is active, it cannot be pointed at. */
 	if (b->type == TYPE_FULLSCREEN && b->rt.is_active)
 		return false;
 
-	/* TYPE_WINDOWのとき、ボタンがアクティブならポイントできない */
+	/* If the button is TYPE_WINDOW and the button is active, it cannot be pointed at. */
 	if (b->type == TYPE_WINDOW && b->rt.is_active)
 		return false;
 
-	/* TYPE_HISTORYのとき、ボタンが非アクティブならポイントできない */
+	/* If the button is TYPE_HISTORY and the button is inactive, it cannot be pointed at. */
 	if (b->type == TYPE_HISTORY && !b->rt.is_active)
 		return false;
 
-	/* TYPE_PREVIEWのとき、ポイントできない */
+	/* If the button is TYPE_PREVIEW, it cannot be pointed at. */
 	if (b->type == TYPE_PREVIEW)
 		return false;
 
-	/* TYPE_NAMEVARのとき、ポイントできない */
+	/* If the button is TYPE_NAMEVAR, it cannot be pointed at. */
 	if (b->type == TYPE_NAMEVAR)
 		return false;
 
-	/* 他の項目がドラッグ中の場合 */
+	/* If another item is being dragged. */
 	if (dragging_index != -1 && dragging_index != index)
 		return false;
 
-	/* キー操作の場合 */
+	/* If it is a key operation. */
 	if (key) {
-		/* ポイントされている状態にする */
+		/* Set it to the pointed state. */
 		pointed_index = index;
 		is_pointed_by_key = true;
 		save_mouse_pos_x = mouse_pos_x;
 		save_mouse_pos_y = mouse_pos_y;
 
-		/* 読み上げる */
+		/* Speak. */
 		if (conf_tts)
 			speak(button[index].alt);
 		return true;
 	}
 
-	/* マウスがボタン領域に入っている場合 */
+	/* If the mouse is within the button area. */
 	if (mouse_pos_x >= b->x && mouse_pos_x <= b->x + b->width &&
 	    mouse_pos_y >= b->y && mouse_pos_y <= b->y + b->height) {
-		/* すでにキーで選択済みの項目の場合 */
+		/* If the item is already selected by key. */
 		if (is_pointed_by_key && index == pointed_index)
 			return false;
 
-		/* キーで選択済みの項目があり、マウスが移動していない場合 */
+		/* If an item is already selected by key and the mouse has not moved. */
 		if (is_pointed_by_key &&
 		    mouse_pos_x == save_mouse_pos_x &&
 		    mouse_pos_y == save_mouse_pos_y)
 			return false;
 
-		/* まだポイント済みになっていない場合 */
+		/* If it is not yet pointed at. */
 		if (index != prev_pointed_index) {
-			/* ポイントされている状態にする */
+			/* Set it to the pointed state. */
 			pointed_index = index;
             is_pointed_by_key = false;
 		}
 		return true;
 	}
 
-	/* ポイントから外れた場合(キー選択の場合を除く) */
+	/* If it is no longer pointed at (except for key selection). */
 	if (pointed_index == index && !is_pointed_by_key)
 		pointed_index = -1;
 
 	return false;
 }
 
-/*
- * ボタンのドラッグ
- */
-
-/* ボリュームボタンのドラッグを処理する */
+/* Process dragging of volume buttons. */
 static void process_button_drag(int index)
 {
 	struct gui_button *b;
 
 	b = &button[index];
 
-	/* ドラッグ可能なボタンではない場合 */
+	/* If the button is not draggable. */
 	if (b->type != TYPE_MASTERVOL &&
 	    b->type != TYPE_BGMVOL &&
 	    b->type != TYPE_VOICEVOL &&
@@ -1678,21 +1291,21 @@ static void process_button_drag(int index)
 	    b->type != TYPE_HISTORYSCROLL_HORIZONTAL)
 		return;
 
-	/* ドラッグ中でない場合 */
+	/* If not dragging. */
 	if (!b->rt.is_dragging) {
-		/* ドラッグ中でない場合 */
+		/* If not dragging. */
 		if (!is_mouse_dragging)
 			return;
 
-		/* ポイントされていない場合 */
+		/* If not pointed at. */
 		if (pointed_index != index)
 			return;
 
-		/* すでにドラッグされている場合 */
+		/* If already dragging. */
 		if (dragging_index != -1)
 			return;
 
-		/* ドラッグを開始する */
+		/* Start dragging. */
 		dragging_index = index;
 		b->rt.is_dragging = true;
 		b->rt.slider = calc_slider_value(index);
@@ -1704,10 +1317,10 @@ static void process_button_drag(int index)
 	}
 
 	/*
-	 * ドラッグ中の場合
+	 * If dragging.
 	 */
 
-	/* スライダの量を設定に反映する */
+	/* Reflect the slider amount in the settings. */
 	b->rt.slider = calc_slider_value(index);
 	switch (b->type) {
 	case TYPE_MASTERVOL:
@@ -1739,40 +1352,40 @@ static void process_button_drag(int index)
 		break;
 	}
 
-	/* ドラッグを終了する場合 */
+	/* If dragging is finished. */
 	if (!is_mouse_dragging) {
 		b->rt.is_dragging = false;
 		dragging_index = -1;
 		is_drag_finished = true;
 		clear_input_state();
 
-		/* 調節完了後のアクションを実行する */
+		/* Execute actions after adjustment is completed. */
 		switch (b->type) {
 		case TYPE_MASTERVOL:
 			break;
 		case TYPE_BGMVOL:
 			break;
 		case TYPE_VOICEVOL:
-			/* デフォルトのキャラクター音量でフィードバックする */
+			/* Provide feedback with the default character volume. */
 			apply_character_volume(CH_VOL_SLOT_DEFAULT);
 			play_se(b->file);
 			break;
 		case TYPE_SEVOL:
-			/* フィードバックする */
+			/* Provide feedback. */
 			play_se(b->file);
 			break;
 		case TYPE_CHARACTERVOL:
-			/* 指定されたキャラクター音量でフィードバックする */
+			/* Provide feedback with the specified character volume. */
 			apply_character_volume(b->index);
 			play_se(b->file);
 			break;
 		case TYPE_TEXTSPEED:
-			/* テキストを再表示する */
+			/* Redisplay the text. */
 			set_text_speed(transient_text_speed);
 			reset_preview_buttons();
 			break;
 		case TYPE_AUTOSPEED:
-			/* テキストを再表示する */
+			/* Redisplay the text. */
 			set_auto_speed(1.0f - b->rt.slider);
 			reset_preview_buttons();
 			break;
@@ -1784,11 +1397,11 @@ static void process_button_drag(int index)
 		}
 	}
 
-	/* 同じタイプのボタンが複数ある場合のために、他のボタンの更新を行う */
+	/* Update other buttons in case there are multiple buttons of the same type. */
 	update_runtime_props(false);
 }
 
-/* スライダの値を計算する */
+/* Calculate the value of the slider. */
 static float calc_slider_value(int index)
 {
 	float val;
@@ -1796,52 +1409,48 @@ static float calc_slider_value(int index)
 	if (button[index].type != TYPE_HISTORYSCROLL) {
 		float x1, x2;
 
-		/* スライダの左端を求める */
+		/* Calculate the left end of the slider. */
 		x1 = (float)(button[index].x + button[index].height / 2);
 
-		/* スライダの右端を求める */
+		/* Calculate the right end of the slider. */
 		x2 = (float)(button[index].x + button[index].width -
 			     button[index].height / 2);
 
-		/* ポイントされている座標における値を計算する */
+		/* Calculate the value at the pointed coordinate. */
 		val = ((float)mouse_pos_x - x1) / (x2 - x1);
 	} else {
 		float y1, y2;
 
-		/* スライダの上端を求める */
+		/* Calculate the top end of the slider. */
 		y1 = (float)(button[index].y + button[index].width / 2);
 
-		/* スライダの下端を求める */
+		/* Calculate the bottom end of the slider. */
 		y2 = (float)(button[index].y + button[index].height -
 			     button[index].width / 2);
 
-		/* ポイントされている座標における値を計算する */
+		/* Calculate the value at the pointed coordinate. */
 		val = ((float)mouse_pos_y - y1) / (y2 - y1);
 	}
 
-	/* 0未満のときを処理する */
+	/* Handle values less than 0. */
 	if (val < 0)
 		val = 0;
 
-	/* 1以上のときを処理する */
+	/* Handle values greater than 1. */
 	if (val > 1.0f)
 		val = 1.0f;
 
 	return val;
 }
 
-/*
- * ボタンのクリック
- */
-
-/* ボタンのクリックを処理する */
+/* Process button click. */
 static void process_button_click(int index)
 {
 	struct gui_button *b;
 
 	b = &button[index];
 
-	/* クリックできないボタンの場合 */
+	/* If the button cannot be clicked. */
 	if (b->type == TYPE_MASTERVOL ||
 	    b->type == TYPE_BGMVOL ||
 	    b->type == TYPE_VOICEVOL ||
@@ -1852,19 +1461,19 @@ static void process_button_click(int index)
 	    b->type == TYPE_PREVIEW)
 		return;
 
-	/* ボタンがポイントされていない場合 */
+	/* If buttons are not pointed. */
 	if (index != pointed_index)
 		return;
 
-	/* ボタンがクリックされていない場合 */
+	/* If the pointed button is not clicked. */
 	if (!is_left_clicked && !is_return_pressed)
 		return;
 
-	/* 他のボタンがドラッグ中の場合 */
+	/* If other buttons are being dragged. */
 	if (dragging_index != -1 && dragging_index != index)
 		return;
 
-	/* ボタンのタイプごとにクリックを処理する */
+	/* Process click according to button type. */
 	switch (b->type) {
 	case TYPE_FULLSCREEN:
 		play_sys_se(b->clickse);
@@ -1933,10 +1542,48 @@ static void process_button_click(int index)
 }
 
 /*
- * ボタンのレンダリング
+ * Rendering
  */
 
-/* ボタンを描画する */
+/* Process rendering. */
+static void process_render(void)
+{
+	float progress;
+	int i;
+
+	/* Calculate alpha value during fade-in and fade-out */
+	cur_alpha = 255;
+	if (is_fading_in) {
+		/* Process fade-in. */
+		progress = (float)get_lap_timer_millisec(&fade_sw) / 1000.0f / fade_in_time;
+		if (progress < 1.0f) {
+			/* Continue fade-in. */
+			cur_alpha = (int)(progress * 255.0f);
+		} else {
+			/* End fade-in. */
+			is_fading_in = false;
+			cur_alpha = 255;
+		}
+	} else if (is_fading_out) {
+		/* Process fade-out. */
+		progress = (float)get_lap_timer_millisec(&fade_sw) / 1000.0f / fade_out_time;
+		if (progress < 1.0f) {
+			/* Continue fade-out. */
+			cur_alpha = 255 - (int)(progress * 255.0f);
+		} else {
+			/* End fade-out. */
+			is_fading_out = false;
+			is_finished = true;
+			cur_alpha = 0;
+		}
+	}
+
+	/* Render each button according to its state. */
+	for (i = 0; i < BUTTON_COUNT; i++)
+		process_button_render(i);
+}
+
+/* Draw a button. */
 static void process_button_render(int index)
 {
 	struct gui_button *b;
@@ -1951,53 +1598,48 @@ static void process_button_render(int index)
 	case TYPE_CHARACTERVOL:
 	case TYPE_TEXTSPEED:
 	case TYPE_AUTOSPEED:
-		/* スライダをレンダリングする */
+		/* Render a slider. */
 		process_button_render_slider(index);
 		break;
-	case TYPE_FONT:
 	case TYPE_FULLSCREEN:
 	case TYPE_WINDOW:
 	case TYPE_SAVEPAGE:
-		/* アクティブ化可能ボタンをレンダリングする */
-		process_button_render_activatable(index);
-		break;
-	case TYPE_GALLERY:
-		/* ギャラリーをレンダリングする */
-		process_button_render_gallery(index);
+		/* Render a stateful button.*/
+		process_button_render_stateful(index);
 		break;
 	case TYPE_SAVE:
 	case TYPE_LOAD:
-		/* セーブ・ロードボタンを描画する */
+		/* Render a save/load button. */
 		process_button_render_save(index);
 		break;
 	case TYPE_HISTORY:
-		/* ヒストリボタンを描画する */
+		/* Render a history button. */
 		process_button_render_history(index);
 		break;
 	case TYPE_HISTORYSCROLL:
-		/* 垂直スライダを描画する */
+		/* Render a vertical slider. */
 		process_button_render_slider_vertical(index);
 		break;
 	case TYPE_HISTORYSCROLL_HORIZONTAL:
-		/* 垂直スライダを描画する */
+		/* Render a horizontal slider. */
 		process_button_render_slider(index);
 		break;
 	case TYPE_PREVIEW:
-		/* プレビューを描画する */
+		/* Render a preview button. */
 		process_button_render_preview(index);
 		break;
 	case TYPE_NAMEVAR:
-		/* 名前変数ボタンを描画する */
-		process_button_render_namevar(index);
+		/* Render a variable button. */
+		process_button_render_var(index);
 		break;
 	default:
-		/* 一般的なボタンを描画する */
+		/* Draw a generic button. */
 		process_button_render_generic(index);
 		break;
 	}
 }
 
-/* スライダーボタンをレンダリングする */
+/* Render a slider button. */
 static void process_button_render_slider(int index)
 {
 	struct gui_button *b;
@@ -2005,22 +1647,22 @@ static void process_button_render_slider(int index)
 
 	b = &button[index];
 
-	/* ポイントされていないときバー部分をidle画像で描画する */
+	/* If the button is not pointed, draw the bar part with the idle image. */
 	if (index != pointed_index || is_fading_in || is_fading_out)
 		render_image_normal(b->x, b->y, b->width, b->height, idle_image, b->x, b->y, b->width, b->height, cur_alpha);
 
-	/* ポイントされているときバー部分をhover画像で描画する */
+	/* If the button is pointed, draw the bar part with the hover image. */
 	if (index == pointed_index && !is_fading_in && !is_fading_out)
 		render_image_normal(b->x, b->y, b->width, b->height, hover_image, b->x, b->y, b->width, b->height, cur_alpha);
 
-	/* 描画位置を計算する */
+	/* Calculate the drawing position. */
 	x = b->x + (int)((float)(b->width - b->height) * b->rt.slider);
 
-	/* ツマミをactive画像で描画する */
+	/* Draw the knob with the active image. */
 	render_image_normal(x, b->y, b->height, b->height, active_image, b->x, b->y, b->height, b->height, cur_alpha);
 }
 
-/* 垂直スライダーボタンをレンダリングする */
+/* Render a vertical slider button. */
 static void process_button_render_slider_vertical(int index)
 {
 	struct gui_button *b;
@@ -2028,43 +1670,22 @@ static void process_button_render_slider_vertical(int index)
 
 	b = &button[index];
 
-	/* ポイントされていないときバー部分をidle画像で描画する */
+	/* If the button is not pointed, draw the bar part with the idle image. */
 	if (index != pointed_index || is_fading_in || is_fading_out)
 		render_image_normal(b->x, b->y, b->width, b->height, idle_image, b->x, b->y, b->width, b->height, cur_alpha);
 
-	/* ポイントされているときバー部分をhover画像で描画する */
+	/* If the button is pointed, draw the bar part with the hover image. */
 	if (index == pointed_index && !is_fading_in && !is_fading_out)
 		render_image_normal(b->x, b->y, b->width, b->height, hover_image, b->x, b->y, b->width, b->height, cur_alpha);
 
-	/* 描画位置を計算する */
+	/* Calculate the drawing position. */
 	y = b->y + (int)((float)(b->height - b->width) * b->rt.slider);
 
-	/* ツマミをactive画像で描画する */
+	/* Draw the knob with the active image. */
 	render_image_normal(b->x, y, b->width, b->width, active_image, b->x, b->y, b->width, b->width, cur_alpha);
 }
 
-/* アクティブ化可能ボタンをレンダリングする */
-static void process_button_render_activatable(int index)
-{
-	struct gui_button *b;
-
-	b = &button[index];
-	assert(b->type == TYPE_FONT || b->type == TYPE_FULLSCREEN ||
-	       b->type == TYPE_WINDOW || b->type == TYPE_SAVEPAGE);
-
-	if (b->rt.is_active) {
-		/* アクティブなとき、active画像を描画する */
-		render_image_normal(b->x, b->y, b->width, b->height, active_image, b->x, b->y, b->width, b->height, cur_alpha);
-	} else if (pointed_index == index && !is_fading_in && !is_fading_out) {
-		/* ポイントされているとき、hover画像を描画する */
-		render_image_normal(b->x, b->y, b->width, b->height, hover_image, b->x, b->y, b->width, b->height, cur_alpha);
-	} else {
-		/* それ以外のときidle画像を描画する */
-		render_image_normal(b->x, b->y, b->width, b->height, idle_image, b->x, b->y, b->width, b->height, cur_alpha);
-	}
-}
-
-/* プレビューボタンをレンダリングする */
+/* Render a preview button. */
 static void process_button_render_preview(int index)
 {
 	struct gui_button *b;
@@ -2074,7 +1695,7 @@ static void process_button_render_preview(int index)
 	render_image_normal(b->x, b->y, b->width, b->height, b->rt.img, 0, 0, b->width, b->height, cur_alpha);
 }
 
-/* 一般のボタンをレンダリングする */
+/* Render a generic button. */
 static void process_button_render_generic(int index)
 {
 	struct gui_button *b;
@@ -2087,35 +1708,15 @@ static void process_button_render_generic(int index)
 		render_image_normal(b->x, b->y, b->width, b->height, hover_image, b->x, b->y, b->width, b->height, cur_alpha);
 }
 
-/* ギャラリーボタンを描画する */
-static void process_button_render_gallery(int index)
-{
-	struct gui_button *b;
-
-	b = &button[index];
-	assert(b->type == TYPE_GALLERY);
-
-	if (b->rt.is_disabled) {
-		/* 指定された変数が0のときはidleを描画する */
-		render_image_normal(b->x, b->y, b->width, b->height, idle_image, b->x, b->y, b->width, b->height, cur_alpha);
-	} else if (index != pointed_index) {
-		/* ポイントされていないとき、active画像を描画する */
-		render_image_normal(b->x, b->y, b->width, b->height, active_image, b->x, b->y, b->width, b->height, cur_alpha);
-	} else {
-		/* ポイントされているとき、hover画像を描画する */
-		render_image_normal(b->x, b->y, b->width, b->height, hover_image, b->x, b->y, b->width, b->height, cur_alpha);
-	}
-}
-
-/* 名前変数ボタンを描画する */
-static void process_button_render_namevar(int index)
+/* Render a variable button. */
+static void process_button_render_var(int index)
 {
 	struct gui_button *b;
 
 	b = &button[index];
 	assert(b->type == TYPE_NAMEVAR);
 
-	/* スクリーンへの描画を行う */
+	/* Draw on the screen. */
 	render_image_normal(button[index].x,
 			    button[index].y,
 			    button[index].width,
@@ -2129,10 +1730,10 @@ static void process_button_render_namevar(int index)
 }
 
 /*
- * セーブ・ロード
+ * Save/Load Button
  */
 
-/* TYPE_SAVE/TYPE_LOADのボタンの初期化を行う */
+/* Initialize buttons of type TYPE_SAVE/TYPE_LOAD. */
 static bool init_save_buttons(void)
 {
 	int i;
@@ -2150,7 +1751,7 @@ static bool init_save_buttons(void)
 	return true;
 }
 
-/* セーブ・ロードのスロットを描画する */
+/* Render save and load slots. */
 static void update_save_buttons(void)
 {
 	int i, base, save_index;
@@ -2171,7 +1772,7 @@ static void update_save_buttons(void)
 	}
 }
 
-/* セーブ・ロードボタンを描画する */
+/* Render a save/load button. */
 static void draw_save_button(int button_index)
 {
 	char text[128];
@@ -2187,20 +1788,20 @@ static void draw_save_button(int button_index)
 	if (b->rt.img == NULL)
 		return;
 
-	/* セーブデータ番号を求める */
+	/* Calculate the save data number. */
 	save_index = save_slots * save_page + b->index;
 
-	/* セーブ時刻を求める */
+	/* Get the save time. */
 	save_time = get_save_date(save_index);
 
-	/* イメージをクリアする */
+	/* Clear the image. */
 	clear_image_color(b->rt.img,
 			  make_pixel(0,
 				     (uint32_t)b->clear_r,
 				     (uint32_t)b->clear_g,
 				     (uint32_t)b->clear_b));
 
-	/* サムネイルを描画する */
+	/* Draw the thumbnail. */
 	thumb = get_save_thumbnail(save_index);
 	if (thumb != NULL) {
 		draw_image_copy(b->rt.img, b->margin, b->margin, thumb,
@@ -2208,7 +1809,7 @@ static void draw_save_button(int button_index)
 			   conf_save_data_thumb_height, 0, 0);
 	}
 
-	/* 日時を描画する */
+	/* Draw the date and time. */
 	if (get_save_date(save_index) == 0) {
 		snprintf(text, sizeof(text), "[%02d] NO DATA", save_index);
 	} else {
@@ -2221,7 +1822,7 @@ static void draw_save_button(int button_index)
 				    conf_save_data_thumb_width + b->margin * 2,
 				    b->margin, text, false);
 
-	/* 章タイトルを描画する */
+	/* Draw the chapter title. */
 	chapter = get_save_chapter_name(save_index);
 	if (chapter != NULL) {
 		draw_save_text_item(button_index,
@@ -2232,7 +1833,7 @@ static void draw_save_button(int button_index)
 				    false);
 	}
 
-	/* 最後のメッセージを描画する */
+	/* Draw the last message. */
 	msg = get_save_last_message(save_index);
 	if (msg) {
 		draw_save_text_item(button_index,
@@ -2245,7 +1846,7 @@ static void draw_save_button(int button_index)
 	notify_image_update(b->rt.img);
 }
 
-/* セーブデータのテキストを描画する */
+/* Render save data text. */
 static int draw_save_text_item(int button_index, int x, int y,
 			       const char *text, bool multiline)
 {
@@ -2256,7 +1857,7 @@ static int draw_save_text_item(int button_index, int x, int y,
 
 	b = &button[button_index];
 
-	/* 色を決定する */
+	/* Determine the color. */
 	color = make_pixel(0xff,
 			   (uint32_t)conf_menu_save_font_r,
 			   (uint32_t)conf_menu_save_font_g,
@@ -2266,7 +1867,7 @@ static int draw_save_text_item(int button_index, int x, int y,
 				   (uint32_t)conf_menu_save_font_outline_g,
 				   (uint32_t)conf_menu_save_font_outline_b);
 
-	/* 描画する */
+	/* Render the text. */
 	construct_draw_msg_context(
 		&context,
 		-1,		/* Not for a layer: use an alternative image. */
@@ -2309,51 +1910,51 @@ static int draw_save_text_item(int button_index, int x, int y,
 	return width;
 }
 
-/* セーブを行う */
+/* Perform a save operation. */
 static void process_save(int button_index)
 {
 	int data_index;
 
-	/* ボタン番号からセーブデータ番号に変換する */
+	/* Convert the button index to a save data index. */
 	data_index = save_page * save_slots + button[button_index].index;
 
-	/* SEを再生する */
+	/* Play the SE. */
 	play_sys_se(button[button_index].clickse);
 
-	/* "@gui save.txt"の場合は、次のコマンドに進めておく */
+	/* If "@gui save.txt", advance to the next command. */
 	if (!is_sys_gui && !did_save)
 		did_save = true;
 
-	/* セーブを実行する */
+	/* Execute a save. */
 	execute_save(data_index);
 
-	/* 最後にセーブしたページを保存する */
+	/* Save the last saved page. */
 	conf_menu_save_last_page = save_page;
 
 	/*
-	 * セーブ直後に上書きダイアログのボタンをクリックするためにマウスが
-	 * 移動され、ポイント項目が変わってしまい、セーブボタンのSEがかき消さ
-	 * れることを回避する。
+	 * To prevent the save button's SE from being drowned out by the mouse
+	 * moving and changing the pointed item when clicking the overwrite
+	 * dialog button immediately after saving.
 	 */
 	is_saved_in_this_frame = true;
 }
 
-/* ロードを行う */
+/* Perform a load operation. */
 static void process_load(int button_index)
 {
 	int data_index;
 
-	/* ボタン番号からセーブデータ番号に変換する */
+	/* Convert a button index to a save data index. */
 	data_index = save_page * save_slots + button[button_index].index;
 
-	/* セーブデータがない場合 */
+	/* If there is no save data. */
 	if (get_save_date(data_index) == 0)
 		return;
 
-	/* ロードを実行する */
+	/* Execute a load. */
 	execute_load(data_index);
 
-	/* 最後にロードしたページを保存する */
+	/* Save the last loaded page. */
 	conf_menu_save_last_page = save_page;
 
 	did_load = true;
@@ -2362,7 +1963,7 @@ static void process_load(int button_index)
 	stop_gui_mode();
 }
 
-/* セーブ・ロードボタンの描画を行う */
+/* Render a save/load button. */
 static void process_button_render_save(int index)
 {
 	struct gui_button *b;
@@ -2374,30 +1975,30 @@ static void process_button_render_save(int index)
 	else
 		render_image_normal(b->x, b->y, b->width, b->height, hover_image, b->x, b->y, b->width, b->height, cur_alpha);
 
-	/* サムネイルとテキストの描画を行う */
+	/* Render the thumbnail and text. */
 	render_image_normal(b->x, b->y, b->width, b->height, b->rt.img, 0, 0, b->width, b->height, cur_alpha);
 
-	/* NEW画像を表示する */
+	/* Render the NEW image. */
 	if (b->rt.is_new_enabled &&
 	    get_latest_save_index() == save_page * save_slots + b->index)
 		render_savenew(b->new_x, b->new_y, cur_alpha);
 }
 
 /*
- * ヒストリ
+ * History Buttons
  */
 
-/* TYPE_HISTORYのボタンの初期化を行う */
+/* Initialize TYPE_HISTORY buttons. */
 static bool init_history_buttons(void)
 {
 	int i, history_count;
 
-	/* ヒストリの数を取得する */
+	/* Get the number of history items. */
 	history_count = get_history_count();
 	if (history_count == 0)
 		return true;
 
-	/* ヒストリの先頭を計算する */
+	/* Calculate the top of the history. */
 	if (history_count <= history_slots) {
 		history_top = history_count - 1;
 		transient_history_slider = 0;
@@ -2406,7 +2007,7 @@ static bool init_history_buttons(void)
 		transient_history_slider = 1.0f;
 	}
 
-	/* ボタンごとにイメージを作成する */
+	/* Create images for each button. */
 	for (i = 0; i < BUTTON_COUNT; i++) {
 		if (button[i].type != TYPE_HISTORY)
 			continue;
@@ -2420,14 +2021,14 @@ static bool init_history_buttons(void)
 	return true;
 }
 
-/* ヒストリボタンの描画を行う */
+/* Render a history button. */
 static void process_button_render_history(int index)
 {
 	struct gui_button *b;
 
 	b = &button[index];
 
-	/* ヒストリ項目がない場合(まだヒストリが少ない場合) */
+	/* If there are no history items (history is still small). */
 	if (b->rt.img == NULL)
 		return;
 
@@ -2436,11 +2037,11 @@ static void process_button_render_history(int index)
 	else
 		render_image_normal(b->x, b->y, b->width, b->height, idle_image, b->x, b->y, b->width, b->height, cur_alpha);
 
-	/* テキストの描画を行う */
+	/* Render the text. */
 	render_image_normal(b->x, b->y, b->width, b->height, b->rt.img, 0, 0, b->width, b->height, cur_alpha);
 }
 
-/* すべてのヒストリのスロットを描画する */
+/* Render all history slots. */
 static void draw_history_buttons(void)
 {
 	int i;
@@ -2455,7 +2056,7 @@ static void draw_history_buttons(void)
 	}
 }
 
-/* ヒストリのスロットを描画する */
+/* Render a history slot. */
 static void draw_history_button(int index)
 {
 	struct gui_button *b;
@@ -2464,12 +2065,12 @@ static void draw_history_button(int index)
 	b = &button[index];
 
 #if defined(OPENNOVEL_TARGET_WASM)
-	/* フォント描画に時間がかかる場合のために、サウンドバッファのフィルを行う */
+	/* To fill the sound buffer in case font rendering takes time */
 	void fill_sound_buffer(void);
 	fill_sound_buffer();
 #endif
 
-	/* ヒストリのオフセットを計算する */
+	/* Calculate the history offset */
 	history_count = get_history_count();
 	if (history_count < history_slots)
 		b->rt.history_offset = history_count - b->index - 1;
@@ -2478,7 +2079,7 @@ static void draw_history_button(int index)
 	if (b->rt.history_offset < 0)
 		b->rt.history_offset = -1;
 
-	/* スロットのアクティブ状態を求める */
+	/* Determine the active state of the slot */
 	if (b->rt.history_offset >= 0 &&
 	    b->rt.history_offset < get_history_count()) {
 		if (get_history_voice(b->rt.history_offset) != NULL)
@@ -2491,21 +2092,21 @@ static void draw_history_button(int index)
 		b->rt.is_active = false;
 	}
 
-	/* イメージをクリアする */
+	/* Clear the image. */
 	clear_image_color(b->rt.img,
 			  make_pixel(0,
 				     (uint32_t)b->clear_r,
 				     (uint32_t)b->clear_g,
 				     (uint32_t)b->clear_b));
 
-	/* メッセージを描画する */
+	/* Render the message. */
 	if (b->rt.history_offset != -1)
 		draw_history_text_item(index);
 
 	notify_image_update(b->rt.img);
 }
 
-/* ヒストリのテキストを描画する */
+/* Render the history text. */
 static void draw_history_text_item(int button_index)
 {
 	struct draw_msg_context context;
@@ -2516,10 +2117,10 @@ static void draw_history_text_item(int button_index)
 
 	b = &button[button_index];
 
-	/* メッセージを取得する */
+	/* Get the message. */
 	text = get_history_message(b->rt.history_offset);
 
-	/* 色を求める */
+	/* Determine the color. */
 	color = make_pixel(0xff,
 			   (pixel_t)conf_menu_history_font_r,
 			   (pixel_t)conf_menu_history_font_g,
@@ -2529,7 +2130,7 @@ static void draw_history_text_item(int button_index)
 				   (pixel_t)conf_menu_history_font_outline_g,
 				   (pixel_t)conf_menu_history_font_outline_b);
 
-	/* ペン位置を計算する */
+	/* Calculate the pen position. */
 	if (!conf_menu_history_font_tategaki) {
 		pen_x = b->margin;
 		pen_y = b->margin;
@@ -2538,7 +2139,7 @@ static void draw_history_text_item(int button_index)
 		pen_y = b->margin;
 	}
 
-	/* 描画する */
+	/* Render. */
 	construct_draw_msg_context(
 		&context,
 		-1,		/* Not for a layer: use an alternative image. */
@@ -2578,7 +2179,7 @@ static void draw_history_text_item(int button_index)
 	draw_msg_common(&context, total_chars);
 }
 
-/* 上スクロールを処理する */
+/* Process scroll up. */
 static void process_history_scroll_up(void)
 {
 	int history_count, old_history_top;
@@ -2586,28 +2187,28 @@ static void process_history_scroll_up(void)
 
 	old_history_top = history_top;
 
-	/* ヒストリの先頭位置を計算する */
+	/* Calculate the top of the history. */
 	history_count = get_history_count();
 	history_top++;
 	if (history_top >= history_count)
 		history_top = history_count - 1;
 
-	/* スクロール位置を計算する */
+	/* Calculate the scroll position. */
 	pos = 1.0f - (float)(history_top - (history_slots - 1)) / (float)((history_count - 1) - (history_slots - 1));
 	if (pos < 0)
 		pos = 0;
 	if (pos > 1.0f)
 		pos = 1.0f;
 
-	/* スライダの位置を補正する */
+	/* Adjust the slider position. */
 	transient_history_slider = pos;
 
-	/* 再描画が必要な場合 */
+	/* If a redraw is necessary. */
 	if (history_top != old_history_top)
 		need_update_history_buttons = true;
 }
 
-/* 下スクロールを処理する */
+/* Process scroll down. */
 static void process_history_scroll_down(void)
 {
 	int history_count, old_history_top;
@@ -2615,54 +2216,54 @@ static void process_history_scroll_down(void)
 
 	old_history_top = history_top;
 
-	/* ヒストリの先頭位置を計算する */
+	/* Calculate the top of the history. */
 	history_count = get_history_count();
 	history_top--;
 	if (history_top < 0)
 		history_top = 0;
 
-	/* スクロール位置を計算する */
+	/* Calculate the scroll position. */
 	pos = 1.0f - (float)(history_top - (history_slots - 1)) / (float)((history_count - 1) - (history_slots - 1));
 	if (pos < 0)
 		pos = 0;
 	if (pos > 1.0f)
 		pos = 1.0f;
 
-	/* スライダの位置を補正する */
+	/* Adjust the slider position. */
 	transient_history_slider = pos;
 
-	/* 再描画が必要な場合 */
+	/* If a redraw is necessary. */
 	if (history_top != old_history_top)
 		need_update_history_buttons = true;
 }
 
-/* ヒストリーバーのクリックによるスクロールを処理する */
+/* Process scroll at a specific position on the history bar. */
 static void process_history_scroll_at(float pos)
 {
 	int history_count, old_history_top;
 
 	old_history_top = history_top;
 
-	/* ヒストリの数がスロットの数より小さい場合 */
+	/* If the number of history items is less than the number of slots. */
 	history_count = get_history_count();
 	if (history_count <= history_slots)
 		return;
 
-	/* スクロール位置を計算する */
+	/* Calculate the scroll position. */
 	if (history_count <= history_slots)
 		history_top = history_count - 1;
 	else
 		history_top = (int)(((float)((history_count - 1) - (history_slots - 1)) * (1.0f - pos)) + (float)(history_slots - 1) + 0.5f);
 
-	/* スライダの位置を補正する */
+	/* Adjust the slider position. */
 	transient_history_slider = pos;
 
-	/* 再描画が必要な場合 */
+	/* If a redraw is necessary. */
 	if (history_top != old_history_top)
 		need_update_history_buttons = true;
 }
 
-/* ヒストリースクロールバーのクリックを処理する */
+/* Process click on the history scroll bar. */
 static void process_history_scroll_click(int index)
 {
 	struct gui_button *b;
@@ -2672,7 +2273,7 @@ static void process_history_scroll_click(int index)
 	process_history_scroll_at(b->rt.slider);
 }
 
-/* ヒストリのボイスを再生する */
+/* Play the voice from the history. */
 static void process_history_voice(int button_index)
 {
 	const char *voice;
@@ -2680,10 +2281,10 @@ static void process_history_voice(int button_index)
 	if (button[button_index].rt.history_offset == -1)
 		return;
 
-	/* その他のキャラクタのボリュームを適用する */
+	/* Apply the volume for other characters. */
 	apply_character_volume(CH_VOL_SLOT_DEFAULT);
 
-	/* ボイスを再生する */
+	/* Play the voice. */
 	voice = get_history_voice(button[button_index].rt.history_offset);
 	if (voice != NULL)
 		play_se(voice);
@@ -2692,10 +2293,10 @@ static void process_history_voice(int button_index)
 }
 
 /*
- * テキストプレビュー
+ * Text Preview Buttons
  */
 
-/* TYPE_PREVIEWのボタンの初期化を行う */
+/* Initialize buttons of type TYPE_PREVIEW */
 static bool init_preview_buttons(void)
 {
 	int i;
@@ -2726,7 +2327,7 @@ static bool init_preview_buttons(void)
 	return true;
 }
 
-/* テキストプレビューをリセットする */
+/* Reset text previews. */
 static void reset_preview_buttons(void)
 {
 	int i;
@@ -2741,7 +2342,7 @@ static void reset_preview_buttons(void)
 	}
 }
 
-/* テキストプレビューをリセットする */
+/* Reset text preview. */
 static void reset_preview_button(int index)
 {
 	struct gui_button *b;
@@ -2752,7 +2353,7 @@ static void reset_preview_button(int index)
 
 	b = &button[index];
 
-	/* イメージをクリアする */
+	/* Clear the image. */
 	clear_image_color(b->rt.img,
 			  make_pixel(0,
 				     (uint32_t)b->clear_r,
@@ -2769,7 +2370,7 @@ static void reset_preview_button(int index)
 				   (pixel_t)conf_msgbox_font_outline_g,
 				   (pixel_t)conf_msgbox_font_outline_b);
 
-	/* ペン位置を計算する */
+	/* Calculate the pen position. */
 	if (!conf_menu_preview_tategaki) {
 		pen_x = 0;
 		pen_y = 0;
@@ -2820,7 +2421,7 @@ static void reset_preview_button(int index)
 	reset_lap_timer(&b->rt.sw);
 }
 
-/* テキストプレビューの描画(更新)を行う */
+/* Draw (update) text previews. */
 static void draw_preview_buttons(void)
 {
 	int i;
@@ -2835,7 +2436,7 @@ static void draw_preview_buttons(void)
 	}
 }
 
-/* テキストプレビューのボタンの描画を行う */
+/* Draw (update) text preview buttons. */
 static void draw_preview_button(int index)
 {
 	struct gui_button *b;
@@ -2843,30 +2444,30 @@ static void draw_preview_button(int index)
 
 	b = &button[index];
 
-	/* メッセージの途中の場合 */
+	/* If the message is in progress. */
 	if (!b->rt.is_waiting) {
-		/* メインメモリ上のイメージの描画を行う */
+		/* Draw the image in main memory. */
 		draw_preview_message(index);
 
-		/* すべての文字を描画し終わった場合 */
+		/* If all characters have been drawn. */
 		if (b->rt.drawn_chars == b->rt.total_chars) {
-			/* ストップウォッチを初期化する */
+			/* Initialize the stopwatch. */
 			reset_lap_timer(&b->rt.sw);
 
-			/* オートモードの待ち時間に入る */
+			/* Enter the wait time for auto mode. */
 			b->rt.is_waiting = true;
 		}
 	} else {
-		/* オートモードの待ち時間の場合 */
+		/* If in auto mode wait time. */
 		lap = get_lap_timer_millisec(&b->rt.sw);
 		if (lap >= (uint64_t)get_wait_time(index)) {
-			/* 待ちを終了する */
+			/* End the wait. */
 			reset_preview_button(index);
 		}
 	}
 }
 
-/* メッセージの描画を行う */
+/* Draw the message. */
 static void draw_preview_message(int index)
 {
 	struct gui_button *b;
@@ -2875,36 +2476,36 @@ static void draw_preview_message(int index)
 
 	b = &button[index];
 
-	/* 今回のフレームで描画する文字数を取得する */
+	/* Get the number of characters to draw this frame. */
 	char_count = get_frame_chars(index);
 	if (char_count == 0)
 		return;
 
-	/* 描画する */
+	/* Draw the message. */
 	ret_chars = draw_msg_common(&b->rt.msg_context, char_count);
 	notify_image_update(b->rt.img);
 
-	/* 描画した文字数を加算する */
+	/* Add the number of characters drawn. */
 	b->rt.drawn_chars += ret_chars;
 }
 
-/* 今回のフレームで描画する文字数を取得する */
+/* Get the number of characters to draw this frame. */
 static int get_frame_chars(int index)
 {
 	float lap;
 	int char_count;
 	float MESSAGE_SPEED = 80.0f;
 
-	/* テキストスピードが最大のときはノーウェイトで全部描画する */
+	/* If the text speed is maximum, draw all characters without waiting. */
 	if (get_text_speed() == 1.0f) {
 		return button[index].rt.total_chars -
 			button[index].rt.drawn_chars;
 	}
 
-	/* 経過時間を取得する */
+	/* Get the elapsed time. */
 	lap = (float)get_lap_timer_millisec(&button[index].rt.sw) / 1000.0f;
 
-	/* 今回描画する文字数を取得する */
+	/* Get the number of characters to draw this frame. */
 	char_count = (int)ceil(MESSAGE_SPEED * (get_text_speed() + 0.1) * lap) - button[index].rt.drawn_chars;
 	if (char_count > button[index].rt.total_chars - button[index].rt.drawn_chars)
 		char_count = button[index].rt.total_chars - button[index].rt.drawn_chars;
@@ -2912,7 +2513,7 @@ static int get_frame_chars(int index)
 	return char_count;
 }
 
-/* オートモードの待ち時間を計算する */
+/* Calculate the wait time for auto mode. */
 static int get_wait_time(int index)
 {
 	const float AUTO_MODE_TEXT_WAIT_SCALE = 0.15f;
@@ -2921,11 +2522,12 @@ static int get_wait_time(int index)
 }
 
 /*
- * 名前文字列の表示
+ * Variable Buttons
  */
 
-/* TYPE_NAMEVARのボタンの初期化を行う */
-static bool init_namevar_buttons(void)
+/* Initialize buttons of type TYPE_VARIABLE. */
+static bool
+init_var_buttons(void)
 {
 	int i;
 
@@ -2949,8 +2551,9 @@ static bool init_namevar_buttons(void)
 	return true;
 }
 
-/* すべての名前変数のボタンを描画する */
-static void draw_namevar_buttons(void)
+/* Draw all buttons of type TYPE_NAMEVAR. */
+static void
+draw_var_buttons(void)
 {
 	int i;
 
@@ -2959,15 +2562,18 @@ static void draw_namevar_buttons(void)
 			draw_namevar_button(i);
 }
 
-/* 名前変数のボタンを描画する */
-static void draw_namevar_button(int index)
+/* Draw buttons of type TYPE_VARIABLE. */
+static void
+draw_var_button(int index)
 {
 	clear_image_color(button[index].rt.img, make_pixel(0, 0, 0, 0));
-	draw_name(index);
+	draw_var_value(index);
 }
 
-/* 名前の描画を行う */
-static void draw_name(int index)
+/* Draw variable value. */
+static void
+draw_var_value(
+	     int index)
 {
 	struct draw_msg_context context;
 	struct gui_button *b;
@@ -2977,7 +2583,7 @@ static void draw_name(int index)
 
 	b = &button[index];
 
-	/* 色を取得する */
+	/* Get colors. */
 	color = make_pixel(0xff,
 			   (pixel_t)conf_msgbox_font_r,
 			   (pixel_t)conf_msgbox_font_g,
@@ -2987,11 +2593,11 @@ static void draw_name(int index)
 				   (pixel_t)conf_msgbox_font_outline_g,
 				   (pixel_t)conf_msgbox_font_outline_b);
 
-	/* 描画する文字列を取得する */
+	/* Get the string to draw. */
 	name = get_name_variable(b->namevar);
 	assert(name != NULL);
 
-	/* 描画する */
+	/* Draw the variable value. */
 	construct_draw_msg_context(
 		&context,
 		-1,		/* Not for a layer: use an alternative image. */
@@ -3031,11 +2637,7 @@ static void draw_name(int index)
 	draw_msg_common(&context, char_count);
 }
 
-/*
- * 名前文字列の編集
- */
-
-/* 名前文字列の編集ボタンの押下を処理する */
+/* Process the press of a name string edit button. */
 static void process_char(int index)
 {
 	char buf[1204];
@@ -3046,114 +2648,47 @@ static void process_char(int index)
 	if (b->msg == NULL)
 		return;
 
-	/* クリアボタンの場合 */
+	/* Clear button. */
 	if (strcmp(b->msg, "[clear]") == 0) {
 		set_name_variable(b->namevar, "");
 		return;
 	}
 
-	/* 1文字消去ボタンの場合 */
+	/* Backspace button. */
 	if (strcmp(b->msg, "[backspace]") == 0) {
 		truncate_name_variable(b->namevar);
 		return;
 	}
 
-	/* 決定ボタンの場合 */
+	/* OK button. */
 	if (strcmp(b->msg, "[ok]") == 0) {
-		/* 名前変数が空白なら決定できない */
+		/*  If the name variable is empty, it cannot be decided. */
 		if (strcmp(get_name_variable(b->namevar), "") != 0)
 			result_index = index;
 		return;
 	}
 
-	/* 現在の名前変数の値を取得する */
+	/* Get the current value of the variable. */
 	orig = get_name_variable(b->namevar);
 
-	/* すでに最大文字数まで到達している場合 */
+	/* If the maximum number of characters has already been reached. */
 	if (count_utf8_chars(orig) >= b->max)
 		return;
 
-	/* 末尾に追加した文字列を作成する */
+	/* Create a string to append to the end. */
 	snprintf(buf, sizeof(buf), "%s%s", orig, b->msg);
 
-	/* 名前変数の値を更新する */
+	/* Update the value of the name variable. */
 	set_name_variable(b->namevar, buf);
 }
 
 /*
- * 結果の取得
+ * Sound Effect Playback and Text-to-Speech
  */
 
-/*
- * GUIの実行結果のジャンプ先ラベルを取得する
- */
-const char *get_gui_result_label(void)
-{
-	struct gui_button *b;
-
-	if (is_fading_in)
-		return NULL;
-
-	if (result_index == -1)
-		return NULL;
-
-	b = &button[result_index];
-
-	if (b->type != TYPE_GOTO && b->type != TYPE_GALLERY)
-		return NULL;
-
-	return b->label;
-}
-
-/*
- * GUIの実行結果が終了であるかを取得する
- */
-bool is_gui_result_exit(void)
-{
-	struct gui_button *b;
-
-	if (is_fading_in)
-		return false;
-
-	if (result_index == -1)
-		return false;
-
-	b = &button[result_index];
-
-	if (b->type != TYPE_QUIT)
-		return false;
-
-	return true;
-}
-
-/*
- * GUIでセーブされたか
- */
-bool is_gui_saved(void)
-{
-	if (did_save)
-		return true;
-
-	return false;
-}
-
-/*
- * GUIでロードされたか
- */
-bool is_gui_loaded(void)
-{
-	if (did_load)
-		return true;
-
-	return false;
-}
-
-/*
- * SEの再生
- */
-
-/* SEを再生する */
-static void play_se(const char *file)
+/* Play a sound effect. */
+static void
+play_se(const char *file)
 {
 	struct wave *w;
 
@@ -3167,8 +2702,9 @@ static void play_se(const char *file)
 	set_mixer_input(SYS_STREAM, w);
 }
 
-/* システムSEを再生する */
-static void play_sys_se(const char *file)
+/* Play a system sound effect. */
+static void
+play_sys_se(const char *file)
 {
 	struct wave *w;
 
@@ -3182,67 +2718,22 @@ static void play_sys_se(const char *file)
 	set_mixer_input(SYS_STREAM, w);
 }
 
-/* ボタンの代替テキストを読み上げる */
-static void speak(const char *text)
+/* Speak the alternative text of a button. */
+static void
+speak(const char *text)
 {
 	if (text != NULL)
 		speak_text(text);
 }
 
-/* WMSを実行する */
-static bool run_wms(const char *file)
-{
-	struct rfile *rf;
-	struct wms_runtime *rt;
-	size_t len;
-	char *script;
-
-	/* スクリプトファイルを開いてすべて読み込む */
-	rf = open_rfile(WMS_DIR, file, false);
-	if (rf == NULL)
-		return false;
-	len = get_rfile_size(rf);
-	script = malloc(len + 1);
-	if (script == NULL) {
-		log_memory();
-		return false;
-	}
-	if (read_rfile(rf, script, len) != len) {
-		log_file_read(WMS_DIR, file);
-		return false;
-	}
-	close_rfile(rf);
-	script[len] = '\0';
-
-	/* パースしてランタイムを作成する */
-	rt = wms_make_runtime(script);
-	if (rt == NULL) {
-		log_wms_syntax_error(file, wms_get_parse_error_line(),
-				     wms_get_parse_error_column());
-		return false;
-	}
-
-	/* ランタイムにFFI関数を登録する */
-	if (!register_s2_functions(rt))
-		return false;
-
-		/* WMSを実行する */
-	if (!wms_run(rt)) {
-		log_wms_runtime_error(get_string_param(PLUGIN_PARAM_FILE),
-				      wms_get_runtime_error_line(rt),
-				      wms_get_runtime_error_message(rt));
-		return false;
-		}
-
-	return true;
-}
 
 /*
- * GUIファイルのロード
+ * GUI File Loading
  */
 
-/* GUIファイルをロードする */
-static bool load_gui_file(const char *file)
+/* Load a GUI file. */
+static bool
+load_gui_file(const char *file)
 {
 	enum {
 		ST_SCOPE,
@@ -3268,31 +2759,11 @@ static bool load_gui_file(const char *file)
 	memset(word, 0, sizeof(word));
 	memset(key, 0, sizeof(key));
 
-	/* ファイルをオープンする */
-	rf = open_rfile(GUI_DIR, file, false);
-	if (rf == NULL)
+	/* Get the file content. */
+	if (!s3_read_file_content(file, &buf, &fsize))
 		return false;
 
-	/* ファイルサイズを取得する */
-	fsize = get_rfile_size(rf);
-
-	/* メモリを確保する */
-	buf = malloc(fsize);
-	if (buf == NULL) {
-		log_memory();
-		close_rfile(rf);
-		return false;
-	}
-
-	/* ファイルを読み込む */
-	if (read_rfile(rf, buf, fsize) < fsize) {
-		log_file_read(GUI_DIR, file);
-		close_rfile(rf);
-		free(buf);
-		return false;
-	}
-
-	/* コメントをスペースに変換する */
+	/* Convert comments to spaces. */
 	is_comment = false;
 	for (pos = 0; pos < fsize; pos++) {
 		if (!is_comment) {
@@ -3308,7 +2779,7 @@ static bool load_gui_file(const char *file)
 		}
 	}
 
-	/* ファイルをパースする */
+	/* Parse the file. */
 	st = ST_SCOPE;
 	line = 0;
 	len = 0;
@@ -3316,10 +2787,10 @@ static bool load_gui_file(const char *file)
 	pos = 0;
 	is_global = false;
 	while (pos < fsize) {
-		/* 1文字読み込む */
+		/* Read one character. */
 		c = buf[pos++];
 
-		/* ステートに応じて解釈する */
+		/* Interpret according to the state. */
 		switch (st) {
 		case ST_SCOPE:
 			if (len == 0) {
@@ -3538,112 +3009,523 @@ static bool load_gui_file(const char *file)
 			break;
 		}
 
-		/* エラー時 */
+		/* In case of error. */
 		if (st == ST_ERROR)
 			break;
 
-		/* FIXME: '\r'のみの改行を処理する */
+		/* FIXME: Handle line breaks with only '\r'. */
 		if (c == '\n')
 			line++;
 	}
 
-	/* エラーが発生した場合 */
+	/* In case of error. */
 	if (st == ST_ERROR) {
 		log_gui_parse_footer(file, line);
 	} else if (st != ST_SCOPE || len > 0) {
 		log_gui_parse_invalid_eof();
 	}
 
-	/* バッファを解放する */
+	/* Release the buffer. */
 	free(buf);
-
-	/* ファイルをクローズする */
-	close_rfile(rf);
 
 	return st != ST_ERROR;
 }
 
-/*
- * moved from stage.c
- */
-
-/* GUIの画像を削除する */
-static void destroy_gui_images(void)
+/* Set global key and value. */
+static bool
+set_global_key_value(const char *key, const char *val)
 {
-	if (base_image != NULL) {
-		destroy_image(base_image);
-		base_image = NULL;
+	if (strcmp(key, "saveslots") == 0) {
+		save_slots = atoi(val);
+		return true;
 	}
-	if (idle_image != NULL) {
-		destroy_image(idle_image);
-		idle_image = NULL;
+
+	if (strcmp(key, "historyslots") == 0) {
+		history_slots = atoi(val);
+		return true;
 	}
-	if (hover_image != NULL) {
-		destroy_image(hover_image);
-		hover_image = NULL;
+
+	if (strcmp(key, "cancelse") == 0) {
+		cancel_se = strdup(val);
+		if (cancel_se == NULL) {
+			log_memory();
+			return false;
+		}
+		return true;
 	}
-	if (active_image != NULL) {
-		destroy_image(active_image);
-		active_image = NULL;
+
+	if (strcmp(key, "fadein") == 0) {
+		fade_in_time = (float)atof(val);
+		return true;
 	}
+
+	if (strcmp(key, "fadeout") == 0) {
+		fade_out_time = (float)atof(val);
+		return true;
+	}
+
+	if (strcmp(key, "timed") == 0) {
+		bomb_time = (float)atof(val);
+		reset_lap_timer(&bomb_sw);
+		return true;
+	}
+
+	if (strcmp(key, "clickcancel") == 0) {
+		is_click_cancel = strcmp(val, "yes") == 0 ? true : false;
+		return true;
+	}
+
+	if (strcmp(key, "escapecancel") == 0) {
+		is_escape_cancel = strcmp(val, "yes") == 0 ? true : false;
+		return true;
+	}
+
+	if (strcmp(key, "alt") == 0) {
+		if (conf_tts)
+			speak(val);
+		return true;
+	}
+
+	log_gui_unknown_global_key(key);
+	return false;
 }
 
-/* GUIのbase画像を読み込む */
-static bool load_base_image(const char *file)
+/* Add a button. */
+static bool
+add_button(int index)
 {
-	if (base_image != NULL) {
-		destroy_image(base_image);
-		base_image = NULL;
+	/* If the number of buttons exceeds the limit. */
+	if (index >= BUTTON_COUNT) {
+		log_gui_too_many_buttons();
+		return false;
 	}
 
-	base_image = create_image_from_file(CG_DIR, file);
-	if (base_image == NULL)
-		return false;
-
+	/* There is no specific processing for adding a button, just checking the count. */
 	return true;
 }
 
-/* GUIのidle画像を読み込む */
-static bool load_idle_image(const char *file)
+/* Set the key of a button. */
+static bool
+set_button_key_value(const int index, const char *key, const char *val)
 {
-	if (idle_image != NULL) {
-		destroy_image(idle_image);
-		idle_image = NULL;
+	struct gui_button *b;
+	int var_val;
+
+	assert(index >= 0 && index < BUTTON_COUNT);
+
+	b = &button[index];
+
+	/* Process the type key. */
+	if (strcmp("type", key) == 0) {
+		b->type = get_type_for_name(val);
+		if (b->type == TYPE_INVALID)
+			return false;
+		return true;
 	}
 
-	idle_image = create_image_from_file(CG_DIR, file);
-	if (idle_image == NULL)
+	/* If type is not specified. */
+	if (b->type == TYPE_INVALID) {
+		log_gui_parse_property_before_type(key);
 		return false;
-
-	return true;
-}
-
-/* GUIのhover画像を読み込む */
-static bool load_hover_image(const char *file)
-{
-	if (hover_image != NULL) {
-		destroy_image(hover_image);
-		hover_image = NULL;
 	}
 
-	hover_image = create_image_from_file(CG_DIR, file);
-	if (hover_image == NULL)
-		return false;
+	/*
+	 * Process keys other than type.
+	 */
 
-	return true;
-}
-
-/* GUIのactive画像を読み込む */
-static bool load_active_image(const char *file)
-{
-	if (active_image != NULL) {
-		destroy_image(active_image);
-		active_image = NULL;
+	/* x */
+	if (strcmp("x", key) == 0) {
+		b->x = atoi(val);
+		return true;
 	}
 
-	active_image = create_image_from_file(CG_DIR, file);
-	if (active_image == NULL)
-		return false;
+	/* y */
+	if (strcmp("y", key) == 0) {
+		b->y = atoi(val);
+		return true;
+	}
 
-	return true;
+	/* width */
+	if (strcmp("width", key) == 0) {
+		b->width = atoi(val);
+		if (b->width <= 0)
+			b->width = 1;
+		return true;
+	}
+
+	/* height */
+	if (strcmp("height", key) == 0) {
+		b->height = atoi(val);
+		if (b->height <= 0)
+			b->height = 1;
+		return true;
+	}
+
+	/* image-idle */
+	if (strcmp("image-idle", key) == 0) {
+		b->img_idle = create_image_from_file(CG_DIR, val);
+		if (b->img_idle == NULL)
+			return false;
+		if (b->width == 0 || b->height == 0) {
+			b->width = b->img_idle->width;
+			b->height = b->img_idle->height;
+		}
+		return true;
+	}
+
+	/* image-hover */
+	if (strcmp("image-hover", key) == 0) {
+		b->img_hover = create_image_from_file(CG_DIR, val);
+		if (b->img_hover == NULL)
+			return false;
+		if (b->width == 0 || b->height == 0) {
+			b->width = b->img_hover->width;
+			b->height = b->img_hover->height;
+		}
+		return true;
+	}
+
+	/* image-disable */
+	if (strcmp("image-disable", key) == 0) {
+		b->img_disable = create_image_from_file(CG_DIR, val);
+		if (b->img_disable == NULL)
+			return false;
+		if (b->width == 0 || b->height == 0) {
+			b->width = b->img_disable->width;
+			b->height = b->img_disable->height;
+		}
+		return true;
+	}
+
+	/* margin */
+	if (strcmp("margin", key) == 0) {
+		b->margin = atoi(val);
+		return true;
+	}
+
+	/* label */
+	if (strcmp("label", key) == 0) {
+		b->label = strdup(val);
+		if (b->label == NULL) {
+			log_memory();
+			return false;
+		}
+		return true;
+	}
+
+	/* file */
+	if (strcmp("file", key) == 0) {
+		b->file = strdup(val);
+		if (b->file == NULL) {
+			log_memory();
+			return false;
+		}
+		return true;
+	}
+
+	/* alt */
+	if (strcmp("alt", key) == 0) {
+		b->alt = strdup(val);
+		if (b->alt == NULL) {
+			log_memory();
+			return false;
+		}
+		return true;
+	}
+
+	/* order */
+	if (strcmp("order", key) == 0) {
+		b->order = atoi(val);
+		return true;
+	}
+
+	/* var */
+	if (strcmp("var", key) == 0) {
+		if (!get_variable_by_string(val, &var_val))
+			return false;
+		if (var_val == 0)
+			b->rt.is_disabled = true;
+		return true;
+	}
+
+	/* index */
+	if (strcmp("index", key) == 0) {
+		b->index = atoi(val);
+		if (b->type == TYPE_CHARACTERVOL) {
+			if (b->index < 0)
+				b->index = 0;
+			if (b->index >= CH_VOL_SLOTS)
+				b->index = CH_VOL_SLOTS - 1;
+		}
+		if (b->type == TYPE_HISTORY) {
+			if (b->index >= history_slots)
+				log_warn("history slot index is out-of-range.");
+		}
+		if (b->type == TYPE_SAVE || b->type == TYPE_LOAD) {
+			if (b->index >= save_slots + 1)
+				log_warn("save slot index is out-of-range.");
+		}
+		return true;
+	}
+
+	/* msg */
+	if (strcmp("msg", key) == 0) {
+		b->msg = strdup(val);
+		if (b->msg == NULL) {
+			log_memory();
+			return false;
+		}
+		return true;
+	}
+
+	/* msg-en */
+	if (strcmp("msg-en", key) == 0) {
+		if (compare_locale("en")) {
+			free(b->msg);
+			b->msg = strdup(val);
+			if (b->msg == NULL) {
+				log_memory();
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/* msg-fr */
+	if (strcmp("msg-fr", key) == 0) {
+		if (compare_locale("fr")) {
+			free(b->msg);
+			b->msg = strdup(val);
+			if (b->msg == NULL) {
+				log_memory();
+				return false;
+			}
+		}
+	}
+
+	/* msg-de */
+	if (strcmp("msg-de", key) == 0) {
+		if (compare_locale("de")) {
+			free(b->msg);
+			b->msg = strdup(val);
+			if (b->msg == NULL) {
+				log_memory();
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/* msg-es */
+	if (strcmp("msg-es", key) == 0) {
+		if (compare_locale("es")) {
+			free(b->msg);
+			b->msg = strdup(val);
+			if (b->msg == NULL) {
+				log_memory();
+				return false;
+			}
+		}
+	}
+
+	/* msg-it */
+	if (strcmp("msg-it", key) == 0) {
+		if (compare_locale("it")) {
+			free(b->msg);
+			b->msg = strdup(val);
+			if (b->msg == NULL) {
+				log_memory();
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/* msg-el */
+	if (strcmp("msg-el", key) == 0) {
+		if (compare_locale("el")) {
+			free(b->msg);
+			b->msg = strdup(val);
+			if (b->msg == NULL) {
+				log_memory();
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/* msg-ru */
+	if (strcmp("msg-ru", key) == 0) {
+		if (compare_locale("ru")) {
+			free(b->msg);
+			b->msg = strdup(val);
+			if (b->msg == NULL) {
+				log_memory();
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/* msg-zh */
+	if (strcmp("msg-zh", key) == 0) {
+		if (compare_locale("zh")) {
+			free(b->msg);
+			b->msg = strdup(val);
+			if (b->msg == NULL) {
+				log_memory();
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/* msg-tw */
+	if (strcmp("msg-tw", key) == 0) {
+		if (compare_locale("tw")) {
+			free(b->msg);
+			b->msg = strdup(val);
+			if (b->msg == NULL) {
+				log_memory();
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/* msg-ja */
+	if (strcmp("msg-ja", key) == 0) {
+		if (compare_locale("ja")) {
+			free(b->msg);
+			b->msg = strdup(val);
+			if (b->msg == NULL) {
+				log_memory();
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/* clickse */
+	if (strcmp("clickse", key) == 0) {
+		b->clickse = strdup(val);
+		if (b->clickse == NULL) {
+			log_memory();
+			return false;
+		}
+		return true;
+	}
+
+	/* pointse */
+	if (strcmp("pointse", key) == 0) {
+		b->pointse = strdup(val);
+		if (b->pointse == NULL) {
+			log_memory();
+			return false;
+		}
+		return true;
+	}
+
+	/* variable */
+	if (strcmp("variable", key) == 0) {
+		b->var = strdup(val);
+		if (b->var == NULL) {
+			log_memory();
+			return false;
+		}
+		return true;
+	}
+
+	/* max */
+	if (strcmp("max", key) == 0) {
+		b->max = abs(atoi(val));
+		return true;
+	}
+
+	/* clear-r */
+	if (strcmp("clear-r", key) == 0) {
+		b->clear_r = atoi(val);
+		return true;
+	}
+
+	/* clear-g */
+	if (strcmp("clear-g", key) == 0) {
+		b->clear_g = atoi(val);
+		return true;
+	}
+
+	/* clear-b */
+	if (strcmp("clear-b", key) == 0) {
+		b->clear_b = atoi(val);
+		return true;
+	}
+
+	/* new-x */
+	if (strcmp("new-x", key) == 0) {
+		b->new_x = atoi(val);
+		b->rt.is_new_enabled = true;
+		return true;
+	}
+
+	/* new-y */
+	if (strcmp("new-y", key) == 0) {
+		b->new_y = atoi(val);
+		b->rt.is_new_enabled = true;
+		return true;
+	}
+
+	log_gui_unknown_button_property(key);
+	return false;
 }
+
+/* Get the type index by type name. */
+static int
+get_type_for_name(const char *name)
+{
+	struct {
+		const char *name;
+		int value;
+	} type_array[] = {
+		{"goto",			TYPE_GOTO},
+		{"gallery",			TYPE_GALLERY},
+		{"mastervol",			TYPE_MASTERVOL},
+		{"bgmvol",			TYPE_BGMVOL},
+		{"voicevol",			TYPE_VOICEVOL},
+		{"sevol",			TYPE_SEVOL},
+		{"charactervol",		TYPE_CHARACTERVOL},
+		{"textspeed",			TYPE_TEXTSPEED},
+		{"autospeed",			TYPE_AUTOSPEED},
+		{"preview",			TYPE_PREVIEW},
+		{"fullscreen",			TYPE_FULLSCREEN},
+		{"window",			TYPE_WINDOW},
+		{"font",			TYPE_FONT},
+		{"menu",			TYPE_GUI},
+		{"gui",				TYPE_GUI},
+		{"savepage",			TYPE_SAVEPAGE},
+		{"save",			TYPE_SAVE},
+		{"load",			TYPE_LOAD},
+		{"history",			TYPE_HISTORY},
+		{"auto",			TYPE_AUTO},
+		{"skip",			TYPE_SKIP},
+		{"historyscroll",		TYPE_HISTORYSCROLL},
+		{"historyscroll-horizontal",	TYPE_HISTORYSCROLL_HORIZONTAL},
+		{"default",			TYPE_DEFAULT},
+		{"title",			TYPE_TITLE},
+		{"cancel",			TYPE_CANCEL},
+		{"namevar",			TYPE_NAMEVAR},
+		{"char",			TYPE_CHAR},
+		{"wms",				TYPE_WMS},
+	};
+	size_t i;
+
+	/* Search for the type name. */
+	for (i = 0; i < sizeof(type_array) / sizeof(type_array[0]); i++)
+		if (strcmp(name, type_array[i].name) == 0)
+			return type_array[i].value;
+
+	/* If not found. */
+	log_gui_unknown_button_type(name);
+	return TYPE_INVALID;
+}
+
+
