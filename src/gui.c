@@ -1148,12 +1148,12 @@ move_to_title(void)
 	s3_clear_local_variables();
 
 	/* Load the script. */
-	if (!s3_load_tag_file(file))
+	if (!s3_move_to_tag_file(file))
 		return false;
 
 	/* Cancel if the @gui command is being executed. */
-	if (is_in_command_repetition())
-		stop_command_repetition();
+	if (s3_is_in_command_repetition())
+		s3_stop_command_repetition();
 
 	/*
 	 * If called during a message or choice
@@ -1163,22 +1163,22 @@ move_to_title(void)
 		is_sys_gui = false;
 
 	/* Deactivate the message. */
-	if (is_message_active())
-		clear_message_active();
+	if (s3_is_message_active())
+		s3_clear_message_active();
 
 	/* Stop the GUI. */
-	stop_gui_mode();
+	s3_stop_gui();
 
 	/* Destroy the current GUI. */
-	cleanup_gui();
+	s3i_cleanup_gui();
 
 	/* Clear the stage. */
-	clear_stage();
+	s3_clear_stage();
 
 	/* Stop the audio. */
-	for (i = 0; i < MIXER_STREAMS; i++) {
-		if (i != SYS_STREAM)
-			set_mixer_input(i, NULL);
+	for (i = 0; i < S3_MIXER_TRACKS; i++) {
+		if (i != S3_TRACK_SYS)
+			s3_set_mixer_input_file(i, NULL, false);
 	}
 
 	did_load = true;
@@ -1190,6 +1190,7 @@ move_to_title(void)
 static bool process_button_point(int index, bool key)
 {
 	struct gui_button *b;
+	int mouse_pos_x, mouse_pos_y;
 
 	b = &button[index];
 
@@ -1198,7 +1199,7 @@ static bool process_button_point(int index, bool key)
 		return false;
 
 	/* If the button is TYPE_LOAD and there is no save data, it cannot be pointed at. */
-	if (b->type == TYPE_LOAD && !b->rt.is_active)
+	if (b->type == TYPE_LOAD && b->rt.is_disabled)
 		return false;
 
 	/* If the button is TYPE_GALLERY and the button is disabled, it cannot be pointed at. */
@@ -1206,15 +1207,15 @@ static bool process_button_point(int index, bool key)
 		return false;
 
 	/* If the button is TYPE_FULLSCREEN and the button is active, it cannot be pointed at. */
-	if (b->type == TYPE_FULLSCREEN && b->rt.is_active)
+	if (b->type == TYPE_FULLSCREEN && b->rt.is_disabled)
 		return false;
 
 	/* If the button is TYPE_WINDOW and the button is active, it cannot be pointed at. */
-	if (b->type == TYPE_WINDOW && b->rt.is_active)
+	if (b->type == TYPE_WINDOW && b->rt.is_disabled)
 		return false;
 
 	/* If the button is TYPE_HISTORY and the button is inactive, it cannot be pointed at. */
-	if (b->type == TYPE_HISTORY && !b->rt.is_active)
+	if (b->type == TYPE_HISTORY && b->rt.is_disabled)
 		return false;
 
 	/* If the button is TYPE_PREVIEW, it cannot be pointed at. */
@@ -1229,6 +1230,9 @@ static bool process_button_point(int index, bool key)
 	if (dragging_index != -1 && dragging_index != index)
 		return false;
 
+	mouse_pos_x = s3_get_mouse_pos_x();
+	mouse_pos_y = s3_get_mouse_pos_y();
+
 	/* If it is a key operation. */
 	if (key) {
 		/* Set it to the pointed state. */
@@ -1238,7 +1242,7 @@ static bool process_button_point(int index, bool key)
 		save_mouse_pos_y = mouse_pos_y;
 
 		/* Speak. */
-		if (conf_tts)
+		if (conf_tts_enable)
 			speak(button[index].alt);
 		return true;
 	}
@@ -1294,7 +1298,7 @@ static void process_button_drag(int index)
 	/* If not dragging. */
 	if (!b->rt.is_dragging) {
 		/* If not dragging. */
-		if (!is_mouse_dragging)
+		if (!s3_is_mouse_dragging())
 			return;
 
 		/* If not pointed at. */
@@ -1310,9 +1314,9 @@ static void process_button_drag(int index)
 		b->rt.is_dragging = true;
 		b->rt.slider = calc_slider_value(index);
 		if (b->type == TYPE_MASTERVOL)
-			set_master_volume(b->rt.slider);
+			s3_set_master_volume(b->rt.slider);
 		if (b->type == TYPE_BGMVOL)
-			set_mixer_global_volume(BGM_STREAM, b->rt.slider);
+			s3_set_mixer_global_volume(S3_TRACK_BGM, b->rt.slider);
 		return;
 	}
 
@@ -1324,10 +1328,10 @@ static void process_button_drag(int index)
 	b->rt.slider = calc_slider_value(index);
 	switch (b->type) {
 	case TYPE_MASTERVOL:
-		set_master_volume(b->rt.slider);
+		s3_set_master_volume(b->rt.slider);
 		break;
 	case TYPE_BGMVOL:
-		set_mixer_global_volume(BGM_STREAM, b->rt.slider);
+		s3_set_mixer_global_volume(BGM_STREAM, b->rt.slider);
 		break;
 	case TYPE_VOICEVOL:
 		set_mixer_global_volume(VOICE_STREAM, b->rt.slider);
