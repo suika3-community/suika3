@@ -44,6 +44,7 @@ jobs:
           path: |
             out/**/suika3.exe
             out/**/suika3-pack.exe
+            out/**/suika3-web.exe
           if-no-files-found: error
           retention-days: 7
 
