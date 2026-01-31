@@ -54,6 +54,8 @@ bool pf_is_mouse_left_pressed;
 bool pf_is_mouse_right_pressed;
 bool pf_is_mouse_left_clicked;
 bool pf_is_mouse_right_clicked;
+bool pf_is_touch_canceled;
+bool pf_is_swiped;
 bool pf_is_gamepad_left_pressed;
 bool pf_is_gamepad_right_pressed;
 bool pf_is_gamepad_up_pressed;
@@ -200,6 +202,8 @@ hal_callback_on_event_start(void)
 	pf_is_mouse_right_pressed = false;
 	pf_is_mouse_left_clicked = false;
 	pf_is_mouse_right_clicked = false;
+	pf_is_touch_canceled = false;
+	pf_is_swiped = false;
 	pf_is_gamepad_left_pressed = false;
 	pf_is_gamepad_right_pressed = false;
 	pf_is_gamepad_up_pressed = false;
@@ -286,6 +290,10 @@ hal_callback_on_event_start(void)
 	pfi_set_vm_int("millisec", 0);
 	pfi_set_vm_int("isMouseLeftPressed", 0);
 	pfi_set_vm_int("isMouseRightPressed", 0);
+	pfi_set_vm_int("isMouseLeftClicked", 0);
+	pfi_set_vm_int("isMouseRightClicked", 0);
+	pfi_set_vm_int("isTouchCanceled", 0);
+	pfi_set_vm_int("isSwiped", 0);
 	pfi_set_vm_int("isEscapeKeyPressed", 0);
 	pfi_set_vm_int("isReturnKeyPressed", 0);
 	pfi_set_vm_int("isSpaceKeyPressed", 0);
@@ -1096,10 +1104,12 @@ hal_callback_on_event_mouse_release(
 			pf_is_mouse_left_pressed = false;
 			pf_is_mouse_left_clicked = true;
 			pfi_set_vm_int("isMouseLeftPressed", 0);
+			pfi_set_vm_int("isMouseLeftClicked", 1);
 		} else {
 			pf_is_mouse_right_pressed = false;
 			pf_is_mouse_right_clicked = true;
 			pfi_set_vm_int("isMouseRightPressed", 0);
+			pfi_set_vm_int("isMouseRightClicked", 1);
 		}
 	}
 }
@@ -1159,7 +1169,9 @@ hal_callback_on_event_touch_cancel(void)
 {
 	if (is_running) {
 		pf_is_mouse_left_pressed = false;
+		pf_is_touch_canceled = true;
 		pfi_set_vm_int("isMouseLeftPressed", 0);
+		pfi_set_vm_int("isTouchCanceled", 1);
 	}
 }
 
@@ -1168,7 +1180,9 @@ hal_callback_on_event_swipe_down(void)
 {
 	if (is_running) {
 		pf_is_mouse_left_pressed = false;
+		pf_is_swiped = true;
 		pfi_set_vm_int("isMouseLeftPressed", 0);
+		pfi_set_vm_int("isSwiped", 1);
 	}
 }
 
@@ -1177,6 +1191,8 @@ hal_callback_on_event_swipe_up(void)
 {
 	if (is_running) {
 		pf_is_mouse_left_pressed = false;
+		pf_is_swiped = true;
 		pfi_set_vm_int("isMouseLeftPressed", 0);
+		pfi_set_vm_int("isSwiped", 1);
 	}
 }
