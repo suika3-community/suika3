@@ -455,7 +455,10 @@ jobs:
           cp windows/build/windows-vs2022-x86-release/Release/suika3-pack.exe dist/misc/windows/
           cp windows/build/windows-vs2022-x86-release/Release/suika3-web.exe dist/misc/wasm/
           cp windows/build/windows-vs2022-arm64-release/Release/suika3.exe dist/misc/windows/suika3-arm64.exe
-          cp samples/shoot/main.pf dist/
+          cp game/main.pf dist/
+          cp game/start.novel dist/
+          cp -R game/bg dist/
+          cp -R game/system dist/
 
       - name: Download mingw artifacts
         uses: actions/download-artifact@v4
