@@ -8,8 +8,8 @@ The next-generation visual novel engine for the 2030s and beyond.
 Suika3 aims to empower creators across the globe for the decades to
 come.
 
-Games made with Suika3 run on the `Suika JIT Virtual Machine` (VM).
-The VM executes `Suika NovelML` along with `Suika SeedScript`.
+Games made with Suika3 run on the `Suika3 JIT Virtual Machine` (VM).
+The VM executes `NovelML 3.0` along with `SeedScript 3.0`.
 
 NovelML is a tag-based markup language for visual novels. It is very
 intuitive for developers with experience with other engines.
@@ -37,12 +37,12 @@ APIs are subject to change.
 
 Suika3 represents the culmination of over two decades of relentless innovation and development:
 
-* **Suika Studio (2001–2004)**: The origin of our codebase, featuring our first GUI-based editors. Inspired by the legendary AGES engine.
+* **Suika Studio (2001–2004)**: The origin of our codebase, featuring our first GUI-based editors. 
 * **Unfruitiful (2005–2015)**: A decade of R&D focused on establishing a robust portability layer for cross-platform support.
 * **Suika2 (2016–2024)**: The cornerstone of our current architecture and the fruit of a decade of dedicated R&D.
   It delivers a full visual novel experience with extensive platform compatibility.
-* **Playfield Engine (2025)**: A versatile 2D engine derived from the core portability layer of the Suika series.
-* **Suika3 (2026–)**: By synthesizing these legacies and introducing **NovelML/SeedScript**,
+* **Playfield Engine (2025–)**: A versatile 2D engine derived from the core portability layer of the Suika series.
+* **Suika3 (2026–)**: By synthesizing these legacies and introducing **NovelML 3.0 / SeedScript 3.0**,
   Suika3 delivers the rock-solid stability of its predecessors alongside the cutting-edge flexibility of modern technology.
 
 ## Manifesto
