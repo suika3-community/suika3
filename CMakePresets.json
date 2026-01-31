@@ -13,7 +13,7 @@
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
         "CMAKE_CONFIGURATION_TYPES": "Debug",
-        "CMAKE_BUILD_TYPE":          "Debug"
+        "CMAKE_BUILD_TYPE":          "Debug",
         "SUIKA_TARGET_WINDOWS":      "ON",
         "SUIKA_ENABLE_JIT":          "ON",
         "SUIKA_ENABLE_I18N":         "ON",
@@ -34,7 +34,7 @@
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
         "CMAKE_CONFIGURATION_TYPES": "Release",
-        "CMAKE_BUILD_TYPE":          "Release"
+        "CMAKE_BUILD_TYPE":          "Release",
         "SUIKA_TARGET_WINDOWS":      "ON",
         "SUIKA_ENABLE_JIT":          "ON",
         "SUIKA_ENABLE_I18N":         "ON",
@@ -55,7 +55,7 @@
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
         "CMAKE_CONFIGURATION_TYPES": "Debug",
-        "CMAKE_BUILD_TYPE":          "Debug"
+        "CMAKE_BUILD_TYPE":          "Debug",
         "SUIKA_TARGET_WINDOWS":      "ON",
         "SUIKA_ENABLE_JIT":          "ON",
         "SUIKA_ENABLE_I18N":         "ON",
@@ -93,7 +93,7 @@
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
         "CMAKE_CONFIGURATION_TYPES": "Debug",
-        "CMAKE_BUILD_TYPE":          "Debug"
+        "CMAKE_BUILD_TYPE":          "Debug",
         "SUIKA_TARGET_WINDOWS":      "ON",
         "SUIKA_ENABLE_JIT":          "ON",
         "SUIKA_ENABLE_I18N":         "ON",
@@ -114,7 +114,7 @@
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
         "CMAKE_CONFIGURATION_TYPES": "Release",
-        "CMAKE_BUILD_TYPE":          "Release"
+        "CMAKE_BUILD_TYPE":          "Release",
         "SUIKA_TARGET_WINDOWS":      "ON",
         "SUIKA_ENABLE_JIT":          "ON",
         "SUIKA_ENABLE_I18N":         "ON",
@@ -136,7 +136,7 @@
       "cacheVariables": {
         "SUIKA_TARGET_GDK_WINDOWS": "ON",
         "SUIKA_ENABLE_JIT":         "ON",
-        "SUIKA_ENABLE_I18N":        "ON",
+        "SUIKA_ENABLE_I18N":        "ON"
       },
       "condition": {
         "type": "equals",
@@ -154,7 +154,7 @@
       "cacheVariables": {
         "SUIKA_TARGET_GDK_XBOX_XS": "ON",
         "SUIKA_ENABLE_JIT":         "OFF",
-        "SUIKA_ENABLE_I18N":        "OFF",
+        "SUIKA_ENABLE_I18N":        "OFF"
       },
       "condition": {
         "type": "equals",
@@ -192,7 +192,7 @@
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
         "CMAKE_CONFIGURATION_TYPES": "Debug",
-        "CMAKE_BUILD_TYPE":          "Debug"
+        "CMAKE_BUILD_TYPE":          "Debug",
         "SUIKA_TARGET_WINDOWS":      "ON",
         "SUIKA_ENABLE_JIT":          "ON",
         "SUIKA_ENABLE_I18N":         "ON",
@@ -213,7 +213,7 @@
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
         "CMAKE_CONFIGURATION_TYPES": "Release",
-        "CMAKE_BUILD_TYPE":          "Release"
+        "CMAKE_BUILD_TYPE":          "Release",
         "SUIKA_TARGET_WINDOWS":      "ON",
         "SUIKA_ENABLE_JIT":          "ON",
         "SUIKA_ENABLE_I18N":         "ON",
@@ -234,7 +234,7 @@
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
         "CMAKE_CONFIGURATION_TYPES": "Debug",
-        "CMAKE_BUILD_TYPE":          "Debug"
+        "CMAKE_BUILD_TYPE":          "Debug",
         "SUIKA_TARGET_WINDOWS":      "ON",
         "SUIKA_ENABLE_JIT":          "ON",
         "SUIKA_ENABLE_I18N":         "ON",
@@ -255,7 +255,7 @@
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
         "CMAKE_CONFIGURATION_TYPES": "Release",
-        "CMAKE_BUILD_TYPE":          "Release"
+        "CMAKE_BUILD_TYPE":          "Release",
         "SUIKA_TARGET_WINDOWS":      "ON",
         "SUIKA_ENABLE_JIT":          "ON",
         "SUIKA_ENABLE_I18N":         "ON",
@@ -276,7 +276,7 @@
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
         "CMAKE_CONFIGURATION_TYPES": "Debug",
-        "CMAKE_BUILD_TYPE":          "Debug"
+        "CMAKE_BUILD_TYPE":          "Debug",
         "SUIKA_TARGET_WINDOWS":      "ON",
         "SUIKA_ENABLE_JIT":          "ON",
         "SUIKA_ENABLE_I18N":         "ON",
@@ -297,7 +297,7 @@
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
         "CMAKE_CONFIGURATION_TYPES": "Release",
-        "CMAKE_BUILD_TYPE":          "Release"
+        "CMAKE_BUILD_TYPE":          "Release",
         "SUIKA_TARGET_WINDOWS":      "ON",
         "SUIKA_ENABLE_JIT":          "ON",
         "SUIKA_ENABLE_I18N":         "ON",
