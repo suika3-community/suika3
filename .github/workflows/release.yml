@@ -559,7 +559,7 @@ jobs:
           mkdir -p dist/misc/android/app/src/main/assets
           cp -R game/* dist/misc/android/app/src/main/assets/
           mkdir -p dist/misc/android/app/src/main/java/io/noctvm/playfield/engineandroid
-          cp external/StratoHAL/src/MainActivity.java dist/misc/android/app/src/main/java/io/noctvm/playfield/engineandroid/
+          cp external/PlayfieldEngine/external/StratoHAL/src/MainActivity.java dist/misc/android/app/src/main/java/io/noctvm/playfield/engineandroid/
           mkdir -p dist/misc/android/app/src/main/jniLibs/arm64-v8a
           cp android-arm64/libsuika3.so dist/misc/android/app/src/main/jniLibs/arm64-v8a/
           mkdir -p dist/misc/android/app/src/main/jniLibs/armeabi-v7a
@@ -599,13 +599,13 @@ jobs:
           mkdir dist/misc/unity/Assets/StreamingAssets
           cp game/main.pf dist/misc/unity/Assets/StreamingAssets/
           mkdir dist/misc/unity/Assets/Resources
-          cp external/StratoHAL/src/PlayfieldScript.cs dist/misc/unity/Assets/
-          cp external/StratoHAL/src/NormalShader.shader dist/misc/unity/Assets/Resources/
-          cp external/StratoHAL/src/AddShader.shader dist/misc/unity/Assets/Resources/
-          cp external/StratoHAL/src/DimShader.shader dist/misc/unity/Assets/Resources/
-          cp external/StratoHAL/src/RuleShader.shader dist/misc/unity/Assets/Resources/
-          cp external/StratoHAL/src/MeltShader.shader dist/misc/unity/Assets/Resources/
-          cp external/StratoHAL/src/MainScene.unity dist/misc/unity/Assets/
+          cp external/PlayfieldEngine/external/StratoHAL/src/PlayfieldScript.cs dist/misc/unity/Assets/
+          cp external/PlayfieldEngine/external/StratoHAL/src/NormalShader.shader dist/misc/unity/Assets/Resources/
+          cp external/PlayfieldEngine/external/StratoHAL/src/AddShader.shader dist/misc/unity/Assets/Resources/
+          cp external/PlayfieldEngine/external/StratoHAL/src/DimShader.shader dist/misc/unity/Assets/Resources/
+          cp external/PlayfieldEngine/external/StratoHAL/src/RuleShader.shader dist/misc/unity/Assets/Resources/
+          cp external/PlayfieldEngine/external/StratoHAL/src/MeltShader.shader dist/misc/unity/Assets/Resources/
+          cp external/PlayfieldEngine/external/StratoHAL/src/MainScene.unity dist/misc/unity/Assets/
           mkdir dist/misc/unity/Assets/Plugins
           mkdir dist/misc/unity/Assets/Plugins/x86_64
           mkdir dist/misc/unity/Assets/Plugins/Switch
