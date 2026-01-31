@@ -422,8 +422,14 @@ hal_callback_on_event_frame(void)
 	}
 
 	/* Clear input states. */
-	//pfi_pfi_set_vm_int("isMouseLeftPressed", 0);
-	//pfi_pfi_set_vm_int("isMouseRightPressed", 0);
+	pf_is_mouse_left_clicked = false;
+	pf_is_mouse_right_clicked = false;
+	pf_is_touch_canceled = false;
+	pf_is_swiped = false;
+	pfi_set_vm_int("isMouseLeftClicked", 0);
+	pfi_set_vm_int("isMouseRightClicked", 0);
+	pfi_set_vm_int("isTouchCanceled", 0);
+	pfi_set_vm_int("isSwiped", 0);
 
 	/* Continue the game loop. */
 	return true;
