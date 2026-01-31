@@ -627,7 +627,6 @@ jobs:
       - name: Copy documents
         run: |
           tar xzf mkdocs/documents.tar.gz -C dist/misc/
-          cp -R samples dist/misc/samples
           cp docs/readme/readme.txt dist/
 
       - name: Get current date
