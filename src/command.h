@@ -41,9 +41,16 @@
 #include <suika3/suika3.h>
 
 /*
- * The bg command.
+ * The "bg" command.
  */
 bool
 s3i_command_bg(void *p);
+
+/*
+ * The "click" command.
+ */
+bool
+s3i_command_click(void *p);
+
 
 #endif

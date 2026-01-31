@@ -52,7 +52,7 @@ static void update(void);
 static bool cleanup(void);
 
 /*
- * The bg command.
+ * The "bg" command.
  */
 bool
 s3i_command_bg(

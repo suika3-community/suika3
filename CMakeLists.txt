@@ -270,6 +270,7 @@ set(SUIKA_BASE_SOURCES
   src/translation.c
   src/vars.c
   src/command_bg.c
+  src/command_click.c
 )
 
 # I18N Source

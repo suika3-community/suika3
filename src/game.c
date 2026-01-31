@@ -259,15 +259,34 @@ s3i_on_game_update(void)
 	int s3_continue;
 	bool tag_end;
 
+	is_mouse_left_clicked = pf_is_mouse_left_clicked;
+	is_mouse_right_clicked = pf_is_mouse_right_clicked;
+	is_space_key_pressed = pf_is_space_key_pressed;
+	is_return_key_pressed = pf_is_return_key_pressed;
+	is_escape_key_pressed = pf_is_escape_key_pressed;
+	is_up_key_pressed = pf_is_up_key_pressed;
+	is_down_key_pressed = pf_is_down_key_pressed;
+	is_left_key_pressed = pf_is_left_key_pressed;
+	is_right_key_pressed = pf_is_right_key_pressed;
+	is_s_key_pressed = pf_is_s_key_pressed;
+	is_l_key_pressed = pf_is_l_key_pressed;
+	is_h_key_pressed = pf_is_h_key_pressed;
+	is_touch_canceled = pf_is_touch_canceled;
+	is_swiped = pf_is_swiped;
+
 	/* Call update functions. */
 	while (1) {
 		/* Clear the continue flag. */
 		pf_set_vm_int("s3Continue", 0);
 
 		/* Call the tag function. */
-		s3_call_vm_tag_function(&tag_end);
+		if (!s3_call_vm_tag_function(&tag_end)) {
+			/* Error: will stop the game after the next rendering. */
+			pf_set_vm_int("exitFlag", 1);
+			break;
+		}
 		if (tag_end) {
-			/* Stop the game after the next rendering. */
+			/* Finished: stop the game after the next rendering. */
 			pf_set_vm_int("exitFlag", 1);
 			break;
 		}

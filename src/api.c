@@ -65,6 +65,7 @@ static struct api_func api_func[] = {
 static struct tag_func tag_func[] = {
 	/* Commands */
 	{"Tag_bg", s3i_command_bg},
+	{"Tag_click", s3i_command_click},
 };
 
 /*
