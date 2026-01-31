@@ -43,6 +43,7 @@ jobs:
           name: windows-binaries
           path: |
             out/**/suika3.exe
+            out/**/suika3-pack.exe
           if-no-files-found: error
           retention-days: 7
 
