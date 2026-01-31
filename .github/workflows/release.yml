@@ -557,7 +557,7 @@ jobs:
           cp -R resources/projects/android/gradlew.bat dist/misc/android/
           cp -R resources/projects/android/gradle dist/misc/android/
           mkdir -p dist/misc/android/app/src/main/assets
-          cp samples/shoot/main.pf dist/misc/android/app/src/main/assets/
+          cp -R game/* dist/misc/android/app/src/main/assets/
           mkdir -p dist/misc/android/app/src/main/java/io/noctvm/playfield/engineandroid
           cp external/StratoHAL/src/MainActivity.java dist/misc/android/app/src/main/java/io/noctvm/playfield/engineandroid/
           mkdir -p dist/misc/android/app/src/main/jniLibs/arm64-v8a
