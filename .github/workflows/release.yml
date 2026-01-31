@@ -37,6 +37,15 @@ jobs:
       - name: Build (x86)
         run: cmake --build --preset windows-vs2022-x86-release --config Release --parallel
 
+      - name: Configure (arm64)
+        run: >
+          cmake --preset windows-vs2022-arm64-release
+          -DFLEX_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_flex.exe"
+          -DBISON_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_bison.exe"
+
+      - name: Build (arm64)
+        run: cmake --build --preset windows-vs2022-arm64-release --config Release --parallel
+
       - name: Upload Windows EXEs
         uses: actions/upload-artifact@v4
         with:
