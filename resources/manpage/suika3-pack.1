@@ -1,0 +1,46 @@
+.\" suika3-pack.1 - Suika3 packager manpage
+.TH SUIKA3-PACK 1 "January 2026" "Suika3 1.0" "User Commands"
+.SH NAME
+suika3-pack \- package assets into a single archive for Suika3
+.SH SYNOPSIS
+.B suika3-pack
+[\fIfiles...\fR]
+
+.SH DESCRIPTION
+The
+.B suika3-pack
+tool creates a package archive
+.I assets.arc
+from the given list of files and directories.
+The resulting archive can be executed by the
+.B suika3
+runtime.
+
+All specified files and directories are recursively included.
+The output file is always written as
+.I assets.arc
+in the current working directory.
+
+.SH EXAMPLES
+Package individual files:
+.EX
+suika3-pack main.pf sprite.png sound.wav
+.EE
+
+Package an entire project directory:
+.EX
+suika3-pack *
+.EE
+
+Combine multiple directories and files:
+.EX
+suika3-pack src/ assets/ main.pf
+.EE
+
+.SH SEE ALSO
+.BR suika3 (1),
+.BR suika3-compiler (1)
+
+.SH AUTHORS
+Awe Morris <awe@noctvm.io> and contributors.
+Project homepage: <https://github.com/suika3-community/suika3>
