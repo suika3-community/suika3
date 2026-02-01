@@ -269,8 +269,9 @@ set(SUIKA_BASE_SOURCES
   src/text.c
   src/translation.c
   src/vars.c
-  src/command_bg.c
-  src/command_click.c
+  src/cmd_bg.c
+  src/cmd_click.c
+  src/cmd_text.c
 )
 
 # I18N Source

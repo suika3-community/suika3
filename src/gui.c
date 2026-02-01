@@ -210,7 +210,7 @@ static struct gui_button {
 		bool is_waiting;
 
 		/* Drawing context. */
-		struct draw_msg_context msg_context;
+		struct s3_draw_msg_context msg_context;
 
 		/* Total character to draw. */
 		int total_chars;
@@ -1898,7 +1898,7 @@ draw_save_text_item(
 	const char *text,
 	bool multiline)
 {
-	struct draw_msg_context context;
+	struct s3_draw_msg_context context;
 	struct gui_button *b;
 	s3_pixel_t color, outline_color;
 	int width, total_chars;
@@ -2232,7 +2232,7 @@ static void
 draw_history_text_item(
 	int button_index)
 {
-	struct draw_msg_context context;
+	struct s3_draw_msg_context context;
 	struct gui_button *b;
 	const char *text;
 	s3_pixel_t color, outline_color;
@@ -2708,7 +2708,7 @@ static void
 draw_var_value(
 	     int index)
 {
-	struct draw_msg_context context;
+	struct s3_draw_msg_context context;
 	struct gui_button *b;
 	const char *name;
 	s3_pixel_t color, outline_color;

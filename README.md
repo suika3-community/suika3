@@ -11,13 +11,17 @@ come.
 Games made with Suika3 run on the `Suika3 JIT Virtual Machine` (VM).
 The VM executes `NovelML 3.0` along with `SeedScript 3.0`.
 
-NovelML is a tag-based markup language for visual novels. It is very
-intuitive for developers with experience with other engines.
+`NovelML 3.0` is a tag-based, human-readable markup for visual novels.
+Familiar to developers from other engines, it uses concise, declarative tags
+for dialogue and scenes, so scripts are readable at a glance.
 
-SeedScript is our original scripting language that runs at true native
+`SeedScript 3.0` is our original scripting language that runs at true native
 speed within the VM. Inspired by JavaScript, SeedScript offers a
 streamlined syntax that is more intuitive for beginners yet powerful
-enough for seasoned developers.
+enough for seasoned developers. Because both the language and VM are
+developed in-house, you never have to worry about being left behind by
+upstream language updates or breaking changes. Your scripts will remain
+stable and compatible for the long term.
 
 ## Status: Work in Progress
 
@@ -33,6 +37,79 @@ APIs are subject to change.
 * **Reliable**: Built on the proven codebase of Suika2 and integrated with the modern Playfield Engine.
 * **Jot-and-Run**: A powerful markup language designed to bring your stories to life in an instant.
 
+## Getting Started
+
+A quick path to try Suika3 locally.
+
+### Using prebuilt binary
+
+Please download from [Releases](releases).
+
+### Building locally
+
+Refer to [build.md](docs/mkdocs-en/build.md) (when available) for platform-specific instructions.
+
+```
+git clone https://github.com/suika3-community/suika3.git
+cd suika3
+mkdir build
+cd build
+cmake ..
+cmake --build .
+cp -R ../game/* .
+./suika3
+```
+
+## Quick Start
+
+`start.novel` file looks like:
+```
+[bg file="back01.png" time="1.0"]
+[click]
+```
+
+## Examples
+
+See the /game directory for:
+* minimal demo projects
+* sample assets and NovelML snippets
+* SeedScript usage patterns
+
+## Building
+
+For contributors who want to build from source. (under construction)
+
+## Documentation
+
+Primary docs will include:
+* NovelML 3.0 reference
+* SeedScript 3.0 language guide
+* API docs
+
+## Roadmap
+
+TBD
+
+## Supported Platforms
+
+Suika3 targets desktop platforms first (Windows, Linux, macOS) with a
+clear migration path for mobile and embedded targets via the
+Playfield Engine.
+
+|Type       |OS         |Status       |Confirmed On                        |
+|-----------|-----------|-------------|------------------------------------|
+|Desktop    |Windows    |✅ Works     |Windows 11 x64                      |
+|           |macOS      |✅ Works     |macOS 15 Sequoia Arm64              |
+|           |Linux      |✅ Works     |Ubuntu 24.04 LTS x86_64             |
+|Mobile     |iOS        |✅ Works     |iPhone iOS 18                       |
+|           |Android    |✅ Works     |Android 16                          |
+|BSD        |FreeBSD    |✅ Works     |FreeBSD 14.3 amd64                  |
+|           |NetBSD     |✅ Works     |NetBSD 10.1 amd64                   |
+|           |OpenBSD    |✅ Works     |OpenBSD 7.7 amd64                   |
+|Others     |WebAssembly|✅ Works     |Chrome                              |
+|           |Chromebook |✅ Works     |Chrome                              |
+|           |Unity      |✅ Works     |Unity 6.2 Windows 11 x86_64         |
+
 ## Lineage: The Grand Journey
 
 Suika3 represents the culmination of over two decades of relentless innovation and development:
@@ -45,32 +122,25 @@ Suika3 represents the culmination of over two decades of relentless innovation a
 * **Suika3 (2026–)**: By synthesizing these legacies and introducing **NovelML 3.0 / SeedScript 3.0**,
   Suika3 delivers the rock-solid stability of its predecessors alongside the cutting-edge flexibility of modern technology.
 
-## Manifesto
+## License
 
-### Stories Belong to Everyone.
+This software is released under the `zlib License`.
 
-We believe that storytelling is one of humanity's most powerful forms
-of recording information. Creating and sharing stories should not be a
-privilege reserved for the few — it is a fundamental human right.
+```
+Suika3
+Copyright (c) 2026 The Suika3 Community
+```
 
-### Accessibility Without Borders.
+## Support & Contact
 
-Creative tools should be open and accessible to all, regardless of
-wealth, geography, or hardware. Suika3 is intentionally engineered to
-run smoothly on entry-level, affordable PCs. Your creativity should
-never be limited by the price tag of your hardware.
+For issues, open an issue on GitHub. For larger discussions and design
+proposals, check the community channels (Discord coming soon).
 
-### Empowering Creators Worldwide.
+## Community
 
-We envision a world where you can develop for platforms you've never
-even touched, reaching audiences far beyond your immediate
-environment. By empowering creators, we aim to foster an open
-ecosystem where:
-
-* **Players** are emotionally enriched by a diverse tapestry of stories.
-* **Developers** can sustain themselves both creatively and economically.
-
-This is more than just software. This is an invitation to create.
+Our official Discord server is coming soon! We are hard at work
+creating a space for creators to connect, share, and grow. Stay tuned
+for updates.
 
 ## Contributing
 
@@ -81,17 +151,9 @@ drives **Suika3** forward.
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for our contribution
 guidelines and code of conduct.
 
-## License
+Please also see [MANIFESTO.md](MANIFESTO.md) for our manifesto.
 
-This software is released under the `zlib License`.
+## Acknowledgements
 
-```
-Suika3
-Copyright (c) 2026 The Suika3 Community
-```
-
-## Community
-
-Our official Discord server is coming soon! We are hard at work
-creating a space for creators to connect, share, and grow. Stay tuned
-for updates.
+Thanks to the Suika2 codebase, Playfield Engine contributors, and the
+growing community of authors and testers who have shaped this project.

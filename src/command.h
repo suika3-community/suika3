@@ -52,5 +52,10 @@ s3i_command_bg(void *p);
 bool
 s3i_command_click(void *p);
 
+/*
+ * The "text" command.
+ */
+bool
+s3i_command_text(void *p);
 
 #endif

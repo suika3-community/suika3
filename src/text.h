@@ -55,7 +55,7 @@
 /*
  * Context for message drawing.
  */
-struct draw_msg_context {
+struct s3_draw_msg_context {
 /* private: */
 	/* Will be copied in the constructor. */
 	struct s3_image *image;

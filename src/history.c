@@ -70,7 +70,11 @@ bool
 s3_add_history(
 	const char *name,
 	const char *msg,
-	const char *voice)
+	const char *voice,
+	s3_pixel_t body_color,
+	s3_pixel_t body_outline_color,
+	s3_pixel_t name_color,
+	s3_pixel_t name_outline_color)
 {
 	return true;
 }

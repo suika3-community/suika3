@@ -638,7 +638,7 @@ setup_savenew(void)
 static void
 restore_text_layers(void)
 {
-	struct draw_msg_context context;
+	struct s3_draw_msg_context context;
 	s3_pixel_t color, outline_color;
 	int i, total_chars;
 
@@ -2149,6 +2149,22 @@ s3_fill_namebox(void)
 }
 
 /*
+ * Get the name box position and size.
+ */
+void
+s3_get_namebox_rect(
+	int *namebox_x,
+	int *namebox_y,
+	int *namebox_w,
+	int *namebox_h)
+{
+	*namebox_x = conf_namebox_x;
+	*namebox_y = conf_namebox_x;
+	*namebox_w = s3_get_image_width(layer_image[S3_LAYER_MSGBOX]);
+	*namebox_h = s3_get_image_height(layer_image[S3_LAYER_MSGBOX]);
+}
+
+/*
  * Show or hides the name box.
  */
 void
@@ -2192,6 +2208,22 @@ s3_show_msgbox(
 }
 
 /*
+ * Get the message box position and size.
+ */
+void
+s3_get_msgbox_rect(
+	int *msgbox_x,
+	int *msgbox_y,
+	int *msgbox_w,
+	int *msgbox_h)
+{
+	*msgbox_x = conf_msgbox_x;
+	*msgbox_y = conf_msgbox_x;
+	*msgbox_w = s3_get_image_width(layer_image[S3_LAYER_MSGBOX]);
+	*msgbox_h = s3_get_image_height(layer_image[S3_LAYER_MSGBOX]);
+}
+
+/*
  * Click Animation Control
  */
 
@@ -2228,6 +2260,30 @@ s3_set_click_index(
 	assert(index < conf_click_frames);
 
 	layer_image[S3_LAYER_CLICK] = click_image[index];
+}
+
+/*
+ * Get the click animation frame position and size.
+ */
+void
+s3_get_click_rect(
+	int *click_x,
+	int *click_y,
+	int *click_w,
+	int *click_h)
+{
+	if (layer_image[S3_LAYER_CLICK] == NULL) {
+		*click_x = conf_click_x;
+		*click_y = conf_click_y;
+		*click_w = 0;
+		*click_h = 0;
+		return;
+	}
+
+	*click_x = conf_click_x;
+	*click_y = conf_click_y;
+	*click_w = s3_get_image_width(layer_image[S3_LAYER_CLICK]);
+	*click_h = s3_get_image_height(layer_image[S3_LAYER_CLICK]);
 }
 
 /*

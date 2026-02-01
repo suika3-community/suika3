@@ -58,6 +58,31 @@
  */
 #define S3_PATH_CONFIG		"config.ini"
 
+/*
+ * Name of the system menu GUI file.
+ */
+#define S3_PATH_SYSMENU_GUI	"sysmenu.gui"
+
+/*
+ * Name of the save GUI file.
+ */
+#define S3_PATH_SAVE_GUI	"save.gui"
+
+/*
+ * Name of the load GUI file.
+ */
+#define S3_PATH_LOAD_GUI	"load.gui"
+
+/*
+ * Name of the history GUI file.
+ */
+#define S3_PATH_HISTORY_GUI	"history.gui"
+
+/*
+ * Name of the config GUI file.
+ */
+#define S3_PATH_CONFIG_GUI	"config.gui"
+
 
 /*
  * Constants for Stage Subsystem (stage.c)
@@ -349,7 +374,7 @@ struct s3_fade_desc {
 /*
  * Context for message drawing.
  */
-struct draw_msg_context;
+struct s3_draw_msg_context;
 
 
 /*
@@ -1433,6 +1458,16 @@ void
 s3_fill_namebox(void);
 
 /*
+ * Get the name box position and size.
+ */
+void
+s3_get_namebox_rect(
+	int *namebox_x,
+	int *namebox_y,
+	int *namebox_w,
+	int *namebox_h);
+
+/*
  * Show or hides the name box.
  */
 void
@@ -1451,6 +1486,16 @@ s3_fill_msgbox(void);
 void
 s3_show_msgbox(
 	bool show);
+
+/*
+ * Get the message box position and size.
+ */
+void
+s3_get_msgbox_rect(
+	int *msgbox_x,
+	int *msgbox_y,
+	int *msgbox_w,
+	int *msgbox_h);
 
 /*
  * Set the position of the click animation.
@@ -1473,6 +1518,16 @@ s3_show_click(
 void
 s3_set_click_index(
 	int index);
+
+/*
+ * Get the click animation frame position and size.
+ */
+void
+s3_get_click_rect(
+	int *click_x,
+	int *click_y,
+	int *click_w,
+	int *click_h);
 
 /*
  * Fill the choose box by the choose box bg image.
@@ -1662,7 +1717,7 @@ s3_draw_glyph(
  */
 void
 s3_construct_draw_msg_context(
-	struct draw_msg_context *context,
+	struct s3_draw_msg_context *context,
 	struct s3_image *dst,
 	const char *msg,
 	int font,
@@ -1701,14 +1756,15 @@ s3_construct_draw_msg_context(
  */
 int
 s3_count_chars_common(
-	struct draw_msg_context *context, int *width);
+	struct s3_draw_msg_context *context,
+	int *width);
 
 /*
  * Draw characters in a message up to (max_chars) characters.
  */
 int
 s3_draw_msg_common(
-	struct draw_msg_context *context,
+	struct s3_draw_msg_context *context,
 	int max_chars);
 
 /*
@@ -1716,9 +1772,16 @@ s3_draw_msg_common(
  */
 void
 s3_get_pen_position_common(
-	struct draw_msg_context *context,
+	struct s3_draw_msg_context *context,
 	int *pen_x,
 	int *pen_y);
+
+/*
+ * Ignore inline wait.
+ */
+void
+s3_set_ignore_inline_wait(
+	struct s3_draw_msg_context *context);
 
 /*
  * Check if a message is a quoted serif. (TODO: delete)
@@ -1726,6 +1789,14 @@ s3_get_pen_position_common(
 bool
 s3_is_quoted_serif(
 	const char *msg);
+
+
+/*
+ * Check if a character is escape sequence.
+ */
+bool
+s3_is_escape_sequence_char(
+	char c);
 
 
 /*
@@ -1813,6 +1884,13 @@ s3_is_mixer_sound_finished(
 const char *
 s3_get_track_file_name(
 	int track);
+
+/*
+ * Apply a character volume to the VOICE track.
+ */
+void
+s3_apply_character_volume(
+	int ch);
 
 
 /*
@@ -2233,7 +2311,11 @@ bool
 s3_add_history(
 	const char *name,
 	const char *msg,
-	const char *voice);
+	const char *voice,
+	s3_pixel_t body_color,
+	s3_pixel_t body_outline_color,
+	s3_pixel_t name_color,
+	s3_pixel_t name_outline_color);
 
 /*
  * Get the number of the history.
@@ -2433,6 +2515,14 @@ bool
 s3_install_tag(
 	const char *name,
 	bool (*func)(void *));
+
+/*
+ * Get a VM integer. (Suika.*)
+ */
+bool
+s3_get_vm_int(
+	const char *name,
+	int *val);
 
 /*
  * Set a VM integer. (Suika.*)

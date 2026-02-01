@@ -277,7 +277,7 @@ s3i_on_game_update(void)
 	/* Call update functions. */
 	while (1) {
 		/* Clear the continue flag. */
-		pf_set_vm_int("s3Continue", 0);
+		s3_set_vm_int("s3Continue", 0);
 
 		/* Call the tag function. */
 		if (!s3_call_vm_tag_function(&tag_end)) {
@@ -292,7 +292,7 @@ s3i_on_game_update(void)
 		}
 
 		/* Check the continue flag. */
-		pf_get_vm_int("s3Continue", &s3_continue);
+		s3_get_vm_int("s3Continue", &s3_continue);
 		if (s3_continue) {
 			/* Process the next tag. */
 			continue;

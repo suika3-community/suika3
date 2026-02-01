@@ -990,7 +990,9 @@ s3_load_eye_image_if_exists(
 /*
  * Reload an eye blinking image.
  */
-bool reload_eye_anime(int chpos)
+bool
+s3_reload_eye_anime(
+	int chpos)
 {
 	int eye_layer;
 
@@ -1006,7 +1008,9 @@ bool reload_eye_anime(int chpos)
 }
 
 /* Synthesis the eye anime. */
-static void synthesis_eye_anime(int chpos)
+static void
+synthesis_eye_anime(
+	int chpos)
 {
 	float ofs_time, base_time;
 	int x, y, i, frame_count, repeat_count;
@@ -1174,7 +1178,10 @@ s3_load_lip_image_if_exists(
 /*
  * Run a lip synchronization anime.
  */
-void run_lip_anime(int chpos, const char *msg)
+void
+s3_run_lip_anime(
+	int chpos,
+	const char *msg)
 {
 	float ofs_time, base_time;
 	int i, x, y, base_layer, lip_layer, frame_count, word_count;
@@ -1289,7 +1296,9 @@ void run_lip_anime(int chpos, const char *msg)
 /*
  * Stop a lip synchronization anime.
  */
-void stop_lip_anime(int chpos)
+void
+s3_stop_lip_anime(
+	int chpos)
 {
 	int lip_layer;
 

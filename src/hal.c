@@ -219,6 +219,28 @@ s3_install_tag(
 }
 
 /*
+ * Get a VM integer. (Suika.*)
+ */
+bool
+s3_get_vm_int(
+	const char *name,
+	int *val)
+{
+	NoctEnv *env;
+	NoctValue dict;
+	NoctValue value;
+
+	env = pf_get_vm_env();
+
+	if (!noct_get_global(env, "Suika", &dict))
+			return false;
+	if (!noct_get_dict_elem_check_int(env, &dict, name, &value,val))
+		return false;
+
+	return true;
+}
+
+/*
  * Set a VM integer. (Suika.*)
  */
 bool

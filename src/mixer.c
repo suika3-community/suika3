@@ -317,6 +317,25 @@ s3_get_character_volume(
 }
 
 /*
+ * Apply a character volume to the VOICE track.
+ */
+void
+s3_apply_character_volume(
+	int ch)
+{
+	float vol;
+
+	assert(ch >= 0 && ch < S3_CH_VOL_SLOTS);
+
+	ch_vol_index = ch;
+
+	vol = vol_global[S3_TRACK_VOICE] * vol_local[S3_TRACK_VOICE] *
+	      vol_character[ch_vol_index] * vol_master;
+
+	pf_set_sound_volume(S3_TRACK_VOICE, vol);
+}
+
+/*
  * Check if the track playback is finished.
  */
 bool
@@ -361,3 +380,4 @@ void process_sound_fading(void)
 		pf_set_sound_volume(track, vol_global[track] * vol_cur[track] * vol_master);
 	}
 }
+
