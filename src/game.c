@@ -42,6 +42,7 @@
 #include "sysbtn.h"
 #include "mixer.h"
 #include "tag.h"
+#include "text.h"
 
 #include <playfield/playfield.h>
 
@@ -204,6 +205,10 @@ s3i_on_game_start(void)
 
 	/* Initialize the tag subsystem. */
 	if (!s3i_init_tag())
+		return false;
+
+	/* Initialize the text subsystem. */
+	if (!s3i_init_text())
 		return false;
 
 	/* Initialize the game states. */

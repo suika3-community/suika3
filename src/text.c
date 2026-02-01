@@ -382,7 +382,7 @@ load_cached_glyph(
 					 color,
 					 outline_width,
 					 outline_color);
-	if (last_image != NULL)
+	if (last_image == NULL)
 		return false;
 
 	return true;

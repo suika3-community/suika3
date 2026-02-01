@@ -2218,7 +2218,7 @@ s3_get_msgbox_rect(
 	int *msgbox_h)
 {
 	*msgbox_x = conf_msgbox_x;
-	*msgbox_y = conf_msgbox_x;
+	*msgbox_y = conf_msgbox_y;
 	*msgbox_w = s3_get_image_width(layer_image[S3_LAYER_MSGBOX]);
 	*msgbox_h = s3_get_image_height(layer_image[S3_LAYER_MSGBOX]);
 }

@@ -184,7 +184,7 @@ s3_load_glyph_image(
 					    &img->width,
 					    &img->height)) {
 		free(img);
-		return false;
+		return NULL;
 	}
 
 	return img;

@@ -1,6 +1,11 @@
 [bg file="bg/roof.png" time="3.0"]
-[click]
+
+[text text="Hello, Suika3!"]
+
 [bg file="bg/coast.png" time="3.0"]
-[click]
+
+[text text="Suika3 started working!"]
+
 [bg file="bg/roof.png" time="3.0"]
-[click]
+
+[text text="Click to exit."]

@@ -894,11 +894,15 @@ init_msg_top(void)
 	}
 
 	/* Expand variables */
-	exp_msg = strdup(s3_expand_string_with_variable(raw_msg));
-	if (exp_msg == NULL) {
-		s3_log_out_of_memory();
-		return false;
-	}
+	// FIXME
+	exp_msg = strdup(raw_msg);
+	/*
+	 * exp_msg = strdup(s3_expand_string_with_variable(raw_msg));
+	 * if (exp_msg == NULL) {
+	 * 	s3_log_out_of_memory();
+	 * 	return false;
+	 * }
+	 */
 
 	/* Register message history for history screen */
 	if (!register_message_for_history(exp_msg)) {
