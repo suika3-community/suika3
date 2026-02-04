@@ -52,7 +52,7 @@ The target file `build-mingw-x86_64/suika3.exe` will be created.
 
 ---
 
-## Linux
+## Linux (X11)
 
 ### Prerequisite
 
@@ -73,11 +73,40 @@ Open the terminal and type the following.
 ```
 git clone https://github.com/suika3-community/suika3.git
 cd suika3
-cmake --preset linux
-cmake --build --preset linux
+cmake --preset linux-x11
+cmake --build --preset linux-x11
 ```
 
-The target file `build-linux/suika3` will be created.
+The target file `build-linux-x11/suika3` will be created.
+
+---
+
+## Linux (Wayland)
+
+### Prerequisite
+
+On Debian or Ubuntu:
+```
+sudo apt-get install git cmake ninja-build build-essential libwayland-dev wayland-protocols libegl1-mesa-dev libasound2-dev
+```
+
+On RedHat, Rocky Linux, Fedora, etc.:
+```
+sudo dnf groupinstall "Development Tools" "Development Libraries"
+sudo dnf install patch git cmake ninja-build wayland-devel wayland-protocols-devel mesa-libEGL-devel alsa-lib-devel
+```
+
+### Steps
+
+Open the terminal and type the following.
+```
+git clone https://github.com/suika3-community/suika3.git
+cd suika3
+cmake --preset linux-wayland
+cmake --build --preset linux-wayland
+```
+
+The target file `build-linux-wayland/suika3` will be created.
 
 ---
 

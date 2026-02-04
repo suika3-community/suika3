@@ -431,12 +431,25 @@
       }
     },
     {
-      "name":           "linux",
+      "name":           "linux-x11",
       "displayName":    "Linux",
       "generator":      "Ninja",
       "binaryDir":      "${sourceDir}/build-linux",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE":            "Release",
+        "SUIKA_TARGET_LINUX":          "ON",
+        "SUIKA_ENABLE_JIT":            "ON",
+        "SUIKA_ENABLE_I18N":           "ON",
+        "SUIKA_ENABLE_PACK":           "ON"
+      }
+    },
+    {
+      "name":           "linux-x11-debug",
+      "displayName":    "Linux",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-linux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Debug",
         "SUIKA_TARGET_LINUX":          "ON",
         "SUIKA_ENABLE_JIT":            "ON",
         "SUIKA_ENABLE_I18N":           "ON",
@@ -450,6 +463,19 @@
       "binaryDir":      "${sourceDir}/build-linux-wayland",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE":               "Release",
+        "SUIKA_TARGET_LINUX_WAYLAND":     "ON",
+        "SUIKA_ENABLE_JIT":               "ON",
+        "SUIKA_ENABLE_I18N":              "ON",
+        "SUIKA_ENABLE_PACK":              "ON"
+      }
+    },
+    {
+      "name":           "linux-wayland-debug",
+      "displayName":    "Linux Framebuffer",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-linux-wayland",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":               "Debug",
         "SUIKA_TARGET_LINUX_WAYLAND":     "ON",
         "SUIKA_ENABLE_JIT":               "ON",
         "SUIKA_ENABLE_I18N":              "ON",
@@ -793,12 +819,20 @@
       "configurePreset": "macos-cli-debug"
     },
     {
-      "name": "linux",
-      "configurePreset": "linux"
+      "name": "linux-x11",
+      "configurePreset": "linux-x11"
+    },
+    {
+      "name": "linux-x11-debug",
+      "configurePreset": "linux-x11-debug"
     },
     {
       "name": "linux-wayland",
       "configurePreset": "linux-wayland"
+    },
+    {
+      "name": "linux-wayland-debug",
+      "configurePreset": "linux-wayland-debug"
     },
     {
       "name": "linux-gbm",
