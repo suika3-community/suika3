@@ -115,7 +115,7 @@ set(WEBP_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/libwebp/src)
 
 # Suppress compilation errors.
 if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
-  target_compile_options(webp PRIVATE -std=gnu89 -w)
+  target_compile_options(webp PRIVATE -std=gnu99 -w)
 elseif(MSVC)
   target_compile_options(webp PRIVATE /W0 /wd4267 /wd4334)
 endif()
