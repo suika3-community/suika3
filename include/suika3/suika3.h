@@ -1390,7 +1390,8 @@ s3_get_fade_method(
 /*
  * Start a fading.
  */
-bool s3_start_fade(
+bool
+s3_start_fade(
 	struct s3_fade_desc *desc,
 	int method,
 	float t,
@@ -1423,6 +1424,12 @@ void
 s3_set_ch_name_mapping(
 	int chpos,
 	int ch_name_index);
+
+/*
+ * Get the talker character name index. (-1 for no speaker)
+ */
+void
+s3_get_ch_talking(void);
 
 /*
  * Set the talker character name index. (-1 for no speaker)

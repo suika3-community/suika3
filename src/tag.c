@@ -243,7 +243,7 @@ s3_get_tag_arg_string(
 	}
 	if (i == count) {
 		/* Not found, return the default value. */
-		return 0;
+		return NULL;
 	}
 
 	prop_value = pf_get_tag_property_value(i);
