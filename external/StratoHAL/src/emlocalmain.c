@@ -1158,7 +1158,7 @@ EM_JS(int, hal_get_system_lang_code, (void), {
 });
 static void init_lang_code(void)
 {
-	switch (get_system_lang_code()) {
+	switch (hal_get_system_lang_code()) {
 	case 0:
 		lang_code = "en";
 		break;
