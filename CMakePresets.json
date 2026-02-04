@@ -434,7 +434,7 @@
       "name":           "linux-x11",
       "displayName":    "Linux",
       "generator":      "Ninja",
-      "binaryDir":      "${sourceDir}/build-linux",
+      "binaryDir":      "${sourceDir}/build-linux-x11",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE":            "Release",
         "SUIKA_TARGET_LINUX":          "ON",
@@ -447,7 +447,7 @@
       "name":           "linux-x11-debug",
       "displayName":    "Linux",
       "generator":      "Ninja",
-      "binaryDir":      "${sourceDir}/build-linux",
+      "binaryDir":      "${sourceDir}/build-linux-x11-debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE":            "Debug",
         "SUIKA_TARGET_LINUX":          "ON",
@@ -473,7 +473,7 @@
       "name":           "linux-wayland-debug",
       "displayName":    "Linux Framebuffer",
       "generator":      "Ninja",
-      "binaryDir":      "${sourceDir}/build-linux-wayland",
+      "binaryDir":      "${sourceDir}/build-linux-wayland-debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE":               "Debug",
         "SUIKA_TARGET_LINUX_WAYLAND":     "ON",
