@@ -1243,7 +1243,7 @@ get_lang_code(void)
 	return lang_code;
 }
 
-EM_JS(int, hal_get_system_lang_code, (void), {
+EM_JS(int, get_system_lang_code, (void), {
 	if (window.navigator.language.startsWith("en"))
 		return 0;
 	if (window.navigator.language.startsWith("fr"))
@@ -1268,7 +1268,7 @@ EM_JS(int, hal_get_system_lang_code, (void), {
 });
 void init_lang_code(void)
 {
-	switch (hal_get_system_lang_code()) {
+	switch (get_system_lang_code()) {
 	case 0:
 		lang_code = "en";
 		break;
@@ -1303,6 +1303,12 @@ void init_lang_code(void)
 		lang_code = "en";
 		break;
 	}
+}
+
+const char *
+hal_get_system_language(void)
+{
+	return lang_code;
 }
 
 void
