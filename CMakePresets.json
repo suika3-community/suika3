@@ -403,6 +403,34 @@
       }
     },
     {
+      "name":           "macos-cli",
+      "displayName":    "macOS",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-macos-cli",
+      "toolchainFile":  "${sourceDir}/cmake/toolchains/macos.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "SUIKA_TARGET_MACOS":          "ON",
+        "SUIKA_ENABLE_JIT":            "ON",
+        "SUIKA_ENABLE_I18N":           "ON",
+        "SUIKA_ENABLE_PACK":           "ON"
+      }
+    },
+    {
+      "name":           "macos-cli-debug",
+      "displayName":    "macOS",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-macos-cli-debug",
+      "toolchainFile":  "${sourceDir}/cmake/toolchains/macos.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Debug",
+        "SUIKA_TARGET_MACOS":          "ON",
+        "SUIKA_ENABLE_JIT":            "ON",
+        "SUIKA_ENABLE_I18N":           "ON",
+        "SUIKA_ENABLE_PACK":           "ON"
+      }
+    },
+    {
       "name":           "linux",
       "displayName":    "Linux",
       "generator":      "Ninja",
@@ -755,6 +783,14 @@
     {
       "name": "macos",
       "configurePreset": "macos"
+    },
+    {
+      "name": "macos-cli",
+      "configurePreset": "macos-cli"
+    },
+    {
+      "name": "macos-cli-debug",
+      "configurePreset": "macos-cli-debug"
     },
     {
       "name": "linux",

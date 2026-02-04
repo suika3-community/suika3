@@ -1646,7 +1646,7 @@ action_toggle_hide(void)
 	} else {
 		/* Show the message box */
 		is_hidden = false;
-		if (name_top = NULL)
+		if (name_top == NULL)
 			s3_show_namebox(true);
 		s3_show_msgbox(true);
 		s3_show_click(is_click_visible);
