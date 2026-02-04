@@ -362,9 +362,22 @@
       "name":           "linux-x11",
       "displayName":    "Linux X11 OpenGL",
       "generator":      "Ninja",
-      "binaryDir":      "${sourceDir}/build-linux",
+      "binaryDir":      "${sourceDir}/build-linux-x11",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE":            "Release",
+        "PLAYFIELD_TARGET_LINUX":      "ON",
+        "PLAYFIELD_ENABLE_JIT":        "ON",
+        "PLAYFIELD_ENABLE_I18N":       "ON",
+        "PLAYFIELD_ENABLE_PACK":       "ON"
+      }
+    },
+    {
+      "name":           "linux-x11-debug",
+      "displayName":    "Linux X11 OpenGL",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-linux-x11-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Debug",
         "PLAYFIELD_TARGET_LINUX":      "ON",
         "PLAYFIELD_ENABLE_JIT":        "ON",
         "PLAYFIELD_ENABLE_I18N":       "ON",
@@ -378,6 +391,19 @@
       "binaryDir":      "${sourceDir}/build-linux-wayland",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE":               "Release",
+        "PLAYFIELD_TARGET_LINUX_WAYLAND": "ON",
+        "PLAYFIELD_ENABLE_JIT":           "ON",
+        "PLAYFIELD_ENABLE_I18N":          "ON",
+        "PLAYFIELD_ENABLE_PACK":          "ON"
+      }
+    },
+    {
+      "name":           "linux-wayland-debug",
+      "displayName":    "Linux Wayland OpenGL",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-linux-wayland-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":               "Debug",
         "PLAYFIELD_TARGET_LINUX_WAYLAND": "ON",
         "PLAYFIELD_ENABLE_JIT":           "ON",
         "PLAYFIELD_ENABLE_I18N":          "ON",

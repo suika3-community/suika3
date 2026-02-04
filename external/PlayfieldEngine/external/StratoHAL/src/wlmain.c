@@ -223,14 +223,14 @@ int main(int argc, char *argv[])
 		return 1;
 
 	/* Do a start callback. */
-	if (!on_event_start())
+	if (!hal_callback_on_event_start())
 		return 1;
 
 	/* Run game loop. */
 	run_game_loop();
 
 	/* Do a stop callback.. */
-	on_event_stop();
+	hal_callback_on_event_stop();
 
 	/* Cleanup HAL. */
 	cleanup_hal();
@@ -284,24 +284,24 @@ static bool init_hal(int argc, char *argv[])
 		return false;
 
 	/* Do a boot callback. */
-	if (!on_event_boot(&window_title, &screen_width, &screen_height))
+	if (!hal_callback_on_event_boot(&window_title, &screen_width, &screen_height))
 		return false;
 
 	/* Initialize the sound HAL. */
 	if (!init_sound()) {
 		/* Ignore a failure. */
-		log_warn("Can't initialize sound.");
+		hal_log_warn("Can't initialize sound.");
 	}
 
 	/* Open an X11 display. */
 	if (!open_display()) {
-		log_error("Can't open display.");
+		hal_log_error("Can't open display.");
 		return false;
 	}
 
 	/* Initizalize OpenGL. */
 	if (!init_opengl(screen_width, screen_height)) {
-		log_error("Can't initialize OpenGL.");
+		hal_log_error("Can't initialize OpenGL.");
 	}
 	update_viewport_size(display_width, display_height);
 
@@ -334,7 +334,7 @@ static bool open_display(void)
 
 	wl_dpy = wl_display_connect(NULL);
 	if (!wl_dpy) {
-		log_error("wl_display_connect failed");
+		hal_log_error("wl_display_connect failed");
 		return false;
 	}
 
@@ -342,7 +342,7 @@ static bool open_display(void)
 	wl_registry_add_listener(reg, &registry_listener, NULL);
 	wl_display_roundtrip(wl_dpy);
 	if (!wl_compositor || !xdg_base) {
-		log_error("required globals missing");
+		hal_log_error("required globals missing");
 		return false;
 	}
 
@@ -358,32 +358,32 @@ static bool open_display(void)
 
 	wlegl_win = wl_egl_window_create(wl_surface, screen_width, screen_height);
 	if (!wlegl_win) {
-		log_error("wl_egl_window_create failed");
+		hal_log_error("wl_egl_window_create failed");
 		return false;
 	}
 
 	egl_dpy = eglGetDisplay((EGLNativeDisplayType)wl_dpy);
 	if (egl_dpy == EGL_NO_DISPLAY) {
-		log_error("eglGetDisplay failed");
+		hal_log_error("eglGetDisplay failed");
 		return false;
 	}
 
 	if (!eglInitialize(egl_dpy, NULL, NULL)) {
-		log_error("eglInitialize failed: 0x%04x\n", eglGetError());
+		hal_log_error("eglInitialize failed: 0x%04x\n", eglGetError());
 		return false;
 	}
 
 	if (!eglBindAPI(EGL_OPENGL_ES_API)) {
-		log_error("eglBindAPI(EGL_OPENGL_ES_API) failed: 0x%04x\n", eglGetError());
+		hal_log_error("eglBindAPI(EGL_OPENGL_ES_API) failed: 0x%04x\n", eglGetError());
 		return false;
 	}
 
 	if (!eglChooseConfig(egl_dpy, cfg_attrs, configs, 64, &ncfg)) {
-		log_error("eglChooseConfig() failed: 0x%04x\n", eglGetError());
+		hal_log_error("eglChooseConfig() failed: 0x%04x\n", eglGetError());
 		return false;
 	}
 	if (ncfg <= 0) {
-		log_error("eglChooseConfig(count) failed.\n");
+		hal_log_error("eglChooseConfig(count) failed.\n");
 		return false;
 	}
 
@@ -406,18 +406,18 @@ static bool open_display(void)
 
 	egl_ctx = eglCreateContext(egl_dpy, egl_cfg, EGL_NO_CONTEXT, (EGLint[]){EGL_CONTEXT_CLIENT_VERSION,2, EGL_NONE});
 	if (egl_ctx == EGL_NO_CONTEXT) {
-		log_error("eglCreateContext failed: 0x%04x\n", eglGetError());
+		hal_log_error("eglCreateContext failed: 0x%04x\n", eglGetError());
 		return false;
 	}
 
 	egl_surf = eglCreateWindowSurface(egl_dpy, egl_cfg, (EGLNativeWindowType)wlegl_win, NULL);
 	if (egl_surf == EGL_NO_SURFACE) {
-		log_error("eglCreateWindowSurface failed: 0x%04x\n", eglGetError());
+		hal_log_error("eglCreateWindowSurface failed: 0x%04x\n", eglGetError());
 		return false;
 	}
 
 	if (!eglMakeCurrent(egl_dpy, egl_surf, egl_surf, egl_ctx)) {
-		log_error("eglMakeCurrent failed: 0x%04x\n", eglGetError());
+		hal_log_error("eglMakeCurrent failed: 0x%04x\n", eglGetError());
 		return false;
 	}
 
@@ -524,7 +524,7 @@ static bool run_frame(void)
 	opengl_start_rendering();
 
 	/* Call a frame event. */
-	cont = on_event_frame();
+	cont = hal_callback_on_event_frame();
 
 	/* End rendering. */
 #if 0
@@ -619,7 +619,10 @@ static void update_viewport_size(int width, int height)
 /*
  * Put an INFO log.
  */
-bool log_info(const char *s, ...)
+bool
+hal_log_info(
+	const char *s,
+	...)
 {
 	char buf[LOG_BUF_SIZE];
 	va_list ap;
@@ -644,7 +647,10 @@ bool log_info(const char *s, ...)
 /*
  * Put a WARN log.
  */
-bool log_warn(const char *s, ...)
+bool
+hal_log_warn(
+	const char *s,
+	...)
 {
 	char buf[LOG_BUF_SIZE];
 	va_list ap;
@@ -669,7 +675,10 @@ bool log_warn(const char *s, ...)
 /*
  * Put an ERROR log.
  */
-bool log_error(const char *s, ...)
+bool
+hal_log_error(
+	const char *s,
+	...)
 {
 	char buf[LOG_BUF_SIZE];
 	va_list ap;
@@ -694,14 +703,16 @@ bool log_error(const char *s, ...)
 /*
  * Put an out-of-memory error.
  */
-bool log_out_of_memory(void)
+bool
+hal_log_out_of_memory(void)
 {
-	log_error(S_TR("Out of memory."));
+	hal_log_error(HAL_TR("Out of memory."));
 	return true;
 }
 
 /* Open the log file. */
-static bool open_log_file(void)
+static bool
+open_log_file(void)
 {
 	if (log_fp == NULL) {
 		log_fp = fopen(LOG_FILE, "w");
@@ -716,7 +727,8 @@ static bool open_log_file(void)
 /*
  * Make a save directory.
  */
-bool make_save_directory(void)
+bool
+hal_make_save_directory(void)
 {
 	struct stat st = {0};
 
@@ -729,7 +741,8 @@ bool make_save_directory(void)
 /*
  * Make an effective path from a directory name and a file name.
  */
-char *make_real_path(const char *fname)
+char *
+hal_make_real_path(const char *fname)
 {
 	char *buf;
 	size_t len;
@@ -738,7 +751,7 @@ char *make_real_path(const char *fname)
 	len = strlen(fname) + 1;
 	buf = malloc(len);
 	if (buf == NULL) {
-		log_out_of_memory();
+		hal_log_out_of_memory();
 		return NULL;
 	}
 
@@ -751,7 +764,9 @@ char *make_real_path(const char *fname)
 /*
  * Reset a timer.
  */
-void reset_lap_timer(uint64_t *t)
+void
+hal_reset_lap_timer(
+	uint64_t *t)
 {
 	struct timeval tv;
 
@@ -763,7 +778,9 @@ void reset_lap_timer(uint64_t *t)
 /*
  * Get a timer lap.
  */
-uint64_t get_lap_timer_millisec(uint64_t *t)
+uint64_t
+hal_get_lap_timer_millisec(
+	uint64_t *t)
 {
 	struct timeval tv;
 	uint64_t end;
@@ -778,7 +795,9 @@ uint64_t get_lap_timer_millisec(uint64_t *t)
 /*
  * Notify an image update.
  */
-void notify_image_update(struct image *img)
+void
+hal_notify_image_update(
+	struct hal_image *img)
 {
 	opengl_notify_image_update(img);
 }
@@ -786,7 +805,9 @@ void notify_image_update(struct image *img)
 /*
  * Notify an image free.
  */
-void notify_image_free(struct image *img)
+void
+hal_notify_image_free(
+	struct hal_image *img)
 {
 	opengl_notify_image_free(img);
 }
@@ -794,12 +815,13 @@ void notify_image_free(struct image *img)
 /*
  * Render an image. (alpha blend)
  */
-void render_image_normal(
+void
+hal_render_image_normal(
 	int dst_left,
 	int dst_top,
 	int dst_width,
 	int dst_height,
-	struct image *src_image,
+	struct hal_image *src_image,
 	int src_left,
 	int src_top,
 	int src_width,
@@ -823,12 +845,13 @@ void render_image_normal(
 /*
  * Render an image. (add blend)
  */
-void render_image_add(
+void
+hal_render_image_add(
 	int dst_left,
 	int dst_top,
 	int dst_width,
 	int dst_height,
-	struct image *src_image,
+	struct hal_image *src_image,
 	int src_left,
 	int src_top,
 	int src_width,
@@ -850,14 +873,45 @@ void render_image_add(
 }
 
 /*
- * Render an image. (dim blend)
+ * Render an image. (sub blend)
  */
-void render_image_dim(
+void
+hal_render_image_sub(
 	int dst_left,
 	int dst_top,
 	int dst_width,
 	int dst_height,
-	struct image *src_image,
+	struct hal_image *src_image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	opengl_render_image_sub(
+		dst_left,
+		dst_top,
+		dst_width,
+		dst_height,
+		src_image,
+		src_left,
+		src_top,
+		src_width,
+		src_height,
+		alpha
+	);
+}
+
+/*
+ * Render an image. (dim blend)
+ */
+void
+hal_render_image_dim(
+	int dst_left,
+	int dst_top,
+	int dst_width,
+	int dst_height,
+	struct hal_image *src_image,
 	int src_left,
 	int src_top,
 	int src_width,
@@ -881,9 +935,10 @@ void render_image_dim(
 /*
  * Render an image. (rule universal transition)
  */
-void render_image_rule(
-	struct image *src_img,
-	struct image *rule_img,
+void
+hal_render_image_rule(
+	struct hal_image *src_img,
+	struct hal_image *rule_img,
 	int threshold)
 {
 	opengl_render_image_rule(src_img, rule_img, threshold);
@@ -892,9 +947,10 @@ void render_image_rule(
 /*
  * Render an image. (melt universal transition)
  */
-void render_image_melt(
-	struct image *src_img,
-	struct image *rule_img,
+void
+hal_render_image_melt(
+	struct hal_image *src_img,
+	struct hal_image *rule_img,
 	int progress)
 {
 	opengl_render_image_melt(src_img, rule_img, progress);
@@ -904,7 +960,7 @@ void render_image_melt(
  * Render an image. (3d transform, alpha blending)
  */
 void
-render_image_3d_normal(
+hal_render_image_3d_normal(
 	float x1,
 	float y1,
 	float x2,
@@ -913,7 +969,7 @@ render_image_3d_normal(
 	float y3,
 	float x4,
 	float y4,
-	struct image *src_image,
+	struct hal_image *src_image,
 	int src_left,
 	int src_top,
 	int src_width,
@@ -930,7 +986,7 @@ render_image_3d_normal(
  * Render an image. (3d transform, alpha blending)
  */
 void
-render_image_3d_add(
+hal_render_image_3d_add(
 	float x1,
 	float y1,
 	float x2,
@@ -939,7 +995,7 @@ render_image_3d_add(
 	float y3,
 	float x4,
 	float y4,
-	struct image *src_image,
+	struct hal_image *src_image,
 	int src_left,
 	int src_top,
 	int src_width,
@@ -953,9 +1009,64 @@ render_image_3d_add(
 }
 
 /*
+ * Render an image. (3d transform, sub blending)
+ */
+void
+hal_render_image_3d_sub(
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	struct hal_image *src_image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	opengl_render_image_3d_sub(
+		x1, y1, x2, y2, x3, y3, x4, y4,
+		src_image, src_left, src_top, src_width, src_height,
+		alpha);
+}
+
+/*
+ * Render an image. (3d transform, dim blending)
+ */
+void
+hal_render_image_3d_dim(
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	struct hal_image *src_image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	opengl_render_image_3d_dim(
+		x1, y1, x2, y2, x3, y3, x4, y4,
+		src_image, src_left, src_top, src_width, src_height,
+		alpha);
+}
+
+/*
  * Play a video.
  */
-bool play_video(const char *fname, bool is_skippable)
+bool
+hal_play_video(
+	const char *fname,
+	bool is_skippable)
 {
 #if 0
 	char *path;
@@ -976,7 +1087,8 @@ bool play_video(const char *fname, bool is_skippable)
 /*
  * Stop the video.
  */
-void stop_video(void)
+void
+hal_stop_video(void)
 {
 #if 0
 	gstplay_stop();
@@ -988,7 +1100,8 @@ void stop_video(void)
 /*
  * Check whether a video is playing.
  */
-bool is_video_playing(void)
+bool
+hal_is_video_playing(void)
 {
 #if 0
 	return is_gst_playing;
@@ -999,7 +1112,8 @@ bool is_video_playing(void)
 /*
  * Check whether full screen mode is supported.
  */
-bool is_full_screen_supported(void)
+bool
+hal_is_full_screen_supported(void)
 {
 	return false;
 }
@@ -1007,7 +1121,8 @@ bool is_full_screen_supported(void)
 /*
  * Check whether we are in full screen mode.
  */
-bool is_full_screen_mode(void)
+bool
+hal_is_full_screen_mode(void)
 {
 	return false;
 }
@@ -1015,7 +1130,8 @@ bool is_full_screen_mode(void)
 /*
  * Enter full screen mode.
  */
-void enter_full_screen_mode(void)
+void
+hal_enter_full_screen_mode(void)
 {
 	if (is_full_screen)
 		return;
@@ -1029,7 +1145,8 @@ void enter_full_screen_mode(void)
 /*
  * Leave full screen mode.
  */
-void leave_full_screen_mode(void)
+void
+hal_leave_full_screen_mode(void)
 {
 	if (!is_full_screen)
 		return;
@@ -1043,7 +1160,8 @@ void leave_full_screen_mode(void)
 /*
  * Get the system locale.
  */
-const char *get_system_language(void)
+const char *
+hal_get_system_language(void)
 {
 	return playfield_lang_code;
 }
@@ -1051,7 +1169,9 @@ const char *get_system_language(void)
 /*
  * Enable/disable message skip by touch move.
  */
-void set_continuous_swipe_enabled(bool is_enabled)
+void
+hal_set_continuous_swipe_enabled(
+	bool is_enabled)
 {
 	UNUSED_PARAMETER(is_enabled);
 }
@@ -1162,7 +1282,7 @@ static void pointer_motion(void *data, struct wl_pointer *pointer, uint32_t time
 	last_mouse_x = (int)((wl_fixed_to_double(sx) - mouse_ofs_x) * mouse_scale);
 	last_mouse_y = (int)((wl_fixed_to_double(sy) - mouse_ofs_y) * mouse_scale);
 
-	on_event_mouse_move(last_mouse_x, last_mouse_y);
+	hal_callback_on_event_mouse_move(last_mouse_x, last_mouse_y);
 }
 
 static void pointer_button(void *data, struct wl_pointer *pointer, uint32_t serial, uint32_t time, uint32_t button, uint32_t state)
@@ -1174,14 +1294,14 @@ static void pointer_button(void *data, struct wl_pointer *pointer, uint32_t seri
 
 	if (button == 272) {
 		if (state == WL_POINTER_BUTTON_STATE_PRESSED)
-			on_event_mouse_press(MOUSE_LEFT, last_mouse_x, last_mouse_y);
+			hal_callback_on_event_mouse_press(HAL_MOUSE_LEFT, last_mouse_x, last_mouse_y);
 		else
-			on_event_mouse_release(MOUSE_LEFT, last_mouse_x, last_mouse_y);
+			hal_callback_on_event_mouse_release(HAL_MOUSE_LEFT, last_mouse_x, last_mouse_y);
 	} else if (button == 273) {
 		if (state == WL_POINTER_BUTTON_STATE_PRESSED)
-			on_event_mouse_press(MOUSE_RIGHT, last_mouse_x, last_mouse_y);
+			hal_callback_on_event_mouse_press(HAL_MOUSE_RIGHT, last_mouse_x, last_mouse_y);
 		else
-			on_event_mouse_release(MOUSE_RIGHT, last_mouse_x, last_mouse_y);
+			hal_callback_on_event_mouse_release(HAL_MOUSE_RIGHT, last_mouse_x, last_mouse_y);
 	}
 }
 
@@ -1213,107 +1333,107 @@ static void keyboard_key(void *data, struct wl_keyboard *keyboard, uint32_t seri
 
 	keycode = get_keycode(key);
 
-	if (keycode == KEY_ALT) {
+	if (keycode == HAL_KEY_ALT) {
 		if (state == WL_KEYBOARD_KEY_STATE_PRESSED)
 			is_alt_pressed = true;
 		else
 			is_alt_pressed = false;
 	}
 
-	if (keycode == KEY_RETURN && state == WL_KEYBOARD_KEY_STATE_PRESSED && is_alt_pressed) {
+	if (keycode == HAL_KEY_RETURN && state == WL_KEYBOARD_KEY_STATE_PRESSED && is_alt_pressed) {
 		if (!is_full_screen)
-			enter_full_screen_mode();
+			hal_enter_full_screen_mode();
 		else
-			leave_full_screen_mode();
+			hal_leave_full_screen_mode();
 		return;
 	}
 
 	if (state == WL_KEYBOARD_KEY_STATE_PRESSED)
-		on_event_key_press(keycode);
+		hal_callback_on_event_key_press(keycode);
 	else
-		on_event_key_release(keycode);
+		hal_callback_on_event_key_release(keycode);
 }
 
 static int get_keycode(int kc)
 {
 	switch (kc) {
-	case 1:   return KEY_ESCAPE;    // KEY_ESC
-	case 28:  return KEY_RETURN;    // KEY_ENTER
-	case 96:  return KEY_RETURN;    // KEY_KPENTER
-	case 57:  return KEY_SPACE;     // KEY_SPACE
-	case 15:  return KEY_TAB;       // KEY_TAB
-	case 14:  return KEY_BACKSPACE; // KEY_BACKSPACE
-	case 111: return KEY_DELETE;    // KEY_DELETE
-	case 102: return KEY_HOME;      // KEY_HOME
-	case 107: return KEY_END;       // KEY_END
-	case 104: return KEY_PAGEUP;    // KEY_PAGEUP
-	case 109: return KEY_PAGEDOWN;  // KEY_PAGEDOWN
-	case 42:                        // KEY_LEFTSHIFT
-	case 54:  return KEY_SHIFT;     // KEY_RIGHTSHIFT
-	case 29:                        // KEY_LEFTCTRL
-	case 97:                        // KEY_RIGHTCTRL
-		return KEY_CONTROL;
-	case 56:                        // KEY_LEFTALT
-	case 100:                       // KEY_RIGHTALT
-		return KEY_ALT;
-	case 108: return KEY_DOWN;
-	case 103: return KEY_UP;
-	case 105: return KEY_LEFT;
-	case 106: return KEY_RIGHT;
+	case 1:   return HAL_KEY_ESCAPE;    // HAL_KEY_ESC
+	case 28:  return HAL_KEY_RETURN;    // HAL_KEY_ENTER
+	case 96:  return HAL_KEY_RETURN;    // HAL_KEY_KPENTER
+	case 57:  return HAL_KEY_SPACE;     // HAL_KEY_SPACE
+	case 15:  return HAL_KEY_TAB;       // HAL_KEY_TAB
+	case 14:  return HAL_KEY_BACKSPACE; // HAL_KEY_BACKSPACE
+	case 111: return HAL_KEY_DELETE;    // HAL_KEY_DELETE
+	case 102: return HAL_KEY_HOME;      // HAL_KEY_HOME
+	case 107: return HAL_KEY_END;       // HAL_KEY_END
+	case 104: return HAL_KEY_PAGEUP;    // HAL_KEY_PAGEUP
+	case 109: return HAL_KEY_PAGEDOWN;  // HAL_KEY_PAGEDOWN
+	case 42:                        // HAL_KEY_LEFTSHIFT
+	case 54:  return HAL_KEY_SHIFT;     // HAL_KEY_RIGHTSHIFT
+	case 29:                        // HAL_KEY_LEFTCTRL
+	case 97:                        // HAL_KEY_RIGHTCTRL
+		return HAL_KEY_CONTROL;
+	case 56:                        // HAL_KEY_LEFTALT
+	case 100:                       // HAL_KEY_RIGHTALT
+		return HAL_KEY_ALT;
+	case 108: return HAL_KEY_DOWN;
+	case 103: return HAL_KEY_UP;
+	case 105: return HAL_KEY_LEFT;
+	case 106: return HAL_KEY_RIGHT;
 
 	// Letters (A=30 … Z=44)
-	case 30: return KEY_A;
-	case 48: return KEY_B;
-	case 46: return KEY_C;
-	case 32: return KEY_D;
-	case 18: return KEY_E;
-	case 33: return KEY_F;
-	case 34: return KEY_G;
-	case 35: return KEY_H;
-	case 23: return KEY_I;
-	case 36: return KEY_J;
-	case 37: return KEY_K;
-	case 38: return KEY_L;
-	case 50: return KEY_M;
-	case 49: return KEY_N;
-	case 24: return KEY_O;
-	case 25: return KEY_P;
-	case 16: return KEY_Q;
-	case 19: return KEY_R;
-	case 31: return KEY_S;
-	case 20: return KEY_T;
-	case 22: return KEY_U;
-	case 47: return KEY_V;
-	case 17: return KEY_W;
-	case 45: return KEY_X;
-	case 21: return KEY_Y;
-	case 44: return KEY_Z;
+	case 30: return HAL_KEY_A;
+	case 48: return HAL_KEY_B;
+	case 46: return HAL_KEY_C;
+	case 32: return HAL_KEY_D;
+	case 18: return HAL_KEY_E;
+	case 33: return HAL_KEY_F;
+	case 34: return HAL_KEY_G;
+	case 35: return HAL_KEY_H;
+	case 23: return HAL_KEY_I;
+	case 36: return HAL_KEY_J;
+	case 37: return HAL_KEY_K;
+	case 38: return HAL_KEY_L;
+	case 50: return HAL_KEY_M;
+	case 49: return HAL_KEY_N;
+	case 24: return HAL_KEY_O;
+	case 25: return HAL_KEY_P;
+	case 16: return HAL_KEY_Q;
+	case 19: return HAL_KEY_R;
+	case 31: return HAL_KEY_S;
+	case 20: return HAL_KEY_T;
+	case 22: return HAL_KEY_U;
+	case 47: return HAL_KEY_V;
+	case 17: return HAL_KEY_W;
+	case 45: return HAL_KEY_X;
+	case 21: return HAL_KEY_Y;
+	case 44: return HAL_KEY_Z;
 
 	// Numbers (1=2 … 0=11)
-	case 2:  return KEY_1;
-	case 3:  return KEY_2;
-	case 4:  return KEY_3;
-	case 5:  return KEY_4;
-	case 6:  return KEY_5;
-	case 7:  return KEY_6;
-	case 8:  return KEY_7;
-	case 9:  return KEY_8;
-	case 10: return KEY_9;
-	case 11: return KEY_0;
+	case 2:  return HAL_KEY_1;
+	case 3:  return HAL_KEY_2;
+	case 4:  return HAL_KEY_3;
+	case 5:  return HAL_KEY_4;
+	case 6:  return HAL_KEY_5;
+	case 7:  return HAL_KEY_6;
+	case 8:  return HAL_KEY_7;
+	case 9:  return HAL_KEY_8;
+	case 10: return HAL_KEY_9;
+	case 11: return HAL_KEY_0;
 
 	// Function keys
-	case 59: return KEY_F1;
-	case 60: return KEY_F2;
-	case 61: return KEY_F3;
-	case 62: return KEY_F4;
-	case 63: return KEY_F5;
-	case 64: return KEY_F6;
-	case 65: return KEY_F7;
-	case 66: return KEY_F8;
-	case 67: return KEY_F9;
-	case 68: return KEY_F10;
-	case 87: return KEY_F11;
-	case 88: return KEY_F12;
+	case 59: return HAL_KEY_F1;
+	case 60: return HAL_KEY_F2;
+	case 61: return HAL_KEY_F3;
+	case 62: return HAL_KEY_F4;
+	case 63: return HAL_KEY_F5;
+	case 64: return HAL_KEY_F6;
+	case 65: return HAL_KEY_F7;
+	case 66: return HAL_KEY_F8;
+	case 67: return HAL_KEY_F9;
+	case 68: return HAL_KEY_F10;
+	case 87: return HAL_KEY_F11;
+	case 88: return HAL_KEY_F12;
 
 	default:
 		break;
