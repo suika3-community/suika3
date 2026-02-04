@@ -200,7 +200,7 @@ hal_set_sound_volume(
  * Check if finished.
  */
 bool
-is_sound_finished(
+hal_is_sound_finished(
 	int n)
 {
 	if(finish[n] && remain[n] == 0)

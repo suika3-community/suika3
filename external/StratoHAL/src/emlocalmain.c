@@ -1133,7 +1133,7 @@ get_lang_code(void)
 	return lang_code;
 }
 
-EM_JS(int, get_system_lang_code, (void), {
+EM_JS(int, hal_get_system_lang_code, (void), {
 	if (window.navigator.language.startsWith("en"))
 		return 0;
 	if (window.navigator.language.startsWith("fr"))
@@ -1196,7 +1196,7 @@ static void init_lang_code(void)
 }
 
 void
-set_continuous_swipe_enabled(
+hal_set_continuous_swipe_enabled(
 	bool is_enabled)
 {
 	is_continuous_swipe_enabled = is_enabled;
