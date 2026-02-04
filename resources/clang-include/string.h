@@ -36,6 +36,7 @@ char  *strncat(char *dest, const char *src, size_t n);
 #define strlen(s)                  __builtin_strlen(s)
 #define strcmp(s1, s2)             __builtin_strcmp(s1, s2)
 #define strncmp(s1, s2, n)         __builtin_strncmp(s1, s2, n)
+#define strcasecmp(s1, s2)         __builtin_strcasecmp(s1, s2)
 
 /*
 size_t strlen(const char *s);
