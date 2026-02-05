@@ -27,6 +27,8 @@ void *memchr(const void *s, int c, size_t n);
 #define strcat(dest, src)          __builtin_strcat(dest, src)
 #define strncat(dest, src, n)      __builtin_strncat(dest, src, n)
 
+int _stricmp(const char *s1, const char *s2);
+
 /*
 char  *strcpy(char *dest, const char *src);
 char  *strncpy(char *dest, const char *src, size_t n);
