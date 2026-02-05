@@ -5,7 +5,7 @@ set(CMAKE_SYSTEM_PROCESSOR x86_64)
 set(CMAKE_C_COMPILER       "clang-cl")
 set(CMAKE_CXX_COMPILER     "clang-cl")
 set(CMAKE_AR               "llvm-lib")
-set(CMAKE_C_FLAGS          "/nologo /c /MT /O2 /I${CMAKE_CURRENT_SOURCE_DIR}/resources/msvc-include /arch:AVX2")
+set(CMAKE_C_FLAGS          "/nologo /c /MT /O2 /I${CMAKE_CURRENT_SOURCE_DIR}/external/PlayfieldEngine/resources/msvc-include /arch:AVX2")
 
 # Magic
 set(CMAKE_C_FLAGS_INIT "" CACHE STRING "" FORCE)

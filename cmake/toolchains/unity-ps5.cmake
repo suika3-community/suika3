@@ -4,7 +4,7 @@ set(CMAKE_SYSTEM_PROCESSOR x86_64)
 # Please update the following.
 set(CMAKE_C_COMPILER       "clang")
 set(CMAKE_AR               "llvm-ar")
-set(CMAKE_C_FLAGS          "-target x86_64-unknow-freebsd -ffreestanding -nostdinc -nostdlib -I${CMAKE_CURRENT_SOURCE_DIR}/resources/clang-include -O2 -g0")
+set(CMAKE_C_FLAGS          "-target x86_64-unknow-freebsd -ffreestanding -nostdinc -nostdlib -I${CMAKE_CURRENT_SOURCE_DIR}/external/PlayfieldEngine/resources/clang-include -O2 -g0")
 
 # Magic
 set(CMAKE_C_FLAGS_INIT "" CACHE STRING "" FORCE)
