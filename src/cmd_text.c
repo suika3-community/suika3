@@ -354,13 +354,13 @@ s3i_command_text(
 			return false;
 		if (cont) {
 			/* Chain to the next tag. */
-			s3_set_vm_int("s3Continue", 0);
+			s3_set_vm_int("s3Continue", 1);
 			return s3_move_to_next_tag();
 		}
 	}
 	if (no_show) {
 		/* Chain to the next tag. */
-		s3_set_vm_int("s3Continue", 0);
+		s3_set_vm_int("s3Continue", 1);
 		s3_move_to_next_tag();
 		return true;
 	}
@@ -527,6 +527,8 @@ static bool
 init(
      bool *cont)
 {
+	*cont = false;
+
 	/* If page mode */
 	if (s3_is_page_mode()) {
 		const char *s = s3_get_tag_arg_string("text");
