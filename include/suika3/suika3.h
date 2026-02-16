@@ -353,7 +353,7 @@ struct s3_image;
  * Fade descriptor.
  */
 struct s3_fade_desc {
-	bool stay;
+	//bool stay;
 	const char *fname;
 	struct s3_image *image;
 	int x;
