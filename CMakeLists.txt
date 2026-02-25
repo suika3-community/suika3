@@ -270,6 +270,7 @@ set(SUIKA_BASE_SOURCES
   src/translation.c
   src/vars.c
   src/cmd_bg.c
+  src/cmd_ch.c
   src/cmd_click.c
   src/cmd_text.c
 )

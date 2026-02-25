@@ -353,7 +353,7 @@ struct s3_image;
  * Fade descriptor.
  */
 struct s3_fade_desc {
-	//bool stay;
+	bool stay;
 	const char *fname;
 	struct s3_image *image;
 	int x;
@@ -364,6 +364,7 @@ struct s3_fade_desc {
 	int center_x;
 	int center_y;
 	float rotate;
+	bool dim;
 };
 
 
@@ -1207,6 +1208,21 @@ s3_set_layer_rotate(
 	float rot);
 
 /*
+ * Get the layer dim state.
+ */
+bool
+s3_get_layer_dim(
+	int layer);
+
+/*
+ * Set the layer dim state.
+ */
+void
+s3_set_layer_dim(
+	int layer,
+	bool dim);
+
+/*
  * Get the layer image width.
  */
 int
@@ -1457,6 +1473,13 @@ void
 s3_force_ch_dim(
 	int chpos,
 	bool is_dim);
+
+/*
+ * Get the dimming state.
+ */
+bool
+s3_get_ch_dim(
+	int chpos);
 
 /*
  * Fill the name box by the name box image.

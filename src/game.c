@@ -167,7 +167,9 @@ static bool dispatch_render(void);
  * Called before the game starts.
  */
 bool
-pf_init_hook(void)
+pf_init_hook(
+	int width,
+	int height)
 {
 	/* Install the default API. */
 	if (!s3i_install_default_api())

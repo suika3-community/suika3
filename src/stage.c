@@ -160,6 +160,9 @@ static int layer_center_y[S3_STAGE_LAYERS];
 /* Rotations for the layers in radian. */
 static float layer_rotate[S3_STAGE_LAYERS];
 
+/* Dimming state for the layers. */
+static float layer_dim[S3_STAGE_LAYERS];
+
 /* File names for the layers. */
 static char *layer_file_name[S3_STAGE_LAYERS];
 
@@ -179,9 +182,6 @@ static char *layer_text[S3_STAGE_LAYERS];
 /*
  * Non-Speaker Dimming
  */
-
-/* Whether to dim characters. */
-static bool ch_dim[S3_CH_BASIC_LAYERS];
 
 /* Character name indices. */
 static int ch_name_mapping[S3_CH_BASIC_LAYERS] = {-1, -1, -1, -1, -1, -1};
@@ -782,9 +782,9 @@ destroy_layer(
 
 	layer_x[layer] = 0;
 	layer_y[layer] = 0;
-	layer_alpha[layer] = 0;
-	layer_scale_x[layer] = 0.0f;
-	layer_scale_y[layer] = 0.0f;
+	layer_alpha[layer] = 255;
+	layer_scale_x[layer] = 1.0f;
+	layer_scale_y[layer] = 1.0f;
 	layer_center_x[layer] = 0;
 	layer_center_y[layer] = 0;
 	layer_rotate[layer] = 0.0f;
@@ -952,6 +952,32 @@ s3_set_layer_rotate(
 
 	layer_rotate[layer] = rot;
 }
+
+/*
+ * Get the layer dim state.
+ */
+bool
+s3_get_layer_dim(
+	int layer)
+{
+	assert(layer >= 0 && layer < S3_STAGE_LAYERS);
+
+	return layer_dim[layer];
+}
+
+/*
+ * Set the layer dim state.
+ */
+void
+s3_set_layer_dim(
+	int layer,
+	bool dim)
+{
+	assert(layer >= 0 && layer < S3_STAGE_LAYERS);
+
+	layer_dim[layer] = dim;
+}
+
 
 /*
  * Get the layer image width.
@@ -1662,8 +1688,7 @@ render_layer(
 		y4 += (float)layer_y[layer];
 
 		/* Render. */
-		if (layer >= S3_LAYER_CHB && layer <= S3_LAYER_CHC &&
-		    ch_dim[s3_layer_to_chpos(layer)]) {
+		if (layer >= S3_LAYER_CHB && layer <= S3_LAYER_CHC && layer_dim[layer]) {
 			pf_render_texture_3d_dim(x1,
 						 y1,
 						 x2,
@@ -1728,8 +1753,7 @@ render_layer(
 	}
 
 	/* If dim. */
-	if (layer >= S3_LAYER_CHB && layer <= S3_LAYER_CHC &&
-	    ch_dim[s3_layer_to_chpos(layer)]) {
+	if (layer >= S3_LAYER_CHB && layer <= S3_LAYER_CHC && layer_dim[layer]) {
 		pf_render_texture_dim(layer_x[layer],
 				      layer_y[layer],
 				      (int)((float)src_width * layer_scale_x[layer]),
@@ -2012,6 +2036,39 @@ s3_is_fade_running(void)
 void
 s3_finish_fade(void)
 {
+	int layer[] = {
+		S3_LAYER_BG,
+		S3_LAYER_BG_FO,
+		S3_LAYER_CHB,
+		S3_LAYER_CHB_FO,
+		S3_LAYER_CHB_EYE,
+		S3_LAYER_CHB_LIP,
+		S3_LAYER_CHL,
+		S3_LAYER_CHL_FO,
+		S3_LAYER_CHL_EYE,
+		S3_LAYER_CHL_LIP,
+		S3_LAYER_CHLC,
+		S3_LAYER_CHLC_FO,
+		S3_LAYER_CHLC_EYE,
+		S3_LAYER_CHLC_LIP,
+		S3_LAYER_CHR,
+		S3_LAYER_CHR_FO,
+		S3_LAYER_CHR_EYE,
+		S3_LAYER_CHR_LIP,
+		S3_LAYER_CHRC,
+		S3_LAYER_CHRC_FO,
+		S3_LAYER_CHRC_EYE,
+		S3_LAYER_CHRC_LIP,
+		S3_LAYER_CHC,
+		S3_LAYER_CHC_FO,
+		S3_LAYER_CHC_EYE,
+		S3_LAYER_CHC_LIP,
+		S3_LAYER_CHF,
+		S3_LAYER_CHF_FO,
+		S3_LAYER_CHF_EYE,
+		S3_LAYER_CHF_LIP
+	};
+
 	int i;
 
 	assert(stage_mode == STAGE_MODE_FADE);
@@ -2022,22 +2079,31 @@ s3_finish_fade(void)
 		fade_rule_img = NULL;
 	}
 
-	for (i = 0; i < S3_STAGE_LAYERS; i++) {
-		if (layer_fading[i]) {
-			s3_clear_layer_anime_sequence(i);
-			layer_fading[i] = false;
+	for (i = 0; i < sizeof(layer) / sizeof(int); i++) {
+		int l = layer[i];
+		if (layer_fading[l]) {
+			s3_clear_layer_anime_sequence(l);
+			layer_fading[l] = false;
 		}
 	}
 
 	/* Destroy the fade-in layer images. */
-	destroy_layer(S3_LAYER_BG_FO);
-	destroy_layer(S3_LAYER_CHB_FO);
-	destroy_layer(S3_LAYER_CHL_FO);
-	destroy_layer(S3_LAYER_CHLC_FO);
-	destroy_layer(S3_LAYER_CHR_FO);
-	destroy_layer(S3_LAYER_CHRC_FO);
-	destroy_layer(S3_LAYER_CHC_FO);
-	destroy_layer(S3_LAYER_CHF_FO);
+	if (layer_image[S3_LAYER_BG_FO] != layer_image[S3_LAYER_BG])
+		destroy_layer(S3_LAYER_BG_FO);
+	if (layer_image[S3_LAYER_CHB_FO] != layer_image[S3_LAYER_CHB])
+		destroy_layer(S3_LAYER_CHB_FO);
+	if (layer_image[S3_LAYER_CHL_FO] != layer_image[S3_LAYER_CHL])
+		destroy_layer(S3_LAYER_CHL_FO);
+	if (layer_image[S3_LAYER_CHLC_FO] != layer_image[S3_LAYER_CHLC])
+		destroy_layer(S3_LAYER_CHLC_FO);
+	if (layer_image[S3_LAYER_CHR_FO] != layer_image[S3_LAYER_CHR])
+		destroy_layer(S3_LAYER_CHR_FO);
+	if (layer_image[S3_LAYER_CHRC_FO] != layer_image[S3_LAYER_CHRC])
+		destroy_layer(S3_LAYER_CHRC_FO);
+	if (layer_image[S3_LAYER_CHC_FO] != layer_image[S3_LAYER_CHC])
+		destroy_layer(S3_LAYER_CHC_FO);
+	if (layer_image[S3_LAYER_CHF_FO] != layer_image[S3_LAYER_CHF])
+		destroy_layer(S3_LAYER_CHF_FO);
 
 	/* Reset the stage mode. */
 	stage_mode = STAGE_MODE_IDLE;
@@ -2097,18 +2163,41 @@ s3_update_ch_dim_by_talking_ch(void)
 	int i;
 
 	for (i = 0; i < S3_CH_BASIC_LAYERS; i++) {
-		if (ch_talking == -1)
-			ch_dim[i] = conf_character_auto_focus;
-		else if (ch_name_mapping[i] == -1)
-			ch_dim[i] = conf_character_auto_focus;
-		else if (ch_name_mapping[i] == ch_talking)
-			ch_dim[i] = false;
-		else if (strncmp(conf_character_folder[ch_name_mapping[i]],
-				 conf_character_folder[ch_talking],
-				 strlen(conf_character_folder[ch_talking])) == 0)
-			ch_dim[i] = false;
-		else
-			ch_dim[i] = true;
+		int layer;
+
+		layer = s3_chpos_to_layer(i);
+
+		if (ch_talking == -1) {
+			/* No character is talking. */
+			if (!conf_character_auto_focus) {
+				/* All characters are light if auto focus is not enabled. */
+				layer_dim[layer] = true;
+			} else {
+				/* All characters are dark if auto focus is enabled. */
+				layer_dim[layer] = false;
+			}
+		} else if (ch_name_mapping[i] == -1) {
+			/* This character is unknown. */
+			if (!conf_character_auto_focus) {
+				/* Unknown character is light if auto focus is not enabled. */
+				layer_dim[layer] = false;
+			} else {
+				/* Unknown character is dark if auto focus if enabled. */
+				layer_dim[layer] = true;
+			}
+
+		} else if (ch_name_mapping[i] == ch_talking) {
+			/* This character is talking. */
+			layer_dim[layer] = false;
+		} else if (strncmp(conf_character_folder[ch_name_mapping[i]],
+				   conf_character_folder[ch_talking],
+				   strlen(conf_character_folder[ch_talking])) == 0) {
+			/* XXX: This is the same character as talking one. */
+			layer_dim[i] = false;
+		} else {
+			/* Not a talking character. */
+			layer_dim[i] = true;
+		}
 	}
 }
 
@@ -2120,9 +2209,27 @@ s3_force_ch_dim(
 	int chpos,
 	bool is_dim)
 {
+	int layer;
+
 	assert(chpos >= 0 && chpos < S3_CH_BASIC_LAYERS);
 
-	ch_dim[chpos] = is_dim;
+	layer = s3_chpos_to_layer(chpos);
+
+	layer_dim[layer] = is_dim;
+}
+
+/*
+ * Get the dimming state.
+ */
+bool
+s3_get_ch_dim(
+	int chpos)
+{
+	int layer;
+
+	layer = s3_chpos_to_layer(chpos);
+
+	return layer_dim[layer];
 }
 
 /*

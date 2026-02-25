@@ -47,6 +47,12 @@ bool
 s3i_command_bg(void *p);
 
 /*
+ * The "ch" command.
+ */
+bool
+s3i_command_ch(void *p);
+
+/*
  * The "click" command.
  */
 bool

@@ -39,20 +39,28 @@
 #include "command.h"
 #include "conf.h"
 
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+
+/*
+ * List of parameters for each layer.
+ */
 struct params {
 	int layer;
 	const char *file_arg;
 	const char *x_arg;
 	const char *y_arg;
-	const char *a_arg;
+	const char *alpha_arg;
 	const char *scale_x_arg;
 	const char *scale_y_arg;
 	const char *center_x_arg;
 	const char *center_y_arg;
 	const char *rotate_arg;
+	const char *dim_arg;
 } params[] = {
 	{
-		S3_STAGE_LAYER_BG,
+		S3_LAYER_BG,
 		"bg",
 		"bg-x",
 		"bg-y",
@@ -62,9 +70,10 @@ struct params {
 		"bg-bg-x",
 		"bg-bg-y",
 		"bg-rotate",
+		"",		/* No "bg-dim" */
 	},
 	{
-		S3_STAGE_LAYER_CHB,
+		S3_LAYER_CHB,
 		"back",
 		"back-x",
 		"back-y",
@@ -74,9 +83,10 @@ struct params {
 		"back-back-x",
 		"back-back-y",
 		"back-rotate",
+		"back-dim",
 	},
 	{
-		S3_STAGE_LAYER_CHL,
+		S3_LAYER_CHL,
 		"left",
 		"left-x",
 		"left-y",
@@ -86,9 +96,10 @@ struct params {
 		"left-left-x",
 		"left-left-y",
 		"left-rotate",
+		"left-dim",
 	},
 	{
-		S3_STAGE_LAYER_CHLC,
+		S3_LAYER_CHLC,
 		"left-center",
 		"left-center-x",
 		"left-center-y",
@@ -98,9 +109,10 @@ struct params {
 		"left-center-left-center-x",
 		"left-center-left-center-y",
 		"left-center-rotate",
+		"left-center-dim",
 	},
 	{
-		S3_STAGE_LAYER_CHR,
+		S3_LAYER_CHR,
 		"right",
 		"right-x",
 		"right-y",
@@ -110,9 +122,10 @@ struct params {
 		"right-right-x",
 		"right-right-y",
 		"right-rotate",
+		"right-dim",
 	},
 	{
-		S3_STAGE_LAYER_CHRC,
+		S3_LAYER_CHRC,
 		"right-center",
 		"right-center-x",
 		"right-center-y",
@@ -122,9 +135,10 @@ struct params {
 		"right-center-right-center-x",
 		"right-center-right-center-y",
 		"right-center-rotate",
+		"right-center-dim",
 	},
 	{
-		S3_STAGE_LAYER_CHC,
+		S3_LAYER_CHC,
 		"center",
 		"center-x",
 		"center-y",
@@ -134,9 +148,10 @@ struct params {
 		"center-center-x",
 		"center-center-y",
 		"center-rotate",
+		"center-dim",
 	},
 	{
-		S3_STAGE_LAYER_CHF,
+		S3_LAYER_CHF,
 		"face",
 		"face-x",
 		"face-y",
@@ -146,6 +161,7 @@ struct params {
 		"face-face-x",
 		"face-face-y",
 		"face-rotate",
+		"face-dim",
 	},
 };
 
@@ -155,23 +171,19 @@ static float span;
 static int fade_method;
 
 static bool init(void);
-static void get_offset_x(const char *s, int layer, int *ofs_x, bool *keep);
-static void get_offset_y(const char *s, int layer, int *ofs_y, bool *keep);
-static int get_alpha(const char *alpha_s);
-static int get_dim(const char *dim_s);
-static void get_position(int *xpos, int *ypos, int chpos, struct image *img, bool ofs_keep_x, bool ofs_keep_y, int ofs_x, int ofs_y);
-static void focus_character(int chpos, const char *fname);
-static void draw(void);
+static void update_ch_mapping(const char *fname, int layer);
+static void process_frame(void);
 static bool cleanup(void);
 
 /*
  * ch command
  */
 bool
-s3i_ch_command(void)
+s3i_command_ch(
+	void *p)
 {
 	/* Is the first frame? */
-	if (!is_in_command_repetition()) {
+	if (!s3_is_in_command_repetition()) {
 		/* Initialize a multiple frame execution. */
 		if (!init())
 			return false;
@@ -181,7 +193,7 @@ s3i_ch_command(void)
 	process_frame();
 
 	/* Is finished? */
-	if (!is_in_command_repetition()) {
+	if (!s3_is_in_command_repetition()) {
 		/* Cleanup the multiple frame execution. */
 		if (!cleanup())
 			return false;
@@ -197,24 +209,34 @@ static bool
 init(void)
 {
 	struct s3_fade_desc desc[S3_FADE_DESC_COUNT];
+	struct s3_image *rule_img;
 	const char *s;
+	const char *fade;
+	int fade_method;
 	int i;
 
+	/* Load the parameters for each layer. */
 	for (i = 0; i < S3_FADE_DESC_COUNT; i++) {
-		const int LAYER_INDEX = param[i].layer;
+		const int LAYER_INDEX = params[i].layer;
 		const char *FILE_ARG = params[i].file_arg;
 		const char *X_ARG = params[i].x_arg;
 		const char *Y_ARG = params[i].y_arg;
+		const char *ALPHA_ARG = params[i].alpha_arg;
 		const char *SCALE_X_ARG = params[i].scale_x_arg;
 		const char *SCALE_Y_ARG = params[i].scale_y_arg;
 		const char *CENTER_X_ARG = params[i].center_x_arg;
 		const char *CENTER_Y_ARG = params[i].center_y_arg;
 		const char *ROTATE_ARG = params[i].rotate_arg;
+		const char *DIM_ARG = params[i].dim_arg;
+		bool is_file_specified;
+
+		desc[i].stay = false;
 
 		/* Has a file argument? */
+		is_file_specified = false;
 		if (s3_check_tag_arg(FILE_ARG)) {
 			/* There is a file name. */
-			s = s3_get_tag_arg(FILE_ARG);
+			s = s3_get_tag_arg_string(FILE_ARG);
 
 			/* Is "none" specified? */
 			if (strcmp(s, "none") == 0) {
@@ -222,11 +244,32 @@ init(void)
 				desc[i].fname = NULL;
 				desc[i].image = NULL;
 			} else {
-				/* Load an image. */
+				/* Load the layer image. */
 				desc[i].fname = s;
 				desc[i].image = s3_create_image_from_file(s);
 				if (desc[i].image == NULL)
 					return false;
+
+				/* If a character layer. */
+				if (LAYER_INDEX == S3_LAYER_CHB ||
+				    LAYER_INDEX == S3_LAYER_CHL ||
+				    LAYER_INDEX == S3_LAYER_CHLC ||
+				    LAYER_INDEX == S3_LAYER_CHC ||
+				    LAYER_INDEX == S3_LAYER_CHRC ||
+				    LAYER_INDEX == S3_LAYER_CHR ||
+				    LAYER_INDEX == S3_LAYER_CHF) {
+					int chpos = s3_layer_to_chpos(LAYER_INDEX);
+					/* Load the eye-blink and lip-sync images. */
+					if (!s3_load_eye_image_if_exists(chpos, s))
+						return false;
+					if (!s3_load_lip_image_if_exists(chpos, s))
+						return false;
+
+					/* Update the character mapping. */
+					update_ch_mapping(s, chpos);
+				}
+
+				is_file_specified = true;
 			}
 		} else {
 			/* Not specified, leave the image as is. */
@@ -236,497 +279,429 @@ init(void)
 
 		/* Has a x position argument? */
 		if (s3_check_tag_arg(X_ARG)) {
-			s = s3_get_tag_arg(X_ARG);
-		}
+			s = s3_get_tag_arg_string(X_ARG);
 
-	}
+			/* Calc the x value. */
+			if (*s == 'r') {
+				/* Relative. */
+				desc[i].x = s3_get_layer_x(LAYER_INDEX);
+				desc[i].x += atoi(s + 1);
+			} else if (strcmp(s, "keep") == 0) {
+				/* Keep. */
+				desc[i].x = s3_get_layer_x(LAYER_INDEX);
+			} else {
+				/* number: Set the value as is. */
+				desc[i].x = atoi(s);
+			}
 
-	s3_get_arg_string("center")
-
-	struct image *img[PARAM_SIZE], *rule_img;
-	const char *fname[PARAM_SIZE];
-	bool stay[PARAM_SIZE];
-	bool ofs_keep_x[PARAM_SIZE];
-	bool ofs_keep_y[PARAM_SIZE];
-	int ofs_x[PARAM_SIZE];
-	int ofs_y[PARAM_SIZE];
-	int alpha[PARAM_SIZE];
-	int x[PARAM_SIZE];
-	int y[PARAM_SIZE];
-	int dim[PARAM_SIZE - 1];
-	const char *method;
-	int i, layer;
-
-	/* パラメータを取得する */
-	fname[CH_CENTER] = get_string_param(CHCH_PARAM_C);
-	fname[CH_RIGHT] = get_string_param(CHCH_PARAM_R);
-	fname[CH_RIGHT_CENTER] = get_string_param(CHCH_PARAM_RC);
-	fname[CH_LEFT] = get_string_param(CHCH_PARAM_L);
-	fname[CH_LEFT_CENTER] = get_string_param(CHCH_PARAM_LC);
-	fname[CH_BACK] = get_string_param(CHCH_PARAM_B);
-	fname[BG_INDEX] = get_string_param(CHCH_PARAM_BG);
-	get_offset_x(get_string_param(CHCH_PARAM_CX), LAYER_CHC, &ofs_x[CH_CENTER], &ofs_keep_x[CH_CENTER]);
-	get_offset_y(get_string_param(CHCH_PARAM_CY), LAYER_CHC, &ofs_y[CH_CENTER], &ofs_keep_y[CH_CENTER]);
-	get_offset_x(get_string_param(CHCH_PARAM_RX), LAYER_CHR, &ofs_x[CH_RIGHT], &ofs_keep_x[CH_RIGHT]);
-	get_offset_y(get_string_param(CHCH_PARAM_RY), LAYER_CHR, &ofs_y[CH_RIGHT], &ofs_keep_y[CH_RIGHT]);
-	get_offset_x(get_string_param(CHCH_PARAM_LX), LAYER_CHL, &ofs_x[CH_LEFT], &ofs_keep_x[CH_LEFT]);
-	get_offset_y(get_string_param(CHCH_PARAM_LY), LAYER_CHL, &ofs_y[CH_LEFT], &ofs_keep_y[CH_LEFT]);
-	get_offset_x(get_string_param(CHCH_PARAM_RCX), LAYER_CHRC, &ofs_x[CH_RIGHT_CENTER], &ofs_keep_x[CH_RIGHT_CENTER]);
-	get_offset_y(get_string_param(CHCH_PARAM_RCY), LAYER_CHRC, &ofs_y[CH_RIGHT_CENTER], &ofs_keep_y[CH_RIGHT_CENTER]);
-	get_offset_x(get_string_param(CHCH_PARAM_LCX), LAYER_CHLC, &ofs_x[CH_LEFT_CENTER], &ofs_keep_x[CH_LEFT_CENTER]);
-	get_offset_y(get_string_param(CHCH_PARAM_LCY), LAYER_CHLC, &ofs_y[CH_LEFT_CENTER], &ofs_keep_y[CH_LEFT_CENTER]);
-	get_offset_x(get_string_param(CHCH_PARAM_BX), LAYER_CHB, &ofs_x[CH_BACK], &ofs_keep_x[CH_BACK]);
-	get_offset_y(get_string_param(CHCH_PARAM_BY), LAYER_CHB, &ofs_y[CH_BACK], &ofs_keep_y[CH_BACK]);
-	get_offset_x(get_string_param(CHCH_PARAM_BGX), LAYER_BG, &ofs_x[BG_INDEX], &ofs_keep_x[BG_INDEX]);
-	get_offset_y(get_string_param(CHCH_PARAM_BGY), LAYER_BG, &ofs_y[BG_INDEX], &ofs_keep_y[BG_INDEX]);
-	alpha[CH_CENTER] = get_alpha(get_string_param(CHCH_PARAM_CA));
-	alpha[CH_RIGHT] = get_alpha(get_string_param(CHCH_PARAM_RA));
-	alpha[CH_LEFT] = get_alpha(get_string_param(CHCH_PARAM_LA));
-	alpha[CH_BACK] = get_alpha(get_string_param(CHCH_PARAM_BA));
-	alpha[CH_RIGHT_CENTER] = get_alpha(get_string_param(CHCH_PARAM_RCA));
-	alpha[CH_LEFT_CENTER] = get_alpha(get_string_param(CHCH_PARAM_LCA));
-	alpha[BG_INDEX] = get_alpha(get_string_param(CHCH_PARAM_BGA));
-	dim[CH_CENTER] = get_dim(get_string_param(CHCH_PARAM_CD));
-	dim[CH_RIGHT] = get_dim(get_string_param(CHCH_PARAM_RD));
-	dim[CH_LEFT] = get_dim(get_string_param(CHCH_PARAM_LD));
-	dim[CH_RIGHT_CENTER] = get_dim(get_string_param(CHCH_PARAM_RCD));
-	dim[CH_LEFT_CENTER] = get_dim(get_string_param(CHCH_PARAM_LCD));
-	dim[CH_BACK] = get_dim(get_string_param(CHCH_PARAM_BD));
-	span = get_float_param(CHCH_PARAM_SPAN);
-	method = get_string_param(CHCH_PARAM_METHOD);
-
-	/* 描画メソッドを識別する */
-	fade_method = get_fade_method(method);
-	if (fade_method == FADE_METHOD_INVALID) {
-		log_script_fade_method(method);
-		log_script_exec_footer();
-		return false;
-	}
-
-	/* 各キャラと背景について */
-	for (i = 0; i < PARAM_SIZE; i++) {
-		stay[i] = false;
-		img[i] = NULL;
-		x[i] = 0;
-		y[i] = 0;
-
-		if (i != BG_INDEX)
-			layer = chpos_to_layer(i);
-		else
-			layer = LAYER_BG;
-
-		/* 変更なしが指定された場合 */
-		if (i != BG_INDEX) {
-			if (strcmp(fname[i], "stay") == 0 || strcmp(fname[i], "") == 0) {
-				/* 変更なしフラグをセットする */
-				stay[i] = true;
-				get_position(&x[i], &y[i], i, get_layer_image(layer), ofs_keep_x[i], ofs_keep_y[i], ofs_x[i], ofs_y[i]);
-				continue;
+			/* Cut off. */
+			if (desc[i].x > 255)
+				desc[i].x = 255;
+			if (desc[i].x < 0)
+				desc[i].x = 0;
+		} else if (is_file_specified) {
+			/* If a file is specified but x is ommited. */
+			assert(desc[i].image != NULL);
+			switch (LAYER_INDEX) {
+			case S3_LAYER_CHB:
+			case S3_LAYER_CHC:
+				desc[i].x = (conf_game_width - s3_get_image_width(desc[i].image)) / 2;
+				break;
+			case S3_LAYER_CHL:
+				desc[i].x = 0;
+				break;
+			case S3_LAYER_CHLC:
+				desc[i].x = (conf_game_width - s3_get_image_width(desc[i].image)) / 4;
+				break;
+			case S3_LAYER_CHR:
+				desc[i].x = conf_game_width - s3_get_image_width(desc[i].image);
+				break;
+			case S3_LAYER_CHRC:
+			{
+				int center = (conf_game_width - s3_get_image_width(desc[i].image)) / 2;
+				int right = conf_game_width - s3_get_image_width(desc[i].image) - conf_stage_ch_margin_right;
+				desc[i].x = (center + right) / 2;
+				break;
+			}
+			default:
+				desc[i].x = 0;
+				break;
 			}
 		} else {
-			if (strcmp(fname[i], "stay") == 0 || strcmp(fname[i], "") == 0) {
-				/* 変更なしフラグをセットする */
-				stay[i] = true;
-				get_position(&x[i], &y[i], i, get_layer_image(layer), ofs_keep_x[i], ofs_keep_y[i], ofs_x[i], ofs_y[i]);
-				continue;
+			/* If file and x are both ommited. */
+			desc[i].x = s3_get_layer_x(LAYER_INDEX);
+		}
+
+		/* Has a y position argument? */
+		if (s3_check_tag_arg(Y_ARG)) {
+			s = s3_get_tag_arg_string(Y_ARG);
+
+			/* Calc the alpha value. */
+			if (*s == 'r') {
+				/* Relative. */
+				desc[i].y = s3_get_layer_y(LAYER_INDEX);
+				desc[i].y += atoi(s + 1);
+			} else if (strcmp(s, "keep") == 0) {
+				/* Keep. */
+				desc[i].y = s3_get_layer_y(LAYER_INDEX);
+			} else {
+				/* number: Set the value as is. */
+				desc[i].y = atoi(s);
+			}
+
+			/* Cut off. */
+			if (desc[i].y > 255)
+				desc[i].y = 255;
+			if (desc[i].y < 0)
+				desc[i].y = 0;
+		} else if (is_file_specified) {
+			/* If a file is specified and y is ommited. */
+			assert(desc[i].image != NULL);
+			switch (LAYER_INDEX) {
+			case S3_LAYER_CHB:
+			case S3_LAYER_CHC:
+			case S3_LAYER_CHL:
+			case S3_LAYER_CHLC:
+			case S3_LAYER_CHR:
+			case S3_LAYER_CHRC:
+				desc[i].y = conf_game_height - s3_get_image_height(desc[i].image);
+				break;
+			default:
+				desc[i].y = 0;
+				break;
+			}
+		} else {
+			/* If file and y are both ommited. */
+			desc[i].y = s3_get_layer_y(LAYER_INDEX);
+		}
+
+		/* Has an alpha value argument? */
+		if (s3_check_tag_arg(ALPHA_ARG)) {
+			s = s3_get_tag_arg_string(ALPHA_ARG);
+
+			/* Calc the alpha value. */
+			if (*s == 'r') {
+				/* Relative. */
+				desc[i].alpha = s3_get_layer_alpha(LAYER_INDEX);
+				desc[i].alpha += atoi(s + 1);
+			} else {
+				/* number: Set the value as is. */
+				desc[i].alpha = atoi(s);
+			}
+
+			/* Cut off. */
+			if (desc[i].alpha > 255)
+				desc[i].alpha = 255;
+			if (desc[i].alpha < 0)
+				desc[i].alpha = 0;
+		} else if (is_file_specified) {
+			/* If ommited. */
+			desc[i].alpha = 255;
+		} else {
+			/* If file and alpha are both ommited. */
+			desc[i].alpha = s3_get_layer_alpha(LAYER_INDEX);
+		}
+
+		/* Has a scale-x value argument? */
+		if (s3_check_tag_arg(SCALE_X_ARG)) {
+			s = s3_get_tag_arg_string(SCALE_X_ARG);
+
+			/* Calc the scale-x value. */
+			if (*s == 'r') {
+				/* Relative. */
+				desc[i].scale_x = s3_get_layer_scale_x(LAYER_INDEX);
+				desc[i].scale_x += (float)atof(s + 1);
+			} else {
+				/* number: Set the value as is. */
+				desc[i].scale_x = (float)atof(s);
+			}
+		} else if (is_file_specified) {
+			/* If a file is specified and scale-x is ommited. */
+			desc[i].scale_x = 1.0f;
+		} else {
+			/* If file and scale-x are both ommited. */
+			desc[i].scale_x = s3_get_layer_scale_x(LAYER_INDEX);
+		}
+
+		/* Has a scale-y value argument? */
+		if (s3_check_tag_arg(SCALE_Y_ARG)) {
+			s = s3_get_tag_arg_string(SCALE_Y_ARG);
+
+			/* Calc the scale-y value. */
+			if (*s == 'r') {
+				/* Relative. */
+				desc[i].scale_y = s3_get_layer_scale_y(LAYER_INDEX);
+				desc[i].scale_y += (float)atof(s + 1);
+			} else {
+				/* number: Set the value as is. */
+				desc[i].scale_y = (float)atof(s);
+			}
+		} else if (is_file_specified) {
+			/* If a file is specified and scale-y is ommited. */
+			desc[i].scale_y = 1.0f;
+		} else {
+			/* If file and scale-y are both ommited. */
+			desc[i].scale_y = s3_get_layer_scale_y(LAYER_INDEX);
+		}
+
+		/* Has a center-x value argument? */
+		if (s3_check_tag_arg(CENTER_X_ARG)) {
+			s = s3_get_tag_arg_string(CENTER_X_ARG);
+
+			/* Calc the center-x value. */
+			if (*s == 'r') {
+				/* Relative. */
+				desc[i].center_x = s3_get_layer_center_x(LAYER_INDEX);
+				desc[i].center_x += (float)atof(s + 1);
+			} else {
+				/* number: Set the value as is. */
+				desc[i].center_x = (float)atof(s);
+			}
+		} else if (is_file_specified) {
+			/* If a file is specified and center-x is ommited. */
+			desc[i].center_x = 0;
+		} else {
+			/* If file and center-x are both ommited. */
+			desc[i].center_x = s3_get_layer_center_x(LAYER_INDEX);
+		}
+
+		/* Has a center-y value argument? */
+		if (s3_check_tag_arg(CENTER_Y_ARG)) {
+			s = s3_get_tag_arg_string(CENTER_Y_ARG);
+
+			/* Calc the center-y value. */
+			if (*s == 'r') {
+				/* Relative. */
+				desc[i].center_y = s3_get_layer_center_y(LAYER_INDEX);
+				desc[i].center_y += (float)atof(s + 1);
+			} else {
+				/* number: Set the value as is. */
+				desc[i].center_y = (float)atof(s);
+			}
+		} else if (is_file_specified) {
+			/* If a file is specified and center-y is ommited. */
+			desc[i].center_y = 0;
+		} else {
+			/* If file and center-y are both ommited. */
+			desc[i].center_y = s3_get_layer_center_y(LAYER_INDEX);
+		}
+
+		/* Has a rotate value argument? */
+		if (s3_check_tag_arg(ROTATE_ARG)) {
+			s = s3_get_tag_arg_string(ROTATE_ARG);
+
+			/* Calc the rotate value. */
+			if (*s == 'r') {
+				/* Relative. */
+				desc[i].rotate = s3_get_layer_rotate(LAYER_INDEX);
+				desc[i].rotate += (float)atof(s + 1);
+			} else {
+				/* number: Set the value as is. */
+				desc[i].rotate = (float)atof(s);
+			}
+		} else if (is_file_specified) {
+			/* If a file is specified and rotate is ommited. */
+			desc[i].rotate = 0;
+		} else {
+			/* If file and rotate are both ommited. */
+			desc[i].rotate = s3_get_layer_rotate(LAYER_INDEX);
+		}
+
+		/* Has a dim value argument? */
+		if (LAYER_INDEX == S3_LAYER_CHB ||
+		    LAYER_INDEX == S3_LAYER_CHL ||
+		    LAYER_INDEX == S3_LAYER_CHLC ||
+		    LAYER_INDEX == S3_LAYER_CHC ||
+		    LAYER_INDEX == S3_LAYER_CHRC ||
+		    LAYER_INDEX == S3_LAYER_CHR ||
+		    LAYER_INDEX == S3_LAYER_CHF) {
+			if (s3_check_tag_arg(DIM_ARG)) {
+				s = s3_get_tag_arg_string(DIM_ARG);
+
+				/* Calc the rotate value. */
+				if (strcmp(s, "true") == 0) {
+					/* Dim. */
+					desc[i].dim = true;
+				} else {
+					/* No dim. */
+					desc[i].dim = false;
+				}
+			} else if (is_file_specified) {
+				/* If a file is specified and rotate is ommited. */
+				desc[i].dim = s3_get_ch_dim(s3_layer_to_chpos(LAYER_INDEX));
+			} else {
+				/* If file and dim are both ommited. */
+				desc[i].dim = s3_get_layer_dim(LAYER_INDEX);
 			}
 		}
-
-		/* イメージの消去が指定された場合 */
-		if (i != BG_INDEX &&
-		    (strcmp(fname[i], "none") == 0 || strcmp(fname[i], "") == 0)) {
-			fname[i] = NULL;
-			x[i] = get_layer_x(layer);
-			y[i] = get_layer_y(layer);
-			continue;
-		}
-
-		/* 背景の色指定の場合 */
-		if (i == BG_INDEX && fname[i][0] == '#') {
-			/* 色を指定してイメージを作成する */
-			img[i] = create_image_from_color_string(conf_game_width, conf_game_height, &fname[i][1]);
-		} else {
-			/* イメージを読み込む */
-			img[i] = create_image_from_file(i != BG_INDEX ? CH_DIR : BG_DIR, fname[i]);
-		}
-		if (img[i] == NULL) {
-			log_script_exec_footer();
-			return false;
-		}
-
-		/* ファイル名を設定する */
-		if (!set_layer_file_name(layer, fname[i]))
-			return false;
-
-		/* 表示位置を取得する */
-		if (i != BG_INDEX) {
-			get_position(&x[i], &y[i], i, img[i], ofs_keep_x[i], ofs_keep_y[i], ofs_x[i], ofs_y[i]);
-		} else {
-			x[i] = ofs_x[i];
-			y[i] = ofs_y[i];
-		}
-
-		/* キャラを暗くしない */
-		if (i != BG_INDEX)
-			focus_character(i, fname[i]);
 	}
 
-	/* 発話中のキャラをなしにする */
-	if (conf_character_focus == 1)
-		set_ch_talking(-1);
-
-	/* キャラのdim状態を発話中のキャラを元に更新する */
-	if (conf_character_focus != 0)
-		update_ch_dim_by_talking_ch();
-
-	/* 手動でキャラのdim状態を設定する */
-	for (i = 0; i < CH_BASIC_LAYERS; i++) {
-		if (dim[i] == 1)
-			force_ch_dim(i, false);
-		else if (dim[i] == -1)
-			force_ch_dim(i, true);
+	/* Get the fade method. */
+	fade = s3_get_tag_arg_string("fade");
+	fade_method = s3_get_fade_method(fade);
+	if (fade_method == S3_FADE_INVALID) {
+		s3_log_error(S3_TR("Invalid fade method \"%s\""), fade_method);
+		s3_log_script_exec_footer();
 	}
 
-	/* ルールが使用される場合 */
-	if (fade_method == FADE_METHOD_RULE ||
-	    fade_method == FADE_METHOD_MELT) {
-		/* ルールファイルが指定されていない場合 */
-		if (strcmp(&method[5], "") == 0) {
-			log_script_rule();
-			log_script_exec_footer();
+	/* If the fade method is "rule" or "melt". */
+	rule_img = NULL;
+	if (fade_method == S3_FADE_RULE ||
+	    fade_method == S3_FADE_MELT) {
+		/* Check for the rule argument. */
+		if (!s3_check_tag_arg("rule")) {
+			s3_log_error(S3_TR("Rule file is not specified."));
+			s3_log_script_exec_footer();
 			return false;
 		}
 
-		/* イメージを読み込む */
-		rule_img = create_image_from_file(RULE_DIR, &method[5]);
+		/* Load the rule image. */
+		rule_img = s3_create_image_from_file(s);
 		if (rule_img == NULL) {
-			log_script_exec_footer();
+			s3_log_script_exec_footer();
 			return false;
 		}
-	} else {
-		rule_img = NULL;
 	}
 
-	/* 繰り返し動作を開始する */
-	start_command_repetition();
+	/* Get the transition time. */
+	span = s3_get_tag_arg_float("time");
 
-	/* キャラフェードモードを有効にする */
-	if (!start_fade_for_chs(stay, fname, img, x, y, alpha, fade_method, rule_img)) {
-		log_script_exec_footer();
+	/* Start a multiple frame behavior. */
+	s3_start_command_repetition();
+
+	/* Start the fading. */
+	if (!s3_start_fade(desc, fade_method, span, rule_img)) {
+		s3_log_script_exec_footer();
 		return false;
 	}
 
-	/* 目パチのイメージをロードする */
-	for (i = 0; i < CH_BASIC_LAYERS; i++) {
-		if (stay[i])
-			continue;
-		if (!load_eye_image_if_exists(i, fname[i]))
-			return false;
-		if (!load_lip_image_if_exists(i, fname[i]))
-			return false;
-	}
+	/* Start the time measurement. */
+	s3_reset_lap_timer(&sw);
 
-	/* 時間計測を開始する */
-	reset_lap_timer(&sw);
-
-	/* メッセージボックスを消す */
+	/* Hide the message box. */
 	if (!conf_msgbox_show_on_ch) {
-		show_namebox(false);
-		show_msgbox(false);
+		s3_show_namebox(false);
+		s3_show_msgbox(false);
 	}
-	show_click(false);
+	s3_show_click(false);
 
 	return true;
 }
 
-/* Xオフセットを取得する */
-static void get_offset_x(const char *s, int layer, int *ofs_x, bool *keep)
-{
-	if (strcmp(s, "keep") == 0) {
-		*keep = true;
-		*ofs_x = get_layer_x(layer);
-	} else {
-		*keep = false;
-		*ofs_x = atoi(s);
-	}
-}
-
-/* Yオフセットを取得する */
-static void get_offset_y(const char *s, int layer, int *ofs_y, bool *keep)
-{
-	if (strcmp(s, "keep") == 0) {
-		*keep = true;
-		*ofs_y = get_layer_y(layer);
-	} else {
-		*keep = false;
-		*ofs_y = atoi(s);
-	}
-}
-
-/* 文字列のアルファ値を整数に変換する */
-static int get_alpha(const char *alpha_s)
-{
-	int ret;
-
-	/* 省略された場合は255にする */
-	if (strcmp(alpha_s, "") == 0)
-		return 255;
-
-	ret = atoi(alpha_s);
-	if (ret < 0)
-		ret = 0;
-	if (ret > 255)
-		ret = 255;
-	return ret;
-}
-
-/* 文字列の明暗を整数に変換する */
-static int get_dim(const char *dim_s)
-{
-	/* 未指定の場合は変更しない */
-	if (strcmp(dim_s, "") == 0)
-		return 0;
-
-	/* 暗くすることが指定された場合 */
-	if (strcmp(dim_s, "dark") == 0 ||
-	    strcmp(dim_s, "yes") == 0 ||
-	    strcmp(dim_s, U8("暗")) == 0)
-	    return -1;
-
-	/* 明るくすることが指定された場合 */
-	if (strcmp(dim_s, "light") == 0 ||
-	    strcmp(dim_s, "no") == 0 ||
-	    strcmp(dim_s, U8("明")) == 0)
-	    return 1;
-
-	/* 指定が誤っている場合は変更しない */
-	return 0;
-}
-
-/* キャラの横方向の位置を取得する */
-static void get_position(int *xpos, int *ypos, int chpos, struct image *img, bool ofs_keep_x, bool ofs_keep_y, int ofs_x, int ofs_y)
-{
-	int center, right;
-
-	*xpos = 0;
-
-	switch (chpos) {
-	case CH_BACK:
-		/* 中央に配置する */
-		if (img != NULL) {
-			if (!ofs_keep_x)
-				*xpos = (conf_game_width - img->width) / 2 + ofs_x;
-			else
-				*xpos = get_layer_x(LAYER_CHB);
-			if (!ofs_keep_y)
-				*ypos = conf_game_height - img->height - conf_stage_ch_margin_bottom + ofs_y;
-			else
-				*ypos = get_layer_y(LAYER_CHB);
-		} else {
-			*xpos = 0;
-			*ypos = 0;
-		}
-		break;
-	case CH_CENTER:
-		/* 中央に配置する */
-		if (img != NULL) {
-			if (!ofs_keep_x)
-				*xpos = (conf_game_width - img->width) / 2 + ofs_x;
-			else
-				*xpos = get_layer_x(LAYER_CHC);
-			if (!ofs_keep_y)
-				*ypos = conf_game_height - img->height - conf_stage_ch_margin_bottom + ofs_y;
-			else
-				*ypos = get_layer_y(LAYER_CHC);
-		} else {
-			*xpos = 0;
-			*ypos = 0;
-		}
-		break;
-	case CH_LEFT:
-		/* 左に配置する */
-		if (img != NULL) {
-			if (!ofs_keep_x)
-				*xpos = conf_stage_ch_margin_left + ofs_x;
-			else
-				*xpos = get_layer_x(LAYER_CHL);
-			if (!ofs_keep_y)
-				*ypos = conf_game_height - img->height - conf_stage_ch_margin_bottom + ofs_y;
-			else
-				*ypos = get_layer_y(LAYER_CHL);
-		} else {
-			*xpos = 0;
-			*ypos = 0;
-		}
-		break;
-	case CH_LEFT_CENTER:
-		/* 左中に配置する */
-		if (img != NULL) {
-			if (!ofs_keep_x)
-				*xpos = (conf_game_width - img->width) / 4 + ofs_x;
-			else
-				*xpos = get_layer_x(LAYER_CHLC);
-			if (!ofs_keep_y)
-				*ypos = conf_game_height - img->height - conf_stage_ch_margin_bottom + ofs_y;
-			else
-				*ypos = get_layer_y(LAYER_CHLC);
-		} else {
-			*xpos = 0;
-			*ypos = 0;
-		}
-		break;
-	case CH_RIGHT:
-		/* 右に配置する */
-		if (img != NULL) {
-			if (!ofs_keep_x)
-				*xpos = conf_game_width - img->width - conf_stage_ch_margin_right + ofs_x;
-			else
-				*xpos = get_layer_x(LAYER_CHR);
-			if (!ofs_keep_y)
-				*ypos = conf_game_height - img->height - conf_stage_ch_margin_bottom + ofs_y;
-			else
-				*ypos = get_layer_y(LAYER_CHR);
-		} else {
-			*xpos = 0;
-			*ypos = 0;
-		}
-		break;
-	case CH_RIGHT_CENTER:
-		/* 右に配置する */
-		if (img != NULL) {
-			if (!ofs_keep_x) {
-				center = (conf_game_width - img->width) / 2;
-				right = conf_game_width - img->width - conf_stage_ch_margin_right;
-				*xpos = (center + right) / 2 + ofs_x;
-			} else {
-				*xpos = get_layer_x(LAYER_CHRC);
-			}
-			if (!ofs_keep_y)
-				*ypos = conf_game_height - img->height - conf_stage_ch_margin_bottom + ofs_y;
-			else
-				*ypos = get_layer_y(LAYER_CHRC);
-		} else {
-			*xpos = 0;
-			*ypos = 0;
-		}
-		break;
-	}
-}
-
-/* キャラクタのフォーカスを行う */
-static void focus_character(int chpos, const char *fname)
+/* Update the character and name mapping. */
+static void
+update_ch_mapping(
+	const char *fname,
+	int chpos)
 {
 	int i;
 
-	/* 名前が登録されているキャラクタであるかチェックする */
-	for (i = 0; i < CHARACTER_MAP_COUNT; i++) {
+	/* Check if the name is registered. */
+	for (i = 0; i < S3_CHARACTER_MAP_COUNT; i++) {
 		if (conf_character_name[i] == NULL)
 			continue;
-		if (conf_character_image[i] == NULL)
+		if (conf_character_folder[i] == NULL)
 			continue;
 		if (fname == NULL)
 			continue;
-		if (strncmp(conf_character_image[i], fname, strlen(conf_character_image[i])) == 0)
+		if (strncmp(conf_character_folder[i],
+			    fname,
+			    strlen(conf_character_folder[i])) == 0)
 			break;
 	}
-	if (i == CHARACTER_MAP_COUNT)
+	if (i == S3_CHARACTER_MAP_COUNT)
 		i = -1;
 
-	set_ch_name_mapping(chpos, i);
+	/* Specify a character index for a character position. */
+	s3_set_ch_name_mapping(chpos, i);
 }
 
-/* 描画を行う */
-static void draw(void)
+static void
+process_frame(void)
 {
 	float lap;
 
-	/* 経過時間を取得する */
-	lap = (float)get_lap_timer_millisec(&sw) / 1000.0f;
+	/* Get the lap time. */
+	lap = (float)s3_get_lap_timer_millisec(&sw) / 1000.0f;
 	if (lap >= span)
 		lap = span;
 
-	/* 入力に反応する */
-	if (is_auto_mode() &&
-	    (is_control_pressed || is_return_pressed ||
-	     is_left_clicked || is_down_pressed)) {
-		/* 入力によりオートモードを終了する */
-		stop_auto_mode();
-		show_automode_banner(false);
+	/* Process inputs. */
+	if (s3_is_auto_mode() &&
+	    (s3_is_control_key_pressed() || s3_is_return_key_pressed() ||
+	     s3_is_mouse_left_clicked() || s3_is_down_key_pressed())) {
+		/* Stop the auto mode by input. */
+		s3_stop_auto_mode();
+		s3_show_automode_banner(false);
 
-		/* 繰り返し動作を停止する */
-		stop_command_repetition();
+		/* Stop the repetition. */
+		s3_stop_command_repetition();
 
-		/* フェードを完了する */
-		finish_fade();
-	} else if (is_skip_mode() &&
-		   (is_control_pressed || is_return_pressed ||
-		    is_left_clicked || is_down_pressed)) {
-		/* 入力によりスキップモードを終了する */
-		stop_skip_mode();
-		show_skipmode_banner(false);
+		/* Stop the fading. */
+		s3_finish_fade();
+	} else if (s3_is_skip_mode() &&
+		   (s3_is_control_key_pressed() ||
+		    s3_is_return_key_pressed() ||
+		    s3_is_mouse_left_clicked() ||
+		    s3_is_down_key_pressed())) {
+		/* Stop the skip mode by input.  */
+		s3_stop_skip_mode();
+		s3_show_skipmode_banner(false);
 
-		/* 繰り返し動作を停止する */
-		stop_command_repetition();
+		/* Stop the repetition. */
+		s3_stop_command_repetition();
 
-		/* フェードを完了する */
-		finish_fade();
+		/* Stop the fading. */
+		s3_finish_fade();
 	} else if ((lap >= span)
 		   ||
-		   is_skip_mode()
+		   s3_is_skip_mode()
 		   ||
-		   (!is_non_interruptible() &&
-		    (is_control_pressed || is_return_pressed ||
-		     is_left_clicked || is_down_pressed))) {
+		   (!s3_is_non_interruptible() &&
+		    (s3_is_control_key_pressed() ||
+		     s3_is_return_key_pressed() ||
+		     s3_is_mouse_left_clicked() ||
+		     s3_is_down_key_pressed()))) {
 		/*
-		 * 経過時間が一定値を超えた場合と、
-		 * スキップモードの場合と、
-		 * 入力により省略された場合
+		 * In case of:
+		 *  - Elapsed time exceeds a certain value.
+		 *  - In skip mode.
+		 *  - Omitted by input.
 		 */
 
-		/* 繰り返し動作を終了する */
-		stop_command_repetition();
+		/* Stop the repetition. */
+		s3_stop_command_repetition();
 
-		/* フェードを終了する */
-		finish_fade();
+		/* Stop the fading. */
+		s3_finish_fade();
 
-		/* 入力があればスキップとオートを終了する */
-		if (is_control_pressed || is_return_pressed ||
-		    is_left_clicked || is_down_pressed) {
-			if (is_skip_mode()) {
-				stop_skip_mode();
-				show_skipmode_banner(false);
-			} else if (is_auto_mode()) {
-				stop_auto_mode();
-				show_automode_banner(false);
+		/* Stop the skip mode or auto mode if there is input.*/
+		if (s3_is_control_key_pressed() ||
+		    s3_is_return_key_pressed() ||
+		    s3_is_mouse_left_clicked() ||
+		    s3_is_down_key_pressed()) {
+			if (s3_is_skip_mode()) {
+				s3_stop_skip_mode();
+				s3_show_skipmode_banner(false);
+			} else if (s3_is_auto_mode()) {
+				s3_stop_auto_mode();
+				s3_show_automode_banner(false);
 			}
 		}
-	} else {
-		/* 進捗を設定する */
-		set_fade_progress(lap / span);
 	}
-
-	/* ステージを描画する */
-	if (is_in_command_repetition())
-		render_fade();
-	else
-		render_stage();
-
-	/* 折りたたみシステムメニューを描画する */
-	if (conf_sysbtn_transition && !is_non_interruptible())
-		render_sysbtn(false);
 }
 
-/* 終了処理を行う */
+/* Cleanup. */
 static bool cleanup(void)
 {
 	int i;
 
-	/* 目パチレイヤーの再設定を行う */
-	for (i = 0; i < CH_BASIC_LAYERS; i++)
-		reload_eye_anime(i);
+	/* Restart the eye blink. */
+	for (i = 0; i < S3_CH_BASIC_LAYERS; i++)
+		s3_reload_eye_anime(i);
 
-	/* 次のコマンドに移動する */
-	if (!move_to_next_command())
+	/* Move to the next tag. */
+	if (!s3_move_to_next_tag())
 		return false;
 
 	return true;
