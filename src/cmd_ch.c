@@ -247,7 +247,7 @@ init(void)
 			continue;
 		}
 
-		/* There is a chage for this layer. */
+		/* There is a change for this layer. */
 		desc[i].stay = false;
 
 		/* Has a file argument? */
