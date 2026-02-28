@@ -41,6 +41,7 @@
 #include "image.h"
 #include "text.h"
 #include "anime.h"
+#include "gui.h"
 
 #include <playfield/playfield.h>
 
@@ -1539,7 +1540,7 @@ s3_render_stage(void)
 		s3i_run_gui_render();
 
 	/* Render the sysbtn. */
-	if (!s3_is_sysbtn_visible()) {
+	if (s3_is_sysbtn_visible()) {
 		if (!s3_is_sysbtn_pointed()) {
 			pf_render_texture(conf_sysbtn_x,
 					  conf_sysbtn_y,

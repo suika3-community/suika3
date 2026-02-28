@@ -579,6 +579,9 @@ s3_start_gui(void)
 	suppress_se = false;
 	suppress_se_forever = false;
 
+	/* Hide the sysbtn. */
+	s3_show_sysbtn(false);
+
 	/* Disable skip action by continuous swipe. */
 	s3_set_continuous_swipe_enabled(false);
 }
@@ -592,6 +595,10 @@ s3_stop_gui(void)
 
 	/* Disable GUI mode. */
 	is_gui_running = false;
+
+	/* Show the sysbtn if enabled. */
+	if (conf_sysbtn_enable)
+		s3_show_sysbtn(true);
 }
 
 /*
@@ -1701,12 +1708,16 @@ process_button_render_slider(
 		}
 	}
 
-	/* Calculate the drawing position. */
-	x = b->x + (int)((float)(b->width - b->height) * b->rt.slider);
-
 	/* Draw the knob with the "disable" image. */
 	if (b->rt.img_disable != NULL) {
 		if (b->rt.img_disable != NULL) {
+			int knob_w;
+
+			knob_w = s3_get_image_width(b->rt.img_disable);
+
+			/* Calculate the drawing position. */
+			x = b->x + (int)((float)b->width * b->rt.slider) - (knob_w / 2);
+
 			s3_render_image(x,
 					b->y,
 					b->height,
@@ -1765,11 +1776,15 @@ process_button_render_slider_vertical(
 		}
 	}
 
-	/* Calculate the drawing position. */
-	y = b->y + (int)((float)(b->height - b->width) * b->rt.slider);
-
 	/* Draw the knob with the "disable" image. */
 	if (b->rt.img_disable != NULL) {
+		int knob_h;
+
+		knob_h = s3_get_image_height(b->rt.img_disable);
+
+		/* Calculate the drawing position. */
+		y = b->y + (int)((float)b->height * b->rt.slider) - (knob_h / 2);
+
 		s3_render_image(b->x,
 				y,
 				b->width,
