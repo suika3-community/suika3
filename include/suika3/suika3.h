@@ -1583,6 +1583,17 @@ s3_show_choosebox(
 	bool show_hover);
 
 /*
+ * Get a rect for a choose box.
+ */
+void
+s3_get_choosebox_rect(
+	int index,
+	int *x,
+	int *y,
+	int *w,
+	int *h);
+
+/*
  * Show or hides the auto mode banner.
  */
 void

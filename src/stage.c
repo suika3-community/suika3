@@ -117,7 +117,8 @@ static bool is_msgbox_visible;
 static bool is_namebox_visible;
 
 /* Whether to show the choose box. */
-static bool is_choosebox_visible[S3_CHOOSEBOX_COUNT];
+static bool is_choosebox_idle_visible[S3_CHOOSEBOX_COUNT];
+static bool is_choosebox_hover_visible[S3_CHOOSEBOX_COUNT];
 
 /* Whether to show the click animation. */
 static bool is_click_visible;
@@ -2442,17 +2443,42 @@ s3_fill_choosebox_hover_image(
  */
 void
 s3_show_choosebox(
-	bool show,
-	int index)
+	int index,
+	bool show_idle,
+	bool show_hover)
 {
 	int i;
 
 	if (index == -1) {
-		for (i = 0; i < S3_CHOOSEBOX_COUNT; i++)
-			is_choosebox_visible[i] = show;
+		for (i = 0; i < S3_CHOOSEBOX_COUNT; i++) {
+			is_choosebox_idle_visible[i] = show_idle;
+			is_choosebox_hover_visible[i] = show_hover;
+		}
 	} else {
-		is_choosebox_visible[index] = show;
+		is_choosebox_idle_visible[index] = show_idle;
+		is_choosebox_hover_visible[index] = show_hover;
 	}
+}
+
+/*
+ * Get a rect for a choose box.
+ */
+void
+s3_get_choosebox_rect(
+	int index,
+	int *x,
+	int *y,
+	int *w,
+	int *h)
+{
+	int layer;
+
+	layer = S3_LAYER_CHOOSE1_IDLE + (2 * index);
+
+	*x = conf_choose_x[index];
+	*y = conf_choose_y[index];
+	*w = s3_get_image_width(layer_image[layer]);
+	*h = s3_get_image_height(layer_image[layer]);
 }
 
 /*

@@ -37,8 +37,10 @@
 
 #include <suika3/suika3.h>
 #include "command.h"
+#include "text.h"
 #include "conf.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
@@ -50,7 +52,7 @@
  * Buttons.
  */
 struct choose_button {
-	const char *msg;
+	const char *text;
 	const char *label;
 	int x;
 	int y;
@@ -72,13 +74,20 @@ static int pointed_index;
 static bool is_selected_by_key;
 
 /* Mouse position when the pointed index is changed by a key operation. */
-static int save_mouse_pos_x, save_mouse_pos_y;
+static int save_mouse_x, save_mouse_y;
 
 /* Whether to ignore due to no effective option? */
 static bool ignore_as_no_option;
 
 /* Is the first frame? (to avoid playing an SE of mouse-over) */
 static bool is_first_frame;
+
+/*
+ * Centering
+ */
+
+/* Is text centered? */
+static bool is_centered;
 
 /*
  * Transition
@@ -95,34 +104,25 @@ static bool need_sysmenu_mode;
 static bool is_timed;
 
 /* Is the timer already bombed? */
-static bool is_bombed;
+static bool is_timer_fired;
+
+/* Timer span. */
+static float timer_span;
 
 /* Stopwatch for the timer. */
-static uint64_t bomb_sw;
+static uint64_t timer_sw;
 
 /*
  * Forward Declaration
  */
 
-/* Main processing. */
-static void pre_process(void);
-static bool blit_process(void);
-static void render_process(void);
-static bool post_process(void);
-
-/* Initiaializatoin. */
 static bool init(void);
-static void draw_text(struct image *target, const char *text, int w, int h, bool is_bg);
-
-/* Input processing. */
+static bool main_process(void);
+static void draw_text(int index, bool is_idle);
 static void process_main_input(void);
 static int get_pointed_index(void);
-
-/* Misc. */
 static void play_se(const char *file);
 static void run_anime(int unfocus_index, int focus_index);
-
-/* Cleanup.*/
 static bool cleanup(void);
 
 /*
@@ -133,18 +133,22 @@ s3i_command_choose(
 	void *p)
 {
 	/* For the first frame, do initialization. */
-	if (!is_in_command_repetition())
+	if (!s3_is_in_command_repetition()) {
+		/* Initialize. */
 		if (!init())
 			return false;
 
-	/* In case of no options to show. */
-	if (ignore_as_no_options)
-		return move_to_next_command();
+		/* In case of no options to show. */
+		if (ignore_as_no_option)
+			return s3_move_to_next_tag();
+	}
 
-	main_process();
+	/* Process a frame. */
+	if (!main_process())
+		return false;
 
 	/* For the last frame, do cleanup. */
-	if (!is_in_command_repetition())
+	if (!s3_is_in_command_repetition())
 		if (!cleanup())
 			return false;
 
@@ -154,7 +158,7 @@ s3i_command_choose(
 /* Initialization. */
 bool init(void)
 {
-	int type;
+	int i;
 	int actual_option_count;
 
 	/* For when the DLL is reused, cleanup first. */
@@ -162,16 +166,17 @@ bool init(void)
 
 	/* Clear variables. */
 	pointed_index = -1;
-	ignore_as_no_options = false;
+	ignore_as_no_option = false;
 	need_sysmenu_mode = false;
 	is_first_frame = true;
 	is_timed = false;
-	is_bombed = false;
-	reset_lap_timer(&bomb_sw);
+	is_timer_fired = false;
+	is_centered = false;
+	s3_reset_lap_timer(&timer_sw);
 
 	/* Collect the option infromation. */
 	actual_option_count = 0;
-	for (i = 0; i < CHOOSE_COUNT; i++) {
+	for (i = 0; i < S3_CHOOSEBOX_COUNT; i++) {
 		bool has_label;
 		bool has_text;
 		char label[128];
@@ -185,11 +190,11 @@ bool init(void)
 		button[i].text = s3_get_tag_arg_string(text);
 		
 		/* Get the coordinates. */
-		s3_get_choose_rect(i,
-				   &button[i].x,
-				   &button[i].y,
-				   &button[i].w,
-				   &button[i].h);
+		s3_get_choosebox_rect(i,
+				      &button[i].x,
+				      &button[i].y,
+				      &button[i].w,
+				      &button[i].h);
 
 		/* Fill the choose box layers. */
 		s3_fill_choosebox_idle_image(i);
@@ -204,43 +209,51 @@ bool init(void)
 
 	/* If there is no option. */
 	if (actual_option_count == 0) {
-		ignore_as_no_options = true;
+		ignore_as_no_option = true;
 		return true;
 	}
 
+	/* Check for leftification. */
+	if (s3_check_tag_arg("leftify") &&
+	    strcmp(s3_get_tag_arg_string("leftify"), "true") == 0) {
+		is_centered = false;
+	} else {
+		is_centered = true;
+	}
+
 	/* Start a multi-frame execution. */
-	start_command_repetition();
+	s3_start_command_repetition();
 
 	/* Hide the name and message boxes. */
 	if (!conf_msgbox_show_on_choose) {
-		show_namebox(false);
-		show_msgbox(true);
+		s3_show_namebox(false);
+		s3_show_msgbox(true);
 	}
-	show_click(false);
+	s3_show_click(false);
 
 	/* Stop the auto mode. */
-	if (is_auto_mode()) {
-		stop_auto_mode();
-		show_automode_banner(false);
+	if (s3_is_auto_mode()) {
+		s3_stop_auto_mode();
+		s3_show_automode_banner(false);
 	}
 
 	/* Stop the skip mode. */
-	if (is_skip_mode()) {
-		stop_skip_mode();
-		show_skipmode_banner(false);
+	if (s3_is_skip_mode()) {
+		s3_stop_skip_mode();
+		s3_show_skipmode_banner(false);
 	}
 
 	/* Initialize the timer. */
 	if (s3_check_tag_arg("time")) {
 		is_timed = true;
 		timer_span = s3_get_tag_arg_float("time");
-		s3_reset_laptime(&bomb_sw);
+		s3_reset_lap_timer(&timer_sw);
 	} else {
 		is_timed = false;
 	}
 
 	/* Disable the skip  behavior by continuos swipe. */
-	set_continuous_swipe_enabled(false);
+	s3_set_continuous_swipe_enabled(false);
 
 	return true;
 }
@@ -249,10 +262,11 @@ bool init(void)
 static void
 draw_text(
 	int index,
-	bool is_bg)
+	bool is_idle)
 {
-	struct draw_msg_context context;
-	pixel_t color, outline_color;
+	struct s3_draw_msg_context context;
+	s3_pixel_t color, outline_color;
+	int outline_width;
 	int layer;
 	struct s3_image *img;
 	int char_count;
@@ -262,55 +276,72 @@ draw_text(
 	y = 0;
 
 	/* Decide the color to draw. */
-	if (is_bg) {
+	if (is_idle) {
 		color = s3_make_pixel(255,
 				      conf_choose_font_idle_r,
 				      conf_choose_font_idle_g,
 				      conf_choose_font_idle_b);
 		outline_color = s3_make_pixel(255,
+					      conf_choose_font_idle_r,
+					      conf_choose_font_idle_g,
+					      conf_choose_font_idle_b);
+		outline_width = conf_choose_font_idle_outline_width;
+	} else {
+		color = s3_make_pixel(255,
+				      conf_choose_font_hover_r,
+				      conf_choose_font_hover_g,
+				      conf_choose_font_hover_b);
+		outline_color = s3_make_pixel(255,
 					      conf_choose_font_hover_r,
 					      conf_choose_font_hover_g,
 					      conf_choose_font_hover_b);
+		outline_width = conf_choose_font_hover_outline_width;
 	}
 
 	/* Decide the position to draw. */
 	if (is_centered) {
 		if (!conf_choose_font_tategaki) {
-			x = x + (w - get_string_width(conf_choose_font, conf_choose_font_size, text)) / 2;
-			y += conf_choose_text_margin_top;
+			int vw = s3_get_string_width(conf_choose_font_select,
+						     conf_choose_font_size,
+						     button[index].text);
+				x = x + (button[index].w - vw) / 2;
+			y += conf_choose_margin_top[index];
 		} else {
-			x = x + (w - conf_choose_font_size) / 2;
-			y = y + (h - get_string_height(conf_choose_font, conf_choose_font_size, text)) / 2;
+			int vh = s3_get_string_height(conf_choose_font_select,
+						      conf_choose_font_size,
+						      button[index].text);
+			x = x + (button[index].w - conf_choose_font_size) / 2;
+			y = y + (button[index].h - vh) / 2;
 		}
 	} else {
-		y += conf_choose_text_margin_top;
+		y += conf_choose_margin_top[index];
 	}
 
 	/* Get the layer index. */
 	layer = S3_LAYER_CHOOSE1_IDLE + (2 * index);
-	if (!is_bg)
+	if (!is_idle)
 		layer++;
 
 	/* Get the layer image. */
 	img = s3_get_layer_image(layer);
 
 	/* Draw a text. */
-	construct_draw_msg_context(
+	s3_construct_draw_msg_context(
 		&context,
 		img,
-		text,
-		conf_choose_font,
+		button[index].text,
+		conf_choose_font_select,
 		conf_choose_font_size,
 		conf_choose_font_size,	/* base_font_size */
 		conf_choose_font_ruby,	/* FIXME: namebox.ruby.sizeの導入 */
-		conf_choose_font_outline,
+		outline_width,
 		x,
 		y,
 		conf_game_width,
 		conf_game_height,
 		x,			/* left_margin */
 		0,			/* right_margin */
-		conf_choose_text_margin_top,
+		conf_choose_margin_top[index],
 		0,			/* bottom_margin */
 		0,			/* line_margin */
 		conf_msgbox_margin_char,
@@ -329,57 +360,41 @@ draw_text(
 		true,			/* ignore_wait */
 		NULL,			/* inline_wait_hook */
 		conf_choose_font_tategaki);
-	char_count = count_chars_common(&context, NULL);
-	draw_msg_common(&context, char_count);
+	char_count = s3_count_chars_common(&context, NULL);
+	s3_draw_msg_common(&context, char_count);
 }
 
 /* Main processing. */
-static void
+static bool
 main_process(void)
 {
+	int i;
+
 	if (is_timed) {
-		if ((float)get_lap_timer_millisec(&bomb_sw) >= conf_choose_timed * 1000.0f) {
-			is_bombed = true;
-			return;
+		if ((float)s3_get_lap_timer_millisec(&timer_sw) >= timer_span * 1000.0f) {
+			is_timer_fired = true;
+			return true;
 		}
 	}
 
 	process_main_input();
 
-	int i;
-
-	if (is_bombed)
+	if (is_timer_fired)
 		return true;
 
-	/*
-	 * 必要な場合はステージのサムネイルを作成する
-	 *  - クイックセーブされるとき
-	 *  - システムGUIに遷移するとき
-	 */
-	if (need_sysmenu_mode) {
-		draw_stage_to_thumb();
-		for (i = 0; i < CHOOSE_COUNT; i++) {
-			if (choose_button[i].img_idle == NULL)
-				continue;
-			draw_choose_to_thumb(choose_button[i].img_idle,
-					     choose_button[i].x,
-					     choose_button[i].y);
-		}
-	}
+	/* Create the thumbnail if move to system menu. */
+	if (need_sysmenu_mode)
+		s3_draw_stage_to_thumb();
 
 	if (need_sysmenu_mode) {
-		if (!prepare_gui_mode(SYSMENU_GUI_FILE, true))
+		if (!s3_load_gui_file(S3_PATH_SYSMENU_GUI, true))
 			return false;
-		start_gui_mode();
+		s3_start_gui();
 	}
 
-	/*
-	 * 必要な場合は繰り返し動作を停止する
-	 *  - 時間制限に達したとき
-	 *  - システムGUIに遷移するとき
-	 */
-	if (is_bombed || need_sysmenu_mode)
-		stop_command_repetition();
+	/* Stop the repetition if needed. */
+	if (is_timer_fired || need_sysmenu_mode)
+		s3_stop_command_repetition();
 
 	is_first_frame = false;
 
@@ -390,6 +405,7 @@ main_process(void)
 static void
 process_main_input(void)
 {
+	int i;
 	int old_pointed_index, new_pointed_index;
 	bool enter_sysmenu;
 
@@ -404,11 +420,11 @@ process_main_input(void)
 	 */
 	if (new_pointed_index != old_pointed_index &&
 	    new_pointed_index != -1 &&
-	    conf_tts &&
+	    conf_tts_enable &&
 	    is_selected_by_key &&
-	    button[new_pointed_index].msg != NULL) {
-		speak_text(NULL);
-		speak_text(choose_button[pointed_index].msg);
+	    button[new_pointed_index].text != NULL) {
+		s3_speak_text(NULL);
+		s3_speak_text(button[pointed_index].text);
 	}
 
 	/* If a pointed index is changed and an item is pointed. */
@@ -416,7 +432,7 @@ process_main_input(void)
 	    new_pointed_index != old_pointed_index) {
 		/* Avoid the first frame. */
 		if (!is_first_frame) {
-			play_se(is_left_clicked ? conf_choose_click_se : conf_choose_change_se);
+			play_se(s3_is_mouse_left_clicked() ? conf_choose_click_se : conf_choose_change_se);
 			run_anime(old_pointed_index, new_pointed_index);
 		}
 	}
@@ -442,9 +458,10 @@ process_main_input(void)
 	pointed_index = new_pointed_index;
 
 	/* If clicked by the mouse left button. */
-	if (pointed_index != -1 && (is_left_clicked || is_return_pressed)) {
+	if (pointed_index != -1 &&
+	    (s3_is_mouse_left_clicked() || s3_is_return_key_pressed())) {
 		play_se(conf_choose_click_se);
-		stop_command_repetition();
+		s3_stop_command_repetition();
 		run_anime(pointed_index, -1);
 	}
 
@@ -454,15 +471,15 @@ process_main_input(void)
 		enter_sysmenu = false;
 
 		/* If right-clicked. */
-		if (is_right_clicked)
+		if (s3_is_mouse_right_clicked())
 			enter_sysmenu = true;
 
 		/* If the escape key is pressed. */
-		if (is_escape_pressed)
+		if (s3_is_escape_key_pressed())
 			enter_sysmenu = true;
 
 		/* If the system button is clicked. */
-		if (is_left_clicked && is_sysbtn_pointed())
+		if (s3_is_mouse_left_clicked() && s3_is_sysbtn_pointed())
 			enter_sysmenu = true;
 
 		/* If the system menu will be run. */
@@ -477,49 +494,54 @@ process_main_input(void)
 static int get_pointed_index(void)
 {
 	int i;
+	int mouse_x;
+	int mouse_y;
+
+	mouse_x = s3_get_mouse_pos_x();
+	mouse_y = s3_get_mouse_pos_x();
 
 	/* Process the right arrow key. */
-	if (is_right_arrow_pressed) {
+	if (s3_is_right_key_pressed()) {
 		is_selected_by_key = true;
-		save_mouse_pos_x = mouse_pos_x;
-		save_mouse_pos_y = mouse_pos_y;
+		save_mouse_x = mouse_x;
+		save_mouse_y = mouse_y;
 		if (pointed_index == -1)
 			return 0;
-		if (pointed_index == CHOOSE_COUNT - 1)
+		if (pointed_index == S3_CHOOSEBOX_COUNT - 1)
 			return 0;
-		if (choose_button[pointed_index + 1].msg != NULL)
+		if (button[pointed_index + 1].text != NULL)
 			return pointed_index + 1;
 		else
 			return 0;
 	}
 
 	/* Process the left arrow key. */
-	if (is_left_arrow_pressed) {
+	if (s3_is_left_key_pressed()) {
 		is_selected_by_key = true;
-		save_mouse_pos_x = mouse_pos_x;
-		save_mouse_pos_y = mouse_pos_y;
+		save_mouse_x = mouse_x;
+		save_mouse_y = mouse_y;
 		if (pointed_index == -1 ||
 		    pointed_index == 0) {
-			for (i = CHOOSE_COUNT - 1; i >= 0; i--)
-				if (choose_button[i].msg != NULL)
+			for (i = S3_CHOOSEBOX_COUNT - 1; i >= 0; i--)
+				if (button[i].text != NULL)
 					return i;
 		}
 		return pointed_index - 1;
 	}
 
 	/* Process the mouse cursor. */
-	for (i = 0; i < CHOOSE_COUNT; i++) {
-		if (choose_button[i].msg == NULL)
+	for (i = 0; i < S3_CHOOSEBOX_COUNT; i++) {
+		if (button[i].text == NULL)
 			continue;
 
-		if (mouse_pos_x >= choose_button[i].x &&
-		    mouse_pos_x < choose_button[i].x + choose_button[i].w &&
-		    mouse_pos_y >= choose_button[i].y &&
-		    mouse_pos_y < choose_button[i].y + choose_button[i].h) {
+		if (mouse_x >= button[i].x &&
+		    mouse_x < button[i].x + button[i].w &&
+		    mouse_y >= button[i].y &&
+		    mouse_y < button[i].y + button[i].h) {
 			/* キーで選択済みの項目があり、マウスが移動していない場合 */
 			if (is_selected_by_key &&
-			    mouse_pos_x == save_mouse_pos_x &&
-			    mouse_pos_y == save_mouse_pos_y)
+			    mouse_x == save_mouse_x &&
+			    mouse_y == save_mouse_y)
 				continue;
 			is_selected_by_key = false;
 			return i;
@@ -542,7 +564,7 @@ play_se(
 	if (file == NULL || strcmp(file, "") == 0)
 		return;
 
-	set_mixer_input_file(S3_TRACK_SYS, file);
+	s3_set_mixer_input_file(S3_TRACK_SYS, file, false);
 }
 
 /* Run an anime. */
@@ -552,12 +574,12 @@ run_anime(
 	int focus_index)
 {
 	/* Anime for a choose box to be unfocused. */
-	if (unfocus_index != -1 && conf_choose_anime_unfocus[unfocus_index] != NULL)
-		load_anime_from_file(conf_choose_anime_unfocus[unfocus_index], -1, NULL);
+	if (unfocus_index != -1 && conf_choose_unfocus_anime[unfocus_index] != NULL)
+		s3_load_anime_from_file(conf_choose_unfocus_anime[unfocus_index], -1, NULL);
 
 	/* Anime for a choose box to be focused. */
-	if (focus_index != -1 && conf_choose_anime_focus[focus_index] != NULL)
-		load_anime_from_file(conf_choose_anime_focus[focus_index], -1, NULL);
+	if (focus_index != -1 && conf_choose_focus_anime[focus_index] != NULL)
+		s3_load_anime_from_file(conf_choose_focus_anime[focus_index], -1, NULL);
 }
 
 /* Cleanup. */
@@ -580,9 +602,9 @@ cleanup(void)
 	}
 
 	/* If the timer bombed. */
-	if (is_bombed) {
+	if (is_timer_fired) {
 		/* Move to the next tag. */
-		if (!move_to_next_command())
+		if (!s3_move_to_next_tag())
 			return false;
 		return true;
 	}
@@ -592,5 +614,5 @@ cleanup(void)
 	 * Move to the label of the chosen item.
 	 */
 	assert(pointed_index != -1);
-	return move_to_label(button[pointed_index].label);
+	return s3_move_to_label(button[pointed_index].label);
 }

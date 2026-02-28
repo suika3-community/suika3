@@ -802,7 +802,7 @@ s3_execute_load_local(
 		/* Hide the name box, message box, and choose boxes. */
 		s3_show_namebox(false);
 		s3_show_msgbox(false);
-		s3_show_choosebox(false, -1);
+		s3_show_choosebox(-1, false, false);
 
 		/* Set the flag. */
 		is_right_after_load = true;
