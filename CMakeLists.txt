@@ -273,6 +273,7 @@ set(SUIKA_BASE_SOURCES
   src/cmd_ch.c
   src/cmd_choose.c
   src/cmd_click.c
+  src/cmd_label.c
   src/cmd_text.c
 )
 

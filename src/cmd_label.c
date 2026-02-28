@@ -2,7 +2,7 @@
 
 /*
  * Suika3
- * The "click" tag implementation
+ * The "label" tag implementation
  */
 
 /*-
@@ -37,62 +37,17 @@
 
 #include <suika3/suika3.h>
 #include "command.h"
-#include "conf.h"
-
-#include <string.h>
-
-/* Wait time for the auto mode. */
-#define AUTO_MODE_WAIT (2000)
-
-static uint64_t sw;
 
 /*
- * The "click" tag implementation.
+ * The "label" tag implementation.
  */
 bool
-s3i_tag_click(
+s3i_tag_label(
 	void *p)
 {
-	/* Perform initialization on the first invocation. */
-	if (!s3_is_in_command_repetition()) {
-		/* Hide the message and name boxes. */
-		s3_show_msgbox(false);
-		s3_show_namebox(false);
+	/* Set the continue flag to run also the next tag. */
+	s3_set_vm_int("s3Continue", 0);
 
-		/* Exit skip mode if it is active */
-		if (s3_is_skip_mode()) {
-			s3_stop_skip_mode();
-			s3_show_skipmode_banner(false);
-		}
-
-		/* Start measuring elapsed time */
-		s3_reset_lap_timer(&sw);
-
-		/* Enter command repetition state */
-		s3_start_command_repetition();
-	}
-
-	/*
-	 * End the repetition when user input is detected,
-	 * or when a certain amount of time has elapsed in auto mode.
-	 */
-	if ((!s3_is_auto_mode() &&
-	     (s3_is_control_key_pressed() ||
-	      s3_is_return_key_pressed() ||
-	      s3_is_down_key_pressed() ||
-	      s3_is_mouse_left_clicked()))
-	    ||
-	    (s3_is_auto_mode() &&
-	     (float)s3_get_lap_timer_millisec(&sw) >= AUTO_MODE_WAIT)) {
-		s3_stop_command_repetition();
-	}
-
-	/* Finalization. */
-	if (!s3_is_in_command_repetition()) {
-		/* Advance to the next command. */
-		return s3_move_to_next_tag();
-	}
-
-	/* Continue executing this command. */
-	return true;
+	/* Move to the next tag. */
+	return s3_move_to_next_tag();
 }

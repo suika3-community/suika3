@@ -2,7 +2,7 @@
 
 /*
  * Suika3
- * Tag "choose" tag implementation
+ * The "choose" tag implementation
  */
 
 /*-
@@ -130,7 +130,7 @@ static bool cleanup(void);
  * The "choose" tag implementation.
  */
 bool
-s3i_command_choose(
+s3i_tag_choose(
 	void *p)
 {
 	/* For the first frame, do initialization. */
@@ -614,6 +614,10 @@ cleanup(void)
 	/* Stop anime sequences. */
 	for (i = 0; i < S3_CHOOSEBOX_COUNT; i++)
 		run_anime(i, -1);
+
+	/* Hide the choose boxes. */
+	for (i = 0; i < S3_CHOOSEBOX_COUNT; i++)
+		s3_show_choosebox(i, false, false);
 
 	/* If we need to transition to a system GUI. */
 	if (need_sysmenu_mode) {

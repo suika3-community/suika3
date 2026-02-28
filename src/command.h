@@ -41,33 +41,45 @@
 #include <suika3/suika3.h>
 
 /*
- * The "bg" command.
+ * The "bg" tag implementation.
  */
 bool
-s3i_command_bg(void *p);
+s3i_tag_bg(void *p);
 
 /*
- * The "ch" command.
+ * The "ch" tag implementation.
  */
 bool
-s3i_command_ch(void *p);
+s3i_tag_ch(void *p);
 
 /*
- * The "choose" command.
+ * The "choose" tag implementation.
  */
 bool
-s3i_command_choose(void *p);
+s3i_tag_choose(void *p);
 
 /*
- * The "click" command.
+ * The "click" tag implementation.
  */
 bool
-s3i_command_click(void *p);
+s3i_tag_click(void *p);
 
 /*
- * The "text" command.
+ * The "label" tag implementation.
  */
 bool
-s3i_command_text(void *p);
+s3i_tag_choose(void *p);
+
+/*
+ * The "label" tag implementation.
+ */
+bool
+s3i_tag_label(void *p);
+
+/*
+ * The "text" tag implementation.
+ */
+bool
+s3i_tag_text(void *p);
 
 #endif

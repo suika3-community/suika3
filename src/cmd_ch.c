@@ -176,10 +176,10 @@ static void process_frame(void);
 static bool cleanup(void);
 
 /*
- * ch command
+ * The "ch" tag implementation.
  */
 bool
-s3i_command_ch(
+s3i_tag_ch(
 	void *p)
 {
 	/* Is the first frame? */

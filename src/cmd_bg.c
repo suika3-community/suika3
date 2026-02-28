@@ -52,10 +52,10 @@ static void update(void);
 static bool cleanup(void);
 
 /*
- * The "bg" command.
+ * The "bg" tag implementation.
  */
 bool
-s3i_command_bg(
+s3i_tag_bg(
 	void *p)
 {
 	if (!s3_is_in_command_repetition())

@@ -56,19 +56,18 @@ static bool Suika_update(void *p);
 static bool Suika_render(void *p);
 
 static struct api_func api_func[] = {
-	/* Skeleton */
 	{"start", Suika_start, true},
 	{"update", Suika_update, true},
 	{"render", Suika_render, true},
 };
 
 static struct tag_func tag_func[] = {
-	/* Commands */
-	{"Tag_bg", s3i_command_bg},
-	{"Tag_ch", s3i_command_ch},
-	{"Tag_choose", s3i_command_choose},
-	{"Tag_click", s3i_command_click},
-	{"Tag_text", s3i_command_text},
+	{"Tag_bg",		s3i_tag_bg},
+	{"Tag_ch",		s3i_tag_ch},
+	{"Tag_choose",		s3i_tag_choose},
+	{"Tag_click",		s3i_tag_click},
+	{"Tag_label",		s3i_tag_label},
+	{"Tag_text",		s3i_tag_text},
 };
 
 /*

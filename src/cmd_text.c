@@ -340,10 +340,10 @@ static void stop(void);
 static bool cleanup(void);
 
 /*
- * Message and serif command
+ * The "text" tag implementation.
  */
 bool
-s3i_command_text(
+s3i_tag_text(
 	void *p)
 {
 	bool cont;
