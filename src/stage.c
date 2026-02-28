@@ -456,7 +456,7 @@ s3i_setup_choose(bool is_hover, int index)
 	int i;
 
 	/* Destroy when reinitialized. */
-	for (i = 0; i < 10; i ++) {
+	for (i = 0; i < S3_CHOOSEBOX_COUNT; i ++) {
 		if (index == -1 || i == index) {
 			if (choose_idle_image[i] != NULL) {
 				s3_destroy_image(choose_idle_image[i]);
@@ -467,6 +467,9 @@ s3i_setup_choose(bool is_hover, int index)
 				choose_hover_image[i] = NULL;
 			}
 		}
+
+		destroy_layer(S3_LAYER_CHOOSE1_IDLE + (2 * i));
+		destroy_layer(S3_LAYER_CHOOSE1_IDLE + (2 * i) + 1);
 	}
 
 	/* Load the images. */
@@ -488,8 +491,19 @@ s3i_setup_choose(bool is_hover, int index)
 		if (index == -1 || is_hover) {
 			choose_hover_image[i] = s3_create_image_from_file(conf_choose_idle[i]);
 			if (choose_hover_image[i] == NULL)
-			return false;
+				return false;
 		}
+	}
+
+	/* Create the layer images. */
+	for (i = 0; i < S3_CHOOSEBOX_COUNT; i++) {
+		layer_image[S3_LAYER_CHOOSE1_IDLE + (2 * i)] = s3_create_image(choose_idle_image[i]->width, choose_idle_image[i]->height);
+		if (layer_image[S3_LAYER_CHOOSE1_IDLE + (2 * i)] == NULL)
+			return false;
+
+		layer_image[S3_LAYER_CHOOSE1_IDLE + (2 * i) + 1] = s3_create_image(choose_hover_image[i]->width, choose_hover_image[i]->height);
+		if (layer_image[S3_LAYER_CHOOSE1_IDLE + (2 * i) + 1] == NULL)
+			return false;
 	}
 
 	return true;
@@ -1458,6 +1472,8 @@ s3_layer_to_chpos(
 void
 s3_render_stage(void)
 {
+	int i;
+
 	/* Update an anime frame. */
 	s3_update_anime_frame();
 
@@ -1465,10 +1481,8 @@ s3_render_stage(void)
 	render_layer(S3_LAYER_BG);
 	render_layer(S3_LAYER_BG_FO);
 	render_layer(S3_LAYER_BG2);
-	render_layer(S3_LAYER_EFB1);
-	render_layer(S3_LAYER_EFB2);
-	render_layer(S3_LAYER_EFB3);
-	render_layer(S3_LAYER_EFB4);
+	for (i = S3_LAYER_EFB1; i <= S3_LAYER_EFB4; i++)
+		render_layer(i);
 	render_layer(S3_LAYER_CHB);
 	render_layer(S3_LAYER_CHB_EYE);
 	render_layer(S3_LAYER_CHB_LIP);
@@ -1493,10 +1507,8 @@ s3_render_stage(void)
 	render_layer(S3_LAYER_CHC_EYE);
 	render_layer(S3_LAYER_CHC_LIP);
 	render_layer(S3_LAYER_CHC_FO);
-	render_layer(S3_LAYER_EFF1);
-	render_layer(S3_LAYER_EFF2);
-	render_layer(S3_LAYER_EFF3);
-	render_layer(S3_LAYER_EFF4);
+	for (i = S3_LAYER_EFF1; i <= S3_LAYER_EFF4; i++)
+		render_layer(i);
 	if (is_msgbox_visible)
 		render_layer(S3_LAYER_MSGBOX);
 	if (is_namebox_visible && conf_namebox_enable)
@@ -1513,14 +1525,14 @@ s3_render_stage(void)
 		render_layer(S3_LAYER_AUTO);
 	if (is_skip_visible)
 		render_layer(S3_LAYER_SKIP);
-	render_layer(S3_LAYER_TEXT1);
-	render_layer(S3_LAYER_TEXT2);
-	render_layer(S3_LAYER_TEXT3);
-	render_layer(S3_LAYER_TEXT4);
-	render_layer(S3_LAYER_TEXT5);
-	render_layer(S3_LAYER_TEXT6);
-	render_layer(S3_LAYER_TEXT7);
-	render_layer(S3_LAYER_TEXT8);
+	for (i = 0; i < S3_CHOOSEBOX_COUNT; i++) {
+		if (is_choosebox_idle_visible[i])
+			render_layer(S3_LAYER_CHOOSE1_IDLE + (2 * i));
+		if (is_choosebox_hover_visible[i])
+			render_layer(S3_LAYER_CHOOSE1_IDLE + (2 * i) + 1);
+	}
+	for (i = S3_LAYER_TEXT1; i <= S3_LAYER_TEXT8; i++)
+		render_layer(i);
 
 	/* Render the sysbtn. */
 	if (!s3_is_sysbtn_visible()) {
@@ -2471,14 +2483,10 @@ s3_get_choosebox_rect(
 	int *w,
 	int *h)
 {
-	int layer;
-
-	layer = S3_LAYER_CHOOSE1_IDLE + (2 * index);
-
 	*x = conf_choose_x[index];
 	*y = conf_choose_y[index];
-	*w = s3_get_image_width(layer_image[layer]);
-	*h = s3_get_image_height(layer_image[layer]);
+	*w = s3_get_image_width(choose_idle_image[index]);
+	*h = s3_get_image_height(choose_idle_image[index]);
 }
 
 /*

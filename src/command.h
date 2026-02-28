@@ -53,6 +53,12 @@ bool
 s3i_command_ch(void *p);
 
 /*
+ * The "choose" command.
+ */
+bool
+s3i_command_choose(void *p);
+
+/*
  * The "click" command.
  */
 bool

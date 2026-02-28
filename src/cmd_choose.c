@@ -52,6 +52,7 @@
  * Buttons.
  */
 struct choose_button {
+	bool is_enabled;
 	const char *text;
 	const char *label;
 	int x;
@@ -161,9 +162,6 @@ bool init(void)
 	int i;
 	int actual_option_count;
 
-	/* For when the DLL is reused, cleanup first. */
-	cleanup();
-
 	/* Clear variables. */
 	pointed_index = -1;
 	ignore_as_no_option = false;
@@ -188,7 +186,14 @@ bool init(void)
 		/* Get the N-th options. */
 		button[i].label = s3_get_tag_arg_string(label);
 		button[i].text = s3_get_tag_arg_string(text);
-		
+		if (button[i].text == NULL) {
+			button[i].is_enabled = false;
+			s3_show_choosebox(i, false, false);
+			continue;
+		} else {
+			button[i].is_enabled = true;
+		}
+
 		/* Get the coordinates. */
 		s3_get_choosebox_rect(i,
 				      &button[i].x,
@@ -203,6 +208,19 @@ bool init(void)
 		/* Draw the text for the choose box layers. */
 		draw_text(i, true);
 		draw_text(i, false);
+
+		/* Set the layer position. */
+		s3_set_layer_position(
+			S3_LAYER_CHOOSE1_IDLE + (2 * i),
+			button[i].x,
+			button[i].y);
+		s3_set_layer_position(
+			S3_LAYER_CHOOSE1_IDLE + (2 * i) + 1,
+			button[i].x,
+			button[i].y);
+
+		/* Show the choose box. */
+		s3_show_choosebox(i, true, false);
 
 		actual_option_count++;
 	}
@@ -445,7 +463,10 @@ process_main_input(void)
 
 	/* Show or hide the choose boxes. */
 	for (i = 0; i < S3_CHOOSEBOX_COUNT; i++) {
-		if (i == new_pointed_index) {
+		if (!button[i].is_enabled)
+			continue;
+
+		if (i != new_pointed_index) {
 			/* Non-pointed item: show idle, hide hover. */
 			s3_show_choosebox(i, true, false);
 		} else {
@@ -491,14 +512,15 @@ process_main_input(void)
 }
 
 /* Get the pointed index. */
-static int get_pointed_index(void)
+static int
+get_pointed_index(void)
 {
 	int i;
 	int mouse_x;
 	int mouse_y;
 
 	mouse_x = s3_get_mouse_pos_x();
-	mouse_y = s3_get_mouse_pos_x();
+	mouse_y = s3_get_mouse_pos_y();
 
 	/* Process the right arrow key. */
 	if (s3_is_right_key_pressed()) {
@@ -531,14 +553,14 @@ static int get_pointed_index(void)
 
 	/* Process the mouse cursor. */
 	for (i = 0; i < S3_CHOOSEBOX_COUNT; i++) {
-		if (button[i].text == NULL)
+		if (!button[i].is_enabled)
 			continue;
 
 		if (mouse_x >= button[i].x &&
 		    mouse_x < button[i].x + button[i].w &&
 		    mouse_y >= button[i].y &&
 		    mouse_y < button[i].y + button[i].h) {
-			/* キーで選択済みの項目があり、マウスが移動していない場合 */
+			/* If there is a pointed item by key, and the mouse cursor has not moved. */
 			if (is_selected_by_key &&
 			    mouse_x == save_mouse_x &&
 			    mouse_y == save_mouse_y)
