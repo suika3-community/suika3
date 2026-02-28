@@ -58,6 +58,7 @@ bool pf_is_mouse_left_pressed;
 bool pf_is_mouse_right_pressed;
 bool pf_is_mouse_left_clicked;
 bool pf_is_mouse_right_clicked;
+bool pf_is_mouse_dragging;
 bool pf_is_touch_canceled;
 bool pf_is_swiped;
 bool pf_is_gamepad_left_pressed;
@@ -209,6 +210,7 @@ hal_callback_on_event_start(void)
 	pf_is_mouse_right_pressed = false;
 	pf_is_mouse_left_clicked = false;
 	pf_is_mouse_right_clicked = false;
+	pf_is_mouse_dragging = false;
 	pf_is_touch_canceled = false;
 	pf_is_swiped = false;
 	pf_is_gamepad_left_pressed = false;
@@ -1085,6 +1087,9 @@ hal_callback_on_event_mouse_press(
 	int y)
 {
 	if (is_running) {
+		if (x < 0 || x >= screen_width || y < 0 || y >= screen_height)
+			return;
+
 		pf_mouse_pos_x = x;
 		pf_mouse_pos_y = y;
 		pfi_set_vm_int("mousePosX", x);
@@ -1093,6 +1098,9 @@ hal_callback_on_event_mouse_press(
 		if (button == HAL_MOUSE_LEFT) {
 			pf_is_mouse_left_pressed = true;
 			pfi_set_vm_int("isMouseLeftPressed", 1);
+
+			pf_is_mouse_dragging = true;
+			pfi_set_vm_int("isMouseDragging", 1);
 		} else {
 			pf_is_mouse_right_pressed = true;
 			pfi_set_vm_int("isMouseRightPressed", 1);
@@ -1111,6 +1119,12 @@ hal_callback_on_event_mouse_release(
 		pf_mouse_pos_y = y;
 		pfi_set_vm_int("mousePosX", x);
 		pfi_set_vm_int("mousePosY", y);
+
+		pf_is_mouse_dragging = false;
+		pfi_set_vm_int("isMouseDragging", 1);
+
+		if (x < 0 || x >= screen_width || y < 0 || y >= screen_height)
+			return;
 
 		if (button == HAL_MOUSE_LEFT) {
 			pf_is_mouse_left_pressed = false;
