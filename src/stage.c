@@ -1534,6 +1534,10 @@ s3_render_stage(void)
 	for (i = S3_LAYER_TEXT1; i <= S3_LAYER_TEXT8; i++)
 		render_layer(i);
 
+	/* Render the GUI buttons. */
+	if (s3_is_gui_running())
+		s3i_run_gui_render();
+
 	/* Render the sysbtn. */
 	if (!s3_is_sysbtn_visible()) {
 		if (!s3_is_sysbtn_pointed()) {

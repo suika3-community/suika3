@@ -66,6 +66,7 @@ static struct tag_func tag_func[] = {
 	{"Tag_ch",		s3i_tag_ch},
 	{"Tag_choose",		s3i_tag_choose},
 	{"Tag_click",		s3i_tag_click},
+	{"Tag_gui",		s3i_tag_gui},
 	{"Tag_label",		s3i_tag_label},
 	{"Tag_text",		s3i_tag_text},
 };

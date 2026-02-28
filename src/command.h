@@ -71,6 +71,12 @@ bool
 s3i_tag_choose(void *p);
 
 /*
+ * The "gui" tag implementation.
+ */
+bool
+s3i_tag_gui(void *p);
+
+/*
  * The "label" tag implementation.
  */
 bool

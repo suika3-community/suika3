@@ -42,7 +42,9 @@
 #include "sysbtn.h"
 #include "mixer.h"
 #include "tag.h"
+#include "gui.h"
 #include "text.h"
+#include "command.h"
 
 #include <playfield/playfield.h>
 
@@ -273,6 +275,7 @@ s3i_on_game_update(void)
 	mouse_pos_y = pf_mouse_pos_y;
 	is_mouse_left_clicked = pf_is_mouse_left_clicked;
 	is_mouse_right_clicked = pf_is_mouse_right_clicked;
+	is_mouse_dragging = pf_is_mouse_dragging;
 	is_space_key_pressed = pf_is_space_key_pressed;
 	is_return_key_pressed = pf_is_return_key_pressed;
 	is_escape_key_pressed = pf_is_escape_key_pressed;
@@ -286,8 +289,12 @@ s3i_on_game_update(void)
 	is_touch_canceled = pf_is_touch_canceled;
 	is_swiped = pf_is_swiped;
 
-	/* Call update functions. */
+	/* Call tags. */
 	while (1) {
+		/* If a GUI is running, do not run a tag. */
+		if (s3_is_gui_running())
+			break;
+
 		/* Clear the continue flag. */
 		s3_set_vm_int("s3Continue", 0);
 
@@ -312,6 +319,23 @@ s3i_on_game_update(void)
 
 		break;
 	} 
+
+	/* Update the GUI if running. */
+	if (s3_is_gui_running()) {
+		bool is_gui_tag;
+
+		/* Check if this is a gui tag execution. (if not, it's a system GUI!) */
+		is_gui_tag = s3_is_in_command_repetition();
+
+		if (!s3i_run_gui_update()) {
+			/* Error: will stop the game after the next rendering. */
+			pf_set_vm_int("exitFlag", 1);
+		}
+		
+		/* If Call the tag for cleanup.*/
+		if (is_gui_tag && s3_is_gui_finished())
+			s3i_tag_gui(NULL);
+	}
 
 	/* Do a sound fading. */
 	process_sound_fading();

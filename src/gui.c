@@ -47,9 +47,6 @@
 #include <math.h>
 #include <assert.h>
 
-/* Number of the maximum buttons. */
-#define BUTTON_COUNT	(128)
-
 /* Button types. */
 enum {
 	/* Invalid button. */
@@ -130,7 +127,9 @@ enum {
 };
 
 /* Button. */
-static struct gui_button {
+struct gui_button {
+	bool is_initialized;
+
 	/*
 	 * Properties written in GUI files.
 	 */
@@ -222,7 +221,8 @@ static struct gui_button {
 		uint64_t sw;
 	} rt;
 
-} button[BUTTON_COUNT];
+};
+static struct gui_button button[S3_BUTTON_LAYERS];
 
 /* Is GUI running? */
 static bool is_gui_running;
@@ -432,7 +432,7 @@ s3i_cleanup_gui(void)
 	is_gui_running = false;
 
 	/* Free button resources. */
-	for (i = 0; i < BUTTON_COUNT; i++) {
+	for (i = 0; i < S3_BUTTON_LAYERS; i++) {
 		if (button[i].label != NULL)
 			free(button[i].label);
 		if (button[i].file != NULL)
@@ -601,6 +601,17 @@ bool
 s3_is_gui_running(void)
 {
 	return is_gui_running;
+}
+
+/*
+ * Chech if a GUI is finished.
+ */
+bool
+s3_is_gui_finished(void)
+{
+	if (result_index != -1)
+		return true;
+	return false;
 }
 
 /*
@@ -810,7 +821,10 @@ static void process_input(void)
 
 	/* Process each button. */
 	is_drag_finished = false;
-	for (i = 0; i < BUTTON_COUNT; i++) {
+	for (i = S3_BUTTON_LAYERS - 1; i >= 0; i--) {
+		if (!button[i].is_initialized)
+			continue;
+
 		if (!is_fading_in && !is_fading_out) {
 			/* Update pointed state. */
 			process_button_point(i, false);
@@ -825,8 +839,11 @@ static void process_input(void)
 
 	/* Process after drag is finished. */
 	if (is_drag_finished) {
-		for (i = 0; i < BUTTON_COUNT; i++)
+		for (i = S3_BUTTON_LAYERS - 1; i >= 0; i--) {
+			if (!button[i].is_initialized)
+				continue;
 			process_button_point(i, false);
+		}
 		is_drag_finished = false;
 	}
 
@@ -903,7 +920,7 @@ update_runtime_props(bool is_first_time)
 	}
 
 	/* Update each button. */
-	for (i = 0; i < BUTTON_COUNT; i++) {
+	for (i = 0; i < S3_BUTTON_LAYERS; i++) {
 		switch (button[i].type) {
 		case TYPE_MASTERVOL:
 			button[i].rt.slider = s3_get_master_volume();
@@ -1059,7 +1076,7 @@ process_left_right_arrow_keys(void)
 		search_start = pointed_index + 1;
 
 		/* Search for a button to select. */
-		for (i = search_start; i < BUTTON_COUNT; i++)
+		for (i = search_start; i < S3_BUTTON_LAYERS; i++)
 			if (process_button_point(i, true))
 				return;
 
@@ -1076,7 +1093,7 @@ process_left_right_arrow_keys(void)
 	if (s3_is_left_key_pressed()) {
 		/* Find the selected button. */
 		if (pointed_index == -1 || pointed_index == 0)
-			search_start = BUTTON_COUNT - 1;
+			search_start = S3_BUTTON_LAYERS - 1;
 		else
 			search_start = pointed_index - 1;
 
@@ -1086,9 +1103,9 @@ process_left_right_arrow_keys(void)
 				return;
 
 		/* Wrap the search. */
-		if (search_start == BUTTON_COUNT -1)
+		if (search_start == S3_BUTTON_LAYERS -1)
 			return;
-		for (i = BUTTON_COUNT - 1; i > search_start; i--)
+		for (i = S3_BUTTON_LAYERS - 1; i > search_start; i--)
 			if (process_button_point(i, true))
 				return;
 	}
@@ -1193,7 +1210,8 @@ move_to_title(void)
 }
 
 /* Process changes in button pointing state. */
-static bool process_button_point(int index, bool key)
+static bool
+process_button_point(int index, bool key)
 {
 	struct gui_button *b;
 	int mouse_pos_x, mouse_pos_y;
@@ -1579,8 +1597,12 @@ process_render(void)
 	}
 
 	/* Render each button according to its state. */
-	for (i = 0; i < BUTTON_COUNT; i++)
+	for (i = 0; i < S3_BUTTON_LAYERS; i++) {
+		if (!button[i].is_initialized)
+			continue;
+
 		process_button_render(i);
+	}
 }
 
 /* Draw a button. */
@@ -1647,25 +1669,56 @@ process_button_render_slider(
 
 	/* If the button is not pointed, draw the bar part with the idle image. */
 	if (index != pointed_index || is_fading_in || is_fading_out) {
-		s3_render_image(b->x, b->y, b->width, b->height,
-				b->rt.img_idle, b->x, b->y, b->width,
-				b->height, cur_alpha);
+		if (b->rt.img_idle != NULL) {
+			s3_render_image(b->x,
+					b->y,
+					b->width,
+					b->height,
+					b->rt.img_idle,
+					b->x,
+					b->y,
+					b->width,
+					b->height,
+					cur_alpha);
+		}
 	}
 
 	/* If the button is pointed, draw the bar part with the hover image. */
 	if (index == pointed_index && !is_fading_in && !is_fading_out) {
-		s3_render_image(b->x, b->y, b->width, b->height,
-				b->rt.img_hover, b->x, b->y, b->width,
-				b->height, cur_alpha);
+		struct s3_image *img;
+		img = b->rt.img_hover != NULL ? b->rt.img_hover : b->rt.img_idle;
+		if (img != NULL) {
+			s3_render_image(b->x,
+					b->y,
+					b->width,
+					b->height,
+					img,
+					b->x,
+					b->y,
+					b->width,
+					b->height,
+					cur_alpha);
+		}
 	}
 
 	/* Calculate the drawing position. */
 	x = b->x + (int)((float)(b->width - b->height) * b->rt.slider);
 
-	/* Draw the knob with the active image. */
-	s3_render_image(x, b->y, b->height, b->height,
-			b->rt.img_disable, b->x, b->y,
-			b->height, b->height, cur_alpha);
+	/* Draw the knob with the "disable" image. */
+	if (b->rt.img_disable != NULL) {
+		if (b->rt.img_disable != NULL) {
+			s3_render_image(x,
+					b->y,
+					b->height,
+					b->height,
+					b->rt.img_disable,
+					b->x,
+					b->y,
+					b->height,
+					b->height,
+					cur_alpha);
+		}
+	}
 }
 
 /* Render a vertical slider button. */
@@ -1680,25 +1733,54 @@ process_button_render_slider_vertical(
 
 	/* If the button is not pointed, draw the bar part with the idle image. */
 	if (index != pointed_index || is_fading_in || is_fading_out) {
-		s3_render_image(b->x, b->y, b->width, b->height,
-				b->rt.img_idle, b->x, b->y, b->width,
-				b->height, cur_alpha);
+		if (b->rt.img_idle != NULL) {
+			s3_render_image(b->x,
+					b->y,
+					b->width,
+					b->height,
+					b->rt.img_idle,
+					b->x,
+					b->y,
+					b->width,
+					b->height,
+					cur_alpha);
+		}
 	}
 
 	/* If the button is pointed, draw the bar part with the hover image. */
 	if (index == pointed_index && !is_fading_in && !is_fading_out) {
-		s3_render_image(b->x, b->y, b->width, b->height,
-				b->rt.img_hover, b->x, b->y, b->width,
-				b->height, cur_alpha);
+		struct s3_image *img;
+		img = b->rt.img_hover != NULL ? b->rt.img_hover : b->rt.img_idle;
+		if (img != NULL) {
+			s3_render_image(b->x,
+					b->y,
+					b->width,
+					b->height,
+					img,
+					b->x,
+					b->y,
+					b->width,
+					b->height,
+					cur_alpha);
+		}
 	}
 
 	/* Calculate the drawing position. */
 	y = b->y + (int)((float)(b->height - b->width) * b->rt.slider);
 
-	/* Draw the knob with the active image. */
-	s3_render_image(b->x, y, b->width, b->width,
-			b->rt.img_disable, b->x, b->y,
-			b->width, b->width, cur_alpha);
+	/* Draw the knob with the "disable" image. */
+	if (b->rt.img_disable != NULL) {
+		s3_render_image(b->x,
+				y,
+				b->width,
+				b->width,
+				b->rt.img_disable,
+				b->x,
+				b->y,
+				b->width,
+				b->width,
+				cur_alpha);
+	}
 }
 
 /* Render a preview button. */
@@ -1710,9 +1792,16 @@ process_button_render_preview(
 
 	b = &button[index];
 
-	s3_render_image(b->x, b->y, b->width, b->height,
+	s3_render_image(b->x,
+			b->y,
+			b->width,
+			b->height,
 			b->rt.img_canvas,
-			0, 0, b->width, b->height, cur_alpha);
+			0,
+			0,
+			b->width,
+			b->height,
+			cur_alpha);
 }
 
 /* Render a generic button. */
@@ -1725,13 +1814,33 @@ process_button_render_generic(
 	b = &button[index];
 
 	if (index != pointed_index) {
-		s3_render_image(b->x, b->y, b->width, b->height,
-				b->rt.img_idle, b->x, b->y, b->width,
-				b->height, cur_alpha);
+		if (b->rt.img_idle != NULL) {
+			s3_render_image(b->x,
+					b->y,
+					b->width,
+					b->height,
+					b->rt.img_idle,
+					b->x,
+					b->y,
+					b->width,
+					b->height,
+					cur_alpha);
+		}
 	} else {
-		s3_render_image(b->x, b->y, b->width, b->height,
-				b->rt.img_hover, b->x, b->y, b->width,
-				b->height, cur_alpha);
+		struct s3_image *img;
+		img = b->rt.img_hover != NULL ? b->rt.img_hover : b->rt.img_idle;
+		if (img != NULL) {
+			s3_render_image(b->x,
+					b->y,
+					b->width,
+					b->height,
+					img,
+					b->x,
+					b->y,
+					b->width,
+					b->height,
+					cur_alpha);
+		}
 	}
 }
 
@@ -1768,7 +1877,7 @@ init_save_buttons(void)
 {
 	int i;
 
-	for (i = 0; i < BUTTON_COUNT; i++) {
+	for (i = 0; i < S3_BUTTON_LAYERS; i++) {
 		if (button[i].type != TYPE_SAVE && button[i].type != TYPE_LOAD)
 			continue;
 
@@ -1788,7 +1897,7 @@ update_save_buttons(void)
 	int i, base, save_index;
 
 	base = save_slots * save_page;
-	for (i = 0; i < BUTTON_COUNT; i++) {
+	for (i = 0; i < S3_BUTTON_LAYERS; i++) {
 		if (button[i].type != TYPE_SAVE && button[i].type != TYPE_LOAD)
 			continue;
 
@@ -2024,27 +2133,33 @@ process_button_render_save(
 	b = &button[index];
 
 	if (index != pointed_index) {
-		s3_render_image(b->x,
-				b->y,
-				b->width,
-				b->height,
-				b->rt.img_idle,
-				b->x,
-				b->y,
-				b->width,
-				b->height,
-				cur_alpha);
+		if (b->rt.img_idle != NULL) {
+			s3_render_image(b->x,
+					b->y,
+					b->width,
+					b->height,
+					b->rt.img_idle,
+					b->x,
+					b->y,
+					b->width,
+					b->height,
+					cur_alpha);
+		}
 	} else {
-		s3_render_image(b->x,
-				b->y,
-				b->width,
-				b->height,
-				b->rt.img_hover,
-				b->x,
-				b->y,
-				b->width,
-				b->height,
-				cur_alpha);
+		struct s3_image *img;
+		img = b->rt.img_hover != NULL ? b->rt.img_hover : b->rt.img_idle;
+		if (img != NULL) {
+			s3_render_image(b->x,
+					b->y,
+					b->width,
+					b->height,
+					img,
+					b->x,
+					b->y,
+					b->width,
+					b->height,
+					cur_alpha);
+		}
 	}
 
 	/* Render the thumbnail and text. */
@@ -2092,7 +2207,7 @@ init_history_buttons(void)
 	}
 
 	/* Create images for each button. */
-	for (i = 0; i < BUTTON_COUNT; i++) {
+	for (i = 0; i < S3_BUTTON_LAYERS; i++) {
 		if (button[i].type != TYPE_HISTORY)
 			continue;
 
@@ -2119,27 +2234,33 @@ process_button_render_history(
 		return;
 
 	if (!b->rt.is_disabled && index == pointed_index) {
-		s3_render_image(b->x,
-				b->y,
-				b->width,
-				b->height,
-				b->rt.img_hover,
-				b->x,
-				b->y,
-				b->width,
-				b->height,
-				cur_alpha);
+		struct s3_image *img;
+		img = b->rt.img_hover != NULL ? b->rt.img_hover : b->rt.img_idle;
+		if (img != NULL) {
+			s3_render_image(b->x,
+					b->y,
+					b->width,
+					b->height,
+					img,
+					b->x,
+					b->y,
+					b->width,
+					b->height,
+					cur_alpha);
+		}
 	} else {
-		s3_render_image(b->x,
-				b->y,
-				b->width,
-				b->height,
-				b->rt.img_idle,
-				b->x,
-				b->y,
-				b->width,
-				b->height,
-				cur_alpha);
+		if (b->rt.img_idle != NULL) {
+			s3_render_image(b->x,
+					b->y,
+					b->width,
+					b->height,
+					b->rt.img_idle,
+					b->x,
+					b->y,
+					b->width,
+					b->height,
+					cur_alpha);
+		}
 	}
 
 	/* Render the text. */
@@ -2161,7 +2282,7 @@ draw_history_buttons(void)
 {
 	int i;
 
-	for (i = 0; i < BUTTON_COUNT; i++) {
+	for (i = 0; i < S3_BUTTON_LAYERS; i++) {
 		if (button[i].type != TYPE_HISTORY)
 			continue;
 		if (button[i].rt.img_canvas == NULL)
@@ -2421,7 +2542,7 @@ static bool init_preview_buttons(void)
 {
 	int i;
 
-	for (i = 0; i < BUTTON_COUNT; i++) {
+	for (i = 0; i < S3_BUTTON_LAYERS; i++) {
 		if (button[i].type != TYPE_PREVIEW)
 			continue;
 		if (button[i].msg == NULL) {
@@ -2452,7 +2573,7 @@ static void reset_preview_buttons(void)
 {
 	int i;
 
-	for (i = 0; i < BUTTON_COUNT; i++) {
+	for (i = 0; i < S3_BUTTON_LAYERS; i++) {
 		if (button[i].type != TYPE_PREVIEW)
 			continue;
 
@@ -2549,7 +2670,7 @@ static void draw_preview_buttons(void)
 {
 	int i;
 
-	for (i = 0; i < BUTTON_COUNT; i++) {
+	for (i = 0; i < S3_BUTTON_LAYERS; i++) {
 		if (button[i].type != TYPE_PREVIEW)
 			continue;
 
@@ -2654,7 +2775,7 @@ init_var_buttons(void)
 {
 	int i;
 
-	for (i = 0; i < BUTTON_COUNT; i++) {
+	for (i = 0; i < S3_BUTTON_LAYERS; i++) {
 		if (button[i].type != TYPE_NAMEVAR)
 			continue;
 		if (button[i].width <= 0)
@@ -2685,7 +2806,7 @@ draw_var_buttons(void)
 {
 	int i;
 
-	for (i = 0; i < BUTTON_COUNT; i++)
+	for (i = 0; i < S3_BUTTON_LAYERS; i++)
 		if (button[i].type == TYPE_NAMEVAR)
 			draw_var_button(i);
 }
@@ -3225,10 +3346,12 @@ add_button(
 	const char *file)
 {
 	/* If the number of buttons exceeds the limit. */
-	if (index >= BUTTON_COUNT) {
+	if (index >= S3_BUTTON_LAYERS) {
 		s3_log_error(S3_TR("Too many GUI buttons in GUI file %s"), file);
 		return false;
 	}
+
+	button[index].is_initialized = true;
 
 	/* There is no specific processing for adding a button, just checking the count. */
 	return true;
@@ -3245,7 +3368,7 @@ set_button_key_value(
 {
 	struct gui_button *b;
 
-	assert(index >= 0 && index < BUTTON_COUNT);
+	assert(index >= 0 && index < S3_BUTTON_LAYERS);
 
 	b = &button[index];
 
@@ -3297,6 +3420,8 @@ set_button_key_value(
 
 	/* image-idle */
 	if (strcmp("image-idle", key) == 0) {
+		if (b->rt.img_idle != NULL)
+			s3_destroy_image(b->rt.img_idle);
 		b->rt.img_idle = s3_create_image_from_file(val);
 		if (b->rt.img_idle == NULL)
 			return false;
@@ -3309,6 +3434,8 @@ set_button_key_value(
 
 	/* image-hover */
 	if (strcmp("image-hover", key) == 0) {
+		if (b->rt.img_hover != NULL)
+			s3_destroy_image(b->rt.img_hover);
 		b->rt.img_hover = s3_create_image_from_file(val);
 		if (b->rt.img_hover == NULL)
 			return false;
@@ -3320,7 +3447,10 @@ set_button_key_value(
 	}
 
 	/* image-disable */
-	if (strcmp("image-disable", key) == 0) {
+	if (strcmp("image-disable", key) == 0 ||
+	    strcmp("image-knob", key) == 0) {
+		if (b->rt.img_disable != NULL)
+			s3_destroy_image(b->rt.img_disable);
 		b->rt.img_disable = s3_create_image_from_file(val);
 		if (b->rt.img_disable == NULL)
 			return false;

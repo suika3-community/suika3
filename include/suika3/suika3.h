@@ -61,27 +61,27 @@
 /*
  * Name of the system menu GUI file.
  */
-#define S3_PATH_SYSMENU_GUI	"sysmenu.gui"
+#define S3_PATH_SYSMENU_GUI	"system/sysmenu/sysmenu.gui"
 
 /*
  * Name of the save GUI file.
  */
-#define S3_PATH_SAVE_GUI	"save.gui"
+#define S3_PATH_SAVE_GUI	"system/save/save.gui"
 
 /*
  * Name of the load GUI file.
  */
-#define S3_PATH_LOAD_GUI	"load.gui"
+#define S3_PATH_LOAD_GUI	"system/load/load.gui"
 
 /*
  * Name of the history GUI file.
  */
-#define S3_PATH_HISTORY_GUI	"history.gui"
+#define S3_PATH_HISTORY_GUI	"system/history/history.gui"
 
 /*
  * Name of the config GUI file.
  */
-#define S3_PATH_CONFIG_GUI	"config.gui"
+#define S3_PATH_CONFIG_GUI	"system/config/config.gui"
 
 
 /*
@@ -159,7 +159,39 @@
 #define S3_LAYER_TEXT6		(65)	/* Text layer 6 */
 #define S3_LAYER_TEXT7		(66)	/* Text layer 7 */
 #define S3_LAYER_TEXT8		(67)	/* Text layer 8 */
-#define S3_STAGE_LAYERS		(68)	/* Total layers */
+#define S3_LAYER_GUI_BTN1	(68)	/* GUI button 1 */
+#define S3_LAYER_GUI_BTN2	(69)	/* GUI button 2 */
+#define S3_LAYER_GUI_BTN3	(70)	/* GUI button 3 */
+#define S3_LAYER_GUI_BTN4	(71)	/* GUI button 4 */
+#define S3_LAYER_GUI_BTN5	(72)	/* GUI button 5 */
+#define S3_LAYER_GUI_BTN6	(73)	/* GUI button 6 */
+#define S3_LAYER_GUI_BTN7	(74)	/* GUI button 7 */
+#define S3_LAYER_GUI_BTN8	(75)	/* GUI button 8 */
+#define S3_LAYER_GUI_BTN9	(76)	/* GUI button 9 */
+#define S3_LAYER_GUI_BTN10	(77)	/* GUI button 10 */
+#define S3_LAYER_GUI_BTN11	(78)	/* GUI button 11 */
+#define S3_LAYER_GUI_BTN12	(79)	/* GUI button 12 */
+#define S3_LAYER_GUI_BTN13	(80)	/* GUI button 13 */
+#define S3_LAYER_GUI_BTN14	(81)	/* GUI button 14 */
+#define S3_LAYER_GUI_BTN15	(82)	/* GUI button 15 */
+#define S3_LAYER_GUI_BTN16	(83)	/* GUI button 16 */
+#define S3_LAYER_GUI_BTN17	(84)	/* GUI button 17 */
+#define S3_LAYER_GUI_BTN18	(85)	/* GUI button 18 */
+#define S3_LAYER_GUI_BTN19	(86)	/* GUI button 19 */
+#define S3_LAYER_GUI_BTN20	(87)	/* GUI button 20 */
+#define S3_LAYER_GUI_BTN21	(88)	/* GUI button 21 */
+#define S3_LAYER_GUI_BTN22	(89)	/* GUI button 22 */
+#define S3_LAYER_GUI_BTN23	(90)	/* GUI button 23 */
+#define S3_LAYER_GUI_BTN24	(91)	/* GUI button 24 */
+#define S3_LAYER_GUI_BTN25	(92)	/* GUI button 25 */
+#define S3_LAYER_GUI_BTN26	(93)	/* GUI button 26 */
+#define S3_LAYER_GUI_BTN27	(94)	/* GUI button 27 */
+#define S3_LAYER_GUI_BTN28	(95)	/* GUI button 28 */
+#define S3_LAYER_GUI_BTN29	(96)	/* GUI button 29 */
+#define S3_LAYER_GUI_BTN30	(97)	/* GUI button 30 */
+#define S3_LAYER_GUI_BTN31	(98)	/* GUI button 31 */
+#define S3_LAYER_GUI_BTN32	(99)	/* GUI button 32 */
+#define S3_STAGE_LAYERS		(100)	/* Total layers */
 
 /*
  * Number of the text layers.
@@ -170,6 +202,11 @@
  * Number of the effect layers.
  */
 #define S3_EFFECT_LAYERS	(4)
+
+/*
+ * Number of the GUI button layers.
+ */
+#define S3_BUTTON_LAYERS	(32)
 
 /*
  * Maximum number of the click animation frames.
@@ -2448,6 +2485,12 @@ s3_stop_gui(void);
  */
 bool
 s3_is_gui_running(void);
+
+/*
+ * Chech if a GUI is finished.
+ */
+bool
+s3_is_gui_finished(void);
 
 /*
  * Get the label of the selected button.
