@@ -263,6 +263,9 @@ static bool is_pointed_by_key;
 /* Is dragging finished? */
 static bool is_drag_finished;
 
+/* Is mouse pointing of a button detected? */
+static bool is_mouse_point_detected;
+
 /* Mouse coordinates when pointed by keyboard input. */
 static int save_mouse_pos_x, save_mouse_pos_y;
 
@@ -346,7 +349,7 @@ static void process_blit(void);
 static void process_render(void);
 static bool process_move(void);
 static void process_se(void);
-static void process_left_right_arrow_keys(void);
+static bool process_left_right_arrow_keys(void);
 static bool add_button(int index, const char *file);
 static bool set_global_key_value(const char *key, const char *val, const char *file, int line);
 static bool set_button_key_value(const int index, const char *key, const char *val, const char *file, int line);
@@ -355,9 +358,9 @@ static void update_runtime_props(bool is_first_time);
 static bool move_to_other_gui(void);
 static bool move_to_title(void);
 static bool process_button_point(int index, bool key);
-static void process_button_drag(int index);
+static bool process_button_drag(int index);
 static float calc_slider_value(int index);
-static void process_button_click(int index);
+static bool process_button_click(int index);
 static void process_button_render(int index);
 static void process_button_render_slider(int index);
 static void process_button_render_slider_vertical(int index);
@@ -795,6 +798,8 @@ process_timeout(void)
 static void process_input(void)
 {
 	int i;
+	bool is_key_detected;
+	bool is_drag_processed;
 
 	/* Do not accept input during fade. */
 	if (is_fading_in || is_fading_out)
@@ -807,9 +812,6 @@ static void process_input(void)
 	result_index = -1;
 	prev_pointed_index = pointed_index;
 	need_update_history_buttons = false;
-
-	/* Process left and right arrow keys. */
-	process_left_right_arrow_keys();
 
 	/* Process scrolling by mouse wheel, up/down keys, or swipe. */
 	if (s3_is_down_key_pressed()) {
@@ -826,30 +828,57 @@ static void process_input(void)
 		update_runtime_props(false);
 	}
 
-	/* Process each button. */
-	is_drag_finished = false;
-	for (i = S3_BUTTON_LAYERS - 1; i >= 0; i--) {
-		if (!button[i].is_initialized)
-			continue;
+	/* Process left and right arrow keys. */
+	is_key_detected = false;
+	if (!is_fading_in && !is_fading_out)
+		is_key_detected = process_left_right_arrow_keys();
 
-		if (!is_fading_in && !is_fading_out) {
-			/* Update pointed state. */
-			process_button_point(i, false);
-
-			/* Update drag state. */
-			process_button_drag(i);
-
-			/* Get click result. */
-			process_button_click(i);
-		}
-	}
-
-	/* Process after drag is finished. */
-	if (is_drag_finished) {
+	/* Update the state of mouse pointing. */
+	if (!is_key_detected && !is_fading_in && !is_fading_out) {
+		is_mouse_point_detected = false;
 		for (i = S3_BUTTON_LAYERS - 1; i >= 0; i--) {
 			if (!button[i].is_initialized)
 				continue;
-			process_button_point(i, false);
+
+			/* Update pointed state. */
+			if (process_button_point(i, false))
+				break;
+		}
+	}
+
+	/* Update the state of mouse dragging. */
+	is_drag_processed = false;
+	if (!is_key_detected && !is_fading_in && !is_fading_out) {
+		is_drag_finished = false;
+		for (i = S3_BUTTON_LAYERS - 1; i >= 0; i--) {
+			if (!button[i].is_initialized)
+				continue;
+
+			/* Update drag state. */
+			if (process_button_drag(i)) {
+				is_drag_processed = true;
+				break;
+			}
+		}
+	}
+
+	/* Update the state of mouse click. */
+	if (!is_drag_processed && !is_fading_in && !is_fading_out) {
+		for (i = S3_BUTTON_LAYERS - 1; i >= 0; i--) {
+			/* Get click result. */
+			if(process_button_click(i))
+				break;
+		}
+	}
+
+	/* Adjust pointing after dragging is finished. */
+	if (is_drag_finished) {
+		is_mouse_point_detected = false;
+		for (i = S3_BUTTON_LAYERS - 1; i >= 0; i--) {
+			if (!button[i].is_initialized)
+				continue;
+			if (process_button_point(i, false))
+				break;
 		}
 		is_drag_finished = false;
 	}
@@ -1070,7 +1099,7 @@ process_se(void)
 }
 
 /* Process left and right arrow keys. */
-static void
+static bool
 process_left_right_arrow_keys(void)
 {
 	int i, search_start;
@@ -1081,19 +1110,22 @@ process_left_right_arrow_keys(void)
 	if (s3_is_right_key_pressed()) {
 		/* Find the selected button. */
 		search_start = pointed_index + 1;
+		if (search_start == S3_BUTTON_LAYERS)
+			search_start = 0;
 
 		/* Search for a button to select. */
-		for (i = search_start; i < S3_BUTTON_LAYERS; i++)
+		for (i = search_start; i < S3_BUTTON_LAYERS; i++) {
 			if (process_button_point(i, true))
-				return;
+				return true;
+		}
 
 		/* Wrap the search. */
 		if (search_start == 0)
-			return;
+			return false;
 		for (i = 0; i < search_start; i++)
 			if (process_button_point(i, true))
-				return;
-		return;
+				return true;
+		return false;
 	}
 
 	/* Process left arrow key. */
@@ -1107,15 +1139,17 @@ process_left_right_arrow_keys(void)
 		/* Search for a button to select. */
 		for (i = search_start; i >= 0; i--)
 			if (process_button_point(i, true))
-				return;
+				return true;
 
 		/* Wrap the search. */
 		if (search_start == S3_BUTTON_LAYERS -1)
-			return;
+			return false;
 		for (i = S3_BUTTON_LAYERS - 1; i > search_start; i--)
 			if (process_button_point(i, true))
-				return;
+				return true;
 	}
+
+	return false;
 }
 
 /* Move to another GUI. */
@@ -1229,6 +1263,10 @@ process_button_point(int index, bool key)
 	if (b->type == TYPE_INVALID)
 		return false;
 
+	/* If the button is TYPE_NOACTION, it cannot be pointed at. (no button) */
+	if (b->type == TYPE_NOACTION)
+		return false;
+
 	/* If the button is TYPE_LOAD and there is no save data, it cannot be pointed at. */
 	if (b->type == TYPE_LOAD && b->rt.is_disabled)
 		return false;
@@ -1279,7 +1317,8 @@ process_button_point(int index, bool key)
 	}
 
 	/* If the mouse is within the button area. */
-	if (mouse_pos_x >= b->x && mouse_pos_x <= b->x + b->width &&
+	if (!is_mouse_point_detected &&
+	    mouse_pos_x >= b->x && mouse_pos_x <= b->x + b->width &&
 	    mouse_pos_y >= b->y && mouse_pos_y <= b->y + b->height) {
 		/* If the item is already selected by key. */
 		if (is_pointed_by_key && index == pointed_index)
@@ -1295,27 +1334,26 @@ process_button_point(int index, bool key)
 		if (index != prev_pointed_index) {
 			/* Set it to the pointed state. */
 			pointed_index = index;
-            is_pointed_by_key = false;
+			is_pointed_by_key = false;
+			is_mouse_point_detected = true;
 		}
 		return true;
 	}
-
-	/* If it is no longer pointed at (except for key selection). */
-	if (pointed_index == index && !is_pointed_by_key)
-		pointed_index = -1;
 
 	return false;
 }
 
 /* Process dragging of volume buttons. */
-static void process_button_drag(int index)
+static bool
+process_button_drag(int index)
 {
 	struct gui_button *b;
 
 	b = &button[index];
 
 	/* If the button is not draggable. */
-	if (b->type != TYPE_MASTERVOL &&
+	if (b->type != TYPE_NOACTION &&
+	    b->type != TYPE_MASTERVOL &&
 	    b->type != TYPE_BGMVOL &&
 	    b->type != TYPE_VOICEVOL &&
 	    b->type != TYPE_SEVOL &&
@@ -1324,21 +1362,21 @@ static void process_button_drag(int index)
 	    b->type != TYPE_AUTOSPEED &&
 	    b->type != TYPE_HISTORYSCROLL &&
 	    b->type != TYPE_HISTORYSCROLL_HORIZONTAL)
-		return;
+		return false;
 
 	/* If not dragging. */
 	if (!b->rt.is_dragging) {
 		/* If not dragging. */
 		if (!s3_is_mouse_dragging())
-			return;
+			return false;
 
 		/* If not pointed at. */
 		if (pointed_index != index)
-			return;
+			return false;
 
 		/* If already dragging. */
 		if (dragging_index != -1)
-			return;
+			return true;
 
 		/* Start dragging. */
 		dragging_index = index;
@@ -1348,7 +1386,7 @@ static void process_button_drag(int index)
 			s3_set_master_volume(b->rt.slider);
 		if (b->type == TYPE_BGMVOL)
 			s3_set_mixer_global_volume(S3_TRACK_BGM, b->rt.slider);
-		return;
+		return true;
 	}
 
 	/*
@@ -1432,10 +1470,13 @@ static void process_button_drag(int index)
 
 	/* Update other buttons in case there are multiple buttons of the same type. */
 	update_runtime_props(false);
+
+	return true;
 }
 
 /* Calculate the value of the slider. */
-static float calc_slider_value(int index)
+static float
+calc_slider_value(int index)
 {
 	float val;
 
@@ -1477,7 +1518,7 @@ static float calc_slider_value(int index)
 }
 
 /* Process button click. */
-static void
+static bool
 process_button_click(
 	int index)
 {
@@ -1486,7 +1527,8 @@ process_button_click(
 	b = &button[index];
 
 	/* If the button cannot be clicked. */
-	if (b->type == TYPE_MASTERVOL ||
+	if (b->type == TYPE_NOACTION ||
+	    b->type == TYPE_MASTERVOL ||
 	    b->type == TYPE_BGMVOL ||
 	    b->type == TYPE_VOICEVOL ||
 	    b->type == TYPE_SEVOL ||
@@ -1494,19 +1536,19 @@ process_button_click(
 	    b->type == TYPE_TEXTSPEED ||
 	    b->type == TYPE_AUTOSPEED ||
 	    b->type == TYPE_PREVIEW)
-		return;
+		return false;
 
-	/* If buttons are not pointed. */
+	/* If this button is not pointed. */
 	if (index != pointed_index)
-		return;
+		return false;
 
 	/* If the pointed button is not clicked. */
 	if (!s3_is_mouse_left_clicked() && !s3_is_return_key_pressed())
-		return;
+		return false;
 
 	/* If other buttons are being dragged. */
 	if (dragging_index != -1 && dragging_index != index)
-		return;
+		return false;
 
 	/* Process click according to button type. */
 	switch (b->type) {
@@ -1563,6 +1605,8 @@ process_button_click(
 	}
 
 	s3_clear_input_state();
+
+	return true;
 }
 
 /*
@@ -1682,8 +1726,8 @@ process_button_render_slider(
 					b->width,
 					b->height,
 					b->rt.img_idle,
-					b->x,
-					b->y,
+					0,
+					0,
 					b->width,
 					b->height,
 					cur_alpha);
@@ -1700,8 +1744,8 @@ process_button_render_slider(
 					b->width,
 					b->height,
 					img,
-					b->x,
-					b->y,
+					0,
+					0,
 					b->width,
 					b->height,
 					cur_alpha);
@@ -1723,8 +1767,8 @@ process_button_render_slider(
 					b->height,
 					b->height,
 					b->rt.img_disable,
-					b->x,
-					b->y,
+					0,
+					0,
 					b->height,
 					b->height,
 					cur_alpha);
@@ -1750,8 +1794,8 @@ process_button_render_slider_vertical(
 					b->width,
 					b->height,
 					b->rt.img_idle,
-					b->x,
-					b->y,
+					0,
+					0,
 					b->width,
 					b->height,
 					cur_alpha);
@@ -1768,8 +1812,8 @@ process_button_render_slider_vertical(
 					b->width,
 					b->height,
 					img,
-					b->x,
-					b->y,
+					0,
+					0,
 					b->width,
 					b->height,
 					cur_alpha);
@@ -1790,8 +1834,8 @@ process_button_render_slider_vertical(
 				b->width,
 				b->width,
 				b->rt.img_disable,
-				b->x,
-				b->y,
+				0,
+				0,
 				b->width,
 				b->width,
 				cur_alpha);
@@ -1835,8 +1879,8 @@ process_button_render_generic(
 					b->width,
 					b->height,
 					b->rt.img_idle,
-					b->x,
-					b->y,
+					0,
+					0,
 					b->width,
 					b->height,
 					cur_alpha);
@@ -1850,8 +1894,8 @@ process_button_render_generic(
 					b->width,
 					b->height,
 					img,
-					b->x,
-					b->y,
+					0,
+					0,
 					b->width,
 					b->height,
 					cur_alpha);
@@ -3769,6 +3813,7 @@ get_type_for_name(
 		const char *name;
 		int value;
 	} type_array[] = {
+		{"noaction",			TYPE_NOACTION},
 		{"goto",			TYPE_LABEL},
 		{"mastervol",			TYPE_MASTERVOL},
 		{"bgmvol",			TYPE_BGMVOL},

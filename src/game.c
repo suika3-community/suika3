@@ -340,21 +340,16 @@ s3i_on_game_update(void)
 	/* Do a sound fading. */
 	process_sound_fading();
 
-	/* Reset input states. */
-	is_mouse_left_clicked = false;
-	is_mouse_right_clicked = false;
-	is_space_key_pressed = false;
-	is_return_key_pressed = false;
-	is_escape_key_pressed = false;
-	is_up_key_pressed = false;
-	is_down_key_pressed = false;
-	is_left_key_pressed = false;
-	is_right_key_pressed = false;
-	is_s_key_pressed = false;
-	is_l_key_pressed = false;
-	is_h_key_pressed = false;
-	is_touch_canceled = false;
-	is_swiped = false;
+	/* Reset input states to avoid keyboard repeat. */
+	pf_is_return_key_pressed = false;
+	pf_is_escape_key_pressed = false;
+	pf_is_up_key_pressed = false;
+	pf_is_down_key_pressed = false;
+	pf_is_left_key_pressed = false;
+	pf_is_right_key_pressed = false;
+	pf_is_s_key_pressed = false;
+	pf_is_l_key_pressed = false;
+	pf_is_h_key_pressed = false;
 
 	return true;
 }
