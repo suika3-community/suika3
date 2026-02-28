@@ -107,12 +107,18 @@ bool
 s3_move_to_label(
 	const char *label)
 {
-	int i;
+	if (!pf_move_to_label_tag(label)) {
+		/* Not found. */
+		s3_log_error(S3_TR("Label \"%s\" not found."), label);
+		return false;
+	}
 
-	for (i = 0; i <
+	if (!pf_move_to_next_tag()) {
+		s3_log_error(S3_TR("Label \"%s\" is at the end of file."), label);
+		return false;
+	}
 
-	/* TODO */
-	return false;
+	return true;
 }
 
 /*
