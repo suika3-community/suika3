@@ -889,6 +889,13 @@ pf_get_tag_property_value(
 	int index);
 
 /*
+ * Evaluate property values of the current tag.
+ */
+bool
+pf_evaluate_tag_property_values(
+	const char *(*get_var_val)(const char *));
+
+/*
  * Push an "if" to the tag stack.
  */
 bool

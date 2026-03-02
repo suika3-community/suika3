@@ -265,7 +265,9 @@ pfi_call_vm_tag_function(
 	struct pfi_tag *t;
 	NoctValue dict;
 	int i;
+	int prop_count;
 	char func_name[256];
+	const char *tag_name;
 	NoctValue func_val;
 	NoctFunc *func;
 	NoctValue ret;
@@ -273,8 +275,7 @@ pfi_call_vm_tag_function(
 	*tag_end = false;
 
 	/* Get a current command. */
-	t = pfi_get_current_tag();
-	if (t == NULL) {
+	if (pfi_get_tag_index() == pfi_get_tag_count()) {
 		/* Reached to the end. Finish the game loop. */
 		*tag_end = true;
 		return true;
@@ -289,15 +290,22 @@ pfi_call_vm_tag_function(
 	}
 
 	/* Setup properties as dictionary items. */
-	for (i = 0; i < t->prop_count; i++) {
+	prop_count = pfi_get_tag_property_count();
+	for (i = 0; i < prop_count; i++) {
 		NoctValue str;
-		if (!noct_make_string(env, &str, t->prop_value[i])) {
+		const char *prop_name;
+		const char *prop_value;
+
+		prop_name = pfi_get_tag_property_name(i);
+		prop_value = pfi_get_tag_property_value(i);
+
+		if (!noct_make_string(env, &str, prop_value)) {
 			hal_log_error(PF_TR("In tag %s:%d: runtime error."),
 				      pfi_get_tag_file_name(),
 				      pfi_get_tag_line());
 			return false;
 		}
-		if (!noct_set_dict_elem(env, &dict, t->prop_name[i], &str)) {
+		if (!noct_set_dict_elem(env, &dict, prop_name, &str)) {
 			hal_log_error(PF_TR("In tag %s:%d: runtime error."),
 				      pfi_get_tag_file_name(),
 				      pfi_get_tag_line());
@@ -306,21 +314,22 @@ pfi_call_vm_tag_function(
 	}
 
 	/* Make a tag function name. */
-	snprintf(func_name, sizeof(func_name), "Tag_%s", t->tag_name);
+	tag_name = pfi_get_tag_name();
+	snprintf(func_name, sizeof(func_name), "Tag_%s", tag_name);
 
 	/* Get a corresponding function.  */
 	if (!noct_get_global(env, func_name, &func_val)) {
 		hal_log_error(PF_TR("%s:%d: Tag \"%s\" not found."),
 			      pfi_get_tag_file_name(),
 			      pfi_get_tag_line(),
-			      t->tag_name);
+			      tag_name);
 		return false;
 	}
 	if (!noct_get_func(env, &func_val, &func)) {
 		hal_log_error(PF_TR("%s:%d: \"tag_%s\" is not a function."),
 			      pfi_get_tag_file_name(),
 			      pfi_get_tag_line(),
-			      t->tag_name);
+			      tag_name);
 		return false;
 	}
 
@@ -333,7 +342,7 @@ pfi_call_vm_tag_function(
 		hal_log_error(PF_TR("In tag %s:%d: Tag \"%s\" execution error."),
 			      pfi_get_tag_file_name(),
 			      pfi_get_tag_line(),
-			      t->tag_name);
+			      tag_name);
 
 		noct_get_error_file(env, &file);
 		noct_get_error_line(env, &line);

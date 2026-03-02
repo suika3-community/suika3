@@ -36,30 +36,6 @@
 
 #include "playfield/playfield.h"
 
-/*
- * Maximum properties in a tag.
- */
-#define PROP_MAX	128
-
-/*
- * Command struct.
- */
-struct pfi_tag {
-	char *tag_name;
-	int prop_count;
-	char *prop_name[PROP_MAX];
-	char *prop_value[PROP_MAX];
-	int line;
-};
-
-/*
- * Tag execution stack element.
- */
-struct pfi_tag_stack {
-	int type;
-	int start;
-};
-
 /* Initialize the tag system. */
 void
 pfi_init_tag(void);
@@ -72,7 +48,7 @@ pfi_cleanup_tag(void);
  * Load a tag file.
  */
 bool
-pfi_load_tag_file(
+pfi_move_to_tag_file(
 	const char *file);
 
 /*
@@ -86,24 +62,6 @@ pfi_get_tag_file_name(void);
  */
 int
 pfi_get_tag_count(void);
-
-/*
- * Get the command index of the current tag.
- */
-int
-pfi_get_tag_index(void);
-
-/*
- * Get the tag line.
- */
-int
-pfi_get_tag_line(void);
-
-/*
- * Get the current tag.
- */
-struct pfi_tag *
-pfi_get_current_tag(void);
 
 /*
  * Move to the next tag.
@@ -124,6 +82,51 @@ pfi_move_to_label_tag(
 bool
 pfi_move_to_tag_index(
 	int index);
+
+/*
+ * Get the command index of the current tag.
+ */
+int
+pfi_get_tag_index(void);
+
+/*
+ * Get the tag line.
+ */
+int
+pfi_get_tag_line(void);
+
+/*
+ * Get the name of the current tag.
+ */
+const char *
+pfi_get_tag_name(void);
+
+/*
+ * Get the property count of the current tag.
+ */
+int
+pfi_get_tag_property_count(void);
+
+/*
+ * Get the property name of the current tag.
+ */
+const char *
+pfi_get_tag_property_name(
+	int index);
+
+/*
+ * Get the property value of the current tag.
+ */
+const char *
+pfi_get_tag_property_value(
+	int index);
+
+/*
+ * Evaluate property values of the current tag.
+ */
+bool
+pfi_evaluate_tag_property_values(
+	const char *(*get_var_val)(const char *));
 
 /*
  * Push an "if" to the tag stack.

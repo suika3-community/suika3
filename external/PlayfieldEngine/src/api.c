@@ -2043,22 +2043,31 @@ pf_set_return_dictionary(
  */
 
 /*
- * Get the tag count.
- */
-int
-pf_get_tag_count(void)
-{
-	return pfi_get_tag_count();
-}
-
-/*
  * Load a tag file and move to it.
  */
 bool
 pf_move_to_tag_file(
 	const char *file)
 {
-	return pfi_load_tag_file(file);
+	return pfi_move_to_tag_file(file);
+}
+
+/*
+ * Get a tag file name.
+ */
+const char *
+pf_get_tag_file(void)
+{
+	return pfi_get_tag_file_name();
+}
+
+/*
+ * Get the tag count.
+ */
+int
+pf_get_tag_count(void)
+{
+	return pfi_get_tag_count();
 }
 
 /*
@@ -2091,15 +2100,6 @@ pf_move_to_tag_index(
 }
 
 /*
- * Get a tag file name.
- */
-const char *
-pf_get_tag_file(void)
-{
-	return pfi_get_tag_file_name();
-}
-
-/*
  * Get the command index of the current tag.
  */
 int
@@ -2123,11 +2123,7 @@ pf_get_tag_line(void)
 const char *
 pf_get_tag_name(void)
 {
-	struct pfi_tag *t;
-
-	t = pfi_get_current_tag();
-
-	return t->tag_name;
+	return pfi_get_tag_name();
 }
 
 /*
@@ -2136,11 +2132,7 @@ pf_get_tag_name(void)
 int
 pf_get_tag_property_count(void)
 {
-	struct pfi_tag *t;
-
-	t = pfi_get_current_tag();
-
-	return t->prop_count;
+	return pfi_get_tag_property_count();
 }
 
 /*
@@ -2150,15 +2142,7 @@ const char *
 pf_get_tag_property_name(
 	int index)
 {
-	struct pfi_tag *t;
-
-	t = pfi_get_current_tag();
-
-	assert(index < t->prop_count);
-	if (index >= t->prop_count)
-		return false;
-
-	return t->prop_name[index];
+	return pfi_get_tag_property_name(index);
 }
 
 /*
@@ -2168,15 +2152,17 @@ const char *
 pf_get_tag_property_value(
 	int index)
 {
-	struct pfi_tag *t;
+	return pfi_get_tag_property_value(index);
+}
 
-	t = pfi_get_current_tag();
-
-	assert(index < t->prop_count);
-	if (index >= t->prop_count)
-		return false;
-
-	return t->prop_value[index];
+/*
+ * Evaluate property values of the current tag.
+ */
+bool
+pf_evaluate_tag_property_values(
+	const char *(*get_var_val)(const char *))
+{
+	return pfi_evaluate_tag_property_values(get_var_val);
 }
 
 /*
