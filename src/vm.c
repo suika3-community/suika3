@@ -34,7 +34,6 @@
 #include "vm.h"
 #include "engine.h"
 #include "api.h"
-#include "tag.h"
 #include "common.h"
 
 /* NoctLang */
@@ -251,105 +250,6 @@ pfi_call_vm_function(
 
 	/* Do a fast GC. */
 	pfi_fast_gc();
-
-	return true;
-}
-
-/*
- * Call a tag function.
- */
-bool
-pfi_call_vm_tag_function(
-	bool *tag_end)
-{
-	struct pfi_tag *t;
-	NoctValue dict;
-	int i;
-	int prop_count;
-	char func_name[256];
-	const char *tag_name;
-	NoctValue func_val;
-	NoctFunc *func;
-	NoctValue ret;
-
-	*tag_end = false;
-
-	/* Get a current command. */
-	if (pfi_get_tag_index() == pfi_get_tag_count()) {
-		/* Reached to the end. Finish the game loop. */
-		*tag_end = true;
-		return true;
-	}
-
-	/* Make a parameter dictionary. */
-	if (!noct_make_empty_dict(env, &dict)) {
-		hal_log_error(PF_TR("In tag %s:%d: runtime error."),
-			      pfi_get_tag_file_name(),
-			      pfi_get_tag_line());
-		return false;
-	}
-
-	/* Setup properties as dictionary items. */
-	prop_count = pfi_get_tag_property_count();
-	for (i = 0; i < prop_count; i++) {
-		NoctValue str;
-		const char *prop_name;
-		const char *prop_value;
-
-		prop_name = pfi_get_tag_property_name(i);
-		prop_value = pfi_get_tag_property_value(i);
-
-		if (!noct_make_string(env, &str, prop_value)) {
-			hal_log_error(PF_TR("In tag %s:%d: runtime error."),
-				      pfi_get_tag_file_name(),
-				      pfi_get_tag_line());
-			return false;
-		}
-		if (!noct_set_dict_elem(env, &dict, prop_name, &str)) {
-			hal_log_error(PF_TR("In tag %s:%d: runtime error."),
-				      pfi_get_tag_file_name(),
-				      pfi_get_tag_line());
-			return false;
-		}
-	}
-
-	/* Make a tag function name. */
-	tag_name = pfi_get_tag_name();
-	snprintf(func_name, sizeof(func_name), "Tag_%s", tag_name);
-
-	/* Get a corresponding function.  */
-	if (!noct_get_global(env, func_name, &func_val)) {
-		hal_log_error(PF_TR("%s:%d: Tag \"%s\" not found."),
-			      pfi_get_tag_file_name(),
-			      pfi_get_tag_line(),
-			      tag_name);
-		return false;
-	}
-	if (!noct_get_func(env, &func_val, &func)) {
-		hal_log_error(PF_TR("%s:%d: \"tag_%s\" is not a function."),
-			      pfi_get_tag_file_name(),
-			      pfi_get_tag_line(),
-			      tag_name);
-		return false;
-	}
-
-	/* Call the function. */
-	if (!noct_enter_vm(env, func_name, 1, &dict, &ret)) {
-		const char *file;
-		int line;
-		const char *msg;
-
-		hal_log_error(PF_TR("In tag %s:%d: Tag \"%s\" execution error."),
-			      pfi_get_tag_file_name(),
-			      pfi_get_tag_line(),
-			      tag_name);
-
-		noct_get_error_file(env, &file);
-		noct_get_error_line(env, &line);
-		noct_get_error_message(env, &msg);
-		hal_log_error(PF_TR("Error: %s: %d: %s"), file, line, msg);
-		return false;
-	}
 
 	return true;
 }
@@ -574,47 +474,6 @@ static bool import(NoctEnv *env)
 	}
 
 	free(data);
-
-	return true;
-}
-
-/* Engine.moveToTagFile() */
-static bool Engine_moveToTagFile(NoctEnv *env)
-{
-	const char *file;
-
-	if (!get_string_param(env, "file", &file))
-		return false;
-
-	if (!pf_move_to_tag_file(file))
-		return false;
-
-	return true;
-}
-
-/* Engine.moveToNextTag() */
-static bool Engine_moveToNextTag(NoctEnv *env)
-{
-	UNUSED_PARAMETER(env);
-
-	pf_move_to_next_tag();
-
-	return true;
-}
-
-/* Engine.callTagFunction() */
-static bool Engine_callTagFunction(NoctEnv *env)
-{
-	bool tag_end;
-	NoctValue ret;
-
-	UNUSED_PARAMETER(env);
-
-	if (!pfi_call_vm_tag_function(&tag_end))
-		return false;
-
-	if (!noct_set_return_make_int(env, &ret, tag_end ? 0 : 1))
-		return false;
 
 	return true;
 }
@@ -1207,10 +1066,6 @@ install_api(
 	} funcs[] = {
 #define RTFUNC(name) {Engine_##name, #name, "Engine." # name}
 		{print, NULL, "print"},
-		{import, NULL, "import"},
-		RTFUNC(moveToTagFile),
-		RTFUNC(moveToNextTag),
-		RTFUNC(callTagFunction),
 		RTFUNC(getDate),
 		RTFUNC(createColorTexture),
 		RTFUNC(loadTexture),

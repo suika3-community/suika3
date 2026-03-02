@@ -324,7 +324,6 @@ set(PLAYFIELD_BASE_SOURCES
   src/api.c
   src/common.c
   src/mainloop.c
-  src/tag.c
   src/vm.c
 )
 
