@@ -79,16 +79,14 @@ init(void)
 	const char *file;
 
 	/* Get the GUI file name. */
-	file = s3_get_tag_arg_string("file");
+	file = s3_get_tag_arg_string("file", false, NULL);
 
 	/* Create a thumbnail for when saved. */
 	s3_draw_stage_to_thumb();
 
 	/* Load the GUI file. */
-	if (!s3_load_gui_file(file, false)) {
-		s3_log_script_exec_footer();
+	if (!s3_load_gui_file(file, false))
 		return false;
-	}
 
 	/* Stop the auto and skip modes. */
 	if (s3_is_auto_mode()) {

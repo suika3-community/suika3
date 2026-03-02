@@ -253,7 +253,7 @@ init(void)
 		is_file_specified = false;
 		if (s3_check_tag_arg(FILE_ARG)) {
 			/* There is a file name. */
-			s = s3_get_tag_arg_string(FILE_ARG);
+			s = s3_get_tag_arg_string(FILE_ARG, false, NULL);
 
 			/* Is "none" specified? */
 			if (strcmp(s, "none") == 0) {
@@ -296,7 +296,7 @@ init(void)
 
 		/* Has a x position argument? */
 		if (s3_check_tag_arg(X_ARG)) {
-			s = s3_get_tag_arg_string(X_ARG);
+			s = s3_get_tag_arg_string(X_ARG, false, NULL);
 
 			/* Calc the x value. */
 			if (*s == 'r') {
@@ -351,7 +351,7 @@ init(void)
 
 		/* Has a y position argument? */
 		if (s3_check_tag_arg(Y_ARG)) {
-			s = s3_get_tag_arg_string(Y_ARG);
+			s = s3_get_tag_arg_string(Y_ARG, false, NULL);
 
 			/* Calc the alpha value. */
 			if (*s == 'r') {
@@ -394,7 +394,7 @@ init(void)
 
 		/* Has an alpha value argument? */
 		if (s3_check_tag_arg(ALPHA_ARG)) {
-			s = s3_get_tag_arg_string(ALPHA_ARG);
+			s = s3_get_tag_arg_string(ALPHA_ARG, false, NULL);
 
 			/* Calc the alpha value. */
 			if (*s == 'r') {
@@ -421,7 +421,7 @@ init(void)
 
 		/* Has a scale-x value argument? */
 		if (s3_check_tag_arg(SCALE_X_ARG)) {
-			s = s3_get_tag_arg_string(SCALE_X_ARG);
+			s = s3_get_tag_arg_string(SCALE_X_ARG, false, NULL);
 
 			/* Calc the scale-x value. */
 			if (*s == 'r') {
@@ -442,7 +442,7 @@ init(void)
 
 		/* Has a scale-y value argument? */
 		if (s3_check_tag_arg(SCALE_Y_ARG)) {
-			s = s3_get_tag_arg_string(SCALE_Y_ARG);
+			s = s3_get_tag_arg_string(SCALE_Y_ARG, false, NULL);
 
 			/* Calc the scale-y value. */
 			if (*s == 'r') {
@@ -463,7 +463,7 @@ init(void)
 
 		/* Has a center-x value argument? */
 		if (s3_check_tag_arg(CENTER_X_ARG)) {
-			s = s3_get_tag_arg_string(CENTER_X_ARG);
+			s = s3_get_tag_arg_string(CENTER_X_ARG, false, NULL);
 
 			/* Calc the center-x value. */
 			if (*s == 'r') {
@@ -484,7 +484,7 @@ init(void)
 
 		/* Has a center-y value argument? */
 		if (s3_check_tag_arg(CENTER_Y_ARG)) {
-			s = s3_get_tag_arg_string(CENTER_Y_ARG);
+			s = s3_get_tag_arg_string(CENTER_Y_ARG, false, NULL);
 
 			/* Calc the center-y value. */
 			if (*s == 'r') {
@@ -505,7 +505,7 @@ init(void)
 
 		/* Has a rotate value argument? */
 		if (s3_check_tag_arg(ROTATE_ARG)) {
-			s = s3_get_tag_arg_string(ROTATE_ARG);
+			s = s3_get_tag_arg_string(ROTATE_ARG, false, NULL);
 
 			/* Calc the rotate value. */
 			if (*s == 'r') {
@@ -533,7 +533,7 @@ init(void)
 		    LAYER_INDEX == S3_LAYER_CHR ||
 		    LAYER_INDEX == S3_LAYER_CHF) {
 			if (s3_check_tag_arg(DIM_ARG)) {
-				s = s3_get_tag_arg_string(DIM_ARG);
+				s = s3_get_tag_arg_string(DIM_ARG, false, NULL);
 
 				/* Calc the rotate value. */
 				if (strcmp(s, "true") == 0) {
@@ -554,11 +554,11 @@ init(void)
 	}
 
 	/* Get the fade method. */
-	fade = s3_get_tag_arg_string("fade");
+	fade = s3_get_tag_arg_string("fade", true, "normal");
 	fade_method = s3_get_fade_method(fade);
 	if (fade_method == S3_FADE_INVALID) {
-		s3_log_error(S3_TR("Invalid fade method \"%s\""), fade_method);
-		s3_log_script_exec_footer();
+		s3_log_tag_error(S3_TR("Invalid fade method \"%s\""), fade_method);
+		return false;
 	}
 
 	/* If the fade method is "rule" or "melt". */
@@ -567,30 +567,25 @@ init(void)
 	    fade_method == S3_FADE_MELT) {
 		/* Check for the rule argument. */
 		if (!s3_check_tag_arg("rule")) {
-			s3_log_error(S3_TR("Rule file is not specified."));
-			s3_log_script_exec_footer();
+			s3_log_tag_error(S3_TR("Rule file is not specified."));
 			return false;
 		}
 
 		/* Load the rule image. */
 		rule_img = s3_create_image_from_file(s);
-		if (rule_img == NULL) {
-			s3_log_script_exec_footer();
+		if (rule_img == NULL)
 			return false;
-		}
 	}
 
 	/* Get the transition time. */
-	span = s3_get_tag_arg_float("time");
+	span = s3_get_tag_arg_float("time", true, 0);
 
 	/* Start a multiple frame behavior. */
 	s3_start_command_repetition();
 
 	/* Start the fading. */
-	if (!s3_start_fade(desc, fade_method, span, rule_img)) {
-		s3_log_script_exec_footer();
+	if (!s3_start_fade(desc, fade_method, span, rule_img))
 		return false;
-	}
 
 	/* Start the time measurement. */
 	s3_reset_lap_timer(&sw);

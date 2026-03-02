@@ -274,6 +274,10 @@ set(SUIKA_BASE_SOURCES
   src/cmd_ch.c
   src/cmd_choose.c
   src/cmd_click.c
+  src/cmd_else.c
+  src/cmd_elseif.c
+  src/cmd_endif.c
+  src/cmd_goto.c
   src/cmd_gui.c
   src/cmd_if.c
   src/cmd_label.c

@@ -56,26 +56,14 @@ s3i_tag_set(
 	s3_evaluate_tag();
 
 	/* Get the variable name. */
-	name = s3_get_tag_arg_string("name");
-	if (name == NULL) {
-		s3_log_error(S3_TR("No name specified."));
-		s3_log_script_exec_footer();
-		return false;
-	}
+	name = s3_get_tag_arg_string("name", false, NULL);
 
 	/* Get the variable value. */
-	value = s3_get_tag_arg_string("value");
-	if (value == NULL) {
-		s3_log_error(S3_TR("No value specified."));
-		s3_log_script_exec_footer();
-		return false;
-	}
+	value = s3_get_tag_arg_string("value", false, NULL);
 
 	/* Set the variable. */
-	if (!s3_set_variable_string(name, value)) {
-		s3_log_script_exec_footer();
+	if (!s3_set_variable_string(name, value))
 		return false;
-	}
 
 	/* Set the continue flag to run also the next tag. */
 	s3_set_vm_int("s3Continue", 0);

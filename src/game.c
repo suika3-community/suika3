@@ -160,6 +160,9 @@ static int last_en_index;
 /* Return destination of gosub. */
 static int return_index;
 
+/* Last tag name. */
+static const char *last_tag_name;
+
 /*
  * Forward declaration.
  */
@@ -279,6 +282,7 @@ s3i_on_game_update(void)
 {
 	int s3_continue;
 	bool tag_end;
+	const char *tag_name;
 
 	mouse_pos_x = pf_mouse_pos_x;
 	mouse_pos_y = pf_mouse_pos_y;
@@ -307,6 +311,12 @@ s3i_on_game_update(void)
 		/* Clear the continue flag. */
 		s3_set_vm_int("s3Continue", 0);
 
+		/* Save the last tag name. */
+		if (s3_get_tag_index() < s3_get_tag_count())
+			tag_name = s3_get_tag_name();
+		else
+			tag_name = NULL;
+
 		/* Call the tag function. */
 		if (!s3_call_vm_tag_function(&tag_end)) {
 			/* Error: will stop the game after the next rendering. */
@@ -318,6 +328,9 @@ s3i_on_game_update(void)
 			pf_set_vm_int("exitFlag", 1);
 			break;
 		}
+
+		/* Save the last tag name. */
+		last_tag_name = tag_name;
 
 		/* Check the continue flag. */
 		s3_get_vm_int("s3Continue", &s3_continue);
@@ -1090,10 +1103,6 @@ s3_get_text_speed(void)
 }
 
 /*
- * Auto Speed (game.c)
- */
-
-/*
  * Set the auto speed.
  */
 void
@@ -1139,6 +1148,15 @@ void
 s3_clear_last_en_index(void)
 {
 	last_en_index = -1;
+}
+
+/*
+ * Get the last tag name.
+ */
+const char *
+s3_get_last_tag_name(void)
+{
+	return last_tag_name;
 }
 
 /*

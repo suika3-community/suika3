@@ -174,7 +174,7 @@ init(void)
 
 	/* Check for leftification. */
 	if (s3_check_tag_arg("leftify") &&
-	    strcmp(s3_get_tag_arg_string("leftify"), "true") == 0) {
+	    strcmp(s3_get_tag_arg_string("leftify", true, false), "true") == 0) {
 		is_centered = false;
 	} else {
 		is_centered = true;
@@ -192,13 +192,13 @@ init(void)
 		snprintf(text, sizeof(text), "text%d", i + 1);
 
 		/* Get the N-th options. */
-		button[i].label = s3_get_tag_arg_string(label);
-		button[i].text = s3_get_tag_arg_string(text);
+		button[i].text = s3_get_tag_arg_string(text, true, NULL);
 		if (button[i].text == NULL) {
 			button[i].is_enabled = false;
 			s3_show_choosebox(i, false, false);
 			continue;
 		} else {
+			button[i].label = s3_get_tag_arg_string(label, false, NULL);
 			button[i].is_enabled = true;
 		}
 
@@ -264,7 +264,7 @@ init(void)
 	/* Initialize the timer. */
 	if (s3_check_tag_arg("time")) {
 		is_timed = true;
-		timer_span = s3_get_tag_arg_float("time");
+		timer_span = s3_get_tag_arg_float("time", false, 0);
 		s3_reset_lap_timer(&timer_sw);
 	} else {
 		is_timed = false;

@@ -80,19 +80,16 @@ init(void)
 	struct s3_fade_desc desc[S3_FADE_DESC_COUNT];
 
 	/* Get the parameters. */
-	fname = s3_get_tag_arg_string("file");
-	span = s3_get_tag_arg_float("time");
-	method = s3_get_tag_arg_string("method");
-	ofs_x = s3_get_tag_arg_int("x");
-	ofs_y = s3_get_tag_arg_int("y");
+	fname = s3_get_tag_arg_string("file", false, NULL);
+	span = s3_get_tag_arg_float("time", true, 0);
+	method = s3_get_tag_arg_string("method", true, "normal");
+	ofs_x = s3_get_tag_arg_int("x", true, 0);
+	ofs_y = s3_get_tag_arg_int("y", true, 0);
 
  	/* Recognize the rendering method. */
 	fade_method = s3_get_fade_method(method);
 	if (fade_method == S3_FADE_INVALID) {
-		s3_log_error(
-			S3_TR("Invalid fade method at file %s line %d."),
-			s3_get_tag_file(),
-			s3_get_tag_line());
+		s3_log_tag_error(S3_TR("Invalid fade method \"%s\"."), method);
 		return false;
 	}
 
@@ -103,18 +100,15 @@ init(void)
 
 		/* If the rule file is not specified. */
 		if (!s3_check_tag_arg("rule")) {
-			s3_log_error(S3_TR("Rule file is missing."));
-			s3_log_script_exec_footer();
+			s3_log_tag_error(S3_TR("Rule file is missing."));
 			return false;
 		}
 
 		/* Load a rule image. */
-		rule = s3_get_tag_arg_string("rule");
+		rule = s3_get_tag_arg_string("rule", false, NULL);
 		rule_img = s3_create_image_from_file(rule);
-		if (rule_img == NULL) {
-			s3_log_script_exec_footer();
+		if (rule_img == NULL)
 			return false;
-		}
 	} else {
 		rule_img = NULL;
 	}
@@ -131,10 +125,8 @@ init(void)
 		/* Load an image. */
 		img = s3_create_image_from_file(fname);
 	}
-	if (img == NULL) {
-		s3_log_script_exec_footer();
+	if (img == NULL)
 		return false;
-	}
 
 	/* Remove the speaking character. */
 	s3_set_ch_talking(-1);
@@ -161,10 +153,8 @@ init(void)
 	desc[S3_FADE_DESC_BG].rotate = 0.0f;
 
 	/* Start a fading. */
-	if (!s3_start_fade(desc, fade_method, span, rule_img)) {
-		s3_log_script_exec_footer();
+	if (!s3_start_fade(desc, fade_method, span, rule_img))
 		return false;
-	}
 
 	/* Hide the message box on fading. */
 	if (!conf_msgbox_show_on_bg) {

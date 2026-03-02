@@ -970,10 +970,8 @@ s3_load_eye_image_if_exists(
 
 	/* Load an image. */
 	eye_img = s3_create_image_from_file(eye_fname);
-	if (eye_img == NULL) {
-		s3_log_script_exec_footer();
+	if (eye_img == NULL)
 		return false;
-	}
 
 	/* Initialize the layer. */
 	s3_set_layer_file_name(eye_layer, eye_fname);
@@ -1161,10 +1159,8 @@ s3_load_lip_image_if_exists(
 
 	/* Load an image. */
 	lip_img = s3_create_image_from_file(lip_fname);
-	if (lip_img == NULL) {
-		s3_log_script_exec_footer();
+	if (lip_img == NULL)
 		return false;
-	}
 
 	/* Set the layer. */
 	s3_set_layer_file_name(lip_layer, lip_fname);

@@ -351,7 +351,7 @@ s3_call_vm_tag_function(
 
 	/* Make a parameter dictionary. */
 	if (!noct_make_empty_dict(env, &dict)) {
-		s3_log_error(S3_TR("In tag %s:%d: runtime error."),
+		s3_log_error(S3_TR("%s:%d: Runtime error."),
 			     s3_get_tag_file(),
 			     s3_get_tag_line());
 		return false;
@@ -368,13 +368,13 @@ s3_call_vm_tag_function(
 		prop_value = s3_get_tag_property_value(i);
 
 		if (!noct_make_string(env, &str, prop_value)) {
-			s3_log_error(S3_TR("In tag %s:%d: runtime error."),
+			s3_log_error(S3_TR("%s:%d: Runtime error."),
 				     s3_get_tag_file(),
 				     s3_get_tag_line());
 			return false;
 		}
 		if (!noct_set_dict_elem(env, &dict, prop_name, &str)) {
-			s3_log_error(S3_TR("In tag %s:%d: runtime error."),
+			s3_log_error(S3_TR("%s:%d: Runtime error."),
 				     s3_get_tag_file(),
 				     s3_get_tag_line());
 			return false;
@@ -387,14 +387,14 @@ s3_call_vm_tag_function(
 
 	/* Get a corresponding function.  */
 	if (!noct_get_global(env, func_name, &func_val)) {
-		s3_log_error(PF_TR("%s:%d: Tag \"%s\" not found."),
+		s3_log_error(S3_TR("%s:%d: Tag \"%s\" not found."),
 			     s3_get_tag_file(),
 			     s3_get_tag_line(),
 			     tag_name);
 		return false;
 	}
 	if (!noct_get_func(env, &func_val, &func)) {
-		s3_log_error(S3_TR("%s:%d: \"tag_%s\" is not a function."),
+		s3_log_error(S3_TR("%s:%d: \"Tag_%s\" is not a function."),
 			     s3_get_tag_file(),
 			     s3_get_tag_line(),
 			     tag_name);
@@ -407,15 +407,9 @@ s3_call_vm_tag_function(
 		int line;
 		const char *msg;
 
-		s3_log_error(S3_TR("In tag %s:%d: Tag \"%s\" execution error."),
-			     s3_get_tag_file(),
-			     s3_get_tag_line(),
-			     tag_name);
-
 		noct_get_error_file(env, &file);
 		noct_get_error_line(env, &line);
 		noct_get_error_message(env, &msg);
-		s3_log_error(S3_TR("Error: %s: %d: %s"), file, line, msg);
 		return false;
 	}
 
@@ -560,12 +554,26 @@ s3_log_out_of_memory(void)
  * Print a log footer for execution error.
  */
 void
-s3_log_script_exec_footer(void)
+s3_log_tag_error(
+	const char *msg,
+	...)
 {
-	s3_log_error(
-		S3_TR("Runtime error at file %s line %d."),
-		s3_get_tag_file(),
-		s3_get_tag_line());
+	char buf[4096];
+	va_list ap;
+	int n;
+
+	n = snprintf(buf,
+		     sizeof(buf),
+		     S3_TR("%s:%d:%s: "),
+		     s3_get_tag_file(),
+		     s3_get_tag_line(),
+		     s3_get_tag_name());
+		     
+	va_start(ap, msg);
+	vsnprintf(buf + n, sizeof(buf) - n, msg, ap);
+	va_end(ap);
+
+	pf_log_error(buf);
 }
 
 /*

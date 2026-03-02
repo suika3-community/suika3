@@ -207,9 +207,8 @@ s3_get_tag_file(void)
 int
 s3_get_tag_index(void)
 {
-	assert(cur_index < tag_size);
 	if (cur_index >= tag_size)
-		return -1;
+		return tag_size;
 	
 	return cur_index;
 }
@@ -279,11 +278,10 @@ bool
 s3_move_to_label_tag(
 	const char *label)
 {
-	int tag_count, prop_count;
 	int i, j;
 
 	/* Search tags. */
-	for (i = 0; i < tag_count; i++) {
+	for (i = 0; i < tag_size; i++) {
 		if (strcmp(tag[i].tag_name, "label") != 0)
 			continue;
 
@@ -301,6 +299,51 @@ s3_move_to_label_tag(
 	}
 
 	/* Not found. */
+	s3_log_tag_error(S3_TR("Label \"%s\" not found."), label);
+	return false;
+}
+
+/*
+ * Move to a matched else (or elseif or endif) tag.
+ */
+bool
+s3_move_to_else_tag(void)
+{
+	int depth;
+	int i;
+
+	depth = 0;
+
+	for (i = cur_index + 1; i < tag_size; i++) {
+		if (strcmp(tag[i].tag_name, "endif") == 0) {
+			if (depth == 0) {
+				cur_index = i + 1;
+				return true;
+			}
+			depth--;
+			continue;
+		}
+		if (strcmp(tag[i].tag_name, "elseif") == 0) {
+			if (depth == 0) {
+				cur_index = i;
+				return true;
+			}
+			continue;
+		}
+		if (strcmp(tag[i].tag_name, "else") == 0) {
+			if (depth == 0) {
+				cur_index = i + 1;
+				return true;
+			}
+			continue;
+		}
+		if (strcmp(tag[i].tag_name, "if") == 0) {
+			depth++;
+			continue;
+		}
+	}
+
+	s3_log_error(S3_TR("No matching endif found."));
 	return false;
 }
 
@@ -310,7 +353,27 @@ s3_move_to_label_tag(
 bool
 s3_move_to_endif_tag(void)
 {
-	/* TODO */
+	int depth;
+	int i;
+
+	depth = 0;
+
+	for (i = cur_index + 1; i < tag_size; i++) {
+		if (strcmp(tag[i].tag_name, "endif") == 0) {
+			if (depth == 0) {
+				cur_index = i + 1;
+				return true;
+			}
+			depth--;
+			continue;
+		}
+		if (strcmp(tag[i].tag_name, "if") == 0) {
+			depth++;
+			continue;
+		}
+	}
+
+	s3_log_error(S3_TR("No matching endif found."));
 	return false;
 }
 
@@ -412,7 +475,9 @@ s3_check_tag_arg(
  */
 int
 s3_get_tag_arg_int(
-	const char *name)
+	const char *name,
+	bool omissible,
+	int def_val)
 {
 	int i, count;
 	const char *prop_name;
@@ -427,8 +492,11 @@ s3_get_tag_arg_int(
 			break;
 	}
 	if (i == count) {
-		/* Not found, return the default value. */
-		return 0;
+		/* Not found. */
+		if (omissible)
+			return def_val;
+		s3_log_error(S3_TR("Argument \"%s\" not specified."), name);
+		return def_val;
 	}
 
 	prop_value = s3_get_tag_property_value(i);
@@ -442,7 +510,9 @@ s3_get_tag_arg_int(
  */
 float
 s3_get_tag_arg_float(
-	const char *name)
+	const char *name,
+	bool omissible,
+	float def_val)
 {
 	int i, count;
 	const char *prop_name;
@@ -457,8 +527,11 @@ s3_get_tag_arg_float(
 			break;
 	}
 	if (i == count) {
-		/* Not found, return the default value. */
-		return 0;
+		/* Not found. */
+		if (omissible)
+			return def_val;
+		s3_log_error(S3_TR("Argument \"%s\" not specified."), name);
+		return def_val;
 	}
 
 	prop_value = s3_get_tag_property_value(i);
@@ -472,7 +545,9 @@ s3_get_tag_arg_float(
  */
 const char *
 s3_get_tag_arg_string(
-	const char *name)
+	const char *name,
+	bool omissible,
+	const char *def_val)
 {
 	int i, count;
 	const char *prop_name;
@@ -486,8 +561,11 @@ s3_get_tag_arg_string(
 			break;
 	}
 	if (i == count) {
-		/* Not found, return the default value. */
-		return NULL;
+		/* Not found. */
+		if (omissible)
+			return def_val;
+		s3_log_error(S3_TR("Argument \"%s\" not specified."), name);
+		return def_val;
 	}
 
 	prop_value = s3_get_tag_property_value(i);

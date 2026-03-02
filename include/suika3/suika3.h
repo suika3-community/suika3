@@ -947,6 +947,12 @@ s3_get_last_english_tag_index(void);
 void
 s3_clear_last_english_tag_index(void);
 
+/*
+ * Get the last tag name.
+ */
+const char *
+s3_get_last_tag_name(void);
+
 
 /*
  * Functions for Image Subsystem (image.c)
@@ -2009,6 +2015,12 @@ s3_move_to_label_tag(
 	const char *label);
 
 /*
+ * Move to the else/elseif/endif tag.
+ */
+bool
+s3_move_to_else_tag(void);
+
+/*
  * Move to the endif tag.
  */
 bool
@@ -2070,21 +2082,27 @@ s3_check_tag_arg(
  */
 int
 s3_get_tag_arg_int(
-	const char *name);
+	const char *name,
+	bool omissible,
+	int def_val);
 
 /*
  * Get a float tag argument.
  */
 float
 s3_get_tag_arg_float(
-	const char *name);
+	const char *name,
+	bool omissible,
+	float def_val);
 
 /*
  * Get a string tag argument.
  */
 const char *
 s3_get_tag_arg_string(
-	const char *name);
+	const char *name,
+	bool omissible,
+	const char *def_val);
 
 /*
  * Evaluate property values of the current tag.
@@ -2735,12 +2753,6 @@ s3_call_vm_tag_function(
 	bool *tag_end);
 
 /*
- * Print a log footer for execution error. (TODO: move)
- */
-void
-s3_log_script_exec_footer(void);
-
-/*
  * Enable/disable message skip by touch move.
  */
 void
@@ -2806,6 +2818,14 @@ s3_log_error(
  */
 void
 s3_log_out_of_memory(void);
+
+/*
+ * Print a tag execution error.
+ */
+void
+s3_log_tag_error(
+	const char *msg,
+	...);
 
 /*
  * Text-to-speech.

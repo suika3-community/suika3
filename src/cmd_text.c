@@ -525,9 +525,12 @@ init(
 {
 	*cont = false;
 
+	/* Apply inline variable references. */
+	s3_evaluate_tag();
+
 	/* If page mode */
 	if (s3_is_page_mode()) {
-		const char *s = s3_get_tag_arg_string("text");
+		const char *s = s3_get_tag_arg_string("text", false, NULL);
 		if (strcasecmp(s, "\\page") == 0 || strcmp(s, "\\P") == 0 || strcmp(s, "\\===") == 0 ||
 		    strcasecmp(s, "\\erase") == 0 || strcmp(s, "\\E") == 0) {
 			int msgbox_x, msgbox_y, msgbox_w, msgbox_h;
@@ -815,7 +818,7 @@ init_name_top(void)
 	}
 
 	/* Get the name */
-	name = s3_get_tag_arg_string("name");
+	name = s3_get_tag_arg_string("name", true, NULL);
 	if (name != NULL) {
 		name_top = strdup(name);
 		if (name_top == NULL) {
@@ -845,7 +848,7 @@ init_voice_file(void)
 	}
 
 	/* Get the voice file name */
-	voice = s3_get_tag_arg_string("voice");
+	voice = s3_get_tag_arg_string("voice", true, NULL);
 
 	return true;
 }
@@ -876,7 +879,7 @@ init_msg_top(void)
 		is_continue_mode = true;
 	} else {
 		/* Get the argument */
-		raw_msg = s3_get_tag_arg_string("text");
+		raw_msg = s3_get_tag_arg_string("text", false, NULL);
 
 		/* Check if it is a continuation line */
 		if (*raw_msg == '\\' && !s3_is_escape_sequence_char(*(raw_msg + 1))) {
@@ -1302,7 +1305,7 @@ play_voice(void)
 		return true;
 
 	/* Set the character volume */
-	set_character_volume_by_name(s3_get_tag_arg_string("name"));
+	set_character_volume_by_name(name_top);
 
 	/* Play the PCM stream */
 	s3_set_mixer_input_file(S3_TRACK_VOICE, voice_file, false);

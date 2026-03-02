@@ -2,7 +2,7 @@
 
 /*
  * Suika3
- * The "if" tag implementation
+ * The "else" tag implementation
  */
 
 /*-
@@ -43,64 +43,25 @@
 #include <assert.h>
 
 /*
- * The "if" tag implementation.
+ * The "else" tag implementation.
  */
 bool
-s3i_tag_if(
+s3i_tag_else(
 	void *p)
 {
-	const char *lhs;
-	const char *op;
-	const char *rhs;
-	bool cond;
-
-	/* Update the tag values by variable values. */
-	s3_evaluate_tag();
-
-	/* Get the condition. */
-	if (!s3_check_tag_arg("lhs")) {
-		s3_log_tag_error(S3_TR("No LHS specified."));
-		return false;
-	}
-	if (!s3_check_tag_arg("rhs")) {
-		s3_log_tag_error(S3_TR("No RHS specified."));
-		return false;
-	}
-	if (!s3_check_tag_arg("op")) {
-		s3_log_tag_error(S3_TR("No operator specified."));
-		return false;
-	}
-	lhs = s3_get_tag_arg_string("lhs", false, NULL);
-	op = s3_get_tag_arg_string("op", false, NULL);
-	rhs = s3_get_tag_arg_string("rhs", false, NULL);
-
-	/* Compare. */
-	if (strcmp(op, "==") == 0) {
-		cond = strcmp(lhs, rhs) == 0 ? true : false;
-	} else if (strcmp(op, "!=") == 0) {
-		cond = strcmp(lhs, rhs) != 0 ? true : false;
-	} else if (strcmp(op, ">") == 0) {
-		cond = atof(lhs) > atof(rhs) ? true : false;
-	} else if (strcmp(op, ">=") == 0) {
-		cond = atof(lhs) >= atof(rhs) ? true : false;
-	} else if (strcmp(op, "<") == 0) {
-		cond = atof(lhs) < atof(rhs) ? true : false;
-	} else if (strcmp(op, "<=") == 0) {
-		cond = atof(lhs) <= atof(rhs) ? true : false;
-	} else {
-		cond = false;
-	}
+	const char *last_tag;
 
 	/* Set the continue flag to run also the next tag. */
 	s3_set_vm_int("s3Continue", 0);
 
-	/* If condition doesn't meet.  */
-	if (!cond) {
-		if (!s3_move_to_else_tag())
-			return false;
-		return true;
+	/* Is a if-elseif chain? (i.e., the last tag executed was "if") */
+	last_tag = s3_get_last_tag_name();
+	if (strcmp(last_tag, "if") == 0 ||
+	    strcmp(last_tag, "elseif") == 0) {
+		/* Run this block. */
+		return s3_move_to_next_tag();
 	}
 
-	/* Move to the next tag if condition met.. */
-	return s3_move_to_next_tag();
+	/* If not, this is an end of the if block, just skip to endif. */
+	return s3_move_to_endif_tag();
 }

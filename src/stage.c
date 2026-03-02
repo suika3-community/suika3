@@ -2282,8 +2282,8 @@ s3_get_namebox_rect(
 {
 	*namebox_x = conf_namebox_x;
 	*namebox_y = conf_namebox_x;
-	*namebox_w = s3_get_image_width(layer_image[S3_LAYER_MSGBOX]);
-	*namebox_h = s3_get_image_height(layer_image[S3_LAYER_MSGBOX]);
+	*namebox_w = s3_get_image_width(namebox_image);
+	*namebox_h = s3_get_image_height(namebox_image);
 }
 
 /*
@@ -2341,8 +2341,8 @@ s3_get_msgbox_rect(
 {
 	*msgbox_x = conf_msgbox_x;
 	*msgbox_y = conf_msgbox_y;
-	*msgbox_w = s3_get_image_width(layer_image[S3_LAYER_MSGBOX]);
-	*msgbox_h = s3_get_image_height(layer_image[S3_LAYER_MSGBOX]);
+	*msgbox_w = s3_get_image_width(msgbox_image);
+	*msgbox_h = s3_get_image_height(msgbox_image);
 }
 
 /*

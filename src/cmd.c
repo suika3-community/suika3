@@ -50,6 +50,10 @@ bool s3i_tag_ch(void *p);
 bool s3i_tag_choose(void *p);
 bool s3i_tag_click(void *p);
 bool s3i_tag_choose(void *p);
+bool s3i_tag_else(void *p);
+bool s3i_tag_elseif(void *p);
+bool s3i_tag_endif(void *p);
+bool s3i_tag_goto(void *p);
 bool s3i_tag_gui(void *p);
 bool s3i_tag_if(void *p);
 bool s3i_tag_label(void *p);
@@ -62,11 +66,15 @@ static struct tag_func tag_func[] = {
 	{"Tag_ch",		s3i_tag_ch},
 	{"Tag_choose",		s3i_tag_choose},
 	{"Tag_click",		s3i_tag_click},
+	{"Tag_else",		s3i_tag_else},
+	{"Tag_elseif",		s3i_tag_elseif},
+	{"Tag_endif",		s3i_tag_endif},
+	{"Tag_goto",		s3i_tag_goto},
 	{"Tag_gui",		s3i_tag_gui},
 	{"Tag_if",		s3i_tag_if},
+	{"Tag_text",		s3i_tag_text},
 	{"Tag_label",		s3i_tag_label},
 	{"Tag_set",		s3i_tag_set},
-	{"Tag_text",		s3i_tag_text},
 };
 
 /*
