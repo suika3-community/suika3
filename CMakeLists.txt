@@ -271,6 +271,7 @@ set(SUIKA_BASE_SOURCES
   src/vars.c
   src/cmd.c
   src/cmd_bg.c
+  src/cmd_bgm.c
   src/cmd_ch.c
   src/cmd_choose.c
   src/cmd_click.c
