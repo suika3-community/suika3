@@ -1,23 +1,43 @@
 [bg file="bg/roof.png" time="1.0"]
 
-[choose
-    text1="テスト〜選択肢１" label1="label1"
-    text2="テスト〜選択肢２" label2="label2"
-    text3="テスト〜選択肢３" label3="label3"
-]
+[text name="AAA" text="名前を選択してください。"]
+
+[choose text1="March" label1="label1"
+        text2="April" label2="label2"
+        text3="May"   label3="label3"]
 
 [label name="label1"]
-[text text="選択肢１が選ばれました。"]
+  [set name="name" value="March"]
+[goto name="common"]
 
 [label name="label2"]
-[text text="選択肢２が選ばれました。"]
+  [set name="name" value="April"]
+[goto name="common"]
 
 [label name="label3"]
-[text text="選択肢３が選ばれました。"]
+  [set name="name" value="May"]
+[goto name="common"]
 
-[ch center="ch/midori-normal.png" time="1.0" fade="normal"]
-[text text="Hello, Suika3!"]
+[label name="common"]
+
+[if lhs="${name}" op="==" rhs="March"]
+    [text text="March is selected."]
+[elseif lhs="${name}" op="==" rhs="April"]
+    [text text="April is selected."]
+[else]
+    [text text="May is selected."]
+[endif]
+
+[ch center="ch/midori-normal.png" time="0.5" fade="normal"]
+
+[text name="${name}" text="Hello!"]
+
 [bg file="bg/coast.png" time="3.0"]
+
 [text text="Suika3 started working!"]
+
 [bg file="bg/roof.png" time="3.0"]
+
 [text text="Click to exit."]
+
+[gui file="system/config/config.txt"]
