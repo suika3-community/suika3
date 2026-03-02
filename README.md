@@ -40,14 +40,14 @@ Built completely from scratch, Playfield Engine features:
 - **Comfortable Scripting:**
     - Powered by Playfield Script, a C/JavaScript-like scripting language designed in-house.
     - Native performance with a built-in JIT compiler.
-    - Write a script and run it instantly — **Jot and Run!**
+    - Write a script and run it instantly — **Jot. Run. Boom!**
 - **Portable Rendering & Audio:**
     - Powered by StratoHAL, a portable game library also designed in-house.
     - Runs virtually everywhere: Windows, macOS, Linux, Chromebook, WebAssembly, iOS, Android, and even consoles.
-    - Deploy to platforms you don't even own — **Go Far, Stay Close!**
+    - Deploy to platforms you don't even own — **One Code Conquers All!**
 - **Minimal Runtime:**
     - The runtime is only ~1.4 MB on Windows.
-    - Perfect for mobile apps — **Go Magically Small, Get Massively Loved!**
+    - Perfect for mobile apps — **little Core, BIG Hits!**
 
 ![platforms](https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/platforms.png)
 
@@ -131,16 +131,18 @@ Playfield Engine running on NetBSD — Of course it runs!:
 
 ## Status
 
-Currently in active development on the 0.8.x branch. Stable 1.0.0 release planned.
+Actively developing on the 0.8.x branch. Stable 1.0.0 release planned.
 
-**Nightly actually works on:**
+Currently we are focusing on `C API` for use with derrived engines.
+
+**The nightly builds actually work on:**
 
 |Type       |OS         |Status       |Confirm Date |Confirmed On                        |
 |-----------|-----------|-------------|-------------|------------------------------------|
-|Desktop    |Windows    |✅ Works     |22 Sep 2025  |Windows 11 x64                      |
-|           |macOS      |✅ Works     |22 Sep 2025  |macOS 15 Sequoia Arm64              |
-|           |Linux      |✅ Works     |22 Sep 2025  |Ubuntu 24.04 LTS x86_64             |
-|Mobile     |iOS        |✅ Works     |22 Sep 2025  |iPhone iOS 18                       |
+|Desktop    |Windows    |✅ Works     |1 March 2026 |Windows 11 x64                      |
+|           |macOS      |✅ Works     |1 March 2026 |macOS 26 Arm64                      |
+|           |Linux      |✅ Works     |1 March 2026 |Ubuntu 24.04 LTS x86_64             |
+|Mobile     |iOS        |✅ Works     |1 March 2026 |iPhone iOS 26                       |
 |           |Android    |✅ Works     |22 Sep 2025  |Android 16                          |
 |BSD        |FreeBSD    |✅ Works     |22 Sep 2025  |FreeBSD 14.3 amd64                  |
 |           |NetBSD     |✅ Works     |22 Sep 2025  |NetBSD 10.1 amd64                   |
@@ -446,14 +448,14 @@ Samples are added timely.
 
 ---
 
-## ChatGPT Support
+## AI Support
 
-To generate game templates with ChatGPT, please let it load the following references:
+To generate game templates with AI, please let it load the following references:
 
 - [Playfield Script Syntax](docs/mkdocs-en/docs/syntax.md)
 - [Playfield Script API](docs/mkdocs-en/docs/api.md)
 
-ChatGPT can then create runnable Playfield Engine games directly.
+AI can then create runnable Playfield Engine games directly.
 
 **Note:** In ChatGPT, you need to click the **"+"** button and enable
 **"Web Search"** so that it can read the above references.
@@ -560,8 +562,8 @@ Note: playfield.exe is the 64-bit binary and playfield32.exe is the 32-bit one.
 
 * One of the following:
     * X11 (X11 + GLX + OpenGL 3) [Default]
-    * Wayland (Wayland + EGL + OpenGL ES 2) [Option]
-    * Framebuffer (GBM + DRM + EGL + OpenGL ES 2) [Option]
+    * Wayland (Wayland + EGL + OpenGL ES 2) [Optional]
+    * Framebuffer (GBM + DRM + EGL + OpenGL ES 2) [Optional]
 
 **iOS:**
 

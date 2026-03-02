@@ -53,6 +53,31 @@
 #define TYPE_FOR		2
 #define TYPE_WHILE		3
 
+/*
+ * Maximum properties in a tag.
+ */
+#define PROP_MAX	128
+
+/*
+ * Command struct.
+ */
+struct pfi_tag {
+	char *tag_name;
+	int prop_count;
+	char *prop_name[PROP_MAX];
+	char *prop_value[PROP_MAX];
+	char *prop_value_eval[PROP_MAX];
+	int line;
+};
+
+/*
+ * Tag execution stack element.
+ */
+struct pfi_tag_stack {
+	int type;
+	int start;
+};
+
 /* Current tag file. */
 static char cur_file[1024];
 
@@ -69,7 +94,11 @@ static int tag_size;
 static struct pfi_tag_stack tag_stack[STACK_MAX];
 static int stack_pointer;
 
+/* Evaluation buffer. */
+static char eval_buf[65536];
+
 /* Forward declaration. */
+static const char *evaluate_prop_value(const char *prop_value, const char *(*get_var_val)(const char *));
 static bool parse_tag_document(const char *doc, bool (*callback)(const char *, int, const char **, const char **, int), char **error_msg, int *error_line);
 static bool parse_tag_callback(const char *name, int props, const char **prop_name, const char **prop_value, int line);
 
@@ -117,7 +146,7 @@ pfi_cleanup_tag(void)
  * Load a tag file.
  */
 bool
-pfi_load_tag_file(
+pfi_move_to_tag_file(
 	const char *file)
 {
 	char *buf;
@@ -171,7 +200,7 @@ pfi_get_tag_count(void)
 int
 pfi_get_tag_index(void)
 {
-	/* If the current tag index is invalid. */
+	assert(index < tag_size);
 	if (cur_index >= tag_size)
 		return -1;
 	
@@ -184,7 +213,7 @@ pfi_get_tag_index(void)
 int
 pfi_get_tag_line(void)
 {
-	/* If the current tag index is invalid. */
+	assert(index < tag_size);
 	if (cur_index >= tag_size)
 		return -1;
 	
@@ -197,7 +226,7 @@ pfi_get_tag_line(void)
 struct pfi_tag *
 pfi_get_current_tag(void)
 {
-	/* If the current command index is invalid. */
+	assert(cur_index < tag_size);
 	if (cur_index >= tag_size)
 		return NULL;
 	
@@ -210,6 +239,10 @@ pfi_get_current_tag(void)
 bool
 pfi_move_to_next_tag(void)
 {
+	assert(cur_index < tag_size);
+	if (cur_index >= tag_size)
+		return false;
+
 	if (cur_index + 1 >= tag_size) {
 		cur_index = tag_size;
 		return true;
@@ -259,12 +292,207 @@ bool
 pfi_move_to_tag_index(
 	int index)
 {
+	assert(index < tag_size);
 	if (index >= tag_size)
 		return false;
 
 	cur_index = index;
 
 	return true;
+}
+
+/*
+ * Get the name of the current tag.
+ */
+const char *
+pfi_get_tag_name(void)
+{
+	assert(cur_index < tag_size);
+	if (cur_index >= tag_size)
+		return NULL;
+
+	assert(tag[cur_index].tag_name != NULL);
+	return tag[cur_index].tag_name;
+}
+
+/*
+ * Get the property count of the current tag.
+ */
+int
+pfi_get_tag_property_count(void)
+{
+	assert(cur_index < tag_size);
+	if (cur_index >= tag_size)
+		return 0;
+
+	assert(tag[cur_index].prop_count >= 0);
+	return tag[cur_index].prop_count;
+}
+
+/*
+ * Get the property name of the current tag.
+ */
+const char *
+pfi_get_tag_property_name(
+	int index)
+{
+	assert(cur_index < tag_size);
+	if (cur_index >= tag_size)
+		return NULL;
+
+	assert(index < tag[cur_index].prop_count);
+	if (index >= tag[cur_index].prop_count)
+		return NULL;
+
+	return tag[cur_index].prop_name[index];
+}
+
+/*
+ * Get the property value of the current tag.
+ */
+const char *
+pfi_get_tag_property_value(
+	int index)
+{
+	assert(cur_index < tag_size);
+	if (cur_index >= tag_size)
+		return NULL;
+
+	assert(index < tag[cur_index].prop_count);
+	if (index >= tag[cur_index].prop_count)
+		return false;
+
+	return tag[cur_index].prop_value[index];
+}
+
+/*
+ * Evaluate property values of the current tag.
+ */
+bool
+pfi_evaluate_tag_property_values(
+	const char *(*get_var_val)(const char *))
+{
+	int i;
+	const char *e;
+
+	for (i = 0; i < tag[cur_index].prop_count; i++) {
+		if (tag[cur_index].prop_value_eval[i] != NULL) {
+			free(tag[cur_index].prop_value_eval[i]);
+			tag[cur_index].prop_value_eval[i] = NULL;
+		}
+
+		e = evaluate_prop_value(tag[cur_index].prop_value[i], get_var_val);
+		if (e == NULL)
+			return false;
+
+		tag[cur_index].prop_value_eval[i] = strdup(e);
+		if (tag[cur_index].prop_value_eval[i] == NULL) {
+			pf_log_out_of_memory();
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/* Parser for inline variables. (`${var}` format) */
+static const char *
+evaluate_prop_value(
+	const char *prop_value,
+	const char *(*get_var_val)(const char *))
+{
+	const char *src;
+	char *dst;
+	bool is_escape1;
+	bool is_escape2;
+	int empty;
+
+	memset(eval_buf, 0, sizeof(eval_buf));
+
+	src = prop_value;
+	dst = eval_buf;
+	is_escape1 = false;
+	is_escape2 = false;
+	empty = sizeof(eval_buf) - 1;
+
+	while (*src != '\0') {
+		/* '$' */
+		if (!is_escape1 && !is_escape2) {
+			if (*src == '$') {
+				is_escape1 = true;
+				src++;
+				continue;
+			} else {
+				*dst++ = *src++;
+				if (--empty)
+					return eval_buf;
+				continue;
+			}
+		}
+
+		/* '{' */
+		if (is_escape1 && !is_escape2) {
+			if (*src == '{') {
+				is_escape1 = false;
+				is_escape2 = true;
+				src++;
+				continue;
+			} else {
+				is_escape1 = false;
+				is_escape2 = false;
+				*dst++ = '$';
+				if (--empty == 0)
+					return eval_buf;
+				*dst++ = *src++;
+				if (--empty == 0)
+					return eval_buf;
+			}
+		}
+
+		/* var */
+		if (!is_escape1 && is_escape2) {
+			char *v;
+			int vempty;
+			char var_name[1024];
+			const char *var_value;
+
+			memset(var_name, 0, sizeof(var_name));
+
+			v = var_name;
+			vempty = sizeof(var_name) - 1;
+
+			while (*src != '\0') {
+				if (*src == '}')
+					break;
+				*v++ = *src++;
+				if (--vempty == 0)
+					return eval_buf;
+			}
+			if (*src == '\0')
+				return eval_buf;
+
+			var_value = get_var_val(var_name);
+			if (var_value != NULL) {
+				while(*var_value != '\0') {
+					*dst++ = *var_value++;
+					if (--empty) {
+						*dst = '\0';
+						return eval_buf;
+					}
+				}
+			}
+
+			is_escape1 = false;
+			is_escape2 = false;
+			continue;
+		}
+
+		*dst++ = *src++;
+		if (--empty == 0)
+			return eval_buf;
+	}
+
+	return eval_buf;
 }
 
 /*
