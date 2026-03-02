@@ -2,7 +2,7 @@
 
 /*
  * Suika3
- * SeedScript API
+ * VM API
  */
 
 /*-
@@ -36,39 +36,25 @@
  */
 
 #include <suika3/suika3.h>
-#include <playfield/playfield.h>
 #include "game.h"
-#include "command.h"
 
+/* API function entry. */
 struct api_func {
 	const char *name;
 	bool (*func)(void *);
 	bool no_args;
 };
 
-struct tag_func {
-	const char *name;
-	bool (*func)(void *);
-};
-
+/* Forward declaration for API functions. */
 static bool Suika_start(void *p);
 static bool Suika_update(void *p);
 static bool Suika_render(void *p);
 
+/* API function table. */
 static struct api_func api_func[] = {
 	{"start", Suika_start, true},
 	{"update", Suika_update, true},
 	{"render", Suika_render, true},
-};
-
-static struct tag_func tag_func[] = {
-	{"Tag_bg",		s3i_tag_bg},
-	{"Tag_ch",		s3i_tag_ch},
-	{"Tag_choose",		s3i_tag_choose},
-	{"Tag_click",		s3i_tag_click},
-	{"Tag_gui",		s3i_tag_gui},
-	{"Tag_label",		s3i_tag_label},
-	{"Tag_text",		s3i_tag_text},
 };
 
 /*
@@ -85,13 +71,6 @@ s3i_install_default_api(void)
 		if (!s3_install_api(api_func[i].name,
 				    api_func[i].func,
 				    api_func[i].no_args))
-			return false;
-	}
-
-	/* Register functions. */
-	for (i = 0; i < sizeof(tag_func) / sizeof(struct tag_func); i++) {
-		if (!s3_install_tag(tag_func[i].name,
-				    tag_func[i].func))
 			return false;
 	}
 

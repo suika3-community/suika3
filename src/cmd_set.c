@@ -2,7 +2,7 @@
 
 /*
  * Suika3
- * Variable Subsystem
+ * The "set" tag implementation
  */
 
 /*-
@@ -35,21 +35,51 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#ifndef SUIKA3_VARS_H
-#define SUIKA3_VARS_H
-
 #include <suika3/suika3.h>
+#include "conf.h"
+
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
 
 /*
- * Initialize the variable subsystem.
+ * The "set" tag implementation.
  */
 bool
-s3i_init_vars(void);
+s3i_tag_set(
+	void *p)
+{
+	const char *name;
+	const char *value;
 
-/*
- * Cleanup the variable subsystem.
- */
-void
-s3i_cleanup_vars(void);
+	/* Update the tag values by variable values. */
+	s3_evaluate_tag();
 
-#endif
+	/* Get the variable name. */
+	name = s3_get_tag_arg_string("name");
+	if (name == NULL) {
+		s3_log_error(S3_TR("No name specified."));
+		s3_log_script_exec_footer();
+		return false;
+	}
+
+	/* Get the variable value. */
+	value = s3_get_tag_arg_string("value");
+	if (value == NULL) {
+		s3_log_error(S3_TR("No value specified."));
+		s3_log_script_exec_footer();
+		return false;
+	}
+
+	/* Set the variable. */
+	if (!s3_set_variable_string(name, value)) {
+		s3_log_script_exec_footer();
+		return false;
+	}
+
+	/* Set the continue flag to run also the next tag. */
+	s3_set_vm_int("s3Continue", 0);
+
+	/* Move to the next tag. */
+	return s3_move_to_next_tag();
+}

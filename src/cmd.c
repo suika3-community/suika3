@@ -2,7 +2,7 @@
 
 /*
  * Suika3
- * Variable Subsystem
+ * Tag Commands
  */
 
 /*-
@@ -35,21 +35,55 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#ifndef SUIKA3_VARS_H
-#define SUIKA3_VARS_H
-
 #include <suika3/suika3.h>
+#include "cmd.h"
+
+/* Tag function entry. */
+struct tag_func {
+	const char *name;
+	bool (*func)(void *);
+};
+
+/* Forward declaration for tag functions. */
+bool s3i_tag_bg(void *p);
+bool s3i_tag_ch(void *p);
+bool s3i_tag_choose(void *p);
+bool s3i_tag_click(void *p);
+bool s3i_tag_choose(void *p);
+bool s3i_tag_gui(void *p);
+bool s3i_tag_if(void *p);
+bool s3i_tag_label(void *p);
+bool s3i_tag_set(void *p);
+bool s3i_tag_text(void *p);
+
+/* Tag function table. */
+static struct tag_func tag_func[] = {
+	{"Tag_bg",		s3i_tag_bg},
+	{"Tag_ch",		s3i_tag_ch},
+	{"Tag_choose",		s3i_tag_choose},
+	{"Tag_click",		s3i_tag_click},
+	{"Tag_gui",		s3i_tag_gui},
+	{"Tag_if",		s3i_tag_if},
+	{"Tag_label",		s3i_tag_label},
+	{"Tag_set",		s3i_tag_set},
+	{"Tag_text",		s3i_tag_text},
+};
 
 /*
- * Initialize the variable subsystem.
+ * Install the tag functions.
  */
 bool
-s3i_init_vars(void);
+s3i_install_tag_funcs(void)
+{
+	const char *params[] = {"param"};
+	int i;
 
-/*
- * Cleanup the variable subsystem.
- */
-void
-s3i_cleanup_vars(void);
+	/* Register functions. */
+	for (i = 0; i < sizeof(tag_func) / sizeof(struct tag_func); i++) {
+		if (!s3_install_tag(tag_func[i].name,
+				    tag_func[i].func))
+			return false;
+	}
 
-#endif
+	return true;
+}

@@ -36,7 +36,6 @@
  */
 
 #include <suika3/suika3.h>
-#include "command.h"
 
 /*
  * The "label" tag implementation.

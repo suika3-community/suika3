@@ -43,6 +43,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* Forward Declaration */
+static const char *get_var_value(const char *var_name);
+
 /*
  * Initialize the tag subsystem.
  */
@@ -85,6 +88,16 @@ s3_move_to_next_tag(void)
 		return true;
 
 	return true;
+}
+
+/*
+ * Move to a matched endif tag.
+ */
+bool
+s3_move_to_matched_endif(void)
+{
+	/* TODO */
+	return false;
 }
 
 /*
@@ -260,3 +273,24 @@ s3_get_tag_arg_string(
 
 	return prop_value;
 }
+
+/*
+ * Evaluate property values of the current tag.
+ */
+bool
+s3_evaluate_tag(void)
+{
+	if (!pf_evaluate_tag_property_values(get_var_value))
+		return false;
+
+	return true;
+}
+
+/* Get a variable value. */
+static const char *
+get_var_value(
+	const char *var_name)
+{
+	return s3_get_variable_string(var_name);
+}
+

@@ -2022,6 +2022,12 @@ int
 s3_get_tag_line(void);
 
 /*
+ * Evaluate property values of the current tag.
+ */
+bool
+s3_evaluate_tag(void);
+
+/*
  * Check if a tag argument exists.
  */
 bool s3_check_tag_arg(const char *name);
@@ -2040,6 +2046,12 @@ float s3_get_tag_arg_float(const char *name);
  * Get a string tag argument.
  */
 const char *s3_get_tag_arg_string(const char *name);
+
+/*
+ * Evaluate property values of the current tag.
+ */
+bool
+s3_evaluate_tag_property_values(void);
 
 
 /*
@@ -2266,7 +2278,7 @@ s3_check_variable_exists(
  */
 bool
 s3_is_global_variable(
-	const char *namel);
+	const char *name);
 
 /*
  * Expand a string that may contain variable references.
@@ -2278,8 +2290,8 @@ s3_expand_string_with_variable(
 /*
  * Clear all local variables.
  */
-bool
-s3_clear_local_variables(void);
+void
+s3_unset_local_variables(void);
 
 
 /*

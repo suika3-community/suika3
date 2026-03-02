@@ -38,12 +38,44 @@
 #include <suika3/suika3.h>
 #include "vars.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define START_SIZE	32
+
+/* Key-value store. */
+struct item {
+	char *key;
+	char *value;
+	uint32_t hash;
+	uint32_t len;
+	bool is_global;
+};
+static struct item *tbl;
+static size_t alloc_size;
+static size_t used_size;
+
+/* Forward declaration. */
+static bool expand_table(void);
+static uint32_t string_hash(const char *s);
+
 /*
  * Initialize the variable subsystem.
  */
-void
+bool
 s3i_init_vars(void)
 {
+	tbl = calloc(sizeof(struct item) * START_SIZE, 1);
+	if (tbl == NULL) {
+		s3_log_out_of_memory();
+		return false;
+	}
+
+	alloc_size = START_SIZE;
+	used_size = 0;
+
+	return true;
 }
 
 /*
@@ -52,6 +84,22 @@ s3i_init_vars(void)
 void
 s3i_cleanup_vars(void)
 {
+	int i;
+
+	for (i = 0; i < alloc_size; i++) {
+		if (tbl[i].key != NULL)
+			free(tbl[i].key);
+		if (tbl[i].value != NULL)
+			free(tbl[i].value);
+	}
+
+	if (tbl != NULL) {
+		free(tbl);
+		tbl = NULL;
+	}
+
+	alloc_size = 0;
+	used_size = 0;
 }
 
 /*
@@ -62,6 +110,11 @@ s3_set_variable_int(
 	const char *name,
 	int val)
 {
+	char digits[128];
+
+	snprintf(digits, sizeof(digits), "%d", val);
+	s3_set_variable_string(name, digits);
+
 	return true;
 }
 
@@ -73,6 +126,11 @@ s3_set_variable_float(
 	const char *name,
 	float val)
 {
+	char digits[128];
+
+	snprintf(digits, sizeof(digits), "%f", val);
+	s3_set_variable_string(name, digits);
+
 	return true;
 }
 
@@ -84,6 +142,116 @@ s3_set_variable_string(
 	const char *name,
 	const char* val)
 {
+	uint32_t hash;
+	uint32_t len;
+	uint32_t index;
+	uint32_t i;
+
+	hash = string_hash(name);
+	len = strlen(name);
+
+	/* Search for the key to replace the value. */
+	index = hash & (alloc_size - 1);
+	for (i = index;
+	     i != ((index - 1 + alloc_size) & (alloc_size - 1));
+	     i = (i + 1) & (alloc_size - 1)) {
+		if (tbl[i].key == NULL)
+			break;
+		if (tbl[i].len == len &&
+		    tbl[i].hash == hash &&
+		    strcmp(tbl[i].value, name) == 0) {
+			/* Found, replace the value. */
+			free(tbl[i].value);
+			tbl[i].value = strdup(val);
+			if (tbl[i].value == NULL) {
+				s3_log_out_of_memory();
+				return false;
+			}
+			return true;
+		}
+	}
+
+	/* Key doesn't exist. Add new one. */
+
+	/* Expand the size if 75% is used. */
+	if (used_size >= alloc_size / 4 * 3) {
+		/* Reallocate the table. */
+		if (!expand_table())
+			return false;
+	}
+
+	/* Append. */
+	index = hash & (alloc_size - 1);
+	for (i = index;
+	     i != ((index - 1 + alloc_size) & (alloc_size - 1));
+	     i = (i + 1) & (alloc_size - 1)) {
+		if (tbl[i].key == NULL) {
+			/* Make a key value. */
+			tbl[i].key = strdup(name);
+			if (tbl[i].key == NULL) {
+				s3_log_out_of_memory();
+				return false;
+			}
+			tbl[i].value = strdup(val);
+			if (tbl[i].value == NULL) {
+				s3_log_out_of_memory();
+				return false;
+			}
+			tbl[i].hash = hash;
+			tbl[i].len = len;
+			break;
+		}
+	}
+	used_size++;
+
+	return true;
+}
+
+/*
+ * Reallocate the table.
+ */
+static bool
+expand_table(void)
+{
+	struct item *new_tbl;
+	size_t i, old_size, new_size;
+	int index, j;
+
+	old_size = alloc_size;
+	new_size = old_size * 2;
+
+	/* Allocate the new array. */
+	new_tbl = calloc(sizeof(struct item) * new_size, 1);
+	if (new_tbl == NULL) {
+		s3_log_out_of_memory();
+		return false;
+	}
+
+	/* Rehash. */
+	for (i = 0; i < old_size; i++) {
+		if (tbl[i].key == NULL)
+			continue;
+
+		index = tbl[i].hash & (new_size - 1);
+		for (j = index;
+		     j != ((index - 1 + new_size) & (new_size - 1));
+		     j = (j + 1) & (new_size - 1)) {
+			if (new_tbl[i].key == NULL) {
+				/* Copy the key and values. */
+				new_tbl[j].key = tbl[i].key;
+				new_tbl[j].value = tbl[i].value;
+				new_tbl[j].hash = tbl[i].hash;
+				new_tbl[j].len = tbl[i].len;
+				break;
+			}
+		}
+	}
+
+	alloc_size = new_size;
+
+	free(tbl);
+	tbl = new_tbl;
+
 	return true;
 }
 
@@ -94,9 +262,38 @@ bool
 s3_unset_variable(
 	const char *name)
 {
-	return true;
-}
+	uint32_t hash;
+	uint32_t len;
+	uint32_t index;
+	uint32_t i;
 
+	hash = string_hash(name);
+	len = strlen(name);
+
+	/* Search for the key. */
+	index = hash & (alloc_size - 1);
+	for (i = index;
+	     i != ((index - 1 + alloc_size) & (alloc_size - 1));
+	     i = (i + 1) & (alloc_size - 1)) {
+		if (tbl[i].key == NULL)
+			break;
+		if (tbl[i].len == len &&
+		    tbl[i].hash == hash &&
+		    strcmp(tbl[i].value, name) == 0) {
+			/* Found, remove it. */
+			free(tbl[i].key);
+			free(tbl[i].value);
+			tbl[i].key = NULL;
+			tbl[i].value = NULL;
+			tbl[i].hash = 0;
+			tbl[i].len = 0;
+			used_size--;
+			return true;
+		}
+	}
+
+	return false;
+}
 
 /*
  * Set a variable global.
@@ -106,6 +303,30 @@ s3_make_variable_global(
 	const char *name,
 	bool is_global)
 {
+	uint32_t hash;
+	uint32_t len;
+	uint32_t index;
+	uint32_t i;
+
+	hash = string_hash(name);
+	len = strlen(name);
+
+	/* Search for the key. */
+	index = hash & (alloc_size - 1);
+	for (i = index;
+	     i != ((index - 1 + alloc_size) & (alloc_size - 1));
+	     i = (i + 1) & (alloc_size - 1)) {
+		if (tbl[i].key == NULL)
+			break;
+		if (tbl[i].len == len &&
+		    tbl[i].hash == hash &&
+		    strcmp(tbl[i].value, name) == 0) {
+			/* Found, make it global. */
+			tbl[i].is_global = true;
+			return true;
+		}
+	}
+
 	return false;
 }
 
@@ -116,7 +337,16 @@ int
 s3_get_variable_int(
 	const char *name)
 {
-	return 0;
+	const char *s_value;
+	int i_value;
+
+	s_value = s3_get_variable_string(name);
+	if (s_value == NULL)
+		return 0;
+
+	i_value = atoi(s_value);
+
+	return i_value;
 }
 
 /*
@@ -126,7 +356,16 @@ float
 s3_get_variable_float(
 	const char *name)
 {
-	return 0.0f;
+	const char *s_value;
+	float f_value;
+
+	s_value = s3_get_variable_string(name);
+	if (s_value == NULL)
+		return 0;
+
+	f_value = (float)atof(s_value);
+
+	return f_value;
 }
 
 /*
@@ -136,7 +375,30 @@ const char *
 s3_get_variable_string(
 	const char *name)
 {
-	return "";
+	uint32_t hash;
+	uint32_t len;
+	uint32_t index;
+	uint32_t i;
+
+	hash = string_hash(name);
+	len = strlen(name);
+
+	/* Search for the key. */
+	index = hash & (alloc_size - 1);
+	for (i = index;
+	     i != ((index - 1 + alloc_size) & (alloc_size - 1));
+	     i = (i + 1) & (alloc_size - 1)) {
+		if (tbl[i].key == NULL)
+			break;
+		if (tbl[i].len == len &&
+		    tbl[i].hash == hash &&
+		    strcmp(tbl[i].key, name) == 0) {
+			/* Found, remove it. */
+			return tbl[i].value;
+		}
+	}
+
+	return NULL;
 }
 
 /*
@@ -145,7 +407,7 @@ s3_get_variable_string(
 int
 s3_get_variable_count(void)
 {
-	return 0;
+	return used_size;
 }
 
 /*
@@ -155,7 +417,18 @@ const char *
 s3_get_variable_name(
 	int index)
 {
-	return "";
+	int i, valid_count;
+
+	valid_count = 0;
+	for (i = 0; i < alloc_size; i++) {
+		if (tbl[i].key == NULL)
+			continue;
+		if (valid_count == index)
+			return tbl[i].key;
+		valid_count++;
+	}
+				     
+	return NULL;
 }
 
 /*
@@ -165,6 +438,29 @@ bool
 s3_check_variable_exists(
 	const char *name)
 {
+	uint32_t hash;
+	uint32_t len;
+	uint32_t index;
+	uint32_t i;
+
+	hash = string_hash(name);
+	len = strlen(name);
+
+	/* Search for the key. */
+	index = hash & (alloc_size - 1);
+	for (i = index;
+	     i != ((index - 1 + alloc_size) & (alloc_size - 1));
+	     i = (i + 1) & (alloc_size - 1)) {
+		if (tbl[i].key == NULL)
+			break;
+		if (tbl[i].len == len &&
+		    tbl[i].hash == hash &&
+		    strcmp(tbl[i].value, name) == 0) {
+			/* Found. */
+			return true;
+		}
+	}
+
 	return false;
 }
 
@@ -173,26 +469,69 @@ s3_check_variable_exists(
  */
 bool
 s3_is_global_variable(
-	const char *namel)
+	const char *name)
 {
+	uint32_t hash;
+	uint32_t len;
+	uint32_t index;
+	uint32_t i;
+
+	hash = string_hash(name);
+	len = strlen(name);
+
+	/* Search for the key. */
+	index = hash & (alloc_size - 1);
+	for (i = index;
+	     i != ((index - 1 + alloc_size) & (alloc_size - 1));
+	     i = (i + 1) & (alloc_size - 1)) {
+		if (tbl[i].key == NULL)
+			break;
+		if (tbl[i].len == len &&
+		    tbl[i].hash == hash &&
+		    strcmp(tbl[i].value, name) == 0) {
+			/* Found. */
+			return tbl[i].is_global;
+		}
+	}
+
 	return false;
 }
 
 /*
- * Expand a string that may contain variable references.
+ * Unset all local variables.
  */
-char *
-s3_expand_string_with_variable(
-	const char *msg)
+void
+s3_unset_local_variables(void)
 {
-	return "";
+	int i;
+
+	/* Search for the key. */
+	for (i = 0; i < alloc_size; i++) {
+		if (tbl[i].key == NULL)
+			continue;
+		if (!tbl[i].is_global) {
+			/* Found, remove it. */
+			free(tbl[i].key);
+			free(tbl[i].value);
+			tbl[i].key = NULL;
+			tbl[i].value = NULL;
+			tbl[i].hash = 0;
+			tbl[i].len = 0;
+			used_size--;
+			if (used_size == 0)
+				break;
+		}
+	}
 }
 
-/*
- * Clear all local variables.
- */
-bool
-s3_clear_local_variables(void)
+/* FNV-1a */
+static uint32_t
+string_hash(const char *s)
 {
-	return true;
+	uint32_t hash = 2166136261u;
+	while (*s) {
+		hash ^= (uint8_t)*s++;
+		hash *= 16777619u;
+	}
+	return hash;
 }

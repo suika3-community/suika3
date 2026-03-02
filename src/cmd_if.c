@@ -36,7 +36,6 @@
  */
 
 #include <suika3/suika3.h>
-#include "command.h"
 #include "conf.h"
 
 #include <stdlib.h>
@@ -55,34 +54,56 @@ s3i_tag_if(
 	const char *lhs;
 	const char *op;
 	const char *rhs;
-	bool do_jump;
+	bool cond;
 
 	/* Update the tag values by variable values. */
-	pf_evaluate_tag_property_values(get_var_value);
+	s3_evaluate_tag();
 
 	/* Get the condition. */
-	lhs = s_get_tag_arg_string("lhs");
-	op = s_get_tag_arg_string("op");
-	rhs = s_get_tag_arg_string("rhs");
+	if (!s3_check_tag_arg("lhs")) {
+		s3_log_error(S3_TR("No LHS specified."));
+		return false;
+	}
+	if (!s3_check_tag_arg("rhs")) {
+		s3_log_error(S3_TR("No RHS specified."));
+		return false;
+	}
+	if (!s3_check_tag_arg("op")) {
+		s3_log_error(S3_TR("No operator specified."));
+		return false;
+	}
+	lhs = s3_get_tag_arg_string("lhs");
+	op = s3_get_tag_arg_string("op");
+	rhs = s3_get_tag_arg_string("rhs");
 
 	/* Compare. */
-	do_jump = true;
+	cond = false;
 	if (strcmp("op", "==") == 0) {
-		
-
-		do_jump = false;
+		cond = strcmp(lhs, rhs) == 0 ? true : false;
+	} else if (strcmp("op", "!=") == 0) {
+		cond = strcmp(lhs, rhs) != 0 ? true : false;
+	} else if (strcmp("op", ">") == 0) {
+		cond = atof(lhs) > atof(rhs) ? true : false;
+	} else if (strcmp("op", ">=") == 0) {
+		cond = atof(lhs) >= atof(rhs) ? true : false;
+	} else if (strcmp("op", "<") == 0) {
+		cond = atof(lhs) < atof(rhs) ? true : false;
+	} else if (strcmp("op", "<=") == 0) {
+		cond = atof(lhs) <= atof(rhs) ? true : false;
 	}
 
 	/* Set the continue flag to run also the next tag. */
 	s3_set_vm_int("s3Continue", 0);
 
-	/* Move to the next tag. */
-	return s3_move_to_next_tag();
-}
+	/* If condition doesn't meet.  */
+	if (!cond) {
+		if (!s3_move_to_matched_endif()) {
+			s3_log_script_exec_footer();
+			return false;
+		}
+		return true;
+	}
 
-static const char *
-get_var_value(
-	const char *var_name)
-{
-	return NULL;
+	/* Move to the next tag if condition met.. */
+	return s3_move_to_next_tag();
 }

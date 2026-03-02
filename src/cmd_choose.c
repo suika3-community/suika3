@@ -36,7 +36,6 @@
  */
 
 #include <suika3/suika3.h>
-#include "command.h"
 #include "text.h"
 #include "conf.h"
 

@@ -36,7 +36,6 @@
  */
 
 #include <suika3/suika3.h>
-#include "command.h"
 #include "conf.h"
 #include "text.h"
 
@@ -74,9 +73,6 @@
 
 /* Name to be drawn */
 static char *name_top;
-
-/* Name before variable expansion */
-static const char *raw_name;
 
 /*
  * Text to be drawn (start of buffer)
@@ -806,7 +802,7 @@ init_colors(void)
 static bool
 init_name_top(void)
 {
-	const char *exp;
+	const char *name;
 
 	/* Do not process if returned from system GUI */
 	if (gui_sys_flag)
@@ -819,17 +815,15 @@ init_name_top(void)
 	}
 
 	/* Get the name */
-	raw_name = s3_get_tag_arg_string("name");
-	if (raw_name != NULL) {
-		exp = s3_expand_string_with_variable(raw_name);
-		name_top = strdup(exp);
+	name = s3_get_tag_arg_string("name");
+	if (name != NULL) {
+		name_top = strdup(name);
 		if (name_top == NULL) {
 			s3_log_out_of_memory();
 			return false;
 		}
 	} else {
 		name_top = NULL;
-		raw_name = NULL;
 	}
 
 	return true;
@@ -1427,7 +1421,7 @@ focus_character(void)
 			continue;
 		if (conf_character_folder[i] == NULL)
 			continue;
-		if (strcmp(conf_character_name[i], raw_name) == 0)
+		if (strcmp(conf_character_name[i], name_top) == 0)
 			break;
 	}
 

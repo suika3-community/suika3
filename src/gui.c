@@ -1208,8 +1208,8 @@ move_to_title(void)
 	/* Clear the state of Ciel. */
 	//ciel_clear_hook();
 
-	/* Clear local variables. */
-	s3_clear_local_variables();
+	/* Unset local variables. */
+	s3_unset_local_variables();
 
 	/* Load the script. */
 	if (!s3_move_to_tag_file(file))

@@ -2,7 +2,7 @@
 
 /*
  * Suika3
- * Command Implementation
+ * Tag Commands
  */
 
 /*-
@@ -41,51 +41,16 @@
 #include <suika3/suika3.h>
 
 /*
- * The "bg" tag implementation.
+ * Install the tag functions.
  */
 bool
-s3i_tag_bg(void *p);
+s3i_install_tag_funcs(void);
 
 /*
- * The "ch" tag implementation.
+ * Specially visible: The "gui" tag function. 
  */
 bool
-s3i_tag_ch(void *p);
-
-/*
- * The "choose" tag implementation.
- */
-bool
-s3i_tag_choose(void *p);
-
-/*
- * The "click" tag implementation.
- */
-bool
-s3i_tag_click(void *p);
-
-/*
- * The "label" tag implementation.
- */
-bool
-s3i_tag_choose(void *p);
-
-/*
- * The "gui" tag implementation.
- */
-bool
-s3i_tag_gui(void *p);
-
-/*
- * The "label" tag implementation.
- */
-bool
-s3i_tag_label(void *p);
-
-/*
- * The "text" tag implementation.
- */
-bool
-s3i_tag_text(void *p);
+s3i_tag_gui(
+	void *p);
 
 #endif

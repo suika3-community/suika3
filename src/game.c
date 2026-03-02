@@ -37,14 +37,15 @@
 
 #include <suika3/suika3.h>
 #include "api.h"
+#include "cmd.h"
 #include "conf.h"
+#include "gui.h"
+#include "mixer.h"
 #include "stage.h"
 #include "sysbtn.h"
-#include "mixer.h"
 #include "tag.h"
-#include "gui.h"
 #include "text.h"
-#include "command.h"
+#include "vars.h"
 
 #include <playfield/playfield.h>
 
@@ -180,6 +181,10 @@ pf_init_hook(
 	if (!s3i_install_default_api())
 		return false;
 
+	/* Install the tag functions. */
+	if (!s3i_install_tag_funcs())
+		return false;
+
 	return true;
 }
 
@@ -196,6 +201,10 @@ s3i_on_game_start(void)
 
 	/* Initialize the config subsystem. */
 	if (!s3i_init_conf())
+		return false;
+
+	/* Initialize the variable subsystem. */
+	if (!s3i_init_vars())
 		return false;
 
 	/* Initialize the stage subsystem. */

@@ -206,7 +206,7 @@ pfi_get_tag_count(void)
 int
 pfi_get_tag_index(void)
 {
-	assert(index < tag_size);
+	assert(cur_index < tag_size);
 	if (cur_index >= tag_size)
 		return -1;
 	
@@ -219,7 +219,7 @@ pfi_get_tag_index(void)
 int
 pfi_get_tag_line(void)
 {
-	assert(index < tag_size);
+	assert(cur_index < tag_size);
 	if (cur_index >= tag_size)
 		return -1;
 	
@@ -357,7 +357,7 @@ pfi_get_tag_property_value(
 
 	/* If there is an evaluated value. */
 	if (tag[cur_index].prop_value_eval[index] != NULL)
-		tag[cur_index].prop_value_eval[index];
+		return tag[cur_index].prop_value_eval[index];
 
 	return tag[cur_index].prop_value[index];
 }
@@ -382,10 +382,12 @@ pfi_evaluate_tag_property_values(
 		if (e == NULL)
 			return false;
 
-		tag[cur_index].prop_value_eval[i] = strdup(e);
-		if (tag[cur_index].prop_value_eval[i] == NULL) {
-			pf_log_out_of_memory();
-			return false;
+		if (strcmp(e, tag[cur_index].prop_value[i]) != 0) {
+			tag[cur_index].prop_value_eval[i] = strdup(e);
+			if (tag[cur_index].prop_value_eval[i] == NULL) {
+				pf_log_out_of_memory();
+				return false;
+			}
 		}
 	}
 
@@ -415,13 +417,13 @@ evaluate_prop_value(
 	while (*src != '\0') {
 		/* '$' */
 		if (!is_escape1 && !is_escape2) {
-			if (*src == '$') {
+ 			if (*src == '$') {
 				is_escape1 = true;
 				src++;
 				continue;
 			} else {
 				*dst++ = *src++;
-				if (--empty)
+				if (--empty == 0)
 					return eval_buf;
 				continue;
 			}
@@ -472,15 +474,14 @@ evaluate_prop_value(
 			if (var_value != NULL) {
 				while(*var_value != '\0') {
 					*dst++ = *var_value++;
-					if (--empty) {
-						*dst = '\0';
+					if (--empty == 0)
 						return eval_buf;
-					}
 				}
 			}
 
 			is_escape1 = false;
 			is_escape2 = false;
+			src++;
 			continue;
 		}
 
