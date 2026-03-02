@@ -136,10 +136,16 @@ pfi_cleanup_tag(void)
 				free(t->prop_value[i]);
 				t->prop_value[i] = NULL;
 			}
+			if (t->prop_value_eval[i] != NULL) {
+				free(t->prop_value_eval[i]);
+				t->prop_value_eval[i] = NULL;
+			}
 		}
 	}
 
 	stack_pointer = 0;
+
+	memset(tag, 0, sizeof(tag));
 }
 
 /*
@@ -218,19 +224,6 @@ pfi_get_tag_line(void)
 		return -1;
 	
 	return tag[cur_index].line;
-}
-
-/*
- * Get the current tag.
- */
-struct pfi_tag *
-pfi_get_current_tag(void)
-{
-	assert(cur_index < tag_size);
-	if (cur_index >= tag_size)
-		return NULL;
-	
-	return &tag[cur_index];
 }
 
 /*
@@ -361,6 +354,10 @@ pfi_get_tag_property_value(
 	assert(index < tag[cur_index].prop_count);
 	if (index >= tag[cur_index].prop_count)
 		return false;
+
+	/* If there is an evaluated value. */
+	if (tag[cur_index].prop_value_eval[index] != NULL)
+		tag[cur_index].prop_value_eval[index];
 
 	return tag[cur_index].prop_value[index];
 }
