@@ -1168,6 +1168,39 @@ pf_is_sound_finished(
 }
 
 /*
+ * Video Playback
+ */
+
+/*
+ * Play a video.
+ */
+bool
+pf_play_video(
+	const char *file,
+	bool is_skippable)
+{
+	return hal_play_video(file, is_skippable);
+}
+
+/*
+ * Stop the video.
+ */
+void
+pf_stop_video(void)
+{
+	hal_stop_video();
+}
+
+/*
+ * Check if a video is playing back.
+ */
+bool
+pf_is_video_playing(void)
+{
+	return hal_is_video_playing();
+}
+
+/*
  * Lap Timer
  */
 

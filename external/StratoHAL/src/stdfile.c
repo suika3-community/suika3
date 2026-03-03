@@ -355,7 +355,7 @@ open_package(
 	}
 	if (i == entry_count) {
 		/* Not found. */
-		//log_error("Cannot open file \"%s\".", path);
+		//hal_log_error("Cannot open file \"%s\".", path);
 		return false;
 	}
 
@@ -367,13 +367,13 @@ open_package(
 	f->fp = fopen(package_path, "r");
 #endif
 	if (f->fp == NULL) {
-		//log_error("Cannot open file \"%s\".", PACKAGE_FILE);
+		//hal_log_error("Cannot open file \"%s\".", package_path);
 		return false;
 	}
 
 	/* Seek to the offset. */
 	if (fseek(f->fp, (long)entry[i].offset, SEEK_SET) != 0) {
-		hal_log_error("Cannot read file \"%s\".", HAL_PACKAGE_FILE);
+		//hal_log_error("Cannot read file \"%s\".", HAL_PACKAGE_FILE);
 		fclose(f->fp);
 		return false;
 	}

@@ -40,14 +40,14 @@ Built completely from scratch, Playfield Engine features:
 - **Comfortable Scripting:**
     - Powered by Playfield Script, a C/JavaScript-like scripting language designed in-house.
     - Native performance with a built-in JIT compiler.
-    - Write a script and run it instantly — **Jot. Run. Boom!**
+    - Write a script and run it instantly — **Jot and Run, Boom!**
 - **Portable Rendering & Audio:**
     - Powered by StratoHAL, a portable game library also designed in-house.
     - Runs virtually everywhere: Windows, macOS, Linux, Chromebook, WebAssembly, iOS, Android, and even consoles.
-    - Deploy to platforms you don't even own — **One Code Conquers All!**
+    - Deploy to platforms you don't even own — **Go Far, Stay Close!**
 - **Minimal Runtime:**
     - The runtime is only ~1.4 MB on Windows.
-    - Perfect for mobile apps — **little Core, BIG Hits!**
+    - Perfect for mobile apps — **Little Core, Big Hits!**
 
 ![platforms](https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/platforms.png)
 
@@ -137,19 +137,19 @@ Currently we are focusing on `C API` for use with derrived engines.
 
 **The nightly builds actually work on:**
 
-|Type       |OS         |Status       |Confirm Date |Confirmed On                        |
-|-----------|-----------|-------------|-------------|------------------------------------|
-|Desktop    |Windows    |✅ Works     |1 March 2026 |Windows 11 x64                      |
-|           |macOS      |✅ Works     |1 March 2026 |macOS 26 Arm64                      |
-|           |Linux      |✅ Works     |1 March 2026 |Ubuntu 24.04 LTS x86_64             |
-|Mobile     |iOS        |✅ Works     |1 March 2026 |iPhone iOS 26                       |
-|           |Android    |✅ Works     |22 Sep 2025  |Android 16                          |
-|BSD        |FreeBSD    |✅ Works     |22 Sep 2025  |FreeBSD 14.3 amd64                  |
-|           |NetBSD     |✅ Works     |22 Sep 2025  |NetBSD 10.1 amd64                   |
-|           |OpenBSD    |✅ Works     |22 Sep 2025  |OpenBSD 7.7 amd64                   |
-|Others     |WebAssembly|✅ Works     |22 Sep 2025  |Chrome                              |
-|           |Chromebook |✅ Works     |22 Sep 2025  |Chrome [Here](https://noctvm.io/w/) |
-|           |Unity      |✅ Works     |22 Sep 2025  |Unity 6.2 Windows 11 x86_64         |
+|Type       |OS              |Status       |Confirm Date |Confirmed On                        |
+|-----------|----------------|-------------|-------------|------------------------------------|
+|Desktop    |Windows         |✅ Works     |1 March 2026 |Windows 11 x64                      |
+|           |macOS           |✅ Works     |1 March 2026 |macOS 26 Arm64                      |
+|           |Linux           |✅ Works     |1 March 2026 |Ubuntu 24.04 LTS x86_64             |
+|Mobile     |iOS             |✅ Works     |1 March 2026 |iPhone iOS 26                       |
+|           |Android         |✅ Works     |22 Sep 2025  |Android 16                          |
+|BSD        |FreeBSD         |✅ Works     |22 Sep 2025  |FreeBSD 14.3 amd64                  |
+|           |NetBSD          |✅ Works     |22 Sep 2025  |NetBSD 10.1 amd64                   |
+|           |OpenBSD         |✅ Works     |22 Sep 2025  |OpenBSD 7.7 amd64                   |
+|Others     |WebAssembly     |✅ Works     |22 Sep 2025  |Chrome                              |
+|           |Chromebook      |✅ Works     |22 Sep 2025  |Chrome [Here](https://noctvm.io/w/) |
+|           |Unity           |✅ Works     |22 Sep 2025  |Unity 6.2 Windows 11 x86_64         |
 
 ---
 
@@ -283,8 +283,8 @@ game engine.
   Supports native DirectX 9/11/12, Metal, OpenGL, OpenGL ES, and WebGL for wide compatibility.
 
 * **Audio**:
-  Provides lightweight audio support through native DirectSound (Windows), Audio Unit (macOS/iOS),
-  ALSA (Linux), OSS (BSD), and other APIs.
+  Provides lightweight audio support through native DirectSound or XAudio2 (Windows),
+  Audio Unit (macOS/iOS), ALSA (Linux), OSS (BSD), and other APIs.
 
 ### StratoHAL
 
@@ -302,7 +302,7 @@ Unity without relying on any NDA-restricted code.
 
 |Platform Type  |OS / Platform       |Notes                                     |
 |---------------|--------------------|------------------------------------------|
-|Desktop        |Windows             |DirectX 12/11/9, DirectSound              |
+|Desktop        |Windows             |DirectX 12/11/9, DirectSound, XAudio2     |
 |               |macOS               |Metal, Audio Unit                         |
 |               |ChromeOS            |OpenGL, ALSA                              |
 |               |Linux               |OpenGL, ALSA                              |
@@ -312,6 +312,7 @@ Unity without relying on any NDA-restricted code.
 |               |Android             |OpenGL, OpenSL ES, NDK                    |
 |Web            |WebAssembly         |WebGL, OpenAL, via Emscripten             |
 |Console        |Unity               |Unity Plugin                              |
+|               |Xbox Series X\|S    |Xbox GDK Native (DirectX 12 + XAudio2)    |
 
 ### Console Unity Plugin Notice
 
@@ -319,6 +320,8 @@ Playfield Engine provides Unity Plugin binaries for platforms
 including Windows 64-bit and game consoles.  These binaries are built
 entirely with the open-source version of LLVM/Clang toolchain (no
 proprietary SDKs).
+
+For Xbox series, you can use the native Microsoft GDK port, not via Unity.
 
 ### NoctLang
 
@@ -404,34 +407,47 @@ development.
 Playfield Engine ships with CMake presets covering various platforms
 and build configurations.
 
-|Preset                       |Platform       |Compiler   |Directory                       |Target           |Type           |
-|-----------------------------|---------------|-----------|--------------------------------|-----------------|---------------|
-|windows-msvc-x86-debug       |Windows        |MSVC       |out/build/windows-x86-debug     |playfield.exe    |Executable     |
-|windows-msvc-x86-release     |Windows        |MSVC       |out/build/windows-x86-release   |playfield.exe    |Executable     |
-|windows-msvc-x64-debug       |Windows        |MSVC       |out/build/windows-x64-debug     |playfield.exe    |Executable     |
-|windows-msvc-x64-release     |Windows        |MSVC       |out/build/windows-x64-release   |playfield.exe    |Executable     |
-|windows-msvc-arm64-debug     |Windows        |MSVC       |out/build/windows-arm64-debug   |playfield.exe    |Executable     |
-|windows-msvc-arm64-release   |Windows        |MSVC       |out/build/windows-arm64/release |playfield.exe    |Executable     |
-|windows-mingw-x86            |Windows        |MinGW      |build-mingw-x86                 |playfield.exe    |Executable     |
-|windows-mingw-x86_64         |Windows        |MinGW      |build-mingw-x86_64              |playfield.exe    |Executable     |
-|windows-mingw-arm64          |Windows        |MinGW-LLVM |build-mingw-arm64               |playfield.exe    |Executable     |
-|macos                        |macOS          |Clang      |build-macos                     |Playfield.app    |App Bundle     |
-|linux                        |Linux          |GCC        |build-linux                     |playfield        |Executable     |
-|freebsd                      |FreeBSD        |Clang      |build-freebsd                   |playfield        |Executable     |
-|netbsd                       |NetBSD         |GCC        |build-freebsd                   |playfield        |Executable     |
-|openbsd                      |OpenBSD        |Clang      |build-freebsd                   |playfield        |Executable     |
-|wasm                         |WebAssembly    |Emscripten |build-wasm                      |index.html       |HTML + Wasm    |
-|wasm-local                   |Chromebook     |Emscripten |build-wasm-local                |index.html       |HTML + Wasm    |
-|ios-device                   |iOS Device     |Clang      |build-ios-device                |libplayfield.a   |Static Library |
-|ios-simulator                |iOS Simulator  |Clang      |build-ios-simulator             |libplayfield.a   |Static Library |
-|android-x86                  |Android x86    |Clang      |build-android-x86               |libplayfield.so  |Shared Library |
-|android-x86_64               |Android x86_64 |Clang      |build-android-x86_64            |libplayfield.so  |Shared Library |
-|android-armv7                |Android armv7  |Clang      |build-android-armv7             |libplayfield.so  |Shared Library |
-|android-arm64                |Android arm64  |Clang      |build-android-arm64             |libplayfield.so  |Shared Library |
-|unity-win64                  |Unity Plugin   |Clang-CL   |build-unity-win64               |libplayfield.dll |DLL Plugin     |
-|unity-switch                 |Unity Plugin   |Clang      |build-unity-switch              |libplayfield.a   |Static Library |
-|unity-ps5                    |Unity Plugin   |Clang      |build-unity-ps5                 |libplayfield.a   |Static Library |
-|unity-xbox                   |Unity Plugin   |Clang      |build-unity-xbox                |libplayfield.a   |Static Library |
+|Preset                         |Platform       |Compiler   |Directory                              |Target           |Type           |
+|-------------------------------|---------------|-----------|---------------------------------------|-----------------|---------------|
+|windows-vs2022-x86-debug       |Windows        |MSVC       |out/build/windows-vs2022-x86-debug     |playfield.exe    |Executable     |
+|windows-vs2022-x86-release     |Windows        |MSVC       |out/build/windows-vs2022-x86-release   |playfield.exe    |Executable     |
+|windows-vs2022-x64-debug       |Windows        |MSVC       |out/build/windows-vs2022-x64-debug     |playfield.exe    |Executable     |
+|windows-vs2022-x64-release     |Windows        |MSVC       |out/build/windows-vs2022-x64-release   |playfield.exe    |Executable     |
+|windows-vs2022-arm64-debug     |Windows        |MSVC       |out/build/windows-vs2022-arm64-debug   |playfield.exe    |Executable     |
+|windows-vs2022-arm64-release   |Windows        |MSVC       |out/build/windows-vs2022-arm64-release |playfield.exe    |Executable     |
+|windows-vs2022-gdk-desktop     |Windows        |MSVC       |out/build/windows-vs2022-gdk-desktop   |playfield.exe    |Executable     |
+|windows-vs2022-gdk-xbox-xs     |Windows        |MSVC       |out/build/windows-vs2022-gdk-xbox-xs   |playfield.exe    |Executable     |
+|windows-vs2026-x86-debug       |Windows        |MSVC       |out/build/windows-vs2026-x86-debug     |playfield.exe    |Executable     |
+|windows-vs2026-x86-release     |Windows        |MSVC       |out/build/windows-vs2026-x86-release   |playfield.exe    |Executable     |
+|windows-vs2026-x64-debug       |Windows        |MSVC       |out/build/windows-vs2026-x64-debug     |playfield.exe    |Executable     |
+|windows-vs2026-x64-release     |Windows        |MSVC       |out/build/windows-vs2026-x64-release   |playfield.exe    |Executable     |
+|windows-vs2026-arm64-debug     |Windows        |MSVC       |out/build/windows-vs2026-arm64-debug   |playfield.exe    |Executable     |
+|windows-vs2026-arm64-release   |Windows        |MSVC       |out/build/windows-vs2026-arm64-release |playfield.exe    |Executable     |
+|windows-vs2026-gdk-desktop     |Windows        |MSVC       |out/build/windows-vs2026-gdk-desktop   |playfield.exe    |Executable     |
+|windows-vs2026-gdk-xbox-xs     |Windows        |MSVC       |out/build/windows-vs2026-gdk-xbox-xs   |playfield.exe    |Executable     |
+|windows-mingw-x86              |Windows        |MinGW      |build-mingw-x86                        |playfield.exe    |Executable     |
+|windows-mingw-x86_64           |Windows        |MinGW      |build-mingw-x86_64                     |playfield.exe    |Executable     |
+|windows-mingw-arm64            |Windows        |MinGW-LLVM |build-mingw-arm64                      |playfield.exe    |Executable     |
+|macos                          |macOS          |Clang      |build-macos                            |Playfield.app    |App Bundle     |
+|linux-x11                      |Linux          |GCC        |build-linux                            |playfield        |Executable     |
+|linux-wayland                  |Linux          |GCC        |build-linux                            |playfield        |Executable     |
+|linux-gdm                      |Linux          |GCC        |build-linux                            |playfield        |Executable     |
+|linux-gdm-rot90                |Linux          |GCC        |build-linux                            |playfield        |Executable     |
+|freebsd                        |FreeBSD        |Clang      |build-freebsd                          |playfield        |Executable     |
+|netbsd                         |NetBSD         |GCC        |build-netbsd                           |playfield        |Executable     |
+|openbsd                        |OpenBSD        |Clang      |build-openbsd                          |playfield        |Executable     |
+|wasm                           |WebAssembly    |Emscripten |build-wasm                             |index.html       |HTML + Wasm    |
+|wasm-local                     |Chromebook     |Emscripten |build-wasm-local                       |index.html       |HTML + Wasm    |
+|ios-device                     |iOS Device     |Clang      |build-ios-device                       |libplayfield.a   |Static Library |
+|ios-simulator                  |iOS Simulator  |Clang      |build-ios-simulator                    |libplayfield.a   |Static Library |
+|android-x86                    |Android x86    |Clang      |build-android-x86                      |libplayfield.so  |Shared Library |
+|android-x86_64                 |Android x86_64 |Clang      |build-android-x86_64                   |libplayfield.so  |Shared Library |
+|android-armv7                  |Android armv7  |Clang      |build-android-armv7                    |libplayfield.so  |Shared Library |
+|android-arm64                  |Android arm64  |Clang      |build-android-arm64                    |libplayfield.so  |Shared Library |
+|unity-win64                    |Unity Plugin   |Clang-CL   |build-unity-win64                      |libplayfield.dll |DLL Plugin     |
+|unity-switch                   |Unity Plugin   |Clang      |build-unity-switch                     |libplayfield.a   |Static Library |
+|unity-ps5                      |Unity Plugin   |Clang      |build-unity-ps5                        |libplayfield.a   |Static Library |
+|unity-xbox                     |Unity Plugin   |Clang      |build-unity-xbox                       |libplayfield.a   |Static Library |
 
 ---
 
