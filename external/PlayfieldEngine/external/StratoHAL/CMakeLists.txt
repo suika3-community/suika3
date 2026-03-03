@@ -25,11 +25,12 @@ option(STRATO_TARGET_GDK_XBOX_XS      "Build for GDK for Xbox Series X|S"  OFF)
 option(STRATO_TARGET_UWP              "Build for UWP"                      OFF)
 
 # Options
-option(STRATO_ENABLE_I18N          "Enable translation"                 OFF)
-option(STRATO_ENABLE_OBJECT        "Build an object library"            OFF)
-option(STRATO_ENABLE_SHARED        "Use shared libraries"               OFF)
-option(STRATO_ENABLE_ROT90         "Rotate screen"                      OFF)
-option(STRATO_ENABLE_GST           "Enable GStreamer support"           OFF)
+option(STRATO_ENABLE_I18N             "Enable translation"                 OFF)
+option(STRATO_ENABLE_OBJECT           "Build an object library"            OFF)
+option(STRATO_ENABLE_SHARED           "Use shared libraries"               OFF)
+option(STRATO_ENABLE_ROT90            "Rotate screen"                      OFF)
+option(STRATO_ENABLE_MEDIAFOUNDATION  "Enable Media Foundation support"    OFF)
+option(STRATO_ENABLE_GST              "Enable GStreamer support"           OFF)
 
 #
 # Automatic Target Detection
@@ -202,22 +203,41 @@ endif()
 
 # For Windows.
 if(STRATO_TARGET_WINDOWS)
-  set(STRATO_SOURCES
-    src/image.c
-    src/glyph.c
-    src/wave.c
-    src/stdfile.c
-    src/winmain.c
-    src/d3drender.c
-    src/d3d12render.cc
-    src/d3d11render.cc
-    src/d3d9render.cc
-    src/gdirender.c
-    src/dsound.c
-    src/dsvideo.cc
-    src/digamepad.cc
-    src/xigamepad.c
-  )
+  if(STRATO_ENABLE_MEDIAFOUNDATION)
+    set(STRATO_SOURCES
+      src/image.c
+      src/glyph.c
+      src/wave.c
+      src/stdfile.c
+      src/winmain.c
+      src/d3drender.c
+      src/d3d12render.cc
+      src/d3d11render.cc
+      src/d3d9render.cc
+      src/gdirender.c
+      src/dsound.c
+      src/mfvideo.cc
+      src/digamepad.cc
+      src/xigamepad.c
+    )
+  else()
+    set(STRATO_SOURCES
+      src/image.c
+      src/glyph.c
+      src/wave.c
+      src/stdfile.c
+      src/winmain.c
+      src/d3drender.c
+      src/d3d12render.cc
+      src/d3d11render.cc
+      src/d3d9render.cc
+      src/gdirender.c
+      src/dsound.c
+      src/dsvideo.cc
+      src/digamepad.cc
+      src/xigamepad.c
+    )
+  endif()
 endif()
 
 # For macOS.
@@ -527,6 +547,12 @@ if(STRATO_TARGET_WINDOWS)
     ${CMAKE_BINARY_DIR}/dx12headers/include/directx
     ${CMAKE_BINARY_DIR}/dx12headers/include/dxguids
   )
+
+  if(STRATO_ENABLE_MEDIAFOUNDATION)
+    target_compile_definitions(strato PRIVATE HAL_USE_MFVIDEO)
+  else()
+    target_compile_definitions(strato PRIVATE HAL_USE_DSVIDEO)
+  endif()
 endif()
 
 # Linux X11: Add -DHAS_USE_GL -DHAL_USE_X11 -DHAL_GSTREAMER
@@ -633,6 +659,12 @@ if(STRATO_TARGET_WINDOWS)
     strmiids
     dxguid
   )
+
+  if(STRATO_ENABLE_MEDIAFOUNDATION)
+    target_link_libraries(strato PUBLIC mf mfplat mfuuid mfreadwrite evr)
+  else()
+    target_link_libraries(strato PUBLIC strmiids)
+  endif()
 
   # -mwindows -municode
   if(MINGW)

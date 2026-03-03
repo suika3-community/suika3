@@ -44,6 +44,8 @@ static IMediaControl *pControl;
 static IVideoWindow *pWindow;
 static IMediaEventEx *pEvent;
 
+static BOOL bPlaying;
+
 static BOOL DisplayRenderFileErrorMessage(HRESULT hr);
 
 //
@@ -110,6 +112,8 @@ DShowPlayVideo(
 		hal_log_error("IMediaControl::Run() failed.");
 		return FALSE;
 	}
+
+	bPlaying = TRUE;
 
 	return TRUE;
 }
@@ -191,13 +195,24 @@ DShowStopVideo(VOID)
 			pEvent = NULL;
 		}
 	}
+
+	bPlaying = FALSE;
+}
+
+//
+// Check if a video is playing back.
+//
+BOOL
+DShowIsVideoPlaying(VOID)
+{
+	return bPlaying;
 }
 
 //
 // Process events (Called from WndProc)
 //
 BOOL
-DShowProcessEvent(VOID)
+DShowProcessEvents(VOID)
 {
 	assert(pEvent != NULL);
 
@@ -244,6 +259,8 @@ DShowProcessEvent(VOID)
 			pEvent->Release();
 			pEvent = NULL;
 		}
+
+		bPlaying = FALSE;
 	}
 
 	// TRUE for continue, FALSE for exit.
