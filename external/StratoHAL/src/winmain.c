@@ -520,6 +520,10 @@ RunFrame(void)
 	if (!bRunFrameAllow)
 		return TRUE;
 
+	/* Update the gamepad input. */
+	DInputUpdate();
+	XInputUpdate();
+
 	/* If a video is showing. */
 	if(bDShowMode)
 	{
@@ -533,10 +537,6 @@ RunFrame(void)
 
 		return TRUE;
 	}
-
-	/* Update the gamepad input. */
-	DInputUpdate();
-	XInputUpdate();
 
 	/* Start rendering. */
 	D3DStartFrame();

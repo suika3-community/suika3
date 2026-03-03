@@ -2,7 +2,7 @@
 
 /*
  * StratoHAL
- * Video playback HAL for DirectShow
+ * Video playback HAL for Media Foundation
  */
 
 /*-
@@ -28,18 +28,16 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#ifndef STRATOHAL_DSVIDEO_H
-#define STRATOHAL_DSVIDEO_H
+#ifndef STRATOHAL_MFVIDEO_H
+#define STRATOHAL_MFVIDEO_H
 
 #include "stratohal/platform.h"
 
 #include <windows.h>
 
-#define WM_GRAPHNOTIFY	(WM_APP + 13)
-
-BOOL DShowPlayVideo(HWND hWnd, const char *pszFileName, int nOfsX, int nOfsY, int nWidth, int nHeight);
-VOID DShowStopVideo(VOID);
-BOOL DShowIsVideoPlaying(VOID);
-BOOL DShowProcessEvents(VOID);
+BOOL MFPlayVideo(HWND hWnd, const char *pszFileName, int nOfsX, int nOfsY, int nWidth, int nHeight);
+VOID MFStopVideo(VOID);
+BOOL MFIsVideoPlaying(VOID);
+BOOL MFProcessEvents(VOID);
 
 #endif
