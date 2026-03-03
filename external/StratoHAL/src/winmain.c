@@ -32,7 +32,7 @@
 #include "stratohal/platform.h"
 #include "d3drender.h"
 #include "dsound.h"
-#include "dsvideo.h"
+#include "mfvideo.h"
 #include "digamepad.h"
 #include "xigamepad.h"
 #include "stdfile.h"
@@ -150,10 +150,10 @@ static int nViewportHeight;
 static float fMouseScale;
 
 /* Is video playing? */
-static BOOL bDShowMode;
+static BOOL bVideoMode;
 
 /* Is video skippable by a click? */
-static BOOL bDShowSkippable;
+static BOOL bVideoSkippable;
 
 /* Log window. */
 static HWND hWndLog;
@@ -525,8 +525,15 @@ RunFrame(void)
 	XInputUpdate();
 
 	/* If a video is showing. */
-	if(bDShowMode)
+	if(bVideoMode)
 	{
+		/* Process Media Foundation events. */
+#if defined(HAL_USE_MFVIDEO)
+		MFProcessEvents();
+#else
+		DShowProcessEvents();
+#endif
+		
 		/* Process events. */
 		if(!SyncEvents())
 			return FALSE;
@@ -751,8 +758,10 @@ WndProc(
 		OnCommand(wParam, lParam);
 		return 0;
 	case WM_GRAPHNOTIFY:
-		if(!DShowProcessEvent())
+#if !defined(HAL_USE_MFVIDEO)
+		if(!DShowProcessEvents())
 			bDShowMode = FALSE;
+#endif
 		break;
 	case WM_SIZING:
 		OnSizing((int)wParam, (LPRECT)lParam);
@@ -965,7 +974,14 @@ OnPaint(
 	PAINTSTRUCT ps;
 
 	hDC = BeginPaint(hWnd, &ps);
-	RunFrame();
+
+#if defined(HAL_USE_MFVIDEO)
+	if (!MFIsVideoPlaying())
+#else
+	if (!DShowIsVideoPlaying())
+#endif
+		RunFrame();
+
 	EndPaint(hWnd, &ps);
 
 	UNUSED_PARAMETER(hDC);
@@ -1190,7 +1206,7 @@ UpdateScreenOffsetAndScale(
 }
 
 /* Initialize the log window. */
-VOID
+static VOID
 InitLogWindow(VOID)
 {
 	WNDCLASSEXW wcex;
@@ -1662,15 +1678,19 @@ hal_play_video(
 	path = hal_make_real_path(fname);
 
 	/* Set the event loop DirectShow mode. */
-	bDShowMode = TRUE;
+	bVideoMode = TRUE;
 
 	/* Set a skippable flag. */
-	bDShowSkippable = is_skippable;
+	bVideoSkippable = is_skippable;
 
 	/* Start a playback. */
+#if defined(HAL_USE_MFVIDEO)
+	BOOL ret = MFPlayVideo(hWndMain, path, nViewportOffsetX, nViewportOffsetY, nViewportWidth, nViewportHeight);
+#else
 	BOOL ret = DShowPlayVideo(hWndMain, path, nViewportOffsetX, nViewportOffsetY, nViewportWidth, nViewportHeight);
+#endif
 	if(!ret)
-		bDShowMode = FALSE;
+		bVideoMode = FALSE;
 
 	free(path);
 	return ret;
@@ -1682,8 +1702,13 @@ hal_play_video(
 void
 hal_stop_video(void)
 {
+#if defined(HAL_USE_MFVIDEO)
+	MFStopVideo();
+#else
 	DShowStopVideo();
-	bDShowMode = FALSE;
+#endif
+
+	bVideoMode = FALSE;
 }
 
 /*
@@ -1692,7 +1717,14 @@ hal_stop_video(void)
 bool
 hal_is_video_playing(void)
 {
-	return bDShowMode;
+#if defined(HAL_USE_MFVIDEO)
+	if (!MFIsVideoPlaying())
+#else
+	if (!DShowIsVideoPlaying())
+#endif
+		bVideoMode = FALSE;
+
+	return bVideoMode;
 }
 
 /*
