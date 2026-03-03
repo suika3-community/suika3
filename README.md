@@ -25,8 +25,14 @@ stable and compatible for the long term.
 
 ## Status: Work in Progress
 
-This repository is currently under active development. Features and
-APIs are subject to change.
+This repository is currently under active development.
+Features and APIs are subject to change.
+
+Currently, we have implemented all basic tags in C.
+We are implementing the plugin system and the API bridge.
+
+Note that our 1.0.0 release will be planned in March 2026.
+Plese wait for it.
 
 ## Key Features
 
