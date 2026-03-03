@@ -40,6 +40,8 @@
 
 #include <string.h>
 
+static bool is_skippable;
+
 /*
  * Forward delclarations.
  */
@@ -72,7 +74,6 @@ static bool
 init(void)
 {
 	const char *file;
-	bool is_skippable;
 
 	/* Get the parameters. */
 	file = s3_get_tag_arg_string("file", false, NULL);
@@ -98,7 +99,8 @@ update(void)
 		return;
 	}
 
-	if (!s3_is_non_interruptible() &&
+	if (is_skippable &&
+	    !s3_is_non_interruptible() &&
 	     (s3_is_control_key_pressed() ||
 	      s3_is_return_key_pressed() ||
 	      s3_is_mouse_left_clicked() ||

@@ -49,7 +49,7 @@ bool
 s3i_tag_returnmacro(
 	void *p)
 {
-	bool s3i_rag_endmacro(void *);
+	bool s3i_tag_endmacro(void *);
 
 	return s3i_tag_endmacro(p);
 }

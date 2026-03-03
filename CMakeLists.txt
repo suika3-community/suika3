@@ -181,6 +181,11 @@ if(SUIKA_TARGET_UNITY)
   set(PLAYFIELD_TARGET_UNITY ON)
 endif()
 
+# Gstreamer on Linux.
+if(SUIKA_TARGET_LINUX)
+  set(PLAYFIELD_ENABLE_GST ON)
+endif()
+
 #
 # Release/Debug
 #
