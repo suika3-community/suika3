@@ -541,6 +541,30 @@ pf_is_sound_finished(
 	int stream);
 
 /*
+ * Video Playback
+ */
+
+/*
+ * Play a video.
+ */
+bool
+pf_play_video(
+	const char *file,
+	bool is_skippable);
+
+/*
+ * Stop the video.
+ */
+void
+pf_stop_video(void);
+
+/*
+ * Check if a video is playing back.
+ */
+bool
+pf_is_video_playing(void);
+
+/*
  * Lap Timer
  */
 
