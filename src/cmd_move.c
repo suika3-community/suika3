@@ -71,6 +71,18 @@ static struct params params[] = {
 		"",		/* No "bg-dim" */
 	},
 	{
+		S3_LAYER_BG2,
+		"bg2-x",
+		"bg2-y",
+		"bg2-a",
+		"bg2-scale-x",
+		"bg2-scale-y",
+		"bg2-bg-x",
+		"bg2-bg-y",
+		"bg2-rotate",
+		"",		/* No "bg-dim" */
+	},
+	{
 		S3_LAYER_CHB,
 		"back-x",
 		"back-y",

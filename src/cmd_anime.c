@@ -106,6 +106,7 @@ init(void)
 	is_async = s3_get_tag_arg_bool("async", true, false);
 	is_showsysbtn = s3_get_tag_arg_bool("showsysbtn", true, false);
 	is_showmsgbox = s3_get_tag_arg_bool("showmsgbox", true, false);
+	is_shownamebox = s3_get_tag_arg_bool("shownamebox", true, false);
 	reg_name = s3_get_tag_arg_string("register", true, NULL);
 
 	/* Start the animes. */
