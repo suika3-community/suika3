@@ -12,12 +12,13 @@
       "toolset":        "v143",
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
-        "CMAKE_CONFIGURATION_TYPES": "Debug",
-        "CMAKE_BUILD_TYPE":          "Debug",
-        "SUIKA_TARGET_WINDOWS":      "ON",
-        "SUIKA_ENABLE_JIT":          "ON",
-        "SUIKA_ENABLE_I18N":         "ON",
-        "SUIKA_ENABLE_PACK":         "ON"
+        "CMAKE_CONFIGURATION_TYPES":    "Debug",
+        "CMAKE_BUILD_TYPE":             "Debug",
+        "SUIKA_TARGET_WINDOWS":         "ON",
+        "SUIKA_ENABLE_JIT":             "ON",
+        "SUIKA_ENABLE_I18N":            "ON",
+        "SUIKA_ENABLE_PACK":            "ON",
+        "SUIKA_ENABLE_MEDIAFOUNDATION": "OFF"
       },
       "condition": {
         "type": "equals",
@@ -33,12 +34,13 @@
       "toolset":        "v143",
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
-        "CMAKE_CONFIGURATION_TYPES": "Release",
-        "CMAKE_BUILD_TYPE":          "Release",
-        "SUIKA_TARGET_WINDOWS":      "ON",
-        "SUIKA_ENABLE_JIT":          "ON",
-        "SUIKA_ENABLE_I18N":         "ON",
-        "SUIKA_ENABLE_PACK":         "ON"
+        "CMAKE_CONFIGURATION_TYPES":    "Release",
+        "CMAKE_BUILD_TYPE":             "Release",
+        "SUIKA_TARGET_WINDOWS":         "ON",
+        "SUIKA_ENABLE_JIT":             "ON",
+        "SUIKA_ENABLE_I18N":            "ON",
+        "SUIKA_ENABLE_PACK":            "ON",
+        "SUIKA_ENABLE_MEDIAFOUNDATION": "OFF"
       },
       "condition": {
         "type": "equals",
@@ -54,12 +56,13 @@
       "toolset":        "v143",
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
-        "CMAKE_CONFIGURATION_TYPES": "Debug",
-        "CMAKE_BUILD_TYPE":          "Debug",
-        "SUIKA_TARGET_WINDOWS":      "ON",
-        "SUIKA_ENABLE_JIT":          "ON",
-        "SUIKA_ENABLE_I18N":         "ON",
-        "SUIKA_ENABLE_PACK":         "ON"
+        "CMAKE_CONFIGURATION_TYPES":    "Debug",
+        "CMAKE_BUILD_TYPE":             "Debug",
+        "SUIKA_TARGET_WINDOWS":         "ON",
+        "SUIKA_ENABLE_JIT":             "ON",
+        "SUIKA_ENABLE_I18N":            "ON",
+        "SUIKA_ENABLE_PACK":            "ON",
+        "SUIKA_ENABLE_MEDIAFOUNDATION": "ON"
       },
       "condition": {
         "type": "equals",
@@ -75,8 +78,13 @@
       "toolset":        "v143",
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
-        "CMAKE_CONFIGURATION_TYPES": "Release",
-        "CMAKE_BUILD_TYPE":          "Release"
+        "CMAKE_CONFIGURATION_TYPES":    "Release",
+        "CMAKE_BUILD_TYPE":             "Release",
+        "SUIKA_TARGET_WINDOWS":         "ON",
+        "SUIKA_ENABLE_JIT":             "ON",
+        "SUIKA_ENABLE_I18N":            "ON",
+        "SUIKA_ENABLE_PACK":            "ON",
+        "SUIKA_ENABLE_MEDIAFOUNDATION": "ON"
       },
       "condition": {
         "type": "equals",
@@ -92,12 +100,13 @@
       "toolset":        "v143",
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
-        "CMAKE_CONFIGURATION_TYPES": "Debug",
-        "CMAKE_BUILD_TYPE":          "Debug",
-        "SUIKA_TARGET_WINDOWS":      "ON",
-        "SUIKA_ENABLE_JIT":          "ON",
-        "SUIKA_ENABLE_I18N":         "ON",
-        "SUIKA_ENABLE_PACK":         "ON"
+        "CMAKE_CONFIGURATION_TYPES":    "Debug",
+        "CMAKE_BUILD_TYPE":             "Debug",
+        "SUIKA_TARGET_WINDOWS":         "ON",
+        "SUIKA_ENABLE_JIT":             "ON",
+        "SUIKA_ENABLE_I18N":            "ON",
+        "SUIKA_ENABLE_PACK":            "ON",
+        "SUIKA_ENABLE_MEDIAFOUNDATION": "ON"
       },
       "condition": {
         "type": "equals",
@@ -113,12 +122,13 @@
       "toolset":        "v143",
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
-        "CMAKE_CONFIGURATION_TYPES": "Release",
-        "CMAKE_BUILD_TYPE":          "Release",
-        "SUIKA_TARGET_WINDOWS":      "ON",
-        "SUIKA_ENABLE_JIT":          "ON",
-        "SUIKA_ENABLE_I18N":         "ON",
-        "SUIKA_ENABLE_PACK":         "ON"
+        "CMAKE_CONFIGURATION_TYPES":    "Release",
+        "CMAKE_BUILD_TYPE":             "Release",
+        "SUIKA_TARGET_WINDOWS":         "ON",
+        "SUIKA_ENABLE_JIT":             "ON",
+        "SUIKA_ENABLE_I18N":            "ON",
+        "SUIKA_ENABLE_PACK":            "ON",
+        "SUIKA_ENABLE_MEDIAFOUNDATION": "ON"
       },
       "condition": {
         "type": "equals",
@@ -134,9 +144,10 @@
       "toolset":        "v143",
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
-        "SUIKA_TARGET_GDK_WINDOWS": "ON",
-        "SUIKA_ENABLE_JIT":         "ON",
-        "SUIKA_ENABLE_I18N":        "ON"
+        "SUIKA_TARGET_GDK_WINDOWS":     "ON",
+        "SUIKA_ENABLE_JIT":             "ON",
+        "SUIKA_ENABLE_I18N":            "ON",
+        "SUIKA_ENABLE_MEDIAFOUNDATION": "ON"
       },
       "condition": {
         "type": "equals",
@@ -152,9 +163,10 @@
       "toolset":        "v143",
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
-        "SUIKA_TARGET_GDK_XBOX_XS": "ON",
-        "SUIKA_ENABLE_JIT":         "OFF",
-        "SUIKA_ENABLE_I18N":        "OFF"
+        "SUIKA_TARGET_GDK_XBOX_XS":     "ON",
+        "SUIKA_ENABLE_JIT":             "OFF",
+        "SUIKA_ENABLE_I18N":            "OFF",
+        "SUIKA_ENABLE_MEDIAFOUNDATION": "ON"
       },
       "condition": {
         "type": "equals",
@@ -175,7 +187,8 @@
         "CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION": "10.0",
         "SUIKA_TARGET_UWP":                         "ON",
         "SUIKA_ENABLE_JIT":                         "OFF",
-        "SUIKA_ENABLE_I18N":                        "OFF"
+        "SUIKA_ENABLE_I18N":                        "OFF",
+        "SUIKA_ENABLE_MEDIAFOUNDATION":             "ON"
       },
       "condition": {
         "type": "equals",
@@ -191,12 +204,13 @@
       "toolset":        "v145",
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
-        "CMAKE_CONFIGURATION_TYPES": "Debug",
-        "CMAKE_BUILD_TYPE":          "Debug",
-        "SUIKA_TARGET_WINDOWS":      "ON",
-        "SUIKA_ENABLE_JIT":          "ON",
-        "SUIKA_ENABLE_I18N":         "ON",
-        "SUIKA_ENABLE_PACK":         "ON"
+        "CMAKE_CONFIGURATION_TYPES":                "Debug",
+        "CMAKE_BUILD_TYPE":                         "Debug",
+        "SUIKA_TARGET_WINDOWS":                     "ON",
+        "SUIKA_ENABLE_JIT":                         "ON",
+        "SUIKA_ENABLE_I18N":                        "ON",
+        "SUIKA_ENABLE_PACK":                        "ON",
+        "SUIKA_ENABLE_MEDIAFOUNDATION":             "OFF"
       },
       "condition": {
         "type": "equals",
@@ -212,12 +226,13 @@
       "toolset":        "v145",
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
-        "CMAKE_CONFIGURATION_TYPES": "Release",
-        "CMAKE_BUILD_TYPE":          "Release",
-        "SUIKA_TARGET_WINDOWS":      "ON",
-        "SUIKA_ENABLE_JIT":          "ON",
-        "SUIKA_ENABLE_I18N":         "ON",
-        "SUIKA_ENABLE_PACK":         "ON"
+        "CMAKE_CONFIGURATION_TYPES":                "Release",
+        "CMAKE_BUILD_TYPE":                         "Release",
+        "SUIKA_TARGET_WINDOWS":                     "ON",
+        "SUIKA_ENABLE_JIT":                         "ON",
+        "SUIKA_ENABLE_I18N":                        "ON",
+        "SUIKA_ENABLE_PACK":                        "ON",
+        "SUIKA_ENABLE_MEDIAFOUNDATION":             "OFF"
       },
       "condition": {
         "type": "equals",
@@ -233,12 +248,13 @@
       "toolset":        "v145",
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
-        "CMAKE_CONFIGURATION_TYPES": "Debug",
-        "CMAKE_BUILD_TYPE":          "Debug",
-        "SUIKA_TARGET_WINDOWS":      "ON",
-        "SUIKA_ENABLE_JIT":          "ON",
-        "SUIKA_ENABLE_I18N":         "ON",
-        "SUIKA_ENABLE_PACK":         "ON"
+        "CMAKE_CONFIGURATION_TYPES":                "Debug",
+        "CMAKE_BUILD_TYPE":                         "Debug",
+        "SUIKA_TARGET_WINDOWS":                     "ON",
+        "SUIKA_ENABLE_JIT":                         "ON",
+        "SUIKA_ENABLE_I18N":                        "ON",
+        "SUIKA_ENABLE_PACK":                        "ON",
+        "SUIKA_ENABLE_MEDIAFOUNDATION":             "ON"
       },
       "condition": {
         "type": "equals",
@@ -254,12 +270,13 @@
       "toolset":        "v145",
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
-        "CMAKE_CONFIGURATION_TYPES": "Release",
-        "CMAKE_BUILD_TYPE":          "Release",
-        "SUIKA_TARGET_WINDOWS":      "ON",
-        "SUIKA_ENABLE_JIT":          "ON",
-        "SUIKA_ENABLE_I18N":         "ON",
-        "SUIKA_ENABLE_PACK":         "ON"
+        "CMAKE_CONFIGURATION_TYPES":                "Release",
+        "CMAKE_BUILD_TYPE":                         "Release",
+        "SUIKA_TARGET_WINDOWS":                     "ON",
+        "SUIKA_ENABLE_JIT":                         "ON",
+        "SUIKA_ENABLE_I18N":                        "ON",
+        "SUIKA_ENABLE_PACK":                        "ON",
+        "SUIKA_ENABLE_MEDIAFOUNDATION":             "ON"
       },
       "condition": {
         "type": "equals",
@@ -275,12 +292,13 @@
       "toolset":        "v145",
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
-        "CMAKE_CONFIGURATION_TYPES": "Debug",
-        "CMAKE_BUILD_TYPE":          "Debug",
-        "SUIKA_TARGET_WINDOWS":      "ON",
-        "SUIKA_ENABLE_JIT":          "ON",
-        "SUIKA_ENABLE_I18N":         "ON",
-        "SUIKA_ENABLE_PACK":         "ON"
+        "CMAKE_CONFIGURATION_TYPES":                "Debug",
+        "CMAKE_BUILD_TYPE":                         "Debug",
+        "SUIKA_TARGET_WINDOWS":                     "ON",
+        "SUIKA_ENABLE_JIT":                         "ON",
+        "SUIKA_ENABLE_I18N":                        "ON",
+        "SUIKA_ENABLE_PACK":                        "ON",
+        "SUIKA_ENABLE_MEDIAFOUNDATION":             "ON"
       },
       "condition": {
         "type": "equals",
@@ -296,12 +314,13 @@
       "toolset":        "v145",
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
-        "CMAKE_CONFIGURATION_TYPES": "Release",
-        "CMAKE_BUILD_TYPE":          "Release",
-        "SUIKA_TARGET_WINDOWS":      "ON",
-        "SUIKA_ENABLE_JIT":          "ON",
-        "SUIKA_ENABLE_I18N":         "ON",
-        "SUIKA_ENABLE_PACK":         "ON"
+        "CMAKE_CONFIGURATION_TYPES":                "Release",
+        "CMAKE_BUILD_TYPE":                         "Release",
+        "SUIKA_TARGET_WINDOWS":                     "ON",
+        "SUIKA_ENABLE_JIT":                         "ON",
+        "SUIKA_ENABLE_I18N":                        "ON",
+        "SUIKA_ENABLE_PACK":                        "ON",
+        "SUIKA_ENABLE_MEDIAFOUNDATION":             "ON"
       },
       "condition": {
         "type": "equals",
@@ -317,9 +336,10 @@
       "toolset":        "v145",
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
-        "SUIKA_TARGET_GDK_WINDOWS": "ON",
-        "SUIKA_ENABLE_JIT":         "ON",
-        "SUIAK_ENABLE_I18N":        "OFF"
+        "SUIKA_TARGET_GDK_WINDOWS":                 "ON",
+        "SUIKA_ENABLE_JIT":                         "ON",
+        "SUIAK_ENABLE_I18N":                        "OFF",
+        "SUIKA_ENABLE_MEDIAFOUNDATION":             "ON"
       },
       "condition": {
         "type": "equals",
@@ -335,9 +355,10 @@
       "toolset":        "v145",
       "binaryDir":      "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
-        "SUIKA_TARGET_GDK_XBOX_XS": "ON",
-        "SUIKA_ENABLE_JIT":         "OFF",
-        "SUIKA_ENABLE_I18N":        "OFF"
+        "SUIKA_TARGET_GDK_XBOX_XS":                 "ON",
+        "SUIKA_ENABLE_JIT":                         "OFF",
+        "SUIKA_ENABLE_I18N":                        "OFF",
+        "SUIKA_ENABLE_MEDIAFOUNDATION":             "ON"
       },
       "condition": {
         "type": "equals",
@@ -352,11 +373,12 @@
       "binaryDir":      "${sourceDir}/build-mingw-x86",
       "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-x86.cmake",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE":            "Release",
-        "SUIKA_TARGET_WINDOWS":        "ON",
-        "SUIKA_ENABLE_JIT":            "ON",
-        "SUIKA_ENABLE_I18N":           "ON",
-        "SUIKA_ENABLE_PACK":           "ON"
+        "CMAKE_BUILD_TYPE":                         "Release",
+        "SUIKA_TARGET_WINDOWS":                     "ON",
+        "SUIKA_ENABLE_JIT":                         "ON",
+        "SUIKA_ENABLE_I18N":                        "ON",
+        "SUIKA_ENABLE_PACK":                        "ON",
+        "SUIKA_ENABLE_MEDIAFOUNDATION":             "OFF"
       }
     },
     {
@@ -366,11 +388,12 @@
       "binaryDir":      "${sourceDir}/build-mingw-x86_64",
       "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-x86_64.cmake",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE":            "Release",
-        "SUIKA_TARGET_WINDOWS":        "ON",
-        "SUIKA_ENABLE_JIT":            "ON",
-        "SUIKA_ENABLE_I18N":           "ON",
-        "SUIKA_ENABLE_PACK":           "ON"
+        "CMAKE_BUILD_TYPE":                         "Release",
+        "SUIKA_TARGET_WINDOWS":                     "ON",
+        "SUIKA_ENABLE_JIT":                         "ON",
+        "SUIKA_ENABLE_I18N":                        "ON",
+        "SUIKA_ENABLE_PACK":                        "ON",
+        "SUIKA_ENABLE_MEDIAFOUNDATION":             "ON"
       }
     },
     {
@@ -380,11 +403,12 @@
       "binaryDir":      "${sourceDir}/build-mingw-arm64",
       "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-arm64.cmake",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE":            "Release",
-        "SUIKA_TARGET_WINDOWS":        "ON",
-        "SUIKA_ENABLE_JIT":            "ON",
-        "SUIKA_ENABLE_I18N":           "ON",
-        "SUIKA_ENABLE_PACK":           "ON"
+        "CMAKE_BUILD_TYPE":                         "Release",
+        "SUIKA_TARGET_WINDOWS":                     "ON",
+        "SUIKA_ENABLE_JIT":                         "ON",
+        "SUIKA_ENABLE_I18N":                        "ON",
+        "SUIKA_ENABLE_PACK":                        "ON",
+        "SUIKA_ENABLE_MEDIAFOUNDATION":             "ON"
       }
     },
     {

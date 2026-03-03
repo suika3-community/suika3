@@ -22,14 +22,16 @@ option(SUIKA_TARGET_NETBSD           "Build for NetBSD X11"                  OFF
 option(SUIKA_TARGET_OPENBSD          "Build for OpenBSD X11"                 OFF)
 
 # Options
-option(SUIKA_ENABLE_JIT           "Enable JIT"              OFF)
-option(SUIKA_ENABLE_I18N          "Enable translation"      OFF)
-option(SUIKA_ENABLE_BUNDLE        "Enable macOS bundle"     OFF)
-option(SUIKA_ENABLE_PACK          "Enable packager"         OFF)
-option(SUIKA_ENABLE_STATIC        "Build a static library"  OFF)
-option(SUIKA_ENABLE_SHARED        "Build a dynamic library" OFF)
-option(SUIKA_ENABLE_DIST          "Build for packages"      OFF)
-option(SUIKA_ENABLE_ROT90         "Rotate screen for GBM"   OFF)
+option(SUIKA_ENABLE_JIT              "Enable JIT"                         OFF)
+option(SUIKA_ENABLE_I18N             "Enable translation"                 OFF)
+option(SUIKA_ENABLE_BUNDLE           "Enable macOS bundle"                OFF)
+option(SUIKA_ENABLE_PACK             "Enable packager"                    OFF)
+option(SUIKA_ENABLE_STATIC           "Build a static library"             OFF)
+option(SUIKA_ENABLE_SHARED           "Build a dynamic library"            OFF)
+option(SUIKA_ENABLE_DIST             "Build for packages"                 OFF)
+option(SUIKA_ENABLE_ROT90            "Rotate screen for GBM"              OFF)
+option(SUIKA_ENABLE_MEDIAFOUNDATION  "Enable Media Foundation support"    OFF)
+option(SUIKA_ENABLE_GST              "Enable GStreamer support"           OFF)
 
 #
 # Automatic Target Detection
@@ -179,6 +181,11 @@ endif()
 # If building for Unity.
 if(SUIKA_TARGET_UNITY)
   set(PLAYFIELD_TARGET_UNITY ON)
+endif()
+
+# Media Foundation on Windows
+if(SUIKA_ENABLE_MEDIAFOUNDATION)
+  set(PLAYFIELD_ENABLE_MEDIAFOUNDATION ON)
 endif()
 
 # Gstreamer on Linux.
