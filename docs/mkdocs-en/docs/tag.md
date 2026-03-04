@@ -180,6 +180,45 @@ Music is an essential tool for setting the mood of your scene, and it will conti
 
 ---
 
+## `callmacro`
+
+Call Macro
+
+The `callmacro` tag executes a previously defined macro.
+It allows you to trigger a specific sequence of commands, such as character entrances or UI animations, multiple times throughout your script without rewriting the original code.
+
+### Basic Usage
+
+```
+# Call a macro named "kaito_entrance"
+[callmacro name="kaito_entrance"]
+
+# Call a macro for a specific scene transition
+[callmacro name="fade_to_white"]
+```
+
+### Arguments
+
+| Argument | Omissible | Description                               | Notes                                              |
+|----------|-----------|-------------------------------------------|----------------------------------------------------|
+| `name`   | No        | The name of the macro to execute.         | Must match a name defined by a `[defmacro]` tag.   |
+| `file`   | Yes       | The file name where the macro is defined. | Omit this to call a macro inside the current file. |
+
+### Tips
+
+**Efficiency**:
+* By using `[callmacro]`, you can keep your main story script focused and readable.
+* Instead of seeing 10 lines of animation code, you'll just see one clear command.
+
+**Execution Flow**:
+* When the engine hits `[callmacro]`, it immediately jumps to the defined macro, runs all the tags inside it, and then automatically returns to the very next line after the `[callmacro]` tag.
+
+**Modular Design**:
+* Think of macros as "custom tags" for your game.
+* If you decide to change how a character enters a scene, you only need to update the code once in the `[defmacro]` block, and every `[callmacro]` will reflect that change!
+
+---
+
 ## `ch`
 
 Character Display
@@ -247,6 +286,44 @@ Each layer above (e.g., `center`) can be customized using the following suffixes
 **Relative Transformation**:
 * Like the `bg` tag, all numeric parameters support the `r` prefix.
 * For example, `center-y="r-50"` will hop the center character 50 pixels upward from its current position.
+
+---
+
+## `chapter`
+
+Set Chapter Name
+
+The `chapter` tag sets the name of the current chapter. 
+This name is typically used by the game system to display progress in the save/load menu or on the game screen, helping players keep track of their journey.
+
+### Basic Usage
+
+```
+# Set the chapter name at the beginning of a story segment
+[chapter name="Chapter 01: The Beginning"]
+
+# Update the chapter name as the story progresses
+[chapter name="Intermission: A Quiet Night"]
+```
+
+### Arguments
+
+| Argument | Omissible | Description                        | Notes                                                      |
+|----------|-----------|------------------------------------|------------------------------------------------------------|
+| `name`   | No        | The name of the chapter to be set. | This string will be stored in the game's system variables. |
+
+### Tips
+
+**Save Data Visibility**:
+* In many Suika3 configurations, the string you set here is what appears on the "Save" and "Load" slots.
+* Choose a name that helps the player remember exactly where they were in the story!
+
+**Consistency**:
+* It's a good practice to call the `[chapter]` tag immediately after a `[label]` that starts a new major scene or chapter. 
+
+**Updating Names**:
+* You can call `[chapter]` as many times as you like.
+* Every time you do, the old chapter name is overwritten by the new one.
 
 ---
 
@@ -415,6 +492,48 @@ Please note that small branches should be realized by `[if]`.
 **Across Files?**:
 * Remember that `[goto]` typically works within the current script file.
 * If you want to jump to a different file entirely, you'll want to look at the `[load]` tag!
+
+---
+
+## `defmacro`
+
+Define Macro
+
+The `defmacro` tag starts the definition of a macro. 
+A macro allows you to group multiple tags and commands into a single named block, which can be reused throughout your script using the `[callmacro]` tag.
+
+### Basic Usage
+
+```
+# Define a macro for a specific character's entrance
+[defmacro name="enter_kaito"]
+    [ch center="kaito_smile.png" time="0.5"]
+    [text name="Kaito" text="Hey! Did I keep you waiting?"]
+[endmacro]
+
+# Later in your script, call it with a single line
+[callmacro name="enter_kaito"]
+```
+
+### Arguments
+
+| Argument | Omissible | Description                     | Notes                                             |
+|----------|-----------|---------------------------------|---------------------------------------------------|
+| `name`   | No        | The unique name for this macro. | Used to identify the macro when calling it later. |
+
+### Tips
+
+**Closing the Definition**:
+* Every `[defmacro]` must be paired with an `[endmacro]` tag to mark the end of the definition.
+
+**Code Reusability**:
+* Macros are perfect for repetitive sequences, such as specific UI transitions, character-specific visual setups, or complex sound and visual combinations.
+
+**Organization**:
+* It is a common practice to define all your macros at the very beginning of your main script file or in a separate file that you load at the start.
+
+**Nesting and Logic**:
+* You can include almost any other tag inside a macro, including `[if]` statements and even `[returnmacro]` to exit the macro early based on certain conditions.
 
 ---
 
@@ -844,211 +963,310 @@ Sound effects are used for short audio cues like door knocks, footsteps, or UI f
 
 ## `volume`
 
-The `volume` tag sets a sound volume for a track with a fading.
+Set Audio Volume
 
-Basic Usage:
+The `volume` tag sets the sound volume for a specific audio track. 
+It's perfect for ensuring that your background music doesn't drown out important sound effects or character voices.
+
+### Basic Usage
+
 ```
-[volume track="bgm" volume="1.0"]
+# Set BGM volume to 50%
+[volume track="bgm" volume="0.5"]
+
+# Set SE volume to maximum
 [volume track="se" volume="1.0"]
-[volume track="voice" volume="1.0"]
+
+# Mute voices
+[volume track="voice" volume="0.0"]
 ```
 
-### `track` argument
+### Arguments
 
-This argument specifies the track to set volume.
+| Argument | Omissible | Description                           | Notes                                     |
+|----------|-----------|---------------------------------------|-------------------------------------------|
+| `track`  | No        | The audio track to adjust.            | See the "Tracks" table below.             |
+| `volume` | No        | The volume level from `0.0` to `1.0`. | `0.0` is silent, `1.0` is maximum volume. |
+| `time`   | Yes (`0`) | Fading time in seconds.               | `0` means instant change.                 |
+### Track Types (`track`)
 
-|Track Name   |Description                   |
-|-------------|------------------------------|
-|bgm          |Background Music              |
-|se           |Sound Effect and System Sound |
-|voice        |Voice                         |
+Suika3 categorizes audio into three main tracks:
 
----
+| Track Name | Description                      |
+|------------|----------------------------------|
+| `bgm`      | Background Music.                |
+| `se`       | Sound Effects and system sounds. |
+| `voice`    | Character voice files.           |
 
-## `chapter`
+### Tips
 
-The `chapter` tag sets a chapter name.
+**Immediate Change**:
+* The volume change happens gradually when `time` is greater than `0`.
+* `time="0"` means an immediate change.
 
-Basic Usage:
-```
-[chapter name="Chapter 01"]
-```
-
-### `name` argument
-
-This argument specifies the chapter name.
+**Default Levels**:
+* It's a good idea to set your preferred volume levels at the start of your game (e.g., in a `start` label) so the player has a consistent experience from the beginning.
 
 ---
 
 ## `skip`
 
-The `skip` tag sets a skip enable status.
+Set Skip Status
 
-Basic Usage:
+The `skip` tag enables or disables the skipping function within the game. 
+It is useful for preventing players from skipping through important cinematic sequences or ensuring that certain scenes are experienced at the intended pace.
+
+### Basic Usage
+
 ```
+# Enable the skip function
 [skip enable="true"]
+
+# Disable the skip function during a critical scene
 [skip enable="false"]
 ```
 
-### `enable` argument
+### Arguments
 
-This argument specifies whether skip is enabled or not.
+| Argument | Omissible | Description                                  | Notes                                                 |
+|----------|-----------|----------------------------------------------|-------------------------------------------------------|
+| `enable` | No        | Whether the skip function is enabled or not. | Set to `true` to allow skipping, `false` to block it. |
+
+### Tips
+
+**Cinematic Control**:
+* Skip feature is typically disabled before the title logo at startup.
+
+**Restoring Settings**:
+* Don't forget to set `[skip enable="true"]` once the critical scene is over.
+* Players usually appreciate having the freedom to skip through text they've already seen.
+
+**System Behavior**:
+* This tag controls the overall "Skip" state of the engine.
+* Even if the player presses a skip hotkey, the engine will ignore it if `enable` is set to `false`.
 
 ---
 
 ## `config`
 
-The `config` tag sets a config value.
+Set Configuration Value
 
-Basic Usage:
+The `config` tag allows you to modify the game system's configuration settings directly from the markup. 
+It is essential for dynamically adjusting the game's UI, such as moving the message box or changing system-level parameters on the fly.
+
+### Basic Usage
+
 ```
+# Change the position of the message box
 [config name="msgbox.x" value="100"]
+[config name="msgbox.y" value="200"]
+
+# Update a specific system setting
+[config name="msgbox.font.size" value="24"]
 ```
 
-### `name` argument
+### Arguments
 
-This argument specifies the config name.
+| Argument | Omissible | Description                                        | Notes                                                    |
+|----------|-----------|----------------------------------------------------|----------------------------------------------------------|
+| `name`   | No        | The name of the configuration parameter to change. | Refer to the system's config list for valid names.       |
+| `value`  | No        | The new value to assign to the parameter.          | Values are handled as strings but may represent numbers. |
 
-### `value` argument
+### Tips
 
-This argument specifies the config value.
+**UI Customization**:
+* You can use `[config]` to reposition the message box during specific scenes to create a more cinematic feel.
+
+**Dynamic Adjustments**:
+* Since this tag can be called anywhere in your script, you can change the game's "look and feel" as the story progresses.
+* For example, shifting the UI for a "flashback" sequence.
+
+**Parameter Names**:
+* Be careful with the `name` argument!
+* It must exactly match the internal configuration keys defined in your Suika3 project settings.
+* See also [the complete list of the configurations](config.md)
 
 ---
 
 ## `layer`
 
-The `layer` tag loads an image, unload an image, or sets parameters for a layer.
+Direct Layer Manipulation
 
-Basic Usage:
+The `layer` tag allows for direct control over specific image and text layers. 
+While tags like `[bg]` and `[ch]` are easier for standard scenes, `[layer]` gives you the precision to modify any individual layer's position, scale, and rotation independently.
+
+### Basic Usage
+
 ```
-[layer
-  name="bg"
-  x="100"
-  y="100"
-  alpha="255"
-  scale-x="1.0"
-  scale-y="1.0"
-  center-x="0"
-  center-y="0"
-  rotate="0.0"
-]
+# Load an image directly onto the center character layer (chc)
+[layer name="chc" file="heroine_smile.png"]
+
+# Adjust only the position and opacity of the background (bg)
+[layer name="bg" x="100" y="100" alpha="128"]
+
+# Rotate the face layer
+[layer name="chf" rotate="45.0" center-x="100" center-y="100"]
 ```
 
-### `name` argument
+### Arguments
 
-This argument specifies the layer.
+| Argument  | Omissible   | Description                          | Notes                              |
+|-----------|-------------|--------------------------------------|------------------------------------|
+| `name`    | No          | The target layer name.               | See the "Layer Names" table below. |
+| `file`    | Yes         | The filename to load onto the layer. | Use `none` to clear the layer.     |
+| `x`       | Yes (`0`)   | The layer's X position.              |                                    |
+| `y`       | Yes (`0`)   | The layer's Y position.              |                                    |
+| `alpha`   | Yes (`255`) | The layer's opacity level.           | `0` to `255`.                      |
+| `scale-x` | Yes (`1.0`) | X-axis scaling factor.               | `1.0` is original size.            |
+| `scale-y` | Yes (`1.0`) | Y-axis scaling factor.               | `1.0` is original size.            |
+| `center-x`| Yes (`0`)   | Rotation center (X).                 | Pivot point for rotation.          |
+| `center-y`| Yes (`0`)   | Rotation center (Y).                 | Pivot point for rotation.          |
+| `rotate`  | Yes (`0.0`) | Rotation in degrees.                 | Positive for clockwise.            |
 
-|Layer Name       |Description                            |
-|-----------------|---------------------------------------|
-|bg               |Background Image                       |
-|bg2              |Background Image 2                     |
-|efb1             |Back Effect 1                          |
-|efb2             |Back Effect 2                          |
-|efb3             |Back Effect 3                          |
-|efb4             |Back Effect 4                          |
-|chb              |Center-Back Character                  |
-|chb-eye          |Center-Back Character's Eyes           |
-|chb-lip          |Center-Back Character's Lips           |
-|chb-fo           |Fading-Out Center-Back Character       |
-|chl              |Left Character                         |
-|chl-eye          |Left Character's Eyes                  |
-|chl-lip          |Left Character's Lips                  |
-|chl-fo           |Fading-Out Left Character              |
-|chlc             |Left-Center Character                  |
-|chlc-eye         |Left-Center Character's Eyes           |
-|chlc-lip         |Left-Center Character's Lips           |
-|chlc-fo          |Fading-Out Left-Center Character       |
-|chr              |Right Character                        |
-|chr-eye          |Right Character's Eyes                 |
-|chr-lip          |Right Character's Lips                 |
-|chr-fo           |Fading-Out Right Character             |
-|chrc             |Right-Center Character                 |
-|chrc-eye         |Right-Center Character's Eyes          |
-|chrc-lip         |Right-Center Character's Lips          |
-|chrc-fo          |Fading-Out Right-Center Character      |
-|chc              |Center Character                       |
-|chc-eye          |Center Character's Eyes                |
-|chc-lip          |Center Character's Lips                |
-|chc-fo           |Fading-Out Center Character            |
-|eff1             |Front Effect 1                         |
-|eff2             |Front Effect 2                         |
-|eff3             |Front Effect 3                         |
-|eff4             |Front Effect 4                         |
-|chf              |Face Character                         |
-|chf-eye          |Face Character's Eyes                  |
-|chf-lip          |Face Character's Lips                  |
-|chf-fo           |Fading-Out Face Character              |
-|text1            |Text Layer 1                           |
-|text2            |Text Layer 2                           |
-|text3            |Text Layer 3                           |
-|text4            |Text Layer 4                           |
-|text5            |Text Layer 5                           |
-|text6            |Text Layer 6                           |
-|text7            |Text Layer 7                           |
-|text8            |Text Layer 8                           |
+### Common Layer Names (`name`)
 
-### `x` argument
+Suika3 has a rich set of predefined layers.
 
-This argument specifies the layer X position.
+Here are the complete list of the layers:
 
-### `y` argument
+|Layer Name       |Description                              |
+|-----------------|-----------------------------------------|
+|bg               |Background Image                         |
+|bg2              |Background Image 2                       |
+|efb1             |Back Effect 1                            |
+|efb2             |Back Effect 2                            |
+|efb3             |Back Effect 3                            |
+|efb4             |Back Effect 4                            |
+|chb              |Center-Back Character                    |
+|chb-eye          |Center-Back Character's Eyes             |
+|chb-lip          |Center-Back Character's Lips             |
+|chb-fo           |Fading-Out Center-Back Character         |
+|chl              |Left Character                           |
+|chl-eye          |Left Character's Eyes                    |
+|chl-lip          |Left Character's Lips                    |
+|chl-fo           |Fading-Out Left Character                |
+|chlc             |Left-Center Character                    |
+|chlc-eye         |Left-Center Character's Eyes             |
+|chlc-lip         |Left-Center Character's Lips             |
+|chlc-fo          |Fading-Out Left-Center Character         |
+|chr              |Right Character                          |
+|chr-eye          |Right Character's Eyes                   |
+|chr-lip          |Right Character's Lips                   |
+|chr-fo           |Fading-Out Right Character               |
+|chrc             |Right-Center Character                   |
+|chrc-eye         |Right-Center Character's Eyes            |
+|chrc-lip         |Right-Center Character's Lips            |
+|chrc-fo          |Fading-Out Right-Center Character        |
+|chc              |Center Character                         |
+|chc-eye          |Center Character's Eyes                  |
+|chc-lip          |Center Character's Lips                  |
+|chc-fo           |Fading-Out Center Character              |
+|msgbox           |Message box (Invisible to `[layer]`)     |
+|namebox          |Name box (Invisible to `[layer]`)        |
+|click            |Click animation (Invisible to `[layer]`) |
+|eff1             |Front Effect 1                           |
+|eff2             |Front Effect 2                           |
+|eff3             |Front Effect 3                           |
+|eff4             |Front Effect 4                           |
+|chf              |Face Character                           |
+|chf-eye          |Face Character's Eyes                    |
+|chf-lip          |Face Character's Lips                    |
+|chf-fo           |Fading-Out Face Character                |
+|text1            |Text Layer 1                             |
+|text2            |Text Layer 2                             |
+|text3            |Text Layer 3                             |
+|text4            |Text Layer 4                             |
+|text5            |Text Layer 5                             |
+|text6            |Text Layer 6                             |
+|text7            |Text Layer 7                             |
+|text8            |Text Layer 8                             |
+|gui1             |GUI Button 1 (Invisible to `[layer]`)    |
+|gui2             |GUI Button 2 (Invisible to `[layer]`)    |
+|gui3             |GUI Button 3 (Invisible to `[layer]`)    |
+|gui4             |GUI Button 4 (Invisible to `[layer]`)    |
+|gui5             |GUI Button 5 (Invisible to `[layer]`)    |
+|gui6             |GUI Button 6 (Invisible to `[layer]`)    |
+|gui7             |GUI Button 7 (Invisible to `[layer]`)    |
+|gui8             |GUI Button 8 (Invisible to `[layer]`)    |
+|gui9             |GUI Button 9 (Invisible to `[layer]`)    |
+|gui10            |GUI Button 10 (Invisible to `[layer]`)   |
+|gui11            |GUI Button 11 (Invisible to `[layer]`)   |
+|gui12            |GUI Button 12 (Invisible to `[layer]`)   |
+|gui13            |GUI Button 13 (Invisible to `[layer]`)   |
+|gui14            |GUI Button 14 (Invisible to `[layer]`)   |
+|gui15            |GUI Button 15 (Invisible to `[layer]`)   |
+|gui16            |GUI Button 16 (Invisible to `[layer]`)   |
+|gui17            |GUI Button 17 (Invisible to `[layer]`)   |
+|gui18            |GUI Button 18 (Invisible to `[layer]`)   |
+|gui19            |GUI Button 19 (Invisible to `[layer]`)   |
+|gui20            |GUI Button 20 (Invisible to `[layer]`)   |
+|gui21            |GUI Button 21 (Invisible to `[layer]`)   |
+|gui22            |GUI Button 22 (Invisible to `[layer]`)   |
+|gui23            |GUI Button 23 (Invisible to `[layer]`)   |
+|gui24            |GUI Button 24 (Invisible to `[layer]`)   |
+|gui25            |GUI Button 25 (Invisible to `[layer]`)   |
+|gui26            |GUI Button 26 (Invisible to `[layer]`)   |
+|gui27            |GUI Button 27 (Invisible to `[layer]`)   |
+|gui28            |GUI Button 28 (Invisible to `[layer]`)   |
+|gui29            |GUI Button 29 (Invisible to `[layer]`)   |
+|gui30            |GUI Button 30 (Invisible to `[layer]`)   |
+|gui31            |GUI Button 31 (Invisible to `[layer]`)   |
+|gui32            |GUI Button 32 (Invisible to `[layer]`)   |
 
-This argument specifies the layer Y position.
+### Tips
 
-### `alpha` argument
+**Precision Control**:
+* Use `[layer]` when you want to load an image to a layer manually when you're working with custom effect layers (`eff1` etc.) that don't have dedicated tags.
 
-This argument specifies the layer alpha value.
+**Instant Updates**:
+* Unlike `[ch]` or `[bg]`, the `layer` tag usually updates the screen instantly.
+* If you want to animate these changes over time, you should use the `[move]` tag instead!
 
-### `scale-x` argument
-
-This argument specifies the layer's X scaling factor.
-
-### `scale-y` argument
-
-This argument specifies the layer's Y scaling factor.
-
-### `center-x` argument
-
-This argument specifies the layer's X center for rotation.
-
-### `center-y` argument
-
-This argument specifies the layer's Y center for rotation.
-
-### `rotate` argument
-
-This argument specifies the layer's rotation in degrees.
+**Layer Hierarchy**:
+* Remember that layers are stacked.
+* For example, `chf` (Face Character) is always rendered in front of `chc` (Center Character).
+* Understanding this "Z-order" is key to complex visual compositions.
 
 ---
 
 ## `move`
 
-The `move` tag animates a character.
+Animate Layer
 
-Basic Usage:
+The `move` tag animates a specific layer over a set duration. 
+It is perfect for creating sliding effects, zooming in on characters, or rotating screen elements to add dynamic energy to your scenes.
+
+### Basic Usage
+
 ```
-[move
-  time="2.0"
-  name="chc"
-  x="100"
-  y="100"
-  alpha="255"
-  scale-x="1.0"
-  scale-y="1.0"
-  center-x="0"
-  center-y="0"
-  rotate="0.0"
-  dim="false"
-]
+# Move the center character to a new position over 2.0 seconds
+[move name="chc" time="2.0" x="100" y="100"]
+
+# Relative movement: Nudge the background 50px to the right
+[move name="bg" time="1.0" x="r50"]
+
+# Gradually fade out a layer while rotating it
+[move name="chf" time="3.0" alpha="0" rotate="r360"]
 ```
 
-### `time` argument
+### Arguments
 
-This argument specifies the animation time in seconds.
+| Argument     | Omissible     | Description                               | Notes                                      |
+|--------------|---------------|-------------------------------------------|--------------------------------------------|
+| `name`       | No            | The target layer to animate.              | See the "Moveable Layers" table below.     |
+| `time`       | No            | The duration of the animation in seconds. | Supports decimal values (e.g., `0.5`).     |
+| `async`      | Yes (`false`) | If `true`, do non-blocking animation.     |                                            |
+| `x`          | Yes           | Target X and Y positions.                 | Supports `r` prefix for relative movement. |
+| `y`          | Yes           | Target X and Y positions.                 | Supports `r` prefix for relative movement. |
+| `alpha`      | Yes           | Target opacity level (0-255).             | Supports `r` prefix for relative changes.  |
+| `scale-x`    | Yes           | Target X-axis scaling factor.             | Supports `r` prefix (e.g., `r0.5`).        |
+| `scale-y`    | Yes           | Target Y-axis scaling factor.             | Supports `r` prefix.                       |
+| `rotate`     | Yes           | Target rotation in degrees.               | Supports `r` prefix (e.g., `r-45`).        |
+| `dim`        | Yes           | Target dimming status.                    | Set to `true` or `false`.                  |
 
-### `name` argument
+### Moveable Layers (`name`)
 
-This argument specifies the layer.
+The `move` tag can be used on these primary layers:
 
 |Layer Name       |Description                            |
 |-----------------|---------------------------------------|
@@ -1062,157 +1280,99 @@ This argument specifies the layer.
 |chc              |Center Character                       |
 |chf              |Face Character                         |
 
-### `x` argument
+### Tips
 
-This argument specifies the layer X position.
+**Non-blocking Animation (`async="true")`**:
+* The script continues to the next command immediately after starting a `[move]`.
+* If you want the script to wait until the animation finishes, follow it with a `[wait]` tag using the same `time` value.
 
-`r100` means +100px relative to the current position.
+**Relative Transformations**:
+* Using the `r` prefix (e.g., `x="r100"`) is incredibly useful for repetitive motions, like making a character "jump" or "shake" without calculating absolute coordinates.
 
-`r-100` means -100px relative to the current position.
-
-### `y` argument
-
-This argument specifies the layer Y position.
-
-`r100` means +100px relative to the current position.
-
-`r-100` means -100px relative to the current position.
-
-### `alpha` argument
-
-This argument specifies the layer alpha value.
-
-`r100` means +100 relative to the current position.
-
-`r-100` means -100 relative to the current position.
-
-### `scale-x` argument
-
-This argument specifies the layer's X scaling factor.
-
-`r0.5` means +0.5 relative to the current position.
-
-`r-0.5` means -0.5 relative to the current position.
-
-### `scale-y` argument
-
-This argument specifies the layer's Y scaling factor.
-
-`r0.5` means +0.5 relative to the current position.
-
-`r-0.5` means -0.5 relative to the current position.
-
-### `center-x` argument
-
-This argument specifies the layer's X center for rotation.
-
-`r100` means +100 relative to the current position.
-
-`r-100` means -100 relative to the current position.
-
-### `center-y` argument
-
-This argument specifies the layer's Y center for rotation.
-
-`r100` means +100 relative to the current position.
-
-`r-100` means -100 relative to the current position.
-
-### `rotate` argument
-
-This argument specifies the layer's rotation in degrees.
-
-`r30` means +30deg relative to the current position.
-
-`r-30` means -30deg relative to the current position.
-
----
-
-## `defmacro`
-
-The `defmacro` tag starts a macro definition.
-
-Basic Usage:
-```
-[defmacro name="MyMacro1"]
-    [text text="Some messages."]
-[endmacro]
-```
-
----
-
-## `callmacro`
-
-The `callmacro` tag calls a macro.
-
-Basic Usage:
-```
-[callmacro name="MyMacro1"]
-```
+**Visual Polish**:
+* Combine `scale-x` and `scale-y` with `move` to create "zoom-in" effects on a character's face for dramatic close-ups!
 
 ---
 
 ## `returnmacro`
 
-The `returnmacro` tag returns from a macro.
+Return from Macro
 
-Basic Usage:
+The `returnmacro` tag immediately exits the current macro and returns the script execution to the line following the original `[callmacro]` tag.
+It is particularly useful for stopping a macro early based on specific conditions within an `[if]` block.
+
+### Basic Usage
+
 ```
-[defmacro name="MyMacro1"]
-    [if lhs="${var1}" op="==" rhs="1"]
-       [returnmacro]
+[defmacro name="check_item"]
+    [if lhs="${has_key}" op="==" rhs="false"]
+        [text text="The door is locked."]
+        [returnmacro]
     [endif]
-    # ...
+
+    # This part only runs if has_key is true
+    [text text="You unlocked the door with the key!"]
 [endmacro]
 ```
+
+### Arguments
+
+This tag does not take any arguments.
+
+| Argument | Omissible | Description | Notes |
+|----------|-----------|-------------|-------|
+| -        | -         | -           | -     |
+
+### Tips
+
+**Early Exit**:
+* Use `[returnmacro]` inside an `[if]` block to skip the rest of a macro's commands if a certain condition is met.
+* This keeps your macros flexible and powerful!
+
+**Implicit Return**:
+* You don't actually need to put `[returnmacro]` at the very end of every macro.
+* Once the engine hits the `[endmacro]` tag, it will return to the main script automatically.
+
+**Flow Control**:
+* Remember that this tag only exits the *current* macro. It doesn't stop the whole game or jump to a different label—it just sends you back to where the macro was called from.
+
 ---
 
 ## `video`
 
-The `video` tag plays a video.
+Play Video
 
-Basic Usage:
-```
-[video file="myvideo.mp4" skippable="false"]
-```
-
-### `file` arguments
-
-This arguments specifies a file name to play.
-
-### `skippable` arguments
-
-This arguments specifies whether the video is skippable by a click or not.
-
-## `goto`
-
-Jump to Label
-
-The `goto` tag immediately moves the script execution to a specified label.
+The `video` tag plays a movie file on the screen.
+It is ideal for opening cinematics, transitional cutscenes, or high-impact visual effects that are best rendered as full-motion video.
 
 ### Basic Usage
 
-Jump to a label named "next_day"
-[goto name="next_day"]
+```
+# Play an opening movie (cannot be skipped)
+[video file="opening.mp4" skippable="false"]
 
+# Play a short cutscene that the player can skip with a click if not the first time
+[video file="cutscene01.mp4" skippable="true"]
+```
 
 ### Arguments
 
-| Argument | Omissible | Description | Notes |
-| :--- | :--- | :--- | :--- |
-| `name` | No | The target label name. | Must match a `[label]` defined in the script. |
-
----
+| Argument    | Omissible     | Description                                           | Notes                                                         |
+|-------------|---------------|-------------------------------------------------------|---------------------------------------------------------------|
+| `file`      | No            | The filename of the video to play.                    | The file must be in a supported format (e.g., .mp4).          |
+| `skippable` | Yes (`false`) | Whether the video can be skipped by a player's click. | Set to `false` to force the player to watch the entire video. |
 
 ### Tips
 
-**Branching Logic**:
-* If you use `choose` with `label1`, the game jumps immediately to that section.
-* If you use `name`, the chosen text is stored, and the script continues to the next line.
-* You can then use the `[if]` tag to check the stored value and create complex branches.
+**File Support**:
+* Ensure your video file is .mp4 (H.264 + AAC) format.
+* If you want to support 32-bit Windows, prepare .wmv file alongside .mp4 file, then remove extension e.g., `[video file="opening"]`.
 
-**Variable Persistence**:
-* Since everything is a string, remember that even numbers like "100" are stored as text.
-* Suika3's logic tags (like `if`) can handle these strings for comparisons.
+**Transitioning**:
+* Once the video finishes playing (or is skipped), the engine automatically proceeds to the next command in your script.
+* It's often a good idea to follow a `[video]` tag with a `[bg]` tag to ensure the screen looks exactly how you want it after the movie ends.
 
----
+**Audio in Video**:
+* Most video files include their own audio track.
+* Keep in mind that this audio will play alongside any `[bgm]` you have running.
+* You might want to stop the music with `[bgm file="none"]` before starting a video with sound!
