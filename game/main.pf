@@ -1,0 +1,28 @@
+// Called when the window is opened.
+func setup() {
+    // Return the window settings.
+    return {
+        width:      1280,
+        height:     720,
+        title:      "My First Game",
+	fullscreen: false
+    };
+}
+
+// Called before the game starts.
+func start() {
+    // Do not delete the following line.
+    Suika.start();
+}
+
+// Called before a frame rendering.
+func update() {
+    // Do not delete the following line.
+    Suika.update();
+}
+
+// Called every frame rendering.
+func render() {
+    // Do not delete the following line.
+    Suika.render();
+}
