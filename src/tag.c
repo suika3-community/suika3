@@ -656,7 +656,7 @@ s3_get_tag_arg_string(
 		/* Not found. */
 		if (omissible)
 			return def_val;
-		s3_log_error(S3_TR("Argument \"%s\" not specified."), name);
+		s3_log_tag_error(S3_TR("Argument \"%s\" not specified."), name);
 		return def_val;
 	}
 

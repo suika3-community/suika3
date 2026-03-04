@@ -1623,7 +1623,7 @@ pf_get_call_arg_string(
 	env = pfi_get_vm_env();
 
 	/* Get the "param" argument. */
-	if (!noct_get_arg_check_array(env, 0, &param))
+	if (!noct_get_arg_check_dict(env, 0, &param))
 		return false;
 
 	/* Get the element by name. */

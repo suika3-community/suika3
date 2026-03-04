@@ -468,28 +468,28 @@ s3_get_config_type(
  * Get a string config value.
  */
 const char *
-s3_get_config_string(
+s3_get_string_config(
 	const char *key);
 
 /*
  * Get a boolean config value.
  */
 bool
-s3_get_config_bool(
+s3_get_bool_config(
 	const char *key);
 
 /*
  * Get an integer config value.
  */
 int
-s3_get_int_config_value(
+s3_get_int_config(
 	const char *key);
 
 /*
  * Get a float config value.
  */
 float
-s3_get_float_config_value(
+s3_get_float_config(
 	const char *key);
 
 /*
@@ -2759,7 +2759,8 @@ bool
 s3_install_api(
 	const char *name,
 	bool (*func)(void *),
-	bool no_args);
+	int param_count,
+	const char **params);
 
 /*
  * Install a tag function.

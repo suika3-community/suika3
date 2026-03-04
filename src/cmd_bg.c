@@ -81,6 +81,8 @@ init(void)
 
 	/* Get the parameters. */
 	fname = s3_get_tag_arg_string("file", false, NULL);
+	if (fname == NULL)
+		return false;
 	span = s3_get_tag_arg_float("time", true, 0);
 	method = s3_get_tag_arg_string("method", true, "normal");
 	ofs_x = s3_get_tag_arg_int("x", true, 0);

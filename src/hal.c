@@ -42,6 +42,7 @@
 #include <noct/noct.h>
 
 #include <stdio.h>
+#include <string.h>
 #include <stdarg.h>
 
 /*
@@ -155,9 +156,9 @@ bool
 s3_install_api(
 	const char *name,
 	bool (*func)(void *),
-	bool no_args)
+	int param_count,
+	const char **params)
 {
-	const char *params[] = {"param"};
 	char full_name[256];
 	NoctEnv *env;
 	NoctValue dict;
@@ -179,13 +180,8 @@ s3_install_api(
 
 	/* Register a cfunc. */
 	snprintf(full_name, sizeof(full_name), "Suika.%s", name);
-	if (!no_args) {
-		if (!noct_register_cfunc(env, full_name, 1, params, (void *)func, NULL))
-			return false;
-	} else {
-		if (!noct_register_cfunc(env, full_name, 0, NULL, (void *)func, NULL))
-			return false;
-	}
+	if (!noct_register_cfunc(env, full_name, param_count, params, (void *)func, NULL))
+		return false;
 
 	/* Get a function value. */
 	if (!noct_get_global(env, full_name, &funcval))
@@ -206,7 +202,7 @@ s3_install_tag(
 	const char *name,
 	bool (*func)(void *))
 {
-	const char *params[] = {"param"};
+	const char *params[] = {"params"};
 	NoctEnv *env;
 
 	env = pf_get_vm_env();
@@ -410,6 +406,10 @@ s3_call_vm_tag_function(
 		noct_get_error_file(env, &file);
 		noct_get_error_line(env, &line);
 		noct_get_error_message(env, &msg);
+
+		if (strcmp(msg, "") != 0)
+			s3_log_error("%s:%d: %s", file, line, msg);
+
 		return false;
 	}
 
