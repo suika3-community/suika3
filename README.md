@@ -63,6 +63,28 @@ Yes, it's OUR language, built just for devs like you ;-)
 
 ---
 
+## Our Philosophy
+
+Suika3 is dedicated to creators who dream of publishing and selling
+original visual novels on the App Store and Google Play, regardless of
+their hardware limitations.
+
+Our mission is to empower talent—particularly in Asia and the Global
+South—to build sustainable careers through their storytelling. We
+believe that with the right tools, creativity can overcome economic
+barriers.
+
+Our commitment to free software is rooted in a simple, practical goal:
+fostering sustainable economic independence. This mission is shaped by
+our core members' personal experiences in Asia and their journeys in
+overcoming adversity. We simply believe that talent, when equipped
+with the right tools, inevitably leads to self-reliance.
+
+Creators with different goals may also find excellent resources in
+other open-source projects or commercial engines like Unity.
+
+---
+
 ## Status: Working Hard for 1.0.0!
 
 We are planning the 1.0.0 release at the end of March 2026.
@@ -71,23 +93,7 @@ Currently we are working very hard to complete Suika3.
 **Our current status is:**
 * ✅ We have implemented all APIs in C.
 * ✅ We have implemented all tags in C.
-* We are implementing API warppers for the scripting language. (Around 300 APIs)
-    * Config
-    * Input
-    * Game
-    * Image
-    * Stage
-    * Mixer
-    * System Button
-    * Text
-    * Tag
-    * Anime
-    * Variable
-    * Save
-    * History
-    * Seen
-    * GUI
-    * HAL
+* We are writing API warppers for the scripting language.
 
 ---
 
