@@ -262,11 +262,11 @@ static bool Suika_getTrackFile(void *p);
 static bool Suika_applyCharacterVolume(void *p);
 
 /* System */
-static bool Suika_showSysbtn(void *p);
-static bool Suika_isSysbtnVisible(void *p);
-static bool Suika_updateSysbtnState(void *p);
-static bool Suika_isSysbtnPointed(void *p);
-static bool Suika_isSysbtnClicked(void *p);
+static bool Suika_showSysBtn(void *p);
+static bool Suika_isSysBtnVisible(void *p);
+static bool Suika_updateSysBtnState(void *p);
+static bool Suika_isSysBtnPointed(void *p);
+static bool Suika_isSysBtnClicked(void *p);
 
 /* Text */
 static bool Suika_getStringWidth(void *p);
@@ -288,8 +288,8 @@ static bool Suika_moveToNextTag(void *p);
 static bool Suika_moveToLabelTag(void *p);
 static bool Suika_moveToMacroTag(void *p);
 static bool Suika_moveToElseTag(void *p);
-static bool Suika_moveToEndifTag(void *p);
-static bool Suika_moveToEndmacroTag(void *p);
+static bool Suika_moveToEndIfTag(void *p);
+static bool Suika_moveToEndMacroTag(void *p);
 static bool Suika_getTagFile(void *p);
 static bool Suika_getTagIndex(void *p);
 static bool Suika_getTagLine(void *p);
@@ -547,8 +547,8 @@ static struct api_func api_func[] = {
 	{"forceChDim",			Suika_forceChDim,		1, single_param},
 	{"getChDim",			Suika_getChDim,			1, single_param},
 	{"Suika_fillNameBox",		Suika_fillNameBox,		0, NULL},
-	{"getNameboxRect",		Suika_getNameboxRect,		0, NULL},
-	{"showNameBox",			Suika_showNameBox,		1, NULL},
+	{"getNameboxRect",		Suika_getNameBoxRect,		0, NULL},
+	{"showNameBox",			Suika_showNameBox,		1, single_param},
 	{"fillMessageBox",		Suika_fillMessageBox,		0, NULL},
 	{"showMessageBox",		Suika_showMessageBox,		1, single_param},
 	{"getMessageBoxRect",		Suika_getMessageBoxRect,	0, NULL},
@@ -3390,7 +3390,7 @@ Suika_setLayerText(void *p)
 }
 
 static bool
-Suika_getSysbtnIdleImage(void *p)
+Suika_getSysBtnIdleImage(void *p)
 {
 	int val;
 	struct s3_image *img;
@@ -3410,7 +3410,7 @@ Suika_getSysbtnIdleImage(void *p)
 }
 
 static bool
-Suika_getSysbtnHoverImage(void *p)
+Suika_getSysBtnHoverImage(void *p)
 {
 	int val;
 	struct s3_image *img;
@@ -3793,7 +3793,7 @@ Suika_getChDim(void *p)
 }
 
 static bool
-Suika_fillNamebox(void *p)
+Suika_fillNameBox(void *p)
 {
 	s3_fill_namebox();
 
@@ -3805,7 +3805,7 @@ Suika_fillNamebox(void *p)
 }
 
 static bool
-Suika_getNameboxRect(void *p)
+Suika_getNameBoxRect(void *p)
 {
         s3_log_error(S3_TR("This API is not implemented yet."));
         return false;
@@ -4538,7 +4538,7 @@ Suika_applyCharacterVolume(void *p)
  */
 
 static bool
-Suika_showSysbtn(void *p)
+Suika_showSysBtn(void *p)
 {
 	int show;
 	bool ret;
@@ -4562,7 +4562,7 @@ Suika_showSysbtn(void *p)
 }
 
 static bool
-Suika_isSysbtnVisible(void *p)
+Suika_isSysBtnVisible(void *p)
 {
 	int val;
 
@@ -4576,7 +4576,7 @@ Suika_isSysbtnVisible(void *p)
 }
 
 static bool
-Suika_updateSysbtnState(void *p)
+Suika_updateSysBtnState(void *p)
 {
 	s3_update_sysbtn_state();
 
@@ -4588,7 +4588,7 @@ Suika_updateSysbtnState(void *p)
 }
 
 static bool
-Suika_isSysbtnPointed(void *p)
+Suika_isSysBtnPointed(void *p)
 {
 	int val;
 
@@ -4602,7 +4602,7 @@ Suika_isSysbtnPointed(void *p)
 }
 
 static bool
-Suika_isSysbtnClicked(void *p)
+Suika_isSysBtnClicked(void *p)
 {
 	int val;
 
@@ -5301,7 +5301,7 @@ Suika_moveToElseTag(void *p)
 }
 
 static bool
-Suika_moveToEndifTag(void *p)
+Suika_moveToEndIfTag(void *p)
 {
 	if (!s3_move_to_endif_tag())
 		return false;
@@ -5314,7 +5314,7 @@ Suika_moveToEndifTag(void *p)
 }
 
 static bool
-Suika_moveToEndmacroTag(void *p)
+Suika_moveToEndMacroTag(void *p)
 {
 	if (!s3_move_to_endmacro_tag())
 		return false;
