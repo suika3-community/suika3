@@ -65,6 +65,16 @@ static int last_outline_color;
 static struct s3_image *last_image;
 
 /*
+ * Context Table
+ *  - Contexts are managed in a table.
+ *  - This is because to access by indices in the VM.
+ */
+
+#define CONTEXT_MAX	256
+
+struct s3_drawmsg *ctx_tbl[CONTEXT_MAX];
+
+/*
  * Forward declarations
  */
 static bool load_cached_glyph(int slot, int codepoint, int size,
@@ -72,7 +82,7 @@ static bool load_cached_glyph(int slot, int codepoint, int size,
 			      hal_pixel_t outline_color);
 static bool isgraph_extended(const char **mbs, uint32_t *wc);
 static int translate_font_type(int font_type);
-static bool draw_emoji(struct s3_draw_msg_context *context, const char *name,
+static bool draw_emoji(struct s3_drawmsg *context, const char *name,
 		       int *w, int *h);
 
 /*
@@ -113,6 +123,13 @@ s3i_init_text(void)
 	last_outline_color = 0;
 	last_image = NULL;
 
+	for (i = 0; i < CONTEXT_MAX; i++) {
+		if (ctx_tbl[i] != NULL) {
+			free(ctx_tbl[i]);
+			ctx_tbl[i] = NULL;
+		}
+	}
+
 	return true;
 }
 
@@ -134,6 +151,13 @@ s3i_cleanup_text(void)
 	if (last_image != NULL) {
 		s3_destroy_image(last_image);
 		last_image = NULL;
+	}
+
+	for (i = 0; i < CONTEXT_MAX; i++) {
+		if (ctx_tbl[i] != NULL) {
+			free(ctx_tbl[i]);
+			ctx_tbl[i] = NULL;
+		}
 	}
 }
 
@@ -487,28 +511,28 @@ s3_draw_glyph(
  */
 
 /* Forward declarations. */
-static void process_escape_sequence(struct s3_draw_msg_context *context);
-static bool process_escape_sequence_centering(struct s3_draw_msg_context *context);
-static bool process_escape_sequence_rightify(struct s3_draw_msg_context *context);
-static bool process_escape_sequence_leftify(struct s3_draw_msg_context *context);
-static void process_escape_sequence_lf(struct s3_draw_msg_context *context);
-static bool process_escape_sequence_font(struct s3_draw_msg_context *context);
-static bool process_escape_sequence_outline(struct s3_draw_msg_context *context);
-static bool process_escape_sequence_color(struct s3_draw_msg_context *context);
-static bool process_escape_sequence_size(struct s3_draw_msg_context *context);
-static bool process_escape_sequence_wait(struct s3_draw_msg_context *context);
-static bool process_escape_sequence_pen(struct s3_draw_msg_context *context);
-static bool process_escape_sequence_ruby(struct s3_draw_msg_context *context);
-static bool process_escape_sequence_emoticon(struct s3_draw_msg_context *context);
-static bool process_escape_sequence_background(struct s3_draw_msg_context *context);
-static bool process_escape_sequence_line_margin(struct s3_draw_msg_context *context);
-static bool process_escape_sequence_left_top_margins(struct s3_draw_msg_context *context);
+static void process_escape_sequence(struct s3_drawmsg *context);
+static bool process_escape_sequence_centering(struct s3_drawmsg *context);
+static bool process_escape_sequence_rightify(struct s3_drawmsg *context);
+static bool process_escape_sequence_leftify(struct s3_drawmsg *context);
+static void process_escape_sequence_lf(struct s3_drawmsg *context);
+static bool process_escape_sequence_font(struct s3_drawmsg *context);
+static bool process_escape_sequence_outline(struct s3_drawmsg *context);
+static bool process_escape_sequence_color(struct s3_drawmsg *context);
+static bool process_escape_sequence_size(struct s3_drawmsg *context);
+static bool process_escape_sequence_wait(struct s3_drawmsg *context);
+static bool process_escape_sequence_pen(struct s3_drawmsg *context);
+static bool process_escape_sequence_ruby(struct s3_drawmsg *context);
+static bool process_escape_sequence_emoticon(struct s3_drawmsg *context);
+static bool process_escape_sequence_background(struct s3_drawmsg *context);
+static bool process_escape_sequence_line_margin(struct s3_drawmsg *context);
+static bool process_escape_sequence_left_top_margins(struct s3_drawmsg *context);
 static bool search_for_end_of_escape_sequence(const char **msg);
-static bool do_word_wrapping(struct s3_draw_msg_context *context);
-static int get_en_word_width(struct s3_draw_msg_context *context);
+static bool do_word_wrapping(struct s3_drawmsg *context);
+static int get_en_word_width(struct s3_drawmsg *context);
 static uint32_t convert_tategaki_char(uint32_t wc);
 static bool is_tategaki_punctuation(uint32_t wc);
-static bool process_lf(struct s3_draw_msg_context *context, uint32_t c, int glyph_width, int glyph_height, uint32_t c_next, int next_glyph_width, int next_glyph_height);
+static bool process_lf(struct s3_drawmsg *context, uint32_t c, int glyph_width, int glyph_height, uint32_t c_next, int next_glyph_width, int next_glyph_height);
 static bool is_gyomatsu_kinsoku(uint32_t c);
 static bool is_gyoto_kinsoku(uint32_t c);
 static bool is_small_kana(uint32_t wc);
@@ -516,9 +540,8 @@ static bool is_small_kana(uint32_t wc);
 /*
  * Initialize a message drawing context.
  */
-void
-s3_construct_draw_msg_context(
-	struct s3_draw_msg_context *context,
+struct s3_drawmsg *
+s3_create_drawmsg(
 	struct s3_image *image,
 	const char *msg,
 	int font,
@@ -552,6 +575,26 @@ s3_construct_draw_msg_context(
 	void (*inline_wait_hook)(float),
 	bool use_tategaki)
 {
+	struct s3_drawmsg *context;
+	int i;
+
+	for (i = 0; i < CONTEXT_MAX; i++) {
+		if (ctx_tbl[i] == NULL)
+			break;
+	}
+	if (i == CONTEXT_MAX) {
+		s3_log_tag_error(S3_TR("Too many drawmsg contexts."));
+		return false;
+	}
+
+	ctx_tbl[i] = malloc(sizeof(struct s3_drawmsg));
+	if (ctx_tbl[i] == NULL) {
+		s3_log_out_of_memory();
+		return false;
+	}
+	ctx_tbl[i]->index = i;
+
+	context = ctx_tbl[i];
 	context->image = image;
 	context->msg = msg;
 	context->font = font;
@@ -605,14 +648,50 @@ s3_construct_draw_msg_context(
 	/* Is quoted? */
 	if (s3_is_quoted_serif(msg) && !use_tategaki)
 		context->left_margin += s3_get_glyph_width(font, font_size, U32C('　', 0x3000));
+
+	return context;
+}
+
+/*
+ * Destroy a message drawing context.
+ */
+void
+s3_destroy_drawmsg(
+	struct s3_drawmsg *context)
+{
+	int index;
+
+	index = context->index;
+	free(ctx_tbl[index]);
+	ctx_tbl[index] = NULL;
+}
+
+/*
+ * Get drawmsg index.
+ */
+int
+s3i_drawmsg_to_int(
+	struct s3_drawmsg *context)
+{
+	return context->index;
+}
+
+/*
+ * Lookup drawmsg by index.
+ */
+struct s3_drawmsg *
+s3i_int_to_drawmsg(
+	int index)
+{
+	return ctx_tbl[index];
 }
 
 /*
  * Count the remaining characters excluding escape sequences.
  */
 int
-s3_count_chars_common(
-	struct s3_draw_msg_context *context,
+s3_count_drawmsg_chars(
+	struct s3_drawmsg *context,
 	int *width)
 {
 	const char *msg;
@@ -704,8 +783,8 @@ static bool search_for_end_of_escape_sequence(const char **msg)
  * Draw characters in a message up to (char count) characters.
  */
 int
-s3_draw_msg_common(
-	struct s3_draw_msg_context *context,	/* a drawing context. */
+s3_draw_message(
+	struct s3_drawmsg *context,	/* a drawing context. */
 	int char_count)				/* characters to draw. */
 {
 	uint32_t wc = 0;
@@ -717,7 +796,7 @@ s3_draw_msg_common(
 	context->font = translate_font_type(context->font);
 
 	if (char_count == -1)
-		char_count = s3_count_chars_common(context, NULL);
+		char_count = s3_count_drawmsg_chars(context, NULL);
 
 	/* For all characters. */
 	for (i = 0; i < char_count; i++) {
@@ -830,7 +909,7 @@ s3_draw_msg_common(
 }
 
 /* Do word wrapping. */
-static bool do_word_wrapping(struct s3_draw_msg_context *context)
+static bool do_word_wrapping(struct s3_drawmsg *context)
 {
 	if (context->use_tategaki)
 		return true;
@@ -852,7 +931,7 @@ static bool do_word_wrapping(struct s3_draw_msg_context *context)
 }
 
 /* Return the word width if it's alphabets, otherwise 0. */
-static int get_en_word_width(struct s3_draw_msg_context *context)
+static int get_en_word_width(struct s3_drawmsg *context)
 {
 	const char *m;
 	uint32_t wc;
@@ -867,7 +946,7 @@ static int get_en_word_width(struct s3_draw_msg_context *context)
 }
 
 /* Do line feed if the rigth space is not enough. */
-static bool process_lf(struct s3_draw_msg_context *context, uint32_t c, int glyph_width, int glyph_height, uint32_t c_next, int next_glyph_width, int next_glyph_height)
+static bool process_lf(struct s3_drawmsg *context, uint32_t c, int glyph_width, int glyph_height, uint32_t c_next, int next_glyph_width, int next_glyph_height)
 {
 	bool line_top, gyoto_second;
 
@@ -1247,7 +1326,7 @@ bool s3_is_escape_sequence_char(char c)
 }
 
 /* Process all the heading escape sequence. */
-static void process_escape_sequence(struct s3_draw_msg_context *context)
+static void process_escape_sequence(struct s3_drawmsg *context)
 {
 	/* Continue while the top is an escape sequence. */
 	while (*context->msg == '\\') {
@@ -1339,7 +1418,7 @@ static void process_escape_sequence(struct s3_draw_msg_context *context)
 }
 
 /* Process the line feed escape sequence. ("\\n") */
-static void process_escape_sequence_lf(struct s3_draw_msg_context *context)
+static void process_escape_sequence_lf(struct s3_drawmsg *context)
 {
 	if (context->ignore_linefeed) {
 		context->msg += 2;
@@ -1357,7 +1436,7 @@ static void process_escape_sequence_lf(struct s3_draw_msg_context *context)
 }
 
 /* Process the font escape sequence. ("\\f{X}") */
-static bool process_escape_sequence_font(struct s3_draw_msg_context *context)
+static bool process_escape_sequence_font(struct s3_drawmsg *context)
 {
 	char font_type;
 	const char *p;
@@ -1405,7 +1484,7 @@ static bool process_escape_sequence_font(struct s3_draw_msg_context *context)
 }
 
 /* Process the outline escape sequence. ("\\o{X}") */
-static bool process_escape_sequence_outline(struct s3_draw_msg_context *context)
+static bool process_escape_sequence_outline(struct s3_drawmsg *context)
 {
 	const char *p;
 	char size_spec[8];
@@ -1446,7 +1525,7 @@ static bool process_escape_sequence_outline(struct s3_draw_msg_context *context)
 }
 
 /* Process the color escape sequence. ("\\#{RRGGBB}") */
-static bool process_escape_sequence_color(struct s3_draw_msg_context *context)
+static bool process_escape_sequence_color(struct s3_drawmsg *context)
 {
 	char color_code[7];
 	const char *p;
@@ -1501,7 +1580,7 @@ static bool process_escape_sequence_color(struct s3_draw_msg_context *context)
 }
 
 /* Process the size escape sequence. ("\\@{XXX}") */
-static bool process_escape_sequence_size(struct s3_draw_msg_context *context)
+static bool process_escape_sequence_size(struct s3_drawmsg *context)
 {
 	char size_spec[8];
 	const char *p;
@@ -1553,7 +1632,7 @@ static bool process_escape_sequence_size(struct s3_draw_msg_context *context)
 }
 
 /* Process the inline wait escape sequence. ("\\w{f.f}") */
-static bool process_escape_sequence_wait(struct s3_draw_msg_context *context)
+static bool process_escape_sequence_wait(struct s3_drawmsg *context)
 {
 	char time_spec[16];
 	const char *p;
@@ -1599,7 +1678,7 @@ static bool process_escape_sequence_wait(struct s3_draw_msg_context *context)
 }
 
 /* Process the pen move escape sequence. ("\\p{x,y}") */
-static bool process_escape_sequence_pen(struct s3_draw_msg_context *context)
+static bool process_escape_sequence_pen(struct s3_drawmsg *context)
 {
 	char pos_spec[32];
 	const char *p;
@@ -1650,7 +1729,7 @@ static bool process_escape_sequence_pen(struct s3_draw_msg_context *context)
 }
 
 /* Process the ruby escape sequence. ("\\^{ruby}") */
-static bool process_escape_sequence_ruby(struct s3_draw_msg_context *context)
+static bool process_escape_sequence_ruby(struct s3_drawmsg *context)
 {
 	char ruby[64];
 	const char *p;
@@ -1720,7 +1799,7 @@ static bool process_escape_sequence_ruby(struct s3_draw_msg_context *context)
 }
 
 /* Process the emoji escape sequence. ("\\e{emoji}") */
-static bool process_escape_sequence_emoticon(struct s3_draw_msg_context *context)
+static bool process_escape_sequence_emoticon(struct s3_drawmsg *context)
 {
 	char name[256];
 	const char *p;
@@ -1768,7 +1847,7 @@ static bool process_escape_sequence_emoticon(struct s3_draw_msg_context *context
 }
 
 /* Process the line margin escape sequence. ("\\L{n}") */
-static bool process_escape_sequence_line_margin(struct s3_draw_msg_context *context)
+static bool process_escape_sequence_line_margin(struct s3_drawmsg *context)
 {
 	char digits[32];
 	const char *p;
@@ -1808,7 +1887,7 @@ static bool process_escape_sequence_line_margin(struct s3_draw_msg_context *cont
 }
 
 /* Process the rect margin escape sequence. ("\\M{x,y}") */
-static bool process_escape_sequence_left_top_margins(struct s3_draw_msg_context *context)
+static bool process_escape_sequence_left_top_margins(struct s3_drawmsg *context)
 {
 	char margin_spec[32];
 	const char *p;
@@ -1868,11 +1947,11 @@ static bool process_escape_sequence_left_top_margins(struct s3_draw_msg_context 
 }
 
 /* Process the centering escape sequence. ("\\c") */
-static bool process_escape_sequence_centering(struct s3_draw_msg_context *context)
+static bool process_escape_sequence_centering(struct s3_drawmsg *context)
 {
 	int width;
 
-	s3_count_chars_common(context, &width);
+	s3_count_drawmsg_chars(context, &width);
 
 	if (!context->use_tategaki)
 		context->pen_x = (context->area_width - width) / 2;
@@ -1884,11 +1963,11 @@ static bool process_escape_sequence_centering(struct s3_draw_msg_context *contex
 }
 
 /* Process the rightify escape sequence. ("\\r") */
-static bool process_escape_sequence_rightify(struct s3_draw_msg_context *context)
+static bool process_escape_sequence_rightify(struct s3_drawmsg *context)
 {
 	int width;
 
-	s3_count_chars_common(context, &width);
+	s3_count_drawmsg_chars(context, &width);
 
 	if (!context->use_tategaki)
 		context->pen_x = context->area_width - context->right_margin - width - 1;
@@ -1900,11 +1979,11 @@ static bool process_escape_sequence_rightify(struct s3_draw_msg_context *context
 }
 
 /* Process the leftify escape sequence. ("\\l") */
-static bool process_escape_sequence_leftify(struct s3_draw_msg_context *context)
+static bool process_escape_sequence_leftify(struct s3_drawmsg *context)
 {
 	int width;
 
-	s3_count_chars_common(context, &width);
+	s3_count_drawmsg_chars(context, &width);
 
 	if (!context->use_tategaki)
 		context->pen_x = context->left_margin;
@@ -1916,7 +1995,7 @@ static bool process_escape_sequence_leftify(struct s3_draw_msg_context *context)
 }
 
 /* Process the back color escape sequence. ("\\k{RRGGBB}") */
-static bool process_escape_sequence_background(struct s3_draw_msg_context *context)
+static bool process_escape_sequence_background(struct s3_drawmsg *context)
 {
 	char color_code[7];
 	const char *p;
@@ -1971,8 +2050,8 @@ static bool process_escape_sequence_background(struct s3_draw_msg_context *conte
  * Get a pen position.
  */
 void
-s3_get_pen_position_common(
-	struct s3_draw_msg_context *context,
+s3_get_drawmsg_pen_position(
+	struct s3_drawmsg *context,
 	int *pen_x,
 	int *pen_y)
 {
@@ -1987,7 +2066,7 @@ s3_get_pen_position_common(
 /* Draw an emoticon. */
 static bool
 draw_emoji(
-	struct s3_draw_msg_context *context,
+	struct s3_drawmsg *context,
 	const char *name,
 	int *w,
 	int *h)
@@ -2077,8 +2156,8 @@ s3_is_quoted_serif(
  * Ignore inline wait.
  */
 void
-s3_set_ignore_inline_wait(
-	struct s3_draw_msg_context *context)
+s3_set_drawmsg_ignore_inline_wait(
+	struct s3_drawmsg *context)
 {
 	context->ignore_wait = true;
 }

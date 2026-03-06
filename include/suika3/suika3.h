@@ -1521,7 +1521,7 @@ s3_set_ch_name_mapping(
 /*
  * Get the talker character name index. (-1 for no speaker)
  */
-void
+int
 s3_get_ch_talking(void);
 
 /*
@@ -1834,9 +1834,8 @@ s3_draw_glyph(
 /*
  * Initialize a message drawing context.
  */
-void
-s3_construct_draw_msg_context(
-	struct s3_draw_msg_context *context,
+struct s3_drawmsg *
+s3_create_drawmsg(
 	struct s3_image *dst,
 	const char *msg,
 	int font,
@@ -1871,36 +1870,44 @@ s3_construct_draw_msg_context(
 	bool use_tategaki);
 
 /*
+ * Destroy a message drawing context.
+ */
+void
+s3_destroy_drawmsg(
+	struct s3_drawmsg *context);
+
+/*
  * Count the remaining characters excluding escape sequences.
  */
 int
-s3_count_chars_common(
-	struct s3_draw_msg_context *context,
+s3_count_drawmsg_chars(
+	struct s3_drawmsg *context,
 	int *width);
 
 /*
  * Draw characters in a message up to (char count) characters.
  */
 int
-s3_draw_msg_common(
-	struct s3_draw_msg_context *context,
+s3_draw_message(
+	struct s3_drawmsg *context,
 	int char_count);
 
 /*
  * Get a pen position.
  */
 void
-s3_get_pen_position_common(
-	struct s3_draw_msg_context *context,
+s3_get_drawmsg_pen_position(
+	struct s3_drawmsg *context,
 	int *pen_x,
 	int *pen_y);
 
 /*
  * Ignore inline wait.
+ * (For change after initialization, including message skip by click)
  */
 void
-s3_set_ignore_inline_wait(
-	struct s3_draw_msg_context *context);
+s3_set_drawmsg_ignore_inline_wait(
+	struct s3_drawmsg *context);
 
 /*
  * Check if a message is a quoted serif. (TODO: delete)
@@ -1908,7 +1915,6 @@ s3_set_ignore_inline_wait(
 bool
 s3_is_quoted_serif(
 	const char *msg);
-
 
 /*
  * Check if a character is escape sequence.

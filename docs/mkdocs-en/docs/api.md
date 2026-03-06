@@ -128,9 +128,10 @@ Suika3 API Reference
     * [Suika.getStringWidth()](#suikagetstringwidth)
     * [Suika.getStringHeight()](#suikagetstringheight)
     * [Suika.drawGlyph()](#suikadrawglyph)
-    * [Suika.constructDrawMsgContext()](#suikaconstructdrawmsgcontext)
-    * [Suika.drawMsgCommon()](#suikadrawmsgcommon)
-    * [Suika.getPenPositionCommon()](#suikagetpenpositioncommon)
+    * [Suika.createDrawMsg()](#suikacreatedrawmsg)
+    * [Suika.destroyDrawMsg()](#suikadestroydrawmsg)
+    * [Suika.drawMessage()](#suikadrawmsgcommon)
+    * [Suika.getDrawMsgPenPosition()](#suikagetpenpositioncommon)
     * [Suika.isEscapeSequenceChar()](#suikaisescapesequencechar)
 * Tag
     * [Suika.getTagCount()](#suikagettagcount)
@@ -2685,9 +2686,9 @@ Boolean that represents success.
 
 ---
 
-## Suika.constructDrawMessageContext()
+## Suika.createDrawMsg()
 
-Initialize a complex message drawing context for high-level text rendering.
+Create a complex message drawing context for high-level text rendering.
 
 ### Parameters
 
@@ -2732,7 +2733,23 @@ A message drawing context object.
 
 ---
 
-## Suika.countChars()
+## Suika.destroyDrawMsg()
+
+Destroy a message drawing context.
+
+### Parameters
+
+| Parameter      | Type     | Description            |
+|----------------|----------|------------------------|
+| context        | Object   | Draw message context.  |
+
+### Return
+
+No return.
+
+---
+
+## Suika.countDrawMsgChars()
 
 Count the remaining characters excluding escape sequences.
 
@@ -2765,24 +2782,7 @@ Returns an integer that indicates the count of characters drawn in the call.
 
 ---
 
-## Suika.drawMessage()
-
-Draw characters in a message up to a specified maximum count using a context.
-
-### Parameters
-
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| context   | Object  | Context from constructDrawMsgContext().    |
-| max_chars | Integer | Maximum characters to draw in this call.   |
-
-### Return
-
-Integer representing the number of characters actually drawn.
-
----
-
-## Suika.getPenPosition()
+## Suika.getDrawMsgPenPosition()
 
 Get the current pen position from a drawing context.
 
@@ -3184,7 +3184,7 @@ Load an animation definition from a file and register it.
 
 ### Return
 
-An object containing success status and whether the anime uses specific layers.
+An array of boolean that indicate each layer is loaded or not.
 
 ---
 
@@ -3365,7 +3365,7 @@ Start lip-sync animation based on the message content for a character.
 | Parameter | Type    | Description                                |
 |-----------|---------|--------------------------------------------|
 | chpos     | Integer | Character position.                        |
-| msg       | String  | The message text to sync with.             |
+| text      | String  | The message text to sync with.             |
 
 ### Return
 

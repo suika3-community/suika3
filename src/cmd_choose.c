@@ -282,7 +282,7 @@ draw_text(
 	int index,
 	bool is_idle)
 {
-	struct s3_draw_msg_context context;
+	struct s3_drawmsg *context;
 	s3_pixel_t color, outline_color;
 	int outline_width;
 	int layer;
@@ -344,8 +344,7 @@ draw_text(
 	img = s3_get_layer_image(layer);
 
 	/* Draw a text. */
-	s3_construct_draw_msg_context(
-		&context,
+	context = s3_create_drawmsg(
 		img,
 		button[index].text,
 		conf_choose_font_select,
@@ -378,8 +377,11 @@ draw_text(
 		true,			/* ignore_wait */
 		NULL,			/* inline_wait_hook */
 		conf_choose_font_tategaki);
-	char_count = s3_count_chars_common(&context, NULL);
-	s3_draw_msg_common(&context, char_count);
+	if (context == NULL)
+		return;
+	char_count = s3_count_drawmsg_chars(context, NULL);
+	s3_draw_message(context, char_count);
+	s3_destroy_drawmsg(context);
 }
 
 /* Main processing. */

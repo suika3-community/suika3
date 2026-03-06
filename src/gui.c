@@ -209,7 +209,7 @@ struct gui_button {
 		bool is_waiting;
 
 		/* Drawing context. */
-		struct s3_draw_msg_context msg_context;
+		struct s3_drawmsg *msg_context;
 
 		/* Total character to draw. */
 		int total_chars;
@@ -452,6 +452,8 @@ s3i_cleanup_gui(void)
 			s3_destroy_image(button[i].rt.img_hover);
 		if (button[i].rt.img_disable != NULL)
 			s3_destroy_image(button[i].rt.img_disable);
+		if (button[i].rt.msg_context != NULL)
+			s3_destroy_drawmsg(button[i].rt.msg_context);
 	}
 
 	/* Zero out buttons. */
@@ -2066,7 +2068,7 @@ draw_save_text_item(
 	const char *text,
 	bool multiline)
 {
-	struct s3_draw_msg_context context;
+	struct s3_drawmsg *context;
 	struct gui_button *b;
 	s3_pixel_t color, outline_color;
 	int width, total_chars;
@@ -2084,8 +2086,7 @@ draw_save_text_item(
 				      (uint32_t)conf_gui_save_font_outline_b);
 
 	/* Render the text. */
-	s3_construct_draw_msg_context(
-		&context,
+	context = s3_create_drawmsg(
 		b->rt.img_canvas,
 		text,
 		conf_gui_save_font_select,
@@ -2118,10 +2119,13 @@ draw_save_text_item(
 		true,		/* ignore_wait */
 		NULL,		/* inline_wait_hook */
 		conf_gui_save_font_tategaki);
-	total_chars = s3_count_chars_common(&context, NULL);
-	s3_draw_msg_common(&context, total_chars);
-
-	width = s3_get_string_width(context.font, context.font_size, text);
+	if (context == NULL)
+		return 0;
+	total_chars = s3_count_drawmsg_chars(context, NULL);
+	s3_draw_message(context, total_chars);
+	width = s3_get_string_width(context->font, context->font_size, text);
+	s3_destroy_drawmsg(context);
+	
 	return width;
 }
 
@@ -2412,7 +2416,7 @@ static void
 draw_history_text_item(
 	int button_index)
 {
-	struct s3_draw_msg_context context;
+	struct s3_drawmsg *context;
 	struct gui_button *b;
 	const char *text;
 	s3_pixel_t color, outline_color;
@@ -2443,8 +2447,7 @@ draw_history_text_item(
 	}
 
 	/* Render. */
-	s3_construct_draw_msg_context(
-		&context,
+	context = s3_create_drawmsg(
 		b->rt.img_canvas,
 		text,
 		conf_gui_history_font_select,
@@ -2477,8 +2480,11 @@ draw_history_text_item(
 		true,		/* ignore_wait */
 		NULL,		/* inline_wait_hook */
 		conf_gui_history_font_tategaki);
-	total_chars = s3_count_chars_common(&context, NULL);
-	s3_draw_msg_common(&context, total_chars);
+	if (context == NULL)
+		return;
+	total_chars = s3_count_drawmsg_chars(context, NULL);
+	s3_draw_message(context, total_chars);
+	s3_destroy_drawmsg(context);
 }
 
 /* Process scroll up. */
@@ -2683,8 +2689,7 @@ static void reset_preview_button(int index)
 		pen_y = 0;
 	}
 
-	s3_construct_draw_msg_context(
-		&b->rt.msg_context,
+	b->rt.msg_context = s3_create_drawmsg(
 		b->rt.img_canvas,
 		b->msg,
 		conf_msgbox_font_select,
@@ -2719,7 +2724,7 @@ static void reset_preview_button(int index)
 		conf_gui_preview_font_tategaki);
 
 	b->rt.is_waiting = false;
-	b->rt.total_chars = s3_count_chars_common(&b->rt.msg_context, NULL);
+	b->rt.total_chars = s3_count_drawmsg_chars(b->rt.msg_context, NULL);
 	b->rt.drawn_chars = 0;
 	s3_reset_lap_timer(&b->rt.sw);
 }
@@ -2785,7 +2790,7 @@ static void draw_preview_message(int index)
 		return;
 
 	/* Draw the message. */
-	ret_chars = s3_draw_msg_common(&b->rt.msg_context, char_count);
+	ret_chars = s3_draw_message(b->rt.msg_context, char_count);
 	s3_notify_image_update(b->rt.img_canvas);
 
 	/* Add the number of characters drawn. */
@@ -2888,7 +2893,7 @@ static void
 draw_var_value(
 	     int index)
 {
-	struct s3_draw_msg_context context;
+	struct s3_drawmsg *context;
 	struct gui_button *b;
 	const char *name;
 	s3_pixel_t color, outline_color;
@@ -2911,8 +2916,7 @@ draw_var_value(
 	assert(name != NULL);
 
 	/* Draw the variable value. */
-	s3_construct_draw_msg_context(
-		&context,
+	context = s3_create_drawmsg(
 		b->rt.img_canvas,
 		name,
 		conf_msgbox_font_select,
@@ -2945,8 +2949,11 @@ draw_var_value(
 		true,		/* ignore_wait */
 		NULL,		/* inline_wait_hook */
 		false);		/* use_tategaki */
-	char_count = s3_count_chars_common(&context, NULL);
-	s3_draw_msg_common(&context, char_count);
+	if (context == NULL)
+		return;
+	char_count = s3_count_drawmsg_chars(context, NULL);
+	s3_draw_message(context, char_count);
+	s3_destroy_drawmsg(context);
 }
 
 /* Process the press of a name string edit button. */

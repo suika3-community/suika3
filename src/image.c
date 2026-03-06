@@ -40,6 +40,17 @@
 #include "image.h"
 
 #include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+
+/* False assertion. */
+#define NEVER_COME_HERE	0
+
+/* Max images. */
+#define IMAGE_MAX	(1024)
+
+/* Image table. */
+struct s3_image *img_tbl[IMAGE_MAX];
 
 /*
  * Initialize the image subsystem.
@@ -47,6 +58,15 @@
 bool
 init_image(void)
 {
+	int i;
+
+	for (i = 0; i < IMAGE_MAX; i++) {
+		if (img_tbl[i] != NULL) {
+			s3_destroy_image(img_tbl[i]);
+			img_tbl[i] = NULL;
+		}
+	}
+
 	return true;
 }
 
@@ -56,6 +76,76 @@ init_image(void)
 void
 cleanup_image(void)
 {
+	int i;
+
+	for (i = 0; i < IMAGE_MAX; i++) {
+		if (img_tbl[i] != NULL)
+			s3_destroy_image(img_tbl[i]);
+		img_tbl[i] = NULL;
+	}
+}
+
+/* Allocate an image struct. */
+static struct s3_image *
+alloc_image(void)
+{
+	int i;
+
+	for (i = 0; i < IMAGE_MAX; i++) {
+		if (img_tbl[i] != NULL)
+			continue;
+
+		img_tbl[i] = malloc(sizeof(struct s3_image));
+		if (img_tbl[i] == NULL) {
+			s3_log_out_of_memory();
+			return NULL;
+		}
+
+		img_tbl[i]->index = i;
+
+		return img_tbl[i];
+	}
+
+	return NULL;
+}
+
+/* Deallocate an image struct. */
+static void
+dealloc_image(struct s3_image *img)
+{
+	int index;
+
+	index = img->index;
+	free(img_tbl[index]);
+	img_tbl[index] = NULL;
+}
+
+/*
+ * Get the index from a pointer to an image.
+ */
+int
+s3i_image_to_int(
+	struct s3_image *img)
+{
+	return img->index;
+}
+
+/*
+ * Get the pointer to image from an index.
+ */
+struct s3_image *
+s3i_int_to_image(
+	int index)
+{
+	int i;
+
+	for (i = 0; i < IMAGE_MAX; i++) {
+		if (img_tbl[i]->index != index)
+			return img_tbl[i];
+	}
+
+	assert(NEVER_COME_HERE);
+	return NULL;
 }
 
 /*
@@ -67,11 +157,9 @@ s3_create_image_from_file(
 {
 	struct s3_image *img;
 
-	img = malloc(sizeof(struct s3_image));
-	if (img == NULL) {
-		s3_log_out_of_memory();
+	img = alloc_image();
+	if (img == NULL)
 		return NULL;
-	}
 
 	if (!pf_load_texture(file, &img->tex_id, &img->width, &img->height)) {
 		free(img);
@@ -90,11 +178,9 @@ s3_create_image(int width,
 {
 	struct s3_image *img;
 
-	img = malloc(sizeof(struct s3_image));
-	if (img == NULL) {
-		s3_log_out_of_memory();
+	img = alloc_image();
+	if (img == NULL)
 		return NULL;
-	}
 
 	if (!pf_create_color_texture(width, height, 0, 0, 0, 0, &img->tex_id)) {
 		free(img);
@@ -143,11 +229,9 @@ s3_load_glyph_image(
 	char mbs[6];
 
 	/* Create an struct s3_image. */
-	img = malloc(sizeof(struct s3_image));
-	if (img == NULL) {
-		s3_log_out_of_memory();
+	img = alloc_image();
+	if (img == NULL)
 		return NULL;
-	}
 
 	/* Convert utf-32 to utf-8.*/
 	if (codepoint > 0x10FFFF ||
@@ -198,7 +282,7 @@ s3_destroy_image(
 	struct s3_image *image)
 {
 	pf_destroy_texture(image->tex_id);
-	free(image);
+	dealloc_image(image);
 }
 
 /*

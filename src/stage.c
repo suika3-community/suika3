@@ -654,7 +654,7 @@ setup_savenew(void)
 static void
 restore_text_layers(void)
 {
-	struct s3_draw_msg_context context;
+	struct s3_drawmsg *context;
 	s3_pixel_t color, outline_color;
 	int i, total_chars;
 
@@ -673,8 +673,7 @@ restore_text_layers(void)
 			continue;
 
 		/* Draw. */
-		s3_construct_draw_msg_context(
-			&context,
+		context = s3_create_drawmsg(
 			layer_image[i],
 			layer_text[i],
 			conf_msgbox_font_select,
@@ -707,8 +706,11 @@ restore_text_layers(void)
 			true,	/* ignore_wait */
 			NULL,	/* inline_wait_hook */
 			false);	/* use_tategaki */
-		total_chars = s3_count_chars_common(&context, NULL);
-		s3_draw_msg_common(&context, total_chars);
+		if (context == NULL)
+			continue;
+		total_chars = s3_count_drawmsg_chars(context, NULL);
+		s3_draw_message(context, total_chars);
+		s3_destroy_drawmsg(context);
 	}
 }
 
@@ -2165,6 +2167,15 @@ s3_set_ch_name_mapping(
 	assert(pos >= 0 && pos < S3_CH_ALL_LAYERS);
 
 	ch_name_mapping[pos] = ch_name_index;
+}
+
+/*
+ * Get the talker character name index. (-1 for no speaker)
+ */
+int
+s3_get_ch_talking(void)
+{
+	return ch_talking;
 }
 
 /*

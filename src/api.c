@@ -39,11 +39,15 @@
 #include <playfield/playfield.h>
 #include <noct/noct.h>
 #include "game.h"
+#include "image.h"
+#include "text.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+
+#define NEVER_COME_HERE 0
 
 /* API function entry. */
 struct api_func {
@@ -226,20 +230,20 @@ static bool Suika_forceChDim(void *p);
 static bool Suika_getChDim(void *p);
 static bool Suika_fillNamebox(void *p);
 static bool Suika_getNameboxRect(void *p);
-static bool Suika_showNamebox(void *p);
-static bool Suika_fillMsgbox(void *p);
-static bool Suika_showMsgbox(void *p);
-static bool Suika_getMsgboxRect(void *p);
+static bool Suika_showNameBox(void *p);
+static bool Suika_fillMessageBox(void *p);
+static bool Suika_showMessageBox(void *p);
+static bool Suika_getMessageBoxRect(void *p);
 static bool Suika_setClickPosition(void *p);
 static bool Suika_showClick(void *p);
 static bool Suika_setClickIndex(void *p);
 static bool Suika_getClickRect(void *p);
-static bool Suika_fillChooseboxIdleImage(void *p);
-static bool Suika_fillChooseboxHoverImage(void *p);
-static bool Suika_showChoosebox(void *p);
-static bool Suika_getChooseboxRect(void *p);
-static bool Suika_showAutomodeBanner(void *p);
-static bool Suika_showSkipmodeBanner(void *p);
+static bool Suika_fillChooseBoxIdleImage(void *p);
+static bool Suika_fillChooseBoxHoverImage(void *p);
+static bool Suika_showChooseBox(void *p);
+static bool Suika_getChooseBoxRect(void *p);
+static bool Suika_showAutoModeBanner(void *p);
+static bool Suika_showSkipModeBanner(void *p);
 static bool Suika_renderImage(void *p);
 static bool Suika_renderImage3d(void *p);
 
@@ -270,11 +274,11 @@ static bool Suika_countUtf8Chars(void *p);
 static bool Suika_getStringWidth(void *p);
 static bool Suika_getStringHeight(void *p);
 static bool Suika_drawGlyph(void *p);
-static bool Suika_constructDrawMsgContext(void *p);
-static bool Suika_countCharsCommon(void *p);
-static bool Suika_drawMsgCommon(void *p);
-static bool Suika_getPenPositionCommon(void *p);
-static bool Suika_setIgnoreInlineWait(void *p);
+static bool Suika_createDrawMsg(void *p);
+static bool Suika_countDrawMsgChars(void *p);
+static bool Suika_drawMessage(void *p);
+static bool Suika_getDrawMsgPenPosition(void *p);
+static bool Suika_setDrawMsgIgnoreInlineWait(void *p);
 static bool Suika_isQuotedSerif(void *p);
 static bool Suika_isEscapeSequenceChar(void *p);
 
@@ -511,9 +515,9 @@ static struct api_func api_func[] = {
 	{"startFade",			Suika_startFade,		1, single_param},
 	{"isFadeRunning",		Suika_isFadeRunning,		0, NULL},
 	{"finishFade",			Suika_finishFade,		0, NULL},
-	{"showMsgbox",			Suika_showMsgbox,		1, single_param},
-	{"showNamebox",			Suika_showNamebox,		1, single_param},
-	{"showChoosebox",		Suika_showChoosebox,		1, single_param},
+	{"showMessageBox",		Suika_showMessageBox,		1, single_param},
+	{"showNameBox",			Suika_showNameBox,		1, single_param},
+	{"showChooseBox",		Suika_showChooseBox,		1, single_param},
 
 	/* Mixer */
 	{"setMixerInputFile",		Suika_setMixerInputFile,	1, single_param},
@@ -533,9 +537,9 @@ static struct api_func api_func[] = {
 	{"getStringWidth",		Suika_getStringWidth,		1, single_param},
 	{"getStringHeight",		Suika_getStringHeight,		1, single_param},
 	{"drawGlyph",			Suika_drawGlyph,		1, single_param},
-	{"constructDrawMsgContext",	Suika_constructDrawMsgContext,	1, single_param}, 
-	{"drawMsgCommon",		Suika_drawMsgCommon,		1, single_param},
-	{"getPenPositionCommon",	Suika_getPenPositionCommon,	1, single_param},
+	{"createDrawMsg",		Suika_createDrawMsg,		1, single_param}, 
+	{"drawMessage",			Suika_drawMessage,		1, single_param},
+	{"getDrawMsgPenPosition",	Suika_getDrawMsgPenPosition,	1, single_param},
 	{"isEscapeSequenceChar",	Suika_isEscapeSequenceChar,	1, single_param},
 
 	/* Tag */
@@ -2328,7 +2332,6 @@ static bool
 Suika_setPrevLastMessage(void *p)
 {
 	char *message;
-	int is_append;
 	bool ret;
 
 	message = NULL;
@@ -2337,10 +2340,8 @@ Suika_setPrevLastMessage(void *p)
 		/* Get the argument. */
 		if (!pf_get_call_arg_string("message", &message))
 			break;
-		if (!pf_get_call_arg_int("isAppend", &is_append))
-			break;
 
-		if (!s3_set_prev_last_message(message, is_append ? true : false))
+		if (!s3_set_prev_last_message(message))
 			break;
 
 		/* Set the return value. */
@@ -3155,7 +3156,7 @@ Suika_setLayerFileName(void *p)
 	char *file;
 	bool ret;
 
-	file_name = NULL;
+	file = NULL;
 	ret = false;
 	do {
 		/* Get the arguments. */
@@ -3174,8 +3175,8 @@ Suika_setLayerFileName(void *p)
 		ret = true;
 	} while (0);
 
-	if (file_name != NULL)
-		free(file_name);
+	if (file != NULL)
+		free(file);
 
 	return ret;	
 }
@@ -3193,7 +3194,7 @@ Suika_getLayerImage(void *p)
 		if (!pf_get_call_arg_int("layer", &layer))
 			break;
 	
-		val = s3_image_to_int(s3_get_layer_image(layer));
+		val = s3i_image_to_int(s3_get_layer_image(layer));
 
 		/* Set the return value. */
 		if (!pf_set_return_int(val))
@@ -3210,6 +3211,7 @@ Suika_setLayerImage(void *p)
 {
 	int layer;
 	int image;
+	struct s3_image *img;
 	bool ret;
 
 	ret = false;
@@ -3220,8 +3222,8 @@ Suika_setLayerImage(void *p)
 		if (!pf_get_call_arg_int("image", &image))
 			break;
 
-		if (!s3_set_layer_image(layer, s3_int_to_image(image)))
-			break;
+		img = s3i_int_to_image(image);
+		s3_set_layer_image(layer, img);
 
 		/* Set the return value. */
 		if (!pf_set_return_int(1))
@@ -3321,51 +3323,41 @@ Suika_setLayerText(void *p)
 static bool
 Suika_getSysbtnIdleImage(void *p)
 {
-	int layer;
 	int val;
+	struct s3_image *img;
 	bool ret;
 
-	ret = false;
-	do {
-		/* Get the argument. */
-		if (!pf_get_call_arg_int("layer", &layer))
-			break;
+	img = s3_get_sysbtn_idle_image();
+	if (img == NULL)
+		return false;
 
-		val = s3_image_to_int(s3_get_sysbtn_idle_image(layer));
+	val = s3i_image_to_int(img);
 
-		/* Set the return value. */
-		if (!pf_set_return_int(val))
-			break;
+	/* Set the return value. */
+	if (!pf_set_return_int(val))
+		return false;
 
-		ret = true;
-	} while (0);
-
-	return ret;
+	return true;
 }
 
 static bool
 Suika_getSysbtnHoverImage(void *p)
 {
-	int layer;
 	int val;
+	struct s3_image *img;
 	bool ret;
 
-	ret = false;
-	do {
-		/* Get the argument. */
-		if (!pf_get_call_arg_int("layer", &layer))
-			break;
+	img = s3_get_sysbtn_hover_image();
+	if (img == NULL)
+		return false;
 
-		val = s3_image_to_int(s3_get_sysbtn_hover_image(layer));
+	val = s3i_image_to_int(img);
 
-		/* Set the return value. */
-		if (!pf_set_return_int(val))
-			break;
+	/* Set the return value. */
+	if (!pf_set_return_int(val))
+		return false;
 
-		ret = true;
-	} while (0);
-
-	return ret;
+	return true;
 }
 
 static bool
@@ -3497,22 +3489,13 @@ Suika_renderStage(void *p)
 {
 	int layer;
 
-	ret = false;
-	do {
-		/* Get the argument. */
-		if (!pf_get_call_arg_int("layer", &layer))
-			break;
+	s3_render_stage();
 
-		s3_render_stage(layer);
+	/* Set the return value. */
+	if (!pf_set_return_int(1))
+		return false;
 
-		/* Set the return value. */
-		if (!pf_set_return_int(1))
-			break;
-
-		ret = true;
-	} while (0);
-
-	return ret;
+	return true;
 }	
 
 static bool
@@ -3531,8 +3514,10 @@ static bool
 Suika_getThumbImage(void *p)
 {
 	int val;
+	struct s3_image *img;
 
-	val = s3_image_to_int(s3_get_thumb_image());
+	img = s3_get_thumb_image();
+	val = s3i_image_to_int(img);
 
 	/* Set the return value. */
 	if (!pf_set_return_int(val))
@@ -3758,19 +3743,31 @@ Suika_getNameboxRect(void *p)
 }
 
 static bool
-Suika_showNamebox(void *p)
+Suika_showNameBox(void *p)
 {
-        s3_show_namebox();
+	int show;
+	bool ret;
 
-        /* Set the return value. */
-        if (!pf_set_return_int(1))
-                return false;
+	ret = false;
+	do {
+		/* Get the arguments. */
+		if (!pf_get_call_arg_int("show", &show))
+			break;
 
-        return true;
+		s3_show_namebox(show ? true : false);
+
+		/* Set the return value. */
+		if (!pf_set_return_int(1))
+			break;
+
+		ret = true;
+	} while (0);
+
+	return ret;
 }
 
 static bool
-Suika_fillMsgbox(void *p)
+Suika_fillMessageBox(void *p)
 {
         s3_fill_msgbox();
 
@@ -3782,20 +3779,33 @@ Suika_fillMsgbox(void *p)
 }
 
 static bool
-Suika_showMsgbox(void *p)
+Suika_showMessageBox(void *p)
 {
-        s3_show_msgbox();
+	int show;
+	bool ret;
 
-        /* Set the return value. */
-        if (!pf_set_return_int(1))
-                return false;
+	ret = false;
+	do {
+		/* Get the arguments. */
+		if (!pf_get_call_arg_int("show", &show))
+			break;
 
-        return true;
+		s3_show_msgbox(show ? true : false);
+
+		/* Set the return value. */
+		if (!pf_set_return_int(1))
+			break;
+
+		ret = true;
+	} while (0);
+
+	return ret;
 }
 
 static bool
 Suika_getMsgboxRect(void *p)
 {
+	/* TODO */
         s3_log_error(S3_TR("This API is not implemented yet."));
         return false;
 }
@@ -3883,42 +3893,18 @@ Suika_getClickRect(void *p)
 }
 
 static bool
-Suika_fillChooseboxIdleImage(void *p)
+Suika_fillChooseBoxIdleImage(void *p)
 {
-	s3_fill_choosebox_idle_image();
-
-	/* Set the return value. */
-	if (!pf_set_return_int(1))
-		return false;
-
-	return true;
-}
-
-static bool
-Suika_fillChooseboxHoverImage(void *p)
-{
-	s3_fill_choosebox_hover_image();
-
-	/* Set the return value. */
-	if (!pf_set_return_int(1))
-		return false;
-
-	return true;
-}
-
-static bool
-Suika_showChoosebox(void *p)
-{
-	int show;
+	int index;
 	bool ret;
 
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("show", &show))
+		if (!pf_get_call_arg_int("index", &index))
 			break;
 
-		s3_show_choosebox(show ? true : false);
+		s3_fill_choosebox_idle_image(index);
 
 		/* Set the return value. */
 		if (!pf_set_return_int(1))
@@ -3931,14 +3917,70 @@ Suika_showChoosebox(void *p)
 }
 
 static bool
-Suika_getChooseboxRect(void *p)
+Suika_fillChooseBoxHoverImage(void *p)
+{
+	int index;
+	bool ret;
+
+	ret = false;
+	do {
+		/* Get the argument. */
+		if (!pf_get_call_arg_int("index", &index))
+			break;
+
+		s3_fill_choosebox_hover_image(index);
+
+		/* Set the return value. */
+		if (!pf_set_return_int(1))
+			return false;
+
+		ret = true;
+	} while (0);
+
+	return ret;
+}
+
+static bool
+Suika_showChooseBox(void *p)
+{
+	int index;
+	int show_idle;
+	int show_hover;
+	bool ret;
+
+	ret = false;
+	do {
+		/* Get the argument. */
+		if (!pf_get_call_arg_int("index", &index))
+			break;
+		if (!pf_get_call_arg_int("showIdle", &show_idle))
+			break;
+		if (!pf_get_call_arg_int("showHover", &show_hover))
+			break;
+
+		s3_show_choosebox(index,
+				  show_idle ? true : false,
+				  show_hover ? true : false);
+
+		/* Set the return value. */
+		if (!pf_set_return_int(1))
+				return false;
+
+		ret = true;
+	} while (0);
+
+	return ret;
+}
+
+static bool
+Suika_getChooseBoxRect(void *p)
 {
         s3_log_error(S3_TR("This API is not implemented yet."));
         return false;
 }
 
 static bool
-Suika_showAutomodeBanner(void *p)
+Suika_showAutoModeBanner(void *p)
 {
 	int show;
 	bool ret;
@@ -3962,7 +4004,7 @@ Suika_showAutomodeBanner(void *p)
 }
 
 static bool
-Suika_showSkipmodeBanner(void *p)
+Suika_showSkipModeBanner(void *p)
 {
 	int show;
 	bool ret;
@@ -3988,44 +4030,50 @@ Suika_showSkipmodeBanner(void *p)
 static bool
 Suika_renderImage(void *p)
 {
-	int dstLeft;
-	int dstTop;
+	int dst_left;
+	int dst_top;
+	int dst_width;
+	int dst_height;
 	int image;
-	int srcLeft;
-	int srcTop;
-	int srcWidth;
-	int srcHeight;
+	int src_left;
+	int src_top;
+	int src_width;
+	int src_height;
 	int alpha;
+	struct s3_image *img;
 	bool ret;
 
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("dstLeft", &dstLeft))
+		if (!pf_get_call_arg_int("dstLeft", &dst_left))
 			break;
-		if (!pf_get_call_arg_int("dstTop", &dstTop))
+		if (!pf_get_call_arg_int("dstTop", &dst_top))
 			break;
 		if (!pf_get_call_arg_int("image", &image))
 			break;
-		if (!pf_get_call_arg_int("srcLeft", &srcLeft))
+		if (!pf_get_call_arg_int("srcLeft", &src_left))
 			break;
-		if (!pf_get_call_arg_int("srcTop", &srcTop))
+		if (!pf_get_call_arg_int("srcTop", &src_top))
 			break;
-		if (!pf_get_call_arg_int("srcWidth", &srcWidth))
+		if (!pf_get_call_arg_int("srcWidth", &src_width))
 			break;
-		if (!pf_get_call_arg_int("srcHeight", &srcHeight))
+		if (!pf_get_call_arg_int("srcHeight", &src_height))
 			break;
 		if (!pf_get_call_arg_int("alpha", &alpha))
 			break;
 
+		img = s3i_int_to_image(image);
 		s3_render_image(
-			dstLeft,
-			dstTop,
-			s3_int_to_image(image),
-			srcLeft,
-			srcTop,
-			srcWidth,
-			srcHeight,
+			dst_left,
+			dst_top,
+			dst_width,
+			dst_height,
+			img,
+			src_left,
+			src_top,
+			src_width,
+			src_height,
 			alpha);
 
 		/* Set the return value. */
@@ -4045,6 +4093,7 @@ Suika_renderImage3d(void *p)
 	int srcLeft, srcTop, srcWidth, srcHeight;
 	int image;
 	int alpha;
+	struct s3_image *img;
 	bool ret;
 
 	ret = false;
@@ -4079,9 +4128,10 @@ Suika_renderImage3d(void *p)
 		if (!pf_get_call_arg_int("alpha", &alpha))
 			break;
 
+		img = s3i_int_to_image(image);
 		s3_render_image_3d(
 			x1, y1, x2, y2, x3, y3, x4, y4,
-			s3_int_to_image(image),
+			img,
 			srcLeft,
 			srcTop,
 			srcWidth,
@@ -4099,15 +4149,15 @@ Suika_renderImage3d(void *p)
 }
 
 /*
- * Sound
+ * Mixer
  */
 
 static bool
-Suika_setMixer_input_file(void *p)
+Suika_setMixerInputFile(void *p)
 {
-	int track,
-	char *file,
-	bool is_looped;
+	int track;
+	char *file;
+	int is_looped;
 	bool ret;
 
 	ret = false;
@@ -4151,7 +4201,7 @@ Suika_setMixerVolume(void *p)
 			break;
 		if (!pf_get_call_arg_float("volume", &volume))
 			break;
-		if (!pf_get_call_arg_int("span", &span))
+		if (!pf_get_call_arg_float("span", &span))
 			break;
 
 		s3_set_mixer_volume(track, volume, span);
@@ -4583,6 +4633,8 @@ Suika_drawGlyph(void *p)
 	char *glyph;
 	int dim;
 	int ret_w, ret_h;
+	struct s3_image *img;
+	uint32_t wc;
 	bool ret;
 
 	ret = false;
@@ -4611,8 +4663,13 @@ Suika_drawGlyph(void *p)
 		if (!pf_get_call_arg_int("dim", &dim))
 			break;
 
+		img = s3i_int_to_image(image);
+
+		if (!s3_utf8_to_utf32(glyph, &wc))
+			break;
+
 		s3_draw_glyph(
-			s3_int_to_image(image),
+			img,
 			fontType,
 			fontSize,
 			baseFontSize,
@@ -4621,7 +4678,7 @@ Suika_drawGlyph(void *p)
 			y,
 			color,
 			outlineColor,
-			glyph,
+			wc,
 			&ret_w,
 			&ret_h,
 			dim ? true : false);
@@ -4640,7 +4697,7 @@ Suika_drawGlyph(void *p)
 }
 
 static bool
-Suika_constructDrawMessageContext(void *p)
+Suika_createDrawMsg(void *p)
 {
 	int image;
 	char *text;
@@ -4674,7 +4731,7 @@ Suika_constructDrawMessageContext(void *p)
 	int ignoreWait;
 	int inlineWaitHook;
 	int tategaki;
-	int ctx;
+	struct s3_drawmsg *context;
 	bool ret;
 
 	text = NULL;
@@ -4746,12 +4803,10 @@ Suika_constructDrawMessageContext(void *p)
 		if (!pf_get_call_arg_int("tategaki", &tategaki))
 			break;
 
-		ctx = allocate_draw_msg_context();
-		if (ctx == NULL)
-			break;
-		
-		s3_construct_draw_message_context(
-			int_to_draw_msg_ctx(ctx),
+		/* TODO: inline hook. */
+
+		context = s3_create_drawmsg(
+			s3i_int_to_image(image),
 			text,
 			fontType,
 			fontSize,
@@ -4781,41 +4836,72 @@ Suika_constructDrawMessageContext(void *p)
 			ignorePosition ? true : false,
 			ignoreRuby ? true : false,
 			ignoreWait ? true : false,
-			inlineWaitHook,
+			NULL,
 			tategaki ? true : false);
 
-			/* Set the return value. */
-			if (!pf_set_return_int(1))
-				break;
+		/* Set the return value. */
+		if (!pf_set_return_int(s3i_drawmsg_to_int(context)))
+			break;
 	
-			ret = true;
+		ret = true;
 	} while (0);
 
 	if (text != NULL)
-		free(text;)
+		free(text);
 
 	return ret;
 }
 
 static bool
-Suika_countChars(void *p)
+Suika_destroyDrawMsg(void *p)
 {
 	int context;
-	struct s3_draw_msg_context *ctx;
+	struct s3_drawmsg *ctx;
 	int val;
 	bool ret;
 
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("context", context))
+		if (!pf_get_call_arg_int("context", &context))
 			break;
 
-		ctx = int_to_context(context);
+		ctx = s3i_int_to_drawmsg(context);
 		if (ctx == NULL)
 			break;
 
-		val = s3_count_chars_common(ctx);
+		s3_destroy_drawmsg(ctx);
+
+		/* Set the return value. */
+		if (!pf_set_return_int(1))
+			break;
+	
+		ret = true;
+	} while (0);
+
+	return ret;
+}
+
+static bool
+Suika_countDrawMsgChars(void *p)
+{
+	int context;
+	struct s3_drawmsg *ctx;
+	int val;
+	bool ret;
+	int width;
+
+	ret = false;
+	do {
+		/* Get the argument. */
+		if (!pf_get_call_arg_int("context", &context))
+			break;
+
+		ctx = s3i_int_to_drawmsg(context);
+		if (ctx == NULL)
+			break;
+
+		val = s3_count_drawmsg_chars(ctx, &width);
 
 		/* Set the return value. */
 		if (!pf_set_return_int(val))
@@ -4832,23 +4918,23 @@ Suika_drawMessage(void *p)
 {
 	int context;
 	int max_chars;
-	struct s3_draw_msg_context *ctx;
+	struct s3_drawmsg *ctx;
 	int val;
 	bool ret;
 
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("context", context))
+		if (!pf_get_call_arg_int("context", &context))
 			break;
-		if (!pf_get_call_arg_int("maxChars", max_chars))
+		if (!pf_get_call_arg_int("maxChars", &max_chars))
 			break;
 
-		ctx = int_to_context(context);
+		ctx = s3i_int_to_drawmsg(context);
 		if (ctx == NULL)
 			break;
 
-		val = s3_draw_msg_common(ctx, max_chars)
+		val = s3_draw_message(ctx, max_chars);
 
 		/* Set the return value. */
 		if (!pf_set_return_int(val))
@@ -4861,55 +4947,62 @@ Suika_drawMessage(void *p)
 }
 
 static bool
-Suika_getPenPosition(void *p)
+Suika_getDrawMsgPenPosition(void *p)
 {
+	NoctEnv *env;
+	NoctValue dic, tmp;
+	int context;
+	struct s3_drawmsg *ctx;
+	int pen_x, pen_y;
 	bool ret;
 
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("context", context))
+		if (!pf_get_call_arg_int("context", &context))
 			break;
 
-		ctx = int_to_context(context);
+		ctx = s3i_int_to_drawmsg(context);
 		if (ctx == NULL)
 			break;
 
-		int penX, penY;
-		s3_get_pen_position(ctx, &penX, &penY);
+		s3_get_drawmsg_pen_position(ctx, &pen_x, &pen_y);
 
 		/* Set the return value. */
+		env = p;
 		if (!noct_make_empty_dict(env, &dic))
 			break;
-		if (!noct_dict_set_int(env, dic, "x", penX))
+		if (!noct_set_dict_elem_make_int(env, &dic, "x", &tmp, pen_x))
 			break;
-		if (!noct_dict_set_int(env, dic, "y", penY))
+		if (!noct_set_dict_elem_make_int(env, &dic, "y", &tmp, pen_y))
 			break;
-		if (!noct_set_return(env, dic))
+		if (!noct_set_return(env, &dic))
 			break;
 
-			ret = true;
+		ret = true;
 	} while (0);
 
 	return ret;	
 }
 
 static bool
-Suika_setIgnoreInlineWait(void *p)
+Suika_setDrawMsgIgnoreInlineWait(void *p)
 {
+	int context;
+	struct s3_drawmsg *ctx;
 	bool ret;
 
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("context", context))
+		if (!pf_get_call_arg_int("context", &context))
 			break;
 
-		ctx = int_to_context(context);
+		ctx = s3i_int_to_drawmsg(context);
 		if (ctx == NULL)
 			break;
 
-		s3_get_ignore_inline_wait(ctx);
+		s3_set_drawmsg_ignore_inline_wait(ctx);
 
 		/* Set the return value. */
 		if (!pf_set_return_int(1))
@@ -4925,7 +5018,7 @@ static bool
 Suika_isQuotedSerif(void *p)
 {
 	char *text;
-	int val
+	int val;
 	bool ret;
 
 	ret = false;
@@ -4953,7 +5046,7 @@ static bool
 Suika_isEscapeSequenceChar(void *p)
 {
 	char *text;
-	int val
+	int val;
 	bool ret;
 
 	ret = false;
@@ -4962,7 +5055,7 @@ Suika_isEscapeSequenceChar(void *p)
 		if (!pf_get_call_arg_string("text", &text))
 			break;
 
-		val = s3_is_escape_sequence_char(text);
+		val = s3_is_escape_sequence_char(*text);
 
 		/* Set the return value. */
 		if (!pf_set_return_int(val ? 1 : 0))
@@ -4973,322 +5066,6 @@ Suika_isEscapeSequenceChar(void *p)
 
 	if (text != NULL)
 		free(text);
-
-	return ret;
-}
-
-/*
- * Mixer Subsystem
- */
-
-static bool
-Suika_setMixerInputFile(void *p)
-{
-	int track;
-	char *file;
-	bool is_looped;
-	bool ret;
-
-	ret = false;
-	do {
-		/* Get the arguments. */
-		if (!pf_get_call_arg_int("track", &track))
-			break;
-		if (!pf_get_call_arg_string("file", &file))
-			break;
-		if (!pf_get_call_arg_int("isLooped", &is_looped))
-			break;
-
-		if (!s3_set_mixer_input_file(track, file, is_looped ? true : false))
-			break;
-
-		/* Set the return value. */
-		if (!pf_set_return_int(1))
-			break;
-
-		ret = true;
-	} while (0);
-
-	if (file != NULL)
-		free(file);
-
-	return ret;
-}
-
-static bool
-Suika_setMixerVolume(void *p)
-{
-	int track;
-	float volume;
-	float span;
-	bool ret;
-
-	ret = false;
-	do {
-		/* Get the arguments. */
-		if (!pf_get_call_arg_int("track", &track))
-			break;
-		if (!pf_get_call_arg_float("volume", &volume))
-			break;
-		if (!pf_get_call_arg_int("span", &span))
-			break;
-
-		s3_set_mixer_volume(track, volume, span);
-	
-		/* Set the return value. */
-		if (!pf_set_return_int(1))
-			break;
-
-		ret = true;
-	} while (0);
-
-	return ret;
-}
-
-static bool
-Suika_getMixerVolume(void *p)
-{
-	int track;
-	int val;
-	bool ret;
-
-	ret = false;
-	do {
-		/* Get the argument. */
-		if (!pf_get_call_arg_int("track", &track))
-			break;
-
-		val = s3_get_mixer_volume(track);
-
-		/* Set the return value. */
-		if (!pf_set_return_float(val))
-			break;
-
-		ret = true;
-	} while (0);
-
-	return ret;
-}
-
-static bool
-Suika_setMasterVolume(void *p)
-{
-	float volume;
-	bool ret;
-
-	ret = false;
-	do {
-		/* Get the arguments. */
-		if (!pf_get_call_arg_float("volume", &volume))
-			break;
-
-		s3_set_master_volume(volume);
-	
-		/* Set the return value. */
-		if (!pf_set_return_int(1))
-			break;
-
-		ret = true;
-	} while (0);
-
-	return ret;
-}
-
-static bool
-Suika_getMasterVolume(void *p)
-{
-	float val;
-	bool ret;
-
-	ret = false;
-	do {
-		val = s3_get_master_volume();
-
-		/* Set the return value. */
-		if (!pf_set_return_float(val))
-			break;
-
-		ret = true;
-	} while (0);
-
-	return ret;
-}
-
-static bool
-Suika_setMixerGlobalVolume(void *p)
-{
-	int track;
-	float volume;
-	bool ret;
-
-	ret = false;
-	do {
-		/* Get the arguments. */
-		if (!pf_get_call_arg_int("track", &track))
-			break;
-		if (!pf_get_call_arg_float("volume", &volume))
-			break;
-
-		s3_set_mixer_global_volume(track, volume);
-	
-		/* Set the return value. */
-		if (!pf_set_return_int(1))
-			break;
-
-		ret = true;
-	} while (0);
-
-	return ret;
-}
-
-static bool
-Suika_getMixerGlobalVolume(void *p)
-{
-	int track;
-	float val;
-	bool ret;
-
-	ret = false;
-	do {
-		/* Get the argument. */
-		if (!pf_get_call_arg_int("track", &track))
-			break;
-
-		val = s3_get_mixer_global_volume(track);
-
-		/* Set the return value. */
-		if (!pf_set_return_float(val))
-			break;
-
-		ret = true;
-	} while (0);
-
-	return ret;
-}
-
-static bool
-Suika_setCharacterVolume(void *p)
-{
-	int index;
-	float vol;
-	bool ret;
-
-	ret = false;
-	do {
-		/* Get the arguments. */
-		if (!pf_get_call_arg_int("index", &index))
-			break;
-		if (!pf_get_call_arg_float("volume", &vol))
-			break;
-
-		s3_set_character_volume(index, vol);
-	
-		/* Set the return value. */
-		if (!pf_set_return_int(1))
-			break;
-
-		ret = true;
-	} while (0);
-
-	return ret;
-}
-
-static bool
-Suika_getCharacterVolume(void *p)
-{
-	int index;
-	bool ret;
-
-	ret = false;
-	do {
-		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
-			break;
-
-		float val = s3_get_character_volume(index);
-
-		/* Set the return value. */
-		if (!pf_set_return_float(val))
-			break;
-
-		ret = true;
-	} while (0);
-
-	return ret;
-}
-
-static bool
-Suika_isMixerSoundFinished(void *p)
-{
-	int track;
-	int val;
-	bool ret;
-
-	ret = false;
-	do {
-		/* Get the argument. */
-		if (!pf_get_call_arg_int("track", &track))
-			break;
-
-		val = s3_is_mixer_sound_finished(track);
-
-		/* Set the return value. */
-		if (!pf_set_return_int(val ? 1 : 0))
-			break;
-
-		ret = true;
-	} while (0);
-
-	return ret;
-}
-
-static bool
-Suika_getTrackFileName(void *p)
-{
-	int track;
-	const char *file;
-	bool ret;
-
-	ret = false;
-	do {
-		/* Get the argument. */
-		if (!pf_get_call_arg_int("track", &track))
-			break;
-
-		file = s3_get_track_file_name(track);
-		if (file == NULL)
-			file = "";
-
-		/* Set the return value. */
-		if (!pf_set_return_string(file))
-			break;
-
-		ret = true;
-	} while (0);
-
-	return ret;
-}
-
-static bool
-Suika_applyCharacterVolume(void *p)
-{
-	int index;
-	bool ret;
-
-	ret = false;
-	do {
-		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
-			break;
-
-		s3_apply_character_volume(index);
-
-		/* Set the return value. */
-		if (!pf_set_return_int(1))
-			break;
-
-		ret = true;
-	} while (0);
 
 	return ret;
 }
@@ -5557,33 +5334,55 @@ Suika_getTagPropertyCount(void *p)
 static bool
 Suika_getTagPropertyName(void *p)
 {
-	const char *name;
+	int index;
+	const char *val;
+	bool ret;
 
-	name = s3_get_tag_property_name();
-	if (name == NULL)
-		name = "";
+	ret = false;
+	do {
+		/* Get the argument. */
+		if (!pf_get_call_arg_int("index", &index))
+			break;
+	
+		val = s3_get_tag_property_name(index);
+		if (val == NULL)
+			val = "";
 
-	/* Set the return value. */
-	if (!pf_set_return_string(name))
-		return false;
+		/* Set the return value. */
+		if (!pf_set_return_string(val))
+			break;
 
-	return true;
+		ret = true;
+	} while (0);
+
+	return ret;
 }
 
 static bool
 Suika_getTagPropertyValue(void *p)
 {
-	const char *value;
+	int index;
+	const char *val;
+	bool ret;
 
-	value = s3_get_tag_property_value();
-	if (value == NULL)
-		value = "";
+	ret = false;
+	do {
+		/* Get the argument. */
+		if (!pf_get_call_arg_int("index", &index))
+			break;
+	
+		val = s3_get_tag_property_value(index);
+		if (val == NULL)
+			val = "";
 
-	/* Set the return value. */
-	if (!pf_set_return_string(value))
-		return false;
+		/* Set the return value. */
+		if (!pf_set_return_string(val))
+			break;
 
-	return true;
+		ret = true;
+	} while (0);
+
+	return ret;
 }
 
 static bool
@@ -5618,6 +5417,8 @@ static bool
 Suika_getTagArgBool(void *p)
 {
 	char *name;
+	int omissible;
+	int def_value;
 	int val;
 	bool ret;
 
@@ -5626,8 +5427,14 @@ Suika_getTagArgBool(void *p)
 		/* Get the argument. */
 		if (!pf_get_call_arg_string("name", &name))
 			break;
+		if (!pf_get_call_arg_int("omissible", &omissible))
+			break;
+		if (!pf_get_call_arg_int("defValue", &def_value))
+			break;
 
-		val = s3_get_tag_arg_bool(name);
+		val = s3_get_tag_arg_bool(name,
+					  omissible ? true : false,
+					  def_value ? true : false);
 
 		/* Set the return value. */
 		if (!pf_set_return_int(val ? 1 : 0))
@@ -5646,6 +5453,8 @@ static bool
 Suika_getTagArgInt(void *p)
 {
 	char *name;
+	int omissible;
+	int def_value;
 	int val;
 	bool ret;
 
@@ -5654,8 +5463,14 @@ Suika_getTagArgInt(void *p)
 		/* Get the argument. */
 		if (!pf_get_call_arg_string("name", &name))
 			break;
+		if (!pf_get_call_arg_int("omissible", &omissible))
+			break;
+		if (!pf_get_call_arg_int("defValue", &def_value))
+			break;
 
-		val = s3_get_tag_arg_int(name);
+		val = s3_get_tag_arg_int(name,
+					 omissible ? true : false,
+					 def_value);
 
 		/* Set the return value. */
 		if (!pf_set_return_int(val))
@@ -5674,6 +5489,8 @@ static bool
 Suika_getTagArgFloat(void *p)
 {
 	char *name;
+	int omissible;
+	float def_value;
 	float val;
 	bool ret;
 
@@ -5682,8 +5499,14 @@ Suika_getTagArgFloat(void *p)
 		/* Get the argument. */
 		if (!pf_get_call_arg_string("name", &name))
 			break;
+		if (!pf_get_call_arg_int("omissible", &omissible))
+			break;
+		if (!pf_get_call_arg_float("defValue", &def_value))
+			break;
 
-		val = s3_get_tag_arg_float(name);
+		val = s3_get_tag_arg_float(name,
+					   omissible ? true : false,
+					   def_value);
 
 		/* Set the return value. */
 		if (!pf_set_return_float(val))
@@ -5702,6 +5525,8 @@ static bool
 Suika_getTagArgString(void *p)
 {
 	char *name;
+	int omissible;
+	char *def_value;
 	const char *val;
 	bool ret;
 
@@ -5710,10 +5535,14 @@ Suika_getTagArgString(void *p)
 		/* Get the argument. */
 		if (!pf_get_call_arg_string("name", &name))
 			break;
+		if (!pf_get_call_arg_int("omissible", &omissible))
+			break;
+		if (!pf_get_call_arg_string("defValue", &def_value))
+			break;
 
-		val = s3_get_tag_arg_string(name);
-		if (val == NULL)
-			val = "";
+		val = s3_get_tag_arg_string(name,
+					    omissible ? true : false,
+					    def_value);
 
 		/* Set the return value. */
 		if (!pf_set_return_string(val))
@@ -5724,6 +5553,8 @@ Suika_getTagArgString(void *p)
 
 	if (name != NULL)
 		free(name);
+	if (def_value != NULL)
+		free(def_value);
 
 	return ret;
 }
@@ -5732,6 +5563,7 @@ static bool
 Suika_evaluateTag(void *p)
 {
 	s3_evaluate_tag();
+
 	/* Set the return value. */
 	if (!pf_set_return_int(1))
 		return false;
@@ -5744,9 +5576,11 @@ Suika_pushTagStackIf(void *p)
 {
 	if (!s3_push_tag_stack_if())
 		return false;
+
 	/* Set the return value. */
 	if (!pf_set_return_int(1))
 		return false;
+
 	return true;
 }
 
@@ -5768,9 +5602,11 @@ Suika_pushTagStackWhile(void *p)
 {
 	if (!s3_push_tag_stack_while())
 		return false;
+
 	/* Set the return value. */
 	if (!pf_set_return_int(1))
 		return false;
+
 	return true;
 }
 
@@ -5792,9 +5628,11 @@ Suika_pushTagStackFor(void *p)
 {
 	if (!s3_push_tag_stack_for())
 		return false;
+
 	/* Set the return value. */
 	if (!pf_set_return_int(1))
 		return false;
+
 	return true;
 }
 
@@ -5818,7 +5656,12 @@ Suika_popTagStackFor(void *p)
 static bool
 Suika_loadAnimeFromFile(void *p)
 {
+	NoctEnv *env;
+	NoctValue arr, tmp;
 	char *file;
+	char *reg_name;
+	int i;
+	bool used_layer[S3_STAGE_LAYERS];
 	bool ret;
 
 	ret = false;
@@ -5826,19 +5669,38 @@ Suika_loadAnimeFromFile(void *p)
 		/* Get the argument. */
 		if (!pf_get_call_arg_string("file", &file))
 			break;
-
-			if (!s3_load_anime_from_file(file))
+		if (!pf_get_call_arg_string("regName", &reg_name))
 			break;
 
-			/* Set the return value. */
-		if (!pf_set_return_int(1))
+		if (strcmp(reg_name, "") == 0) {
+			free(reg_name);
+			reg_name = NULL;
+		}
+
+		if (!s3_load_anime_from_file(file, reg_name, used_layer))
 			break;
 
-			ret = true;
+		/* Set the return value. */
+		env = p;
+		if (!noct_make_empty_array(env, &arr))
+			break;
+		for (i = 0; i < S3_STAGE_LAYERS; i++) {
+			if (!noct_set_array_elem_make_int(env, &arr, i, &tmp, used_layer[i] ? 1 : 0))
+				break;
+		}
+		if (i != S3_STAGE_LAYERS)
+			break;
+		if (!noct_set_return(env, &arr))
+			break;
+
+		ret = true;
 	} while (0);
 
 	if (file != NULL)
 		free(file);
+	if (reg_name != NULL)
+		free(reg_name);
+
 	return ret;
 }
 
@@ -5923,7 +5785,7 @@ Suika_addAnimeSequencePropertyF(void *p)
 		if (!pf_set_return_int(1))
 			break;
 
-			ret = true;
+		ret = true;
 	} while (0);
 
 	if (name != NULL)
@@ -5953,7 +5815,7 @@ Suika_addAnimeSequencePropertyI(void *p)
 		if (!pf_set_return_int(1))
 			break;
 
-			ret = true;
+		ret = true;
 	} while (0);
 
 	if (name != NULL)
@@ -5990,24 +5852,14 @@ static bool
 Suika_isAnimeRunning(void *p)
 {
 	int val;
-	bool ret;
 
-	ret = false;
-	do {
-		/* Get the argument. */
-		if (!pf_get_call_arg_int("val", &val))
-			break;
+	val = s3_is_anime_running();
 
-		val = s3_is_anime_running(val);
+	/* Set the return value. */
+	if (!pf_set_return_int(val ? 1 : 0))
+		return false;
 
-		/* Set the return value. */
-		if (!pf_set_return_int(val ? 1 : 0))
-			break;
-
-		ret = true;
-	} while (0);
-
-	return ret;
+	return true;
 }
 
 static bool
@@ -6032,11 +5884,11 @@ Suika_isAnimeFinishedForLayer(void *p)
 
 			val = s3_is_anime_finished_for_layer(layer);
 
-			/* Set the return value. */
+		/* Set the return value. */
 		if (!pf_set_return_int(val ? 1 : 0))
 			break;
 
-			ret = true;
+		ret = true;
 	} while (0);
 
 	return ret;
@@ -6092,12 +5944,15 @@ Suika_getRegAnimeName(void *p)
 		/* Get the argument. */
 		if (!pf_get_call_arg_int("index", &index))
 			break;
+
 		name = s3_get_reg_anime_name(index);
 		if (name == NULL)
 			name = "";
+
 		/* Set the return value. */
 		if (!pf_set_return_string(name))
 			break;
+
 		ret = true;
 	} while (0);
 
@@ -6115,12 +5970,15 @@ Suika_getRegAnimeFileName(void *p)
 		/* Get the argument. */
 		if (!pf_get_call_arg_int("index", &index))
 			break;
+
 		file = s3_get_reg_anime_file_name(index);
 		if (file == NULL)
 			file = "";
+
 		/* Set the return value. */
 		if (!pf_set_return_string(file))
 			break;
+
 		ret = true;
 	} while (0);
 
@@ -6131,19 +5989,30 @@ static bool
 Suika_loadEyeImageIfExists(void *p)
 {
 	int chpos;
+	char *file;
 	bool ret;
+
 	ret = false;
 	do {
 		/* Get the argument. */
 		if (!pf_get_call_arg_int("chpos", &chpos))
 			break;
-		if (!s3_load_eye_image_if_exists(chpos))
+		if (!pf_get_call_arg_string("file", &file))
 			break;
+
+		if (!s3_load_eye_image_if_exists(chpos, file))
+			break;
+
 		/* Set the return value. */
 		if (!pf_set_return_int(1))
 			break;
+
 		ret = true;
 	} while (0);
+
+	if (file != NULL)
+		free(file);
+
 	return ret;
 }
 
@@ -6152,18 +6021,23 @@ Suika_reloadEyeAnime(void *p)
 {
 	int chpos;
 	bool ret;
+
 	ret = false;
 	do {
 		/* Get the argument. */
 		if (!pf_get_call_arg_int("chpos", &chpos))
 			break;
+
 		if (!s3_reload_eye_anime(chpos))
 			break;
+
 		/* Set the return value. */
 		if (!pf_set_return_int(1))
 			break;
+
 		ret = true;
 	} while (0);
+
 	return ret;
 }
 
@@ -6171,19 +6045,30 @@ static bool
 Suika_loadLipImageIfExists(void *p)
 {
 	int chpos;
+	char *file;
 	bool ret;
+
 	ret = false;
 	do {
 		/* Get the argument. */
 		if (!pf_get_call_arg_int("chpos", &chpos))
 			break;
-		if (!s3_load_lip_image_if_exists(chpos))
+		if (!pf_get_call_arg_string("file", &file))
 			break;
+
+		if (!s3_load_lip_image_if_exists(chpos, file))
+			break;
+
 		/* Set the return value. */
 		if (!pf_set_return_int(1))
 			break;
+
 		ret = true;
 	} while (0);
+
+	if (file != NULL)
+		free(file);
+
 	return ret;
 }
 
@@ -6191,19 +6076,29 @@ static bool
 Suika_runLipAnime(void *p)
 {
 	int chpos;
+	char *text;
 	bool ret;
+
 	ret = false;
 	do {
 		/* Get the argument. */
 		if (!pf_get_call_arg_int("chpos", &chpos))
 			break;
-		if (!s3_run_lip_anime(chpos))
+		if (!pf_get_call_arg_string("text", &text))
 			break;
+
+		s3_run_lip_anime(chpos, text);
+
 		/* Set the return value. */
 		if (!pf_set_return_int(1))
 			break;
+
 		ret = true;
 	} while (0);
+
+	if (text == NULL)
+		free(text);
+
 	return ret;
 }
 
@@ -6212,18 +6107,22 @@ Suika_stopLipAnime(void *p)
 {
 	int chpos;
 	bool ret;
+
 	ret = false;
 	do {
 		/* Get the argument. */
 		if (!pf_get_call_arg_int("chpos", &chpos))
 			break;
-		if (!s3_stop_lip_anime(chpos))
-			break;
+
+		s3_stop_lip_anime(chpos);
+
 		/* Set the return value. */
 		if (!pf_set_return_int(1))
 			break;
+
 		ret = true;
 	} while (0);
+
 	return ret;
 }
 
@@ -6245,14 +6144,19 @@ Suika_setVariableInt(void *p)
 			break;
 		if (!pf_get_call_arg_int("value", &value))
 			break;
+
 		s3_set_variable_int(name, value);
+
 		/* Set the return value. */
 		if (!pf_set_return_int(1))
 			break;
+
 		ret = true;
 	} while (0);
+
 	if (name != NULL)
 		free(name);
+
 	return ret;
 }
 
@@ -6270,14 +6174,19 @@ Suika_setVariableFloat(void *p)
 			break;
 		if (!pf_get_call_arg_float("value", &value))
 			break;
+
 		s3_set_variable_float(name, value);
+
 		/* Set the return value. */
 		if (!pf_set_return_int(1))
 			break;
+
 		ret = true;
 	} while (0);
+
 	if (name != NULL)
 		free(name);
+
 	return ret;
 }
 
@@ -6295,16 +6204,21 @@ Suika_setVariableString(void *p)
 			break;
 		if (!pf_get_call_arg_string("value", &value))
 			break;
+
 		s3_set_variable_string(name, value);
+
 		/* Set the return value. */
 		if (!pf_set_return_int(1))
 			break;
+
 		ret = true;
 	} while (0);
+
 	if (name != NULL)
 		free(name);
 	if (value != NULL)
 		free(value);
+
 	return ret;
 }
 
@@ -6377,14 +6291,19 @@ Suika_getVariableInt(void *p)
 		/* Get the argument. */
 		if (!pf_get_call_arg_string("name", &name))
 			break;
+
 		val = s3_get_variable_int(name);
+
 		/* Set the return value. */
 		if (!pf_set_return_int(val))
 			break;
+
 		ret = true;
 	} while (0);
+
 	if (name != NULL)
 		free(name);
+
 	return ret;
 }
 
@@ -6400,14 +6319,19 @@ Suika_getVariableFloat(void *p)
 		/* Get the argument. */
 		if (!pf_get_call_arg_string("name", &name))
 			break;
+
 		val = s3_get_variable_float(name);
+
 		/* Set the return value. */
 		if (!pf_set_return_float(val))
 			break;
+
 		ret = true;
 	} while (0);
+
 	if (name != NULL)
 		free(name);
+
 	return ret;
 }
 
@@ -6415,7 +6339,7 @@ static bool
 Suika_getVariableString(void *p)
 {
 	char *name;
-	char *val;
+	const char *val;
 	bool ret;
 
 	ret = false;
@@ -6423,16 +6347,19 @@ Suika_getVariableString(void *p)
 		/* Get the argument. */
 		if (!pf_get_call_arg_string("name", &name))
 			break;
+
 		val = s3_get_variable_string(name);
+
 		/* Set the return value. */
 		if (!pf_set_return_string(val))
 			break;
+
 		ret = true;
 	} while (0);
+
 	if (name != NULL)
 		free(name);
-	if (val != NULL)
-		free(val);
+
 	return ret;
 }
 
@@ -6462,12 +6389,15 @@ Suika_getVariableName(void *p)
 		/* Get the argument. */
 		if (!pf_get_call_arg_int("index", &index))
 			break;
+
 		name = s3_get_variable_name(index);
 		if (name == NULL)
 			name = "";
+
 		/* Set the return value. */
 		if (!pf_set_return_string(name))
 			break;
+
 		ret = true;
 	} while (0);
 
@@ -6551,9 +6481,11 @@ Suika_executeSaveGlobal(void *p)
 {
 	if (!s3_execute_save_global())
 		return false;
+
 	/* Set the return value. */
 	if (!pf_set_return_int(1))
 		return false;
+
 	return true;
 }
 
@@ -6562,9 +6494,11 @@ Suika_executeLoadGlobal(void *p)
 {
 	if (!s3_execute_load_global())
 		return false;
+
 	/* Set the return value. */
 	if (!pf_set_return_int(1))
 		return false;
+
 	return true;
 }
 
@@ -6573,6 +6507,7 @@ Suika_executeSaveLocal(void *p)
 {
 	int index;
 	bool ret;
+
 	ret = false;
 	do {
 		/* Get the argument. */
@@ -6588,6 +6523,8 @@ Suika_executeSaveLocal(void *p)
 
 		ret = true;
 	} while (0);
+
+	return ret;
 }
 
 static bool
@@ -6595,6 +6532,7 @@ Suika_executeLoadLocal(void *p)
 {
 	int index;
 	bool ret;
+
 	ret = false;
 	do {
 		/* Get the argument. */
@@ -6620,17 +6558,21 @@ Suika_checkSaveExists(void *p)
 	int index;
 	int val;
 	bool ret;
+
 	ret = false;
 	do {
 		/* Get the argument. */
 		if (!pf_get_call_arg_int("index", &index))
 			break;
+
 		val = s3_check_save_exists(index);
+
 		/* Set the return value. */
 		if (!pf_set_return_int(val ? 1 : 0))
 			break;
 		ret = true;
 	} while (0);
+
 	return ret;
 }
 
@@ -6639,14 +6581,14 @@ Suika_deleteLocalSave(void *p)
 {
 	int index;
 	bool ret;
+
 	ret = false;
 	do {
 		/* Get the argument. */
 		if (!pf_get_call_arg_int("index", &index))
 			break;
 
-		if (!s3_delete_local_save(index))
-			break;
+		s3_delete_local_save(index);
 
 		/* Set the return value. */
 		if (!pf_set_return_int(1))
@@ -6654,13 +6596,14 @@ Suika_deleteLocalSave(void *p)
 
 		ret = true;
 	} while (0);
+
+	return ret;
 }
 
 static bool
 Suika_deleteGlobalSave(void *p)
 {
-	if (!s3_delete_global_save())
-		return false;
+	s3_delete_global_save();
 
 	/* Set the return value. */
 	if (!pf_set_return_int(1))
@@ -6675,9 +6618,11 @@ Suika_checkRightAfterLoad(void *p)
 	int val;
 
 	val = s3_check_right_after_load();
+
 	/* Set the return value. */
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
+
 	return true;
 }
 
@@ -6687,17 +6632,22 @@ Suika_getSaveTimestamp(void *p)
 	int index;
 	uint64_t timestamp;
 	bool ret;
+
 	ret = false;
 	do {
 		/* Get the argument. */
 		if (!pf_get_call_arg_int("index", &index))
 			break;
+
 		timestamp = s3_get_save_timestamp(index);
+
 		/* Set the return value. */
 		if (!pf_set_return_int((int)timestamp))
 			break;
+
 		ret = true;	
 	} while (0);
+
 	return ret;
 }
 
@@ -6727,14 +6677,18 @@ Suika_getSaveChapterName(void *p)
 		/* Get the argument. */
 		if (!pf_get_call_arg_int("index", &index))
 			break;
+
 		name = s3_get_save_chapter_name(index);
 		if (name == NULL)
 			name = "";
+
 		/* Set the return value. */
 		if (!pf_set_return_string(name))
 			break;
+
 		ret = true;
 	} while (0);
+
 	return ret;
 }
 
@@ -6750,14 +6704,18 @@ Suika_getSaveLastMessage(void *p)
 		/* Get the argument. */
 		if (!pf_get_call_arg_int("index", &index))
 			break;
+
 		message = s3_get_save_last_message(index);
 		if (message == NULL)
 			message = "";
+
 		/* Set the return value. */
 		if (!pf_set_return_string(message))
 			break;
+
 		ret = true;
 	} while (0);
+
 	return ret;
 }
 
@@ -6775,11 +6733,12 @@ Suika_getSaveThumbnail(void *p)
 static bool
 Suika_clearHistory(void *p)
 {
-	if (!s3_clear_history())
-		return false;
+	s3_clear_history();
+
 	/* Set the return value. */
 	if (!pf_set_return_int(1))
 		return false;
+
 	return true;
 }
 
@@ -6789,6 +6748,10 @@ Suika_addHistory(void *p)
 	char *name;
 	char *message;
 	char *voice;
+	int body_color;
+	int body_outline_color;
+	int name_color;
+	int name_outline_color;
 	bool ret;
 
 	ret = false;
@@ -6801,7 +6764,14 @@ Suika_addHistory(void *p)
 		if (!pf_get_call_arg_string("voice", &voice))
 			break;
 
-		s3_add_history(name, message, voice);
+		if (!s3_add_history(name,
+				    message,
+				    voice,
+				    body_color,
+				    body_outline_color,
+				    name_color,
+				    name_outline_color))
+			break;
 
 		/* Set the return value. */
 		if (!pf_set_return_int(1))
@@ -6841,17 +6811,21 @@ Suika_getHistoryName(void *p)
 	int index;
 	const char *name;
 	bool ret;
+
 	ret = false;
 	do {
 		/* Get the argument. */
 		if (!pf_get_call_arg_int("index", &index))
 			break;
+
 		name = s3_get_history_name(index);
 		if (name == NULL)
 			name = "";
+
 		/* Set the return value. */
 		if (!pf_set_return_string(name))
 			break;
+
 		ret = true;
 	} while (0);
 	return ret;
@@ -6868,14 +6842,18 @@ Suika_getHistoryMessage(void *p)
 		/* Get the argument. */
 		if (!pf_get_call_arg_int("index", &index))
 			break;
+
 		message = s3_get_history_message(index);
 		if (message == NULL)
 			message = "";
+
 		/* Set the return value. */
 		if (!pf_set_return_string(message))
 			break;
+
 		ret = true;
 	} while (0);
+
 	return ret;
 }
 
@@ -6885,19 +6863,24 @@ Suika_getHistoryVoice(void *p)
 	int index;
 	const char *voice;
 	bool ret;
+
 	ret = false;
 	do {
 		/* Get the argument. */
 		if (!pf_get_call_arg_int("index", &index))
 			break;
+
 		voice = s3_get_history_voice(index);
 		if (voice == NULL)
 			voice = "";
+
 		/* Set the return value. */
 		if (!pf_set_return_string(voice))
 			break;
+
 		ret = true;
 	} while (0);
+
 	return ret;
 }
 
@@ -6910,9 +6893,11 @@ Suika_loadSeen(void *p)
 {
 	if (!s3_load_seen())
 		return false;
+
 	/* Set the return value. */
 	if (!pf_set_return_int(1))
 		return false;
+
 	return true;
 }
 
@@ -6921,9 +6906,11 @@ Suika_saveSeen(void *p)
 {
 	if (!s3_save_seen())
 		return false;
+
 	/* Set the return value. */
 	if (!pf_set_return_int(1))
 		return false;
+
 	return true;
 }
 
@@ -6931,10 +6918,13 @@ static bool
 Suika_getSeenFlags(void *p)
 {
 	int flags;
+
 	flags = s3_get_seen_flags();
+
 	/* Set the return value. */
 	if (!pf_set_return_int(flags))
 		return false;
+
 	return true;
 }
 
@@ -6972,17 +6962,19 @@ Suika_checkRightAfterSysGUI(void *p)
 	int val;
 
 	val = s3_check_right_after_sys_gui();
+
 	/* Set the return value. */
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
-	return true;
 
+	return true;
 }
 
 static bool
 Suika_loadGUIFile(void *p)
 {
 	char *file;
+	int is_sys;
 	bool ret;
 
 	ret = false;
@@ -6990,8 +6982,10 @@ Suika_loadGUIFile(void *p)
 		/* Get the argument. */
 		if (!pf_get_call_arg_string("file", &file))
 			break;
+		if (!pf_get_call_arg_int("isSys", &is_sys))
+			break;
 
-		if (!s3_load_gui_file(file))
+		if (!s3_load_gui_file(file, is_sys ? true : false))
 			break;
 
 		/* Set the return value. */
@@ -7010,22 +7004,24 @@ Suika_loadGUIFile(void *p)
 static bool
 Suika_startGUI(void *p)
 {
-	if (!s3_start_gui())
-		return false;
+	s3_start_gui();
+
 	/* Set the return value. */
 	if (!pf_set_return_int(1))
 		return false;
+
 	return true;
 }
 
 static bool
 Suika_stopGUI(void *p)
 {
-	if (!s3_stop_gui())
-		return false;
+	s3_stop_gui();
+
 	/* Set the return value. */
 	if (!pf_set_return_int(1))
 		return false;
+
 	return true;
 }
 
@@ -7035,9 +7031,11 @@ Suika_isGUIRunning(void *p)
 	int val;
 
 	val = s3_is_gui_running();
+
 	/* Set the return value. */
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
+
 	return true;
 }
 
@@ -7047,48 +7045,40 @@ Suika_isGUIFinished(void *p)
 	int val;
 
 	val = s3_is_gui_finished();
+
 	/* Set the return value. */
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
+
 	return true;
 }
 
 static bool
 Suika_getGUIResultLabel(void *p)
 {
-	char *label;
+	const char *val;
 	bool ret;
 
-	ret = false;
-	do {
-		/* Get the argument. */
-		if (!pf_get_call_arg_string("label", &label))
-			break;
+	val = s3_get_gui_result_label();
 
-		if (!s3_get_gui_result_label(label))
-			break;
+	/* Set the return value. */
+	if (!pf_set_return_string(val))
+		return false;
 
-		/* Set the return value. */
-		if (!pf_set_return_int(1))
-			break;
-
-		ret = true;
-	} while (0);
-
-	if (label != NULL)
-		free(label);
-
-	return ret;
+	return true;
 }
 
 static bool
 Suika_isGUIResultTitle(void *p)
 {
 	int val;
+
 	val = s3_is_gui_result_title();
+
 	/* Set the return value. */
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
+
 	return true;
 }
 
@@ -7096,10 +7086,13 @@ static bool
 Suika_checkIfSavedInGUI(void *p)
 {
 	int val;
+
 	val = s3_check_if_saved_in_gui();
+
 	/* Set the return value. */
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
+
 	return true;
 }
 
@@ -7107,10 +7100,13 @@ static bool
 Suika_checkIfLoadedInGUI(void *p)
 {
 	int val;
+
 	val = s3_check_if_loaded_in_gui();
+
 	/* Set the return value. */
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
+
 	return true;
 }
 
@@ -7125,12 +7121,12 @@ Suika_getMillisec(void *p)
 	NoctValue val;
 	uint64_t lap;
 
-	env = pf_get_vm_env();
 	lap = pf_get_lap_timer_millisec(&time_origin);
-	if (!noct_set_return_make_int(env, &val, (uint32_t)lap))
+
+	if (!pf_set_return_int((uint32_t)lap))
 		return false;
 
-	return false;
+	return true;
 }
 
 static bool
@@ -7185,22 +7181,43 @@ Suika_readSaveData(void *p)
 static bool
 Suika_playVideo(void *p)
 {
-	if (!s3_play_video())
-		return false;
-	/* Set the return value. */
-	if (!pf_set_return_int(1))
-		return false;
-	return true;
+	char *file;
+	int is_skippable;
+	bool ret;
+
+	ret = false;
+	do {
+		/* Get the argument. */
+		if (!pf_get_call_arg_string("file", &file))
+			break;
+		if (!pf_get_call_arg_int("isSkippable", &is_skippable))
+			break;
+		
+		if (!s3_play_video(file, is_skippable ? 1 : 0))
+			break;
+
+		/* Set the return value. */
+		if (!pf_set_return_int(1))
+			break;
+
+		ret = true;
+	} while (0);
+
+	if (file != NULL)
+		free(file);
+
+	return ret;
 }
 
 static bool
 Suika_stopVideo(void *p)
 {
-	if (!s3_stop_video())
-		return false;
+	s3_stop_video();
+
 	/* Set the return value. */
 	if (!pf_set_return_int(1))
 		return false;
+
 	return true;
 }
 
@@ -7208,10 +7225,13 @@ static bool
 Suika_isVideoPlaying(void *p)
 {
 	int val;
+
 	val = s3_is_video_playing();
+
 	/* Set the return value. */
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
+
 	return true;
 }
 
@@ -7220,19 +7240,24 @@ Suika_speakText(void *p)
 {
 	char *text;
 	bool ret;
+
 	ret = false;
 	do {
 		/* Get the argument. */
 		if (!pf_get_call_arg_string("text", &text))
 			break;
-		if (!s3_speak_text(text))
-			break;
+
+		s3_speak_text(text);
+
 		/* Set the return value. */
 		if (!pf_set_return_int(1))
 			break;
+
 		ret = true;
 	} while (0);
+
 	if (text != NULL)
 		free(text);
+
 	return ret;
 }

@@ -55,7 +55,7 @@
 /*
  * Context for message drawing.
  */
-struct s3_draw_msg_context {
+struct s3_drawmsg {
 /* private: */
 	/* Will be copied in the constructor. */
 	struct s3_image *image;
@@ -101,15 +101,41 @@ struct s3_draw_msg_context {
 	bool runtime_is_gyoto_kinsoku;
 	bool runtime_is_gyoto_kinsoku_second;
 	bool is_quoted;
+
+	/* Management. */
+	int index;
 };
 
-/* Initialize the glyph subsystem. */
-bool s3i_init_text(void);
+/*
+ * Initialize the glyph subsystem.
+ */
+bool
+s3i_init_text(void);
 
-/* Cleanup the glyph subsystem. */
-void s3i_cleanup_text(void);
+/*
+ * Cleanup the glyph subsystem.
+ */
+void
+s3i_cleanup_text(void);
 
-/* Check if c is an escape sequence character. */
-bool is_escape_sequence_char(char c);
+/*
+ * Check if c is an escape sequence character.
+ */
+bool
+s3i_is_escape_sequence_char(char c);
+
+/*
+ * Get drawmsg index.
+ */
+int
+s3i_drawmsg_to_int(
+	struct s3_drawmsg *context);
+
+/*
+ * Lookup drawmsg by index.
+ */
+struct s3_drawmsg *
+s3i_int_to_drawmsg(
+	int index);
 
 #endif

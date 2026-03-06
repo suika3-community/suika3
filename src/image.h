@@ -44,6 +44,8 @@ struct s3_image {
 	int tex_id;
 	int width;
 	int height;
+
+	int index;
 };
 
 /*
@@ -57,5 +59,19 @@ s3i_init_image(void);
  */
 void
 s3i_cleanup_image(void);
+
+/*
+ * Get the index from a pointer to an image.
+ */
+int
+s3i_image_to_int(
+	struct s3_image *img);
+
+/*
+ * Get the pointer to image from an index.
+ */
+struct s3_image *
+s3i_int_to_image(
+	int index);
 
 #endif

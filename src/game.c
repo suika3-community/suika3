@@ -1199,9 +1199,18 @@ s3_get_auto_speed(void)
  * Mark the last English index.
  */
 void
-s3_mark_last_en_index(void)
+s3_mark_last_english_tag_index(void)
 {
 	last_en_index = s3_get_tag_index();
+}
+
+/*
+ * Clear the last English index.
+ */
+void
+s3_clear_last_english_tag_index(void)
+{
+	last_en_index = -1;
 }
 
 /*

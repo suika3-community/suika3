@@ -87,7 +87,7 @@ static char *msg_top;
  */
 
 /* Drawing state of the main text */
-static struct s3_draw_msg_context msgbox_context;
+static struct s3_drawmsg *msgbox_context;
 
 /* Whether to draw all due to skipping (avoid inline wait) */
 static bool do_draw_all;
@@ -287,12 +287,12 @@ static const char *skip_lf(const char *m, int *lf);
 static void put_space(void);
 static bool register_message_for_history(const char *msg);
 static char *concat_serif(const char *name, const char *serif);
-static void init_msgbox(void);
+static bool init_msgbox(void);
 static bool init_serif(void);
 static bool check_play_voice(void);
 static bool play_voice(void);
 static void set_character_volume_by_name(const char *name);
-static void blit_namebox(void);
+static bool blit_namebox(void);
 static void focus_character(void);
 static void init_click(void);
 static void init_repetition(void);
@@ -309,7 +309,7 @@ static bool frame_sysbtn(void);
 
 /* blit drawing processing */
 static void blit_frame(void);
-static void blit_pending_message(void);
+static bool blit_pending_message(void);
 static bool is_end_of_msg(void);
 static void blit_msgbox(void);
 static void inline_wait_hook(float wait_time);
@@ -596,7 +596,8 @@ init(
 	 */
 
 	/* Initialize the message box */
-	init_msgbox();
+	if (!init_msgbox())
+		return false;
 
 	/* Perform initialization specific to the dialogue */
 	if (!init_serif())
@@ -1134,12 +1135,12 @@ concat_serif(
 }
 
 /* Initialize the message box */
-static void
+static bool
 init_msgbox(void)
 {
 	/* If returning from system GUI */
 	if (gui_sys_flag)
-		return;
+		return false;
 
 	/* Get the rectangle of the message box */
 	s3_get_msgbox_rect(&msgbox_x, &msgbox_y, &msgbox_w, &msgbox_h);
@@ -1160,17 +1161,18 @@ init_msgbox(void)
 	orig_pen_y = pen_y;
 
 	/* If not a continuation line, clear the message layer */
-	if (!is_continue_mode)
+	if (!is_continue_mode) {
 		s3_fill_msgbox();
-	else
-		blit_pending_message();
+	} else {
+		if (!blit_pending_message())
+			return false;
+	}
 
 	/* Make the message layer visible */
 	s3_show_msgbox(true);
 
-	/* Construct the context for message drawing */
-	s3_construct_draw_msg_context(
-		&msgbox_context,
+	/* Create a context for message drawing */
+	msgbox_context = s3_create_drawmsg(
 		s3_get_layer_image(S3_LAYER_MSGBOX),
 		msg_top,
 		conf_msgbox_font_select,
@@ -1203,10 +1205,14 @@ init_msgbox(void)
 		false,	/* ignore_wait */
 		inline_wait_hook,
 		conf_msgbox_font_tategaki);
+	if (msgbox_context == NULL)
+		return false;
 
 	/* Count the number of characters */
-	total_chars = s3_count_chars_common(&msgbox_context, NULL);
+	total_chars = s3_count_drawmsg_chars(msgbox_context, NULL);
 	drawn_chars = 0;
+
+	return true;
 }
 
 /* Process the serif command */
@@ -1243,7 +1249,8 @@ init_serif(void)
 
 	/* Draw the name */
 	if (conf_namebox_enable)
-		blit_namebox();
+		if (!blit_namebox())
+			return false;
 
 	/* Show the name box */
 	s3_show_namebox(true);
@@ -1342,10 +1349,10 @@ set_character_volume_by_name(
 }
 
 /* Draw the name box */
-static void
+static bool
 blit_namebox(void)
 {
-	struct s3_draw_msg_context context;
+	struct s3_drawmsg *context;
 	int pen_x, pen_y, char_count;
 	int namebox_x, namebox_y, namebox_width, namebox_height;
 
@@ -1370,8 +1377,7 @@ blit_namebox(void)
 	s3_fill_namebox();
 
 	/* Create the character drawing context */
-	s3_construct_draw_msg_context(
-		&context,
+	context = s3_create_drawmsg(
 		s3_get_layer_image(S3_LAYER_NAMEBOX),
 		name_top,
 		conf_namebox_font_select,
@@ -1404,12 +1410,18 @@ blit_namebox(void)
 		true,			/* ignore_wait */
 		NULL,			/* inline_wait_hook */
 		conf_namebox_font_tategaki);
+	if (context == NULL)
+		return false;
 
 	/* Get the number of characters in the name */
-	char_count = s3_count_chars_common(&context, NULL);
+	char_count = s3_count_drawmsg_chars(context, NULL);
 
 	/* Draw the characters */
-	s3_draw_msg_common(&context, char_count);
+	s3_draw_message(context, char_count);
+
+	s3_destroy_drawmsg(context);
+
+	return true;
 }
 
 /* Focus the character */
@@ -1778,10 +1790,10 @@ blit_frame(void)
 	}
 }
 
-static void
+static bool
 blit_pending_message(void)
 {
-	struct s3_draw_msg_context text_context;
+	struct s3_drawmsg *context;
 	const char *text;
 	s3_pixel_t save_body_color, save_body_outline_color;
 	int len;
@@ -1789,7 +1801,7 @@ blit_pending_message(void)
 	// FIXME: get_pending_message()
 	text = s3_get_buffered_message();
 	if (text == NULL)
-		return;
+		return true;
 
 	s3_fill_msgbox();
 
@@ -1814,8 +1826,7 @@ blit_pending_message(void)
 					   (uint32_t)conf_msgbox_dim_outline_g,
 					   (uint32_t)conf_msgbox_dim_outline_b);
 
-	s3_construct_draw_msg_context(
-		&text_context,
+	context = s3_create_drawmsg(
 		s3_get_layer_image(S3_LAYER_MSGBOX),
 		text,
 		conf_msgbox_font_select,
@@ -1848,14 +1859,12 @@ blit_pending_message(void)
 		false,	/* ignore_wait */
 		inline_wait_hook,
 		conf_msgbox_font_tategaki);
-
-	len = s3_count_chars_common(&text_context, NULL);
-	s3_draw_msg_common(&text_context, len);
-
-	s3_get_pen_position_common(&text_context, &pen_x, &pen_y);
-
-	// FIXEM
-	//free(text);
+	if (context == NULL)
+		return false;
+	len = s3_count_drawmsg_chars(context, NULL);
+	s3_draw_message(context, len);
+	s3_get_drawmsg_pen_position(context, &pen_x, &pen_y);
+	s3_destroy_drawmsg(context);
 
 	body_color = save_body_color;
 	body_outline_color = save_body_outline_color;
@@ -1897,7 +1906,7 @@ blit_msgbox(void)
 		return;
 
 	/* Perform drawing */
-	ret = s3_draw_msg_common(&msgbox_context, char_count);
+	ret = s3_draw_message(msgbox_context, char_count);
 	if (is_inline_wait) {
 		/* If inline wait appeared */
 		drawn_chars += ret;
@@ -1909,7 +1918,7 @@ blit_msgbox(void)
 
 	/* Get the pen's drawing end position */
 	if (drawn_chars == total_chars)
-		s3_get_pen_position_common(&msgbox_context, &pen_x, &pen_y);
+		s3_get_drawmsg_pen_position(msgbox_context, &pen_x, &pen_y);
 }
 
 /* Callback when inline wait escape sequence appears */
@@ -1983,15 +1992,15 @@ get_frame_chars(void)
 #ifdef USE_EDITOR
 		/*
 		 * If the debugger's stop button is pressed,
-		 * transition to command end without moving to click wait
+		 * transition to command end without moving to click wait.
 		 */
 		if (dbg_is_stop_requested())
 			s3_stop_command_repetition();
 #endif
 
-		/* Draw all remaining characters */
+		/* Draw all remaining characters. */
 		do_draw_all = true;
-		s3_set_ignore_inline_wait(&msgbox_context);
+		s3_set_drawmsg_ignore_inline_wait(msgbox_context);
 		return total_chars - drawn_chars;
 	}
 
@@ -2126,7 +2135,7 @@ set_click(void)
 			int cur_pen_x, cur_pen_y;
 			s3_set_click_index(0);
 			s3_get_click_rect(&click_x, &click_y, &click_w, &click_h);
-			s3_get_pen_position_common(&msgbox_context, &cur_pen_x, &cur_pen_y);
+			s3_get_drawmsg_pen_position(msgbox_context, &cur_pen_x, &cur_pen_y);
 			s3_set_click_position(cur_pen_x + conf_msgbox_x,
 					      cur_pen_y + conf_msgbox_y);
 		} else {
@@ -2276,7 +2285,7 @@ check_stop_click_animation(void)
 static void
 blit_dimming(void)
 {
-	struct s3_draw_msg_context context;
+	struct s3_drawmsg *context;
 
 	/* Dimming is enabled in the config */
 	assert(conf_msgbox_dim_enable);
@@ -2295,8 +2304,7 @@ blit_dimming(void)
 					   (uint32_t)conf_msgbox_dim_outline_b);
 
 	/* Overwrite the main text */
-	s3_construct_draw_msg_context(
-		&context,
+	context = s3_create_drawmsg(
 		s3_get_layer_image(S3_LAYER_MSGBOX),
 		msg_top,
 		conf_msgbox_font_select,
@@ -2329,7 +2337,8 @@ blit_dimming(void)
 		true,	/* ignore_wait */
 		NULL,	/* inline_wait_hook */
 		conf_msgbox_font_tategaki);
-	s3_draw_msg_common(&context, total_chars);
+	s3_draw_message(context, total_chars);
+	s3_destroy_drawmsg(context);
 }
 
 /*
@@ -2438,6 +2447,11 @@ static bool
 cleanup(void)
 {
 	int chpos;
+
+	if (msgbox_context) {
+		s3_destroy_drawmsg(msgbox_context);
+		msgbox_context = NULL;
+	}
 
 	/* Save the pen position for @ichoose */
 	s3_set_pen_position(pen_x, pen_y);
