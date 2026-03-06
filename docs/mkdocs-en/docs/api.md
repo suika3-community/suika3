@@ -73,7 +73,7 @@ Suika3 API Reference
     * [Suika.drawImageAlpha()](#suikadrawimagealpha)
     * [Suika.drawImageAdd()](#suikadrawimageadd)
     * [Suika.drawImageSub()](#suikadrawimagesub)
-    * [Suika.makePixel()](#suikam akepixel)
+    * [Suika.makeColor()](#suikamakecolor)
     * [Suika.fillImageRect()](#suikafillimagerect)
 * Stage
     * [Suika.reloadStageImages()](#suikareloadstageimages)
@@ -103,7 +103,7 @@ Suika3 API Reference
     * [Suika.getTalkingChpos()](#suikagettalkingchpos)
     * [Suika.updateChDimByTalkingCh()](#suikaupdatechdimbytalkingch)
     * [Suika.showMsgbox()](#suikashowmsgbox)
-    * [Suika.showNamebox()](#suikashownamebox)
+    * [Suika.showNameBox()](#suikashownamebox)
     * [Suika.showChoosebox()](#suikashowchoosebox)
     * [Suika.renderImage()](#suikarenderimage)
     * [Suika.renderImage3d()](#suikarenderimage3d)
@@ -171,7 +171,7 @@ Suika3 API Reference
     * [Suika.setVariableInt()](#suikasetvariableint)
     * [Suika.setVariableFloat()](#suikasetvariablefloat)
     * [Suika.setVariableString()](#suikasetvariablestring)
-    * [Suika.getVariableInt()](#suikagetvariablestring)
+    * [Suika.getVariableInt()](#suikagetvariableint)
     * [Suika.getVariableFloat()](#suikagetvariablefloat)
     * [Suika.getVariableString()](#suikagetvariablestring)
     * [Suika.unsetVariable()](#suikaunsetvariable)
@@ -209,14 +209,14 @@ Suika3 API Reference
     * [Suika.getSeenFlags()](#suikagetseenflags)
     * [Suika.setSeenFlags()](#suikasetseenflags)
 * GUI
-    * [Suika.loadGuhUIFile()](#suikaloadguifile)
-    * [Suika.startGUI())](#suikastartgui)
-    * [Suika.stopGui()](#suikastopgui)
+    * [Suika.loadGUIFile()](#suikaloadguifile)
+    * [Suika.startGUI()](#suikastartgui)
+    * [Suika.stopGUI()](#suikastopgui)
     * [Suika.isGUIRunning()](#suikaisguirunning)
-    * [Suika.isGuiFinished()](#suikaisguifinished)
+    * [Suika.isGUIFinished()](#suikaisguifinished)
     * [Suika.getGUIResultLabel()](#suikagetguiresultlabel)
     * [Suika.isGUIResultTitle()](#suikaisguiresulttitle)
-    * [Suika.checkIfSavedInGUI()](#suikacheckifloadedingui)
+    * [Suika.checkIfSavedInGUI()](#suikacheckifsavedingui)
     * [Suika.checkIfLoadedInGui()](#suikacheckifloadedingui)
     * [Suika.checkRightAfterSysGUI()](#suikacheckrightaftersysgui)
 * HAL
@@ -1066,7 +1066,7 @@ Read the call stack element at the specified index.
 |-----------|---------|-----------------------|
 | sp        | Integer | Stack element index.  |
 
-### Result
+### Return
 
 Returns a dictionary that contains:
 
@@ -1087,7 +1087,7 @@ Write the call stack element at the specified index.
 | file      | String  | Script file name.     |
 | index     | Integer | Tag index.            |
 
-### Result
+### Return
 
 No return.
 
@@ -1379,6 +1379,8 @@ Returns a string.
 
 ## Suika.setTextSpeed()
 
+Set the text speed.
+
 ### Parameters
 
 | Parameter | Type    | Description           |
@@ -1406,6 +1408,8 @@ Returns a float.
 ---
 
 ## Suika.setAutoSpeed()
+
+Set the auto mode speed.
 
 ### Parameters
 
@@ -1547,7 +1551,7 @@ Get the height of an image.
 
 | Parameter | Type   | Description                   |
 |-----------|--------|-------------------------------|
-| img       | Object | Image object.                 |
+| image     | Object | Image object.                 |
 
 ### Return
 
@@ -1561,9 +1565,9 @@ Destroy an image and free its memory.
 
 ### Parameters
 
-| Parameter | Type   | Description                                |
-|-----------|--------|--------------------------------------------|
-| img       | Object | Image object to destroy.      |
+| Parameter | Type   | Description                   |
+|-----------|--------|-------------------------------|
+| image     | Object | Image object to destroy.      |
 
 ### Return
 
@@ -1577,16 +1581,16 @@ Copy an image to another image (no blending).
 
 ### Parameters
 
-| Parameter  | Type    | Description                                   |
-|------------|---------|-----------------------------------------------|
-| dst        | Object  | Destination image.               |
-| dst_left   | Integer | X coordinate in destination.     |
-| dst_top    | Integer | Y coordinate in destination.     |
-| src        | Object  | Source image.                    |
-| dst_width  | Integer | Width to draw.                   |
-| dst_height | Integer | Height to draw.                  |
-| src_left   | Integer | X coordinate in source.          |
-| src_top    | Integer | Y coordinate in source.          |
+| Parameter  | Type    | Description                      |
+|------------|---------|----------------------------------|
+| dstImage   | Object  | Destination image.               |
+| dstLeft    | Integer | X coordinate in destination.     |
+| dstTop     | Integer | Y coordinate in destination.     |
+| srcImage   | Object  | Source image.                    |
+| dstWidth   | Integer | Width to draw.                   |
+| dstHeight  | Integer | Height to draw.                  |
+| srcLeft    | Integer | X coordinate in source.          |
+| srcTop     | Integer | Y coordinate in source.          |
 
 ### Return
 
@@ -1602,12 +1606,12 @@ Draw an image with alpha blending.
 
 | Parameter | Type    | Description                      |
 |-----------|---------|----------------------------------|
-| dst       | Object  | Destination image.               |
+| dstImage  | Object  | Destination image.               |
 | dstLeft   | Integer | X coordinate in destination.     |
 | dstTop    | Integer | Y coordinate in destination.     |
 | dstWidth  | Integer | Width to draw.                   |
 | dstHeight | Integer | Height to draw.                  |
-| src       | Object  | Source image.                    |
+| srcImage  | Object  | Source image.                    |
 | srcLeft   | Integer | X coordinate in source.          |
 | srcTop    | Integer | Y coordinate in source.          |
 | alpha     | Integer | Alpha value (`0`-`255`).         |
@@ -1626,15 +1630,19 @@ Draw an image with additive blending.
 
 | Parameter | Type    | Description                      |
 |-----------|---------|----------------------------------|
-| dst       | Object  | Destination image.               |
+| dstImage  | Object  | Destination image.               |
 | dstLeft   | Integer | X coordinate in destination.     |
 | dstTop    | Integer | Y coordinate in destination.     |
 | dstWidth  | Integer | Width to draw.                   |
 | dstHeight | Integer | Height to draw.                  |
-| src       | Object  | Source image.                    |
+| srcImage  | Object  | Source image.                    |
 | srcLeft   | Integer | X coordinate in source.          |
 | srcTop    | Integer | Y coordinate in source.          |
 | alpha     | Integer | Alpha value (`0`-`255`).         |
+
+### Return
+
+No return.
 
 ---
 
@@ -1646,15 +1654,19 @@ Draw an image with subtractive blending.
 
 | Parameter | Type    | Description                      |
 |-----------|---------|----------------------------------|
-| dst       | Object  | Destination image.               |
+| dstImage  | Object  | Destination image.               |
 | dstLeft   | Integer | X coordinate in destination.     |
 | dstTop    | Integer | Y coordinate in destination.     |
 | dstWidth  | Integer | Width to draw.                   |
 | dstHeight | Integer | Height to draw.                  |
-| src       | Object  | Source image.                    |
+| srcImage  | Object  | Source image.                    |
 | srcLeft   | Integer | X coordinate in source.          |
 | srcTop    | Integer | Y coordinate in source.          |
 | alpha     | Integer | Alpha value (`0`-`255`).         |
+
+### Return
+
+No return.
 
 ---
 
@@ -1685,7 +1697,7 @@ Fill a rectangular area on an image with a color.
 
 | Parameter | Type    | Description                         |
 |-----------|---------|-------------------------------------|
-| img       | Object  | Target image.                       |
+| image     | Object  | Target image.                       |
 | left      | Integer | X coordinate.                       |
 | top       | Integer | Y coordinate.                       |
 | width     | Integer | Width.                              |
@@ -2005,7 +2017,7 @@ Set the string displayed on a text layer.
 
 ### Return
 
-Set returns boolean.
+No return.
 
 ---
 
@@ -2079,7 +2091,7 @@ Specify a character name index for a character position.
 | Parameter   | Type    | Description                |
 |-------------|---------|----------------------------|
 | chpos       | Integer | Character position.        |
-| chNameIndex | Integer | Character name inex.       |
+| chNameIndex | Integer | Character name index.      |
 
 ### Return
 
@@ -2105,12 +2117,12 @@ Set the talking character.
 | `back`         | Center Back Character    |
 | `left`         | Left Character           |
 | `left-center`  | Left Center Character    |
-| `right`        | Right Center Character   |
+| `right`        | Right Character   |
 | `right-center` | Right Center Character   |
 
 ### Return
 
-Set returns No return; Get returns Integer.
+No return.
 
 ---
 
@@ -2265,29 +2277,118 @@ No return.
 
 ## Suika.getMessageBoxRect()
 
+Get the message box rect.
+
+### Parameters
+
+No parameters.
+
+### Return
+
+An object that contains:
+* `x`
+* `y`
+* `w`
+* `h`
+
 ---
 
 ## Suika.setClickPosition()
+
+Set the click animation position.
+
+### Parameters
+
+| Parameter | Type    | Description                |
+|-----------|---------|----------------------------|
+| x         | Integer | X position.                |
+| y         | Integer | Y position.                |
+
+### Return
+
+No return.
 
 ---
 
 ## Suika.showClick()
 
+Show or hide the click animation.
+
+### Parameters
+
+| Parameter | Type    | Description                |
+|-----------|---------|----------------------------|
+| show      | Boolean | Show or hide.              |
+
+### Return
+
+No return.
+
 ---
 
 ## Suika.setClickIndex()
+
+Set the index of the click animation frame.
+
+### Parameters
+
+| Parameter | Type    | Description                |
+|-----------|---------|----------------------------|
+| index     | Integer | Frame index.               |
+
+### Return
+
+No return.
 
 ---
 
 ## Suika.getClickRect()
 
+Get the click animation rect.
+
+### Parameters
+
+No parameters.
+
+### Return
+
+An object that contains:
+* `x`
+* `y`
+* `w`
+* `h`
+
 ---
 
 ## Suika.fillChooseBoxIdleImage()
 
+Fill a choose box idle layer by the choose box idle image.
+
+### Parameters
+
+| Parameter | Type    | Description                |
+|-----------|---------|----------------------------|
+| index     | Integer | Choose box index.          |
+
+### Return
+
+No return.
+
 ---
 
 ## Suika.fillChooseBoxHoverImage()
+
+Fill a choose box hover layer by the choose box hover image.
+
+### Parameters
+
+| Parameter | Type    | Description                |
+|-----------|---------|----------------------------|
+| index     | Integer | Choose box index.          |
+
+### Return
+
+No return.
 
 ---
 
@@ -2311,13 +2412,51 @@ No return.
 
 ## Suika.getChooseBoxRect()
 
+Get the choose box rect.
+
+### Parameters
+
+No parameters.
+
+### Return
+
+An object that contains:
+* `x`
+* `y`
+* `w`
+* `h`
+
 ---
 
 ## Suika.showAutoModeBanner()
 
+Show or hide the auto mode banner.
+
+### Parameters
+
+| Parameter  | Type    | Description                 |
+|------------|---------|-----------------------------|
+| show       | Boolean | Show or hide.               |
+
+### Return
+
+No return.
+
 ---
 
 ## Suika.showSkipModeBanner()
+
+Show or hide the skip mode banner.
+
+### Parameters
+
+| Parameter  | Type    | Description                 |
+|------------|---------|-----------------------------|
+| show       | Boolean | Show or hide.               |
+
+### Return
+
+No return.
 
 ---
 
@@ -2325,13 +2464,16 @@ No return.
 
 Perform direct rendering of an image to the screen.
 
+Note that you should consider using the stage layers for normal rendering.
+This API is useful for effects.
+
 ### Parameters
 
 | Parameter | Omissible    | Type    | Description                                |
 |-----------|--------------|---------|--------------------------------------------|
 | dstLeft   | No           | Integer | Destination top-left X position.           |
 | dstTop    | No           | Integer | Destination top-left Y position.           |
-| tex       | No           | Object  | Image.                                     |
+| image     | No           | Object  | Image.                                     |
 | srcLeft   | No           | Integer | Source top-left X position.                |
 | srcTop    | No           | Integer | Source top-left Y position.                |
 | srcWidth  | No           | Integer | Source width.                              |
@@ -2347,6 +2489,9 @@ No return.
 ## Suika.renderImage3d()
 
 Perform direct rendering of an image to the screen with 3D transformation.
+
+Note that you should consider using the stage layers for normal rendering.
+This API is useful for effects.
 
 ### Parameters
 
@@ -2375,9 +2520,23 @@ No return.
 
 ## Suika.startKirakira()
 
+Start Kirakira effect.
+
+Kirakira effect is an animation that is shown at the screen position where the mouse cursor is clicked.
+
+### Parameters
+
+No parameters.
+
+### Return
+
+No return.
+
 ---
 
 ## Suika.renderKirakira()
+
+Render Kirakira effect.
 
 ---
 
@@ -2444,7 +2603,7 @@ Get the volume for a specific mixer track.
 | Parameter | Type    | Description                                |
 |-----------|---------|--------------------------------------------|
 | track     | String  | Mixer track name.                          |
-| vol       | Float   | Volume level (0.0 to 1.0).                 |
+| volume    | Float   | Volume level (0.0 to 1.0).                 |
 | span      | Float   | Fade duration in seconds.                  |
 
 ### Track Names
@@ -2470,11 +2629,11 @@ Set the master volume affecting all tracks.
 
 | Parameter | Type    | Description                                |
 |-----------|---------|--------------------------------------------|
-| vol       | Float   | Master volume level (0.0 to 1.0).          |
+| volume    | Float   | Master volume level (0.0 to 1.0).          |
 
 ### Return
 
-Get returns Float; Set returns No return.
+No return.
 
 ---
 
@@ -3428,7 +3587,7 @@ Set a value to a local or global variable.
 | Parameter | Type    | Description            |
 |-----------|---------|------------------------|
 | name      | String  | Name of the variable.  |
-| val       | Integer | Value to set           |
+| value     | Integer | Value to set           |
 
 ### Return
 
@@ -3445,7 +3604,7 @@ Set a value to a local or global variable.
 | Parameter | Type    | Description             |
 |-----------|---------|-------------------------|
 | name      | String  | Name of the variable.   |
-| val       | Float   | Value to set            |
+| value     | Float   | Value to set            |
 
 ### Return
 
@@ -3462,7 +3621,7 @@ Set a value to a local or global variable.
 | Parameter | Type    | Description             |
 |-----------|---------|-------------------------|
 | name      | String  | Name of the variable.   |
-| val       | Integer | Value to set            |
+| value     | String  | Value to set            |
 
 ### Return
 
@@ -3585,11 +3744,9 @@ Boolean value.
 
 Get the number of variables.
 
-### Parameters (for getVariableName)
+### Parameters
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| index     | Integer | Index of the variable.     |
+No parameters.
 
 ### Return
 
@@ -4237,7 +4394,7 @@ Play returns Boolean; IsPlaying returns Boolean.
 
 Stop the video playback.
 
-### Parameters (for playVideo)
+### Parameters
 
 No parameters.
 
@@ -4251,7 +4408,7 @@ No return.
 
 Check if a video is playing back.
 
-### Parameters (for playVideo)
+### Parameters
 
 No parameters.
 
@@ -4265,6 +4422,10 @@ Returns boolean.
 
 Check for full-screen mode ability.
 
+### Parameters
+
+No parameters.
+
 ### Return
 
 Boolean.
@@ -4274,6 +4435,10 @@ Boolean.
 ## Suika.enterFullScreenMode()
 
 Enter the full-screen mode.
+
+### Parameters
+
+No parameters.
 
 ### Return
 
