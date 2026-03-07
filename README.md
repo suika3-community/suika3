@@ -31,13 +31,16 @@ Currently we are working very hard to complete Suika3.
 
 **Our current status is:**
 
-* ✅ Implemented tag execution skeleton.
-* ✅ Implemented all APIs in C.
-* ✅ Implemented all tags in C.
-* ✅ Wrote wrappers of most C APIs for the scripting language.
+* ✅ Cleaning up the Suika2 code base. (OpenNovel) (June 2024 - November 2024)
+* ✅ Implementing the scripting language. (NoctLang) (December 2024 - March 2025)
+* ✅ Implementing the 2D game engine. (Playfield Engine) (March 2025 - October 2025)
+* ✅ Implementing the tag execution engine. (Suika3) (January 2026 - February 2026)
+* ✅ Refactoring all C APIs. (January 2026 - February 2026)
+* ✅ Implementing all tags in C. (January 2026 - February 2026)
+* ✅ Wrapping all APIs in SuikaScript. (February 2026 - March 2026)
 
 * Remaining Tasks
-    * Final checking for API consistency. (March 7, 2026)
+    * ✅ Final checking for API consistency and freeze the API. (March 7, 2026)
     * Adjusting GUI functionality including GUI animations. (March 8, 2026)
     * Engine Feature Freeze (March 8, 2026)
     * Adding the exporter tool. (March 9, 2026)
