@@ -269,6 +269,8 @@ systems via the Playfield Engine.
 
 ### Platform Availability at a Glance
 
+`Supported` means Playfield Engine fully supports it.
+
 | Category    | OS / Environment   | Status       | Last Checked | Checked On                       |
 | :---        | :---               | :---         | :---         | :---                             |
 | **Desktop** | Windows            | ✅ Supported | 3 Mar 2026   | Windows 11 (x64/Arm64)           |
@@ -282,9 +284,6 @@ systems via the Playfield Engine.
 | **Web**     | WebAssembly (Wasm) | ✅ Supported | -            | Chrome, Edge, Safari             |
 |             | Chromebook         | ✅ Supported | -            | Chrome Browser / Linux Container |
 | **Other**   | Unity Integration  | ✅ Supported | -            | Unity 6.2 (Windows x86_64)       |
-
-
-
 
 ### Windows Compatibility List
 
