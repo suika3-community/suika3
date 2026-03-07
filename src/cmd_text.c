@@ -1683,6 +1683,8 @@ frame_sysbtn(void)
 	}
 #endif
 
+	s3_update_sysbtn_state();
+
 	/* Accept key operations */
 	if (s3_is_space_key_pressed()) {
 		action_toggle_hide();

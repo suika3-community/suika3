@@ -3,6 +3,9 @@ Suika3 API Reference
 
 ## Index
 
+* Fundamental
+    * [Suika.print()](#suikaprint)
+    * [Suika.loadPlugin()](#suikaloadplugin)
 * Config
     * [Suika.setConfig()](#suikasetconfig)
     * [Suika.getConfigCount()](#suikagetconfigcount)
@@ -123,15 +126,30 @@ Suika3 API Reference
     * [Suika.setLayerFrame()](#suikasetlayerframe)
     * [Suika.getLayerText()](#suikagetlayertext)
     * [Suika.setLayerText()](#suikasetlayertext)
+    * [Suika.getSysBtnIdleImage()](#suikagetsysbtnidleimage)
+    * [Suika.getSysBtnHoverImage()](#suikagetsysbtnhoverimage)
+    * [Suika.clearStageBasic()](#suikaclearstagebasic)
+    * [Suika.clearStage()](#suikaclearstage)
+    * [Suika.chposToLayer()](#suikachpostolayer)
+    * [Suika.chposToEyeLayer()](#suikachpostoeyelayer)
+    * [Suika.chposToLipLayer()](#suikachpostoliplayer)
+    * [Suika.layerToChpos()](#suikalayertochpos)
     * [Suika.renderStage()](#suikarenderstage)
+    * [Suika.drawStageToThumb()](#suikadrawstagetothumb)
+    * [Suika.getThumbImage()](#suikagetthumbimage())
+    * [Suika.getFadeMethod()](#suikagetfademethod)
+    * [Suika.getAccelMethod()](#suikagetaccelmethod)
     * [Suika.startFade()](#suikastartfade)
+    * [Suika.setShakeOffset()](#suikashakeoffset)
     * [Suika.isFadeRunning()](#suikaisfaderunning)
     * [Suika.finishFade()](#suikafinishfade)
+    * [Suika.setChNameMapping()](#suikasetchnamemapping)
+    * [Suika.getTalkingChpos()](#suikagettalkingchpos)
     * [Suika.setChTalking()](#suikasetchtalking)
     * [Suika.getTalkingChpos()](#suikagettalkingchpos)
-    * [Suika.setChNameMapping()](#suikasetchnamemapping)
-    * [Suika.getChDim()](#suikagetchdim)
+    * [Suika.updateChDimByTalkingCh()](#suikaupdatechdimbytalkingch)
     * [Suika.forceChDim()](#suikaforcechdim)
+    * [Suika.getChDim()](#suikagetchdim)
     * [Suika.updateChDimByTalkingCh()](#suikaupdatechdimbytalkingch)
     * [Suika.fillMessageBox()](#suikafillmessagebox)
     * [Suika.showMessageBox()](#suikashowmessagebox)
@@ -140,6 +158,8 @@ Suika3 API Reference
     * [Suika.showNameBox()](#suikashownamebox)
     * [Suika.getNameBoxRect()](#suikagetnameboxrect)
     * [Suika.showChoosebox()](#suikashowchoosebox)
+    * [Suika.showAutoModeBanner()](#suikashowautomodebanner)
+    * [Suika.showSkipModeBanner()](#suikashowskipmodebanner)
     * [Suika.renderImage()](#suikarenderimage)
     * [Suika.renderImage3d()](#suikarenderimage3d)
     * [Suika.setClickPosition()](#suikasetclickposition)
@@ -149,8 +169,6 @@ Suika3 API Reference
     * [Suika.fillChooseBoxIdleImage()](#suikafillchooseboxidleimage)
     * [Suika.fillChooseBoxHoverImage()](#suikafillchooseboxhoverimage)
     * [Suika.getChooseBoxRect()](#suikagetchooseboxrect)
-    * [Suika.showAutoModeBanner()](#suikashowautomodebanner)
-    * [Suika.showSkipModeBanner()](#suikashowskipmodebanner)
     * [Suika.startKirakira()](#suikastartkirakira)
     * [Suika.renderKirakira()](#suikarenderkirakira)
 * Mixer
@@ -183,6 +201,9 @@ Suika3 API Reference
     * [Suika.moveToNextTag()](#suikamovetonexttag)
     * [Suika.moveToLabelTag()](#suikamovetolabeltag)
     * [Suika.moveToMacroTag()](#suikamovetomacrotag)
+    * [Suika.moveToElseTag()](#suikamovetoelsetag)
+    * [Suika.moveToEndIfTag()](#suikamovetoendiftag)
+    * [Suika.moveToEndMacroTag()](#suikamovetoendmacrotag)
     * [Suika.getTagFileName()](#suikagettagfilename)
     * [Suika.getTagName()](#suikagettagname)
     * [Suika.getTagPropertyCount()](#suikagettagpropertycount)
@@ -1999,7 +2020,7 @@ No return.
 
 ---
 
-## Suika.setLayerFileName()
+## Suika.setLayerFile()
 
 Set a file to be displayed on a layer.
 
@@ -2066,6 +2087,126 @@ No return.
 
 ---
 
+## Suika.getSysBtnIdleImage()
+
+Get the sysbtn idle image.
+
+### Parameters
+
+No parameters.
+
+### Return
+
+Returns an image object.
+
+---
+
+## Suika.getSysBtnHoverImage()
+
+Get the sysbtn hover image.
+
+### Parameters
+
+No parameters.
+
+### Return
+
+Returns an image object.
+
+---
+
+## Suika.clearStageBasic()
+
+Clear the basic layers.
+
+### Parameters
+
+No parameters.
+
+### Return
+
+Returns an image object.
+
+---
+
+## Suika.clearStage()
+
+Clear the stage and make it initial state.
+
+### Parameters
+
+No parameters.
+
+### Return
+
+Returns an image object.
+
+---
+
+## Suika.chposToLayer()
+
+Convert a character position to a stage layer index.
+
+### Parameters
+
+| Parameter | Type    | Description           |
+|-----------|---------|-----------------------|
+| chpos     | Integer | Character position.   |
+
+### Return
+
+Returns an integer.
+
+---
+
+## Suika.chposToEyeLayer()
+
+Convert a character position to a stage layer index (character eye).
+
+### Parameters
+
+| Parameter | Type    | Description           |
+|-----------|---------|-----------------------|
+| chpos     | Integer | Character position.   |
+
+### Return
+
+Returns an integer.
+
+---
+
+## Suika.chposToLipLayer()
+
+Convert a character position to a stage layer index (character lip).
+
+### Parameters
+
+| Parameter | Type    | Description           |
+|-----------|---------|-----------------------|
+| chpos     | Integer | Character position.   |
+
+### Return
+
+Returns an integer.
+
+---
+
+## Suika.layerToChpos()
+
+Convert a stage layer index to a character position.
+
+### Parameters
+
+| Parameter | Type    | Description           |
+|-----------|---------|-----------------------|
+| layer     | Integer | Layer index.          |
+
+### Return
+
+Returns an integer.
+
+---
+
 ## Suika.renderStage()
 
 Render the stage with all stage layers.
@@ -2096,6 +2237,23 @@ Start a transition effect.
 ### Return
 
 Boolean value.
+
+---
+
+## Suika.setShakeOffset()
+
+Set the offset for the shake command.
+
+### Parameters
+
+| Parameter | Type    | Description    |
+|-----------|---------|----------------|
+| x         | Integer | X offset.      |
+| y         | Integer | Y offset.      |
+
+### Return
+
+No return.
 
 ---
 
@@ -2144,6 +2302,29 @@ No return.
 
 ---
 
+## Suika.getTalkingChpos()
+
+Get the position of the character currently speaking.
+
+### Parameters
+
+No parameters.
+
+### Return
+
+Returns a string.
+
+| Name           | Description              |
+|----------------|--------------------------|
+| `center`       | Center Character         |
+| `back`         | Center Back Character    |
+| `left`         | Left Character           |
+| `left-center`  | Left Center Character    |
+| `right`        | Right Center Character   |
+| `right-center` | Right Center Character   |
+
+---
+
 ## Suika.setChTalking()
 
 Set the talking character.
@@ -2173,7 +2354,7 @@ No return.
 
 ## Suika.getTalkingChpos()
 
-Get the position of the character currently speaking.
+Get the talker character position.
 
 ### Parameters
 
@@ -2181,16 +2362,7 @@ No parameters.
 
 ### Return
 
-Returns a string.
-
-| Name           | Description              |
-|----------------|--------------------------|
-| `center`       | Center Character         |
-| `back`         | Center Back Character    |
-| `left`         | Left Character           |
-| `left-center`  | Left Center Character    |
-| `right`        | Right Center Character   |
-| `right-center` | Right Center Character   |
+Returns an integer.
 
 ---
 
@@ -2304,7 +2476,7 @@ No return.
 
 ---
 
-## Suika.showMsgbox()
+## Suika.showMessageBox()
 
 Show or hide the message box.
 
@@ -3097,6 +3269,54 @@ Boolean value.
 ## Suika.moveToMacroTag()
 
 Jump to a specific macro by name.
+
+### Parameters
+
+| Parameter | Type   | Description             |
+|-----------|--------|-------------------------|
+| name      | String | Target macro name.      |
+
+### Return
+
+Boolean value.
+
+---
+
+## Suika.moveToElseTag()
+
+Jump to a correspoinding else/elseif/endif tag.
+
+### Parameters
+
+| Parameter | Type   | Description             |
+|-----------|--------|-------------------------|
+| name      | String | Target macro name.      |
+
+### Return
+
+Boolean value.
+
+---
+
+## Suika.moveToEndIfTag()
+
+Jump to a correspoinding endif tag.
+
+### Parameters
+
+| Parameter | Type   | Description             |
+|-----------|--------|-------------------------|
+| name      | String | Target macro name.      |
+
+### Return
+
+Boolean value.
+
+---
+
+## Suika.moveToEndMacroTag()
+
+Jump to a correspoinding endmacro tag.
 
 ### Parameters
 

@@ -204,8 +204,8 @@ static bool Suika_setLayerImage(void *p);
 static bool Suika_setLayerFrame(void *p);
 static bool Suika_getLayerText(void *p);
 static bool Suika_setLayerText(void *p);
-static bool Suika_getSysbtnIdleImage(void *p);
-static bool Suika_getSysbtnHoverImage(void *p);
+static bool Suika_getSysBtnIdleImage(void *p);
+static bool Suika_getSysBtnHoverImage(void *p);
 static bool Suika_clearStageBasic(void *p);
 static bool Suika_clearStage(void *p);
 static bool Suika_chposToLayer(void *p);
@@ -534,6 +534,14 @@ static struct api_func api_func[] = {
 	{"setLayerFrame",		Suika_setLayerFrame,		1, single_param},
 	{"getLayerText",		Suika_getLayerText,		1, single_param},
 	{"setLayerText",		Suika_setLayerText,		1, single_param},
+	{"getSysBtnIdleImage",		Suika_getSysBtnIdleImage,	0, NULL},
+	{"getSysBtnHoverImage",		Suika_getSysBtnHoverImage,	0, NULL},
+	{"clearStageBasic",		Suika_clearStageBasic,		0, NULL},
+	{"clearStage",			Suika_clearStage,		0, NULL},
+	{"chposToLayer",		Suika_chposToLayer,		1, single_param},
+	{"chposToEyeLayer",		Suika_chposToEyeLayer,		1, single_param},
+	{"chposToLipLayer",		Suika.chposToLipLayer,		1, single_param},
+	{"layerToChpos",		Suika.layerToChpos,		1, single_param},
 	{"renderStage",			Suika_renderStage,		0, NULL},
 	{"startFade",			Suika_startFade,		1, single_param},
 	{"setShakeOffset",		Suika_setShakeOffset,		1, single_param},
@@ -546,7 +554,7 @@ static struct api_func api_func[] = {
 	{"updateChDimByTalkingCh",	Suika_updateChDimByTalkingCh,	0, NULL},
 	{"forceChDim",			Suika_forceChDim,		1, single_param},
 	{"getChDim",			Suika_getChDim,			1, single_param},
-	{"Suika_fillNameBox",		Suika_fillNameBox,		0, NULL},
+	{"fillNameBox",			Suika_fillNameBox,		0, NULL},
 	{"getNameboxRect",		Suika_getNameBoxRect,		0, NULL},
 	{"showNameBox",			Suika_showNameBox,		1, single_param},
 	{"fillMessageBox",		Suika_fillMessageBox,		0, NULL},
@@ -564,6 +572,15 @@ static struct api_func api_func[] = {
 	{"showSkipModeBanner",		Suika_showSkipModeBanner,	1, single_param},
 	{"renderImage",			Suika_renderImage,		1, single_param},
 	{"renderImage3d",		Suika_renderImage3d,		1, single_param},
+	{"setClickPosition",		Suika_setClickPosition,		1, single_param},
+	{"showClick",			Suika_showClick,		1, single_param},
+	{"setClickIndex",		Suika_setClickIndex,		1, single_param},
+	{"getClickRect",		Suika_getClickRect,		0, NULL},
+	{"fillChooseBoxIdleImage",	Suika_fillChooseBoxIdleImage,	1, single_param},
+	{"fillChooseBoxHoverImage",	Suika_fillChooseBoxHoverImage,	1, single_param},
+	{"getChooseBoxRect",		Suika_getChooseBoxRect,		1, single_param},
+	{"startKirakira",		Suika_startKirakira,		0, NULL},
+	{"renderKirakira",		Suika_renderKirakira,		0, NULL},
 
 	/* Mixer */
 	{"setMixerInputFile",		Suika_setMixerInputFile,	1, single_param},
