@@ -9,7 +9,7 @@ A next-generation cross-platform visual novel engine designed for the 2030s and 
 
 Suika3 is a high-performance, production-grade visual novel engine
 specifically engineered for commercial app development, maintained by
-the `Suika3 Community`.
+the `Suika3 Community` and led by Awe Morris.
 
 Engineered with state-of-the-art techniques in computer science,
 Suika3 delivers native performance and true portability empowering
@@ -77,28 +77,6 @@ Currently we are working very hard to complete Suika3.
 
 ---
 
-## Why SuikaScript?
-
-* **Instant Iteration:** No compile cycles, no waiting. The built-in
-    JIT compiler runs your scripts immediately after editing, so you
-    can tweak gameplay and see results in real-time.
-* **True Native Performance:** Run extensions at full speed on iOS,
-    Android, and consoles. Even on platforms where JIT is restricted,
-    you never have to sacrifice performance.
-* **Smooth Store Approval:** Dramatically lower the risk of
-    rejection. Since final builds consist of native code via AOT,
-    you'll breeze through App Store and console certifications.
-* **Easy to Learn, Powerful to Use:** The JavaScript-inspired syntax
-    is friendly for beginners, yet offers the deep flexibility
-    seasoned developers expect for complex systems.
-* **Long-term Stability:** Because we develop the language in-house,
-    you're shielded from breaking changes in upstream projects. We own
-    and control the full stack, so your scripts stay compatible forever.
-
-Yes, it's OUR language, built just for devs like you ;-)
-
----
-
 ## Key Features
 
 * **High Performance**: Powered by the Suika JIT VM, it delivers
@@ -113,28 +91,6 @@ Yes, it's OUR language, built just for devs like you ;-)
   with the modern Playfield Engine.
 * **Jot-and-Run**: A powerful markup language designed to bring your
   stories to life in an instant.
-
----
-
-## Our Philosophy
-
-Suika3 is dedicated to creators who dream of publishing and selling
-original visual novels on the App Store and Google Play, regardless of
-their hardware limitations.
-
-Our mission is to empower talent—particularly in Asia and the Global
-South—to build sustainable careers through their storytelling. We
-believe that with the right tools, creativity can overcome economic
-barriers.
-
-Our commitment to free software is rooted in a simple, practical goal:
-fostering sustainable economic independence. This mission is shaped by
-our core members' personal experiences in Asia and their journeys in
-overcoming adversity. We simply believe that talent, when equipped
-with the right tools, inevitably leads to self-reliance.
-
-Creators with different goals may also find excellent resources in
-other open-source projects or commercial engines like Unity.
 
 ---
 
@@ -251,16 +207,267 @@ See the `game/` directory for:
 
 ---
 
-## Documentation
+### Why SuikaScript?
 
-Documentation is also available at [the Website](https://suika3.vn/docs/)
-and it is synchronized to the latest.
+* **Instant Iteration:** No compile cycles, no waiting. The built-in
+    JIT compiler runs your scripts immediately after editing, so you
+    can tweak gameplay and see results in real-time.
+* **True Native Performance:** Run extensions at full speed on iOS,
+    Android, and consoles. Even on platforms where JIT is restricted,
+    you never have to sacrifice performance.
+* **Smooth Store Approval:** Dramatically lower the risk of
+    rejection. Since final builds consist of native code via AOT,
+    you'll breeze through App Store and console certifications.
+* **Easy to Learn, Powerful to Use:** The JavaScript-inspired syntax
+    is friendly for beginners, yet offers the deep flexibility
+    seasoned developers expect for complex systems.
+* **Long-term Stability:** Because we develop the language in-house,
+    you're shielded from breaking changes in upstream projects. We own
+    and control the full stack, so your scripts stay compatible forever.
 
-* [NovelML 3.0 Syntax Reference](docs/mkdocs-en/docs/tags.md) (In-Progress)
-* [NovelML 3.0 Tag Reference](docs/mkdocs-en/docs/tags.md)
-* [SuikaScript 3.0 Syntax Reference](docs/mkdocs-en/docs/syntax.md)
-* [SuikaScript 3.0 API Reference](docs/mkdocs-en/docs/syntax.md)
-* [Built Instruction](docs/mkdocs-en/docs/build.md)
+Yes, it's OUR language, built just for devs like you ;-)
+
+---
+
+## Why Suika3?: Our Philosophy
+
+### Mission: Building a Sustainable Ecosystem
+
+Our dedication to the commercial success of visual novels is a
+strategic response to the long-term health of the medium. We believe
+that for visual novels to flourish in the 2030s, they must transcend
+hobbyist boundaries and re-establish themselves as a thriving creative
+industry.
+
+Since the 2010s, the visual novel market has faced significant growth
+challenges. One critical bottleneck has been the **lack of
+high-performance open-source engines** capable of delivering a
+seamless **native experience on iOS and Android**.
+
+Without accessible, professional-grade tools for modern mobile
+platforms, many creators have been restricted to limited distribution
+channels. As a result, the medium has struggled to reach a global,
+mobile-first audience, slowing its overall expansion.
+
+While free and hobbyist projects are culturally indispensable, they
+alone cannot sustain an entire creative industry. A truly healthy
+ecosystem requires:
+
+* **Commercially Viable Games** — Titles that reach players on their
+    primary devices and generate the economic activity necessary for
+    creators to build long-term careers.
+
+* **Economic Independence** — Empowering talent, particularly in Asia
+    and the Global South, to overcome economic barriers through
+    storytelling.
+
+* **A Living Industry** — Transforming the medium from a niche
+    interest into a sustainable market where creativity can lead to
+    self-reliance.
+
+### Our Vision: Catalyst for Growth
+
+We do not aim to provide just another tool. Our goal is to provide a
+**catalyst for growth**.
+
+By offering a "port-anywhere" engine that delivers native performance
+without the overhead of heavy commercial frameworks, we enable
+developers to focus on what matters most: **telling stories that
+endure.**
+
+Because we love visual novels, we are committed to pushing the medium
+forward and ensuring it remains a vibrant and economically viable art
+form for decades to come.
+
+### Our Values: Empowering Talents for Sustainable Careers
+
+Suika3 is dedicated to creators who dream of publishing and selling
+original visual novels on the App Store and Google Play, regardless of
+their hardware limitations.
+
+Our value is to empower talent—particularly in Asia and the Global
+South—to build sustainable careers through their storytelling. We
+believe that with the right tools, creativity can overcome economic
+barriers.
+
+Our commitment to free software is rooted in a simple, practical goal:
+fostering sustainable economic independence. This mission is shaped by
+our core members' personal experiences in Asia and their journeys in
+overcoming adversity. We simply believe that talent, when equipped
+with the right tools, inevitably leads to self-reliance.
+
+Creators with different goals may also find excellent resources in
+other open-source projects or commercial engines like Unity.
+
+---
+
+## Technical Overview
+
+If these crazy specifications give you chills, welcome to the
+club. You're a real engineer ;-)
+
+Suika3 is not merely a wrapper around SDL combined with a scripting language.
+It features its own rendering and audio backends, and its own scripting language,
+positioning it as a fully independent game engine.
+
+### Core Architecture
+
+Suika3 is based on `PlayField Engine`, a comprehensive 2D game engine.
+This means that Suika3 is fully extensible using the Playfield API.
+(Can you believe that Playfield Engine was actually developed just for Suika3?)
+
+```
++------------------------------+
+|        NovelML (Tags)        |
++------------------------------+
+| Plugin Tags (by SuikaScript) | --> SuikaScript can be compiled into a native binary!
++------------------------------+
+|       Base Tags (by C)       |
++------------------------------+
+|    SuikaScript Wrapper API   |
++------------------------------+
+|         Suika3 C API         |
++------------------------------+
+|       Playfield C API        |
++---------------+--------------+
+|   StratoHAL   |   NoctLang   |
++---------------+--------------+
+|       Operating System       |
++------------------------------+
+```
+
+* **Scripting**:
+  Integrates [NoctLang](https://github.com/awemorris/NoctLang),
+  a tiny yet mighty language designed for game scripting.
+
+* **Rendering**:
+  Supports native DirectX 9/11/12, Metal, OpenGL, OpenGL ES, and WebGL for wide compatibility.
+
+* **Audio**:
+  Provides lightweight audio support through native DirectSound or XAudio2 (Windows),
+  Audio Unit (macOS/iOS), ALSA (Linux), OSS (BSD), and other APIs.
+
+### StratoHAL
+
+StratoHAL originated as the codebase of a 2D game engine developed since 2001,
+and has been open-sourced with a proven record of exceptional stability.
+Evolving over a quarter century from the Windows 9x era,
+StratoHAL has grown to support macOS, Linux, iOS, Android, WebAssembly, and Unity.
+It has been running reliably on smartphones for more than a decade.
+While SDL3 already exists as a popular open-source alternative,
+StratoHAL covers the same major platforms as SDL3 — and uniquely provides console support through Unity without relying on any NDA-restricted code.
+
+### Platform Support and Components
+
+|Platform Type  |OS / Platform       |Graphics                 |Sound                 |SDK                  |
+|---------------|--------------------|-------------------------|----------------------|---------------------|
+|Desktop        |Windows             |DirectX 12/11/9          |DirectSound           |Win32 API            |
+|               |macOS               |Metal                    |Audio Unit            |AppKit (Objective-C) |
+|               |ChromeOS            |WebGL 2                  |OpenAL (Emscripten)   |Emscripten (C)       |
+|               |Linux               |OpenGL 3                 |ALSA                  |C, X11 or Wayland    |
+|               |*BSD                |OpenGL 3                 |OSS (/dev/dsp)        |C, X11               |
+|               |Qt                  |OpenGL 3                 |Qt Sound              |Qt                   |
+|Mobile         |iOS                 |Metal                    |Audio Unit            |UIKit (Objective-C)  |
+|               |Android             |OpenGL ES 2              |OpenSL ES             |Android NDK          |
+|Web            |WebAssembly (Wasm)  |WebGL 2                  |OpenAL (Emscripten)   |Emscripten (C)       |
+|Console        |Unity               |Unity                    |Unity                 |Unity Native Plugin  |
+|               |Xbox Series X\|S    |DirectX 12               |XAudio2               |Microsoft GDK        |
+
+### Console Unity Plugin Notice
+
+Playfield Engine provides Unity Plugin binaries for platforms
+including Windows 64-bit and game consoles.  These binaries are built
+entirely with the open-source version of LLVM/Clang toolchain (no
+proprietary SDKs).
+
+For Xbox series, you can use the native Microsoft GDK port directly, not via Unity.
+
+### NoctLang
+
+```
+SuikaScript = NoctLang + Suika3 API
+```
+
+**NoctLang** is a lightweight scripting language designed for in-app scripting.
+With a game-oriented syntax, it emphasizes clarity, instant startup, and tight integration with the engine.
+
+The built-in JIT compiler supports a wide range of CPU architectures, including:
+* Intel x86 (32-bit)
+* AMD64/x86_64 (64-bit)
+* ARMv7 (32-bit)
+* Arm64 (64-bit)
+* RISC-V (32-bit/64-bit)
+* PowerPC/POWER (32-bit/64-bit)
+* MIPS (32-bit/64-bit)
+
+For platforms where JIT is restricted (such as mobile or consoles),
+NoctLang can fall back to interpreter mode, and AOT (ahead-of-time)
+compilation using a C source backend — ensuring full compatibility
+even in tightly controlled environments.
+
+### Script Execution Mode
+
+|Platform       |Mode               |
+|---------------|-------------------|
+|Windows x86    |JIT                |
+|Windows x64    |JIT                |
+|Windows arm64  |JIT                |
+|macOS x86_64   |JIT                |
+|macOS arm64    |JIT                |
+|Linux x86      |JIT                |
+|Linux x86_64   |JIT                |
+|Linux armv7    |JIT                |
+|Linux arm64    |JIT                |
+|iOS            |Interpreter or AOT |
+|Android ARMv7  |Interpreter or AOT |
+|Android Arm64  |Interpreter or AOT |
+|WebAssembly    |Interpreter or AOT |
+|Unity Plugin   |Interpreter or AOT |
+|Xbox           |Interpreter or AOT |
+|FreeBSD        |JIT                |
+|NetBSD         |JIT                |
+|OpenBSD        |Interpreter or AOT |
+
+### Runtime Footprint
+
+|Platform       |Binary Size    |Memory Usage (GC)                                              |
+|---------------|---------------|---------------------------------------------------------------|
+|All targets    |~2 MB          |Allocates 256 MB at startup for GC; does not exceed that limit |
+
+The garbage collector allocates 256 MB at startup because currently 256 MB is the maximum heap size.
+So the required system memory size is 256 MB by default.
+(However, this can be adjusted to a smaller value.)
+
+---
+
+## Garbage Collection (GC) in Suika3
+
+Suika3 features a high-performance generational garbage collector,
+inspired by the architecture of the Java HotSpot VM. This design
+ensures that developers can focus on creation without being
+interrupted by the dreaded "GC spikes" or frame drops.
+
+### Core Mechanism: Generational GC
+
+The system categorizes objects into two groups to optimize memory
+management:
+
+* Young Generation: Most objects die young. Suika3 handles these using
+  a high-speed Copying Algorithm (Semi-space Copy GC), which clears
+  out temporary data in a flash. (typically < 0.1ms)
+* Old Generation: Long-lived objects are moved here. This area uses a
+  Mark-Sweep-Compact GC algorithm, which periodically reorganizes
+  memory to prevent fragmentation. (typically 10-300ms)
+
+### Frame-Synchronized Latency Hiding
+
+The real "magic" of Suika3 lies in its timing. By executing the
+Young-generation Copy GC every single frame, the system effectively
+hides the GC processing time within the natural frame interval.
+
+Thanks to this generational strategy, the heavier Old-generation
+Mark-and-Sweep is rarely triggered, maintaining a silky-smooth
+experience for the player.
 
 ---
 
@@ -377,6 +584,19 @@ systems through specialized runtimes.
 | Android 6   | ✅     |
 | Android 5   | N/A    |
 | Android 4.4 | N/A    |
+
+---
+
+## Documentation
+
+Documentation is also available at [the Website](https://suika3.vn/docs/)
+and it is synchronized to the latest.
+
+* [NovelML 3.0 Syntax Reference](docs/mkdocs-en/docs/tags.md) (In-Progress)
+* [NovelML 3.0 Tag Reference](docs/mkdocs-en/docs/tags.md)
+* [SuikaScript 3.0 Syntax Reference](docs/mkdocs-en/docs/syntax.md)
+* [SuikaScript 3.0 API Reference](docs/mkdocs-en/docs/syntax.md)
+* [Built Instruction](docs/mkdocs-en/docs/build.md)
 
 ---
 
@@ -502,179 +722,10 @@ Suika3 ships with CMake presets covering various platforms and build configurati
 
 ---
 
-## Technical Overview
-
-If you were shocked after reading this section, you're a real engineer ;-)
-
-Suika3 is not merely a wrapper around SDL combined with a scripting language.
-It features its own rendering and audio backends, and its own scripting language,
-positioning it as a fully independent game engine.
-
-### Core Architecture
-
-Suika3 is based on `PlayField Engine`, a comprehensive 2D game engine.
-This means that Suika3 is fully extensible using the Playfield API.
-(Can you believe that Playfield Engine was actually developed just for Suika3?)
-
-```
-+------------------------------+
-|        NovelML (Tags)        |
-+------------------------------+
-| Plugin Tags (by SuikaScript) | --> SuikaScript can be compiled into a native binary!
-+------------------------------+
-|       Base Tags (by C)       |
-+------------------------------+
-|    SuikaScript Wrapper API   |
-+------------------------------+
-|         Suika3 C API         |
-+------------------------------+
-|       Playfield C API        |
-+---------------+--------------+
-|   StratoHAL   |   NoctLang   |
-+---------------+--------------+
-|       Operating System       |
-+------------------------------+
-```
-
-* **Scripting**:
-  Integrates [NoctLang](https://github.com/awemorris/NoctLang),
-  a tiny yet mighty language designed for game scripting.
-
-* **Rendering**:
-  Supports native DirectX 9/11/12, Metal, OpenGL, OpenGL ES, and WebGL for wide compatibility.
-
-* **Audio**:
-  Provides lightweight audio support through native DirectSound or XAudio2 (Windows),
-  Audio Unit (macOS/iOS), ALSA (Linux), OSS (BSD), and other APIs.
-
-### StratoHAL
-
-StratoHAL originated as the codebase of a 2D game engine developed since 2001,
-and has been open-sourced with a proven record of exceptional stability.
-Evolving over a quarter century from the Windows 9x era,
-StratoHAL has grown to support macOS, Linux, iOS, Android, WebAssembly, and Unity.
-It has been running reliably on smartphones for more than a decade.
-While SDL3 already exists as a popular open-source alternative,
-StratoHAL covers the same major platforms as SDL3 — and uniquely provides console support through Unity without relying on any NDA-restricted code.
-
-### Platform Support and Comonents
-
-|Platform Type  |OS / Platform       |Graphics                 |Sound                 |SDK                  |
-|---------------|--------------------|-------------------------|----------------------|---------------------|
-|Desktop        |Windows             |DirectX 12/11/9          |DirectSound           |Win32 API            |
-|               |macOS               |Metal                    |Audio Unit            |AppKit (Objective-C) |
-|               |ChromeOS            |WebGL 2                  |OpenAL (Emscripten)   |Emscripten (C)       |
-|               |Linux               |OpenGL 3                 |ALSA                  |C, X11 or Wayland    |
-|               |*BSD                |OpenGL 3                 |OSS (/dev/dsp)        |C, X11               |
-|               |Qt                  |OpenGL 3                 |Qt Sound              |Qt                   |
-|Mobile         |iOS                 |Metal                    |Audio Unit            |UIKit (Objective-C)  |
-|               |Android             |OpenGL ES 2              |OpenSL ES             |Android NDK          |
-|Web            |WebAssembly (Wasm)  |WebGL 2                  |OpenAL (Emscripten)   |Emscripten (C)       |
-|Console        |Unity               |Unity                    |Unity                 |Unity Native Plugin  |
-|               |Xbox Series X\|S    |DirectX 12               |XAudio2 (GDK)         |Microsft GDK         |
-
-### Console Unity Plugin Notice
-
-Playfield Engine provides Unity Plugin binaries for platforms
-including Windows 64-bit and game consoles.  These binaries are built
-entirely with the open-source version of LLVM/Clang toolchain (no
-proprietary SDKs).
-
-For Xbox series, you can use the native Microsoft GDK port directly, not via Unity.
-
-### NoctLang
-
-```
-SuikaScript = NoctLang + Suika3 API
-```
-
-**NoctLang** is a lightweight scripting language designed for in-app scripting.
-With a game-oriented syntax, it emphasizes clarity, instant startup, and tight integration with the engine.
-
-The built-in JIT compiler supports a wide range of CPU architectures, including:
-* Intel x86 (32-bit)
-* AMD64/x86_64 (64-bit)
-* ARMv7 (32-bit)
-* Arm64 (64-bit)
-* RISC-V (32-bit/64-bit)
-* PowerPC/POWER (32-bit/64-bit)
-* MIPS (32-bit/64-bit)
-
-For platforms where JIT is restricted (such as mobile or consoles),
-NoctLang can fall back to interpreter mode, and AOT (ahead-of-time)
-compilation using a C source backend — ensuring full compatibility
-even in tightly controlled environments.
-
-### Script Execution Mode
-
-|Platform       |Mode               |
-|---------------|-------------------|
-|Windows x86    |JIT                |
-|Windows x64    |JIT                |
-|Windows arm64  |JIT                |
-|macOS x86_64   |JIT                |
-|macOS arm64    |JIT                |
-|Linux x86      |JIT                |
-|Linux x86_64   |JIT                |
-|Linux armv7    |JIT                |
-|Linux arm64    |JIT                |
-|iOS            |Interpreter or AOT |
-|Android ARMv7  |Interpreter or AOT |
-|Android Arm64  |Interpreter or AOT |
-|WebAssembly    |Interpreter or AOT |
-|Unity Plugin   |Interpreter or AOT |
-|Xbox           |Interpreter or AOT |
-|FreeBSD        |JIT                |
-|NetBSD         |JIT                |
-|OpebBSD        |Interpreter or AOT |
-
-### Runtime Footprint
-
-|Platform       |Binary Size    |Memory Usage (GC)                                              |
-|---------------|---------------|---------------------------------------------------------------|
-|All targets    |~2 MB          |Allocates 256 MB at startup for GC; does not exceed that limit |
-
-The garbage collector allocates 256 MB at startup because currently 256 MB is the maximum heap size.
-So the required system memory size is 256 MB by default.
-(However, this can be adjusted to a smaller value.)
-
----
-
-## Garbage Collection (GC) in Suika3
-
-Suika3 features a high-performance generational garbage collector,
-inspired by the architecture of the Java HotSpot VM. This design
-ensures that developers can focus on creation without being
-interrupted by the dreaded "GC spikes" or frame drops.
-
-### Core Mechanism: Generational GC
-
-The system categorizes objects into two groups to optimize memory
-management:
-
-* Young Generation: Most objects die young. Suika3 handles these using
-  a high-speed Copying Algorithm (Semi-space Copy GC), which clears
-  out temporary data in a flash. (typically < 0.1ms)
-* Old Generation: Long-lived objects are moved here. This area uses a
-  Mark-Sweep-Compact GC algorithm, which periodically reorganizes
-  memory to prevent fragmentation. (typically 10-300ms)
-
-### Frame-Synchronized Latency Hiding
-
-The real "magic" of Suika3 lies in its timing. By executing the
-Young-generation Copy GC every single frame, the system effectively
-hides the GC processing time within the natural frame interval.
-
-Thanks to this generational strategy, the heavier Old-generation
-Mark-and-Sweep is rarely triggered, maintaining a silky-smooth
-experience for the player.
-
----
-
 ## Codebase & Maturity
 
 Suika3 is a robust visual novel engine with over 100k lines of code (LoC).
-This isn't a weekend project, but a "matured" codebase evolved over 25+ years.
+This is not a weekend project but a mature codebase evolved over 25+ years.
 
 * **Proven Stability:** Includes core logic refined since 2001.
 * **Modern Architecture:** Features a clean HAL (Hardware Abstraction
@@ -726,14 +777,40 @@ Copyright (c) 2026 The Suika3 Community
 
 ## Support & Contact
 
-For issues, open an issue on GitHub. For larger discussions and design
-proposals, check the community channels (Discord coming soon).
+For general inquiries, bug reports, and technical assistance:
+
+* **GitHub Issues**: Preferred for formal bug tracking and feature
+    requests.
+
+* **[Discord Server](https://discord.gg/YZsq9u9Mgr)**: The best place
+    for real-time discussions and quick questions.
+
+We strive to provide timely support and help creators bring their
+stories to life.
+
+### Professional & Enterprise Support
+
+While the **Suika3 Community** provides active support through GitHub
+and Discord, we recognize that **commercial projects** often require
+dedicated support or guaranteed response times.
+
+For studios and developers requiring **formal maintenance contracts,
+priority bug fixes, or private consultations**, please contact us
+directly via email. We are committed to helping ensure your project's
+success in a high-stakes production environment.
+
+* **Contact**: Awe Morris <awe@noctvm.io>
+
+**Not looking for a formal contract? No problem.** If you are an indie
+developer or hobbyist and prefer to keep things casual, just ping us
+on Discord with any questions. We're always happy to chat, and we'll
+do our best to respond or push a fix as soon as possible! ;-)
 
 ---
 
 ## Community
 
-Our official Discord server is coming soon! Stay tuned for updates.
+[Discord Server](https://discord.gg/YZsq9u9Mgr)
 
 ### Our Commitment to Inclusivity
 
@@ -746,11 +823,14 @@ but not limited to:
 * **Identity & Expression:** Race, ethnicity, nationality, language,
     gender identity and expression, sexual orientation, and sex
     characteristics.
-* **Personal Attributes:** Age, body size, personal appearance, ilness,
+
+* **Personal Attributes:** Age, body size, personal appearance, illness,
     and neurodiversity.
-* **Life Context:** Faiths, beliefs, disability (visible or
-    invisible), level of experience, education, and socio-economic
+
+* **Life Context:** Faiths, beliefs, disability (e.g. visibility, but
+    not limited), level of experience, education, and socio-economic
     status.
+
 * **Justice & Inclusion:** We explicitly welcome individuals with past
     criminal records, firmly believing in the power of second chances
     and the inherent value of every contributor who participates
