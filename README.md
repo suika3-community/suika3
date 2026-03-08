@@ -6,8 +6,8 @@ Suika3
 </div>
 
 A next-generation visual novel engine for professional creators,
-designed to run across virtually all platforms,
-ensuring long-term maintenance for the 2030s and beyond.
+designed to run natively across virtually all platforms,
+ensuring long-term support for the 2030s and beyond.
 
 ![platforms](https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/platforms.png)
 
@@ -16,12 +16,12 @@ ensuring long-term maintenance for the 2030s and beyond.
 ## TL;DR
 
 * **High-Performance:** Native, written in C
-* **Better Scripting:** JIT VM, with AOT for App Store compliance
-* **Multi-platform support:**
+* **Better Scripting:** JIT VM with AOT fallback for App Store compliance
+* **Virtuall All Platforms:**
     * **Desktop:** Windows, macOS, Linux, Chromebook, Raspberry Pi
     * **Mobile:** iOS, Android, HarmonyOS NEXT
-    * **Web:** WebAssembly (Wasm)
-    * **Console:** Xbox (GDK), PS5 and Switch (via Unity Integration)
+    * **Web:** WebAssembly
+    * **Console:** Xbox GDK, PS5 and Switch via Unity Integration
 * Target: Empowering both commercial and indie studios
 
 [Join Discord](https://discord.gg/YZsq9u9Mgr)
@@ -71,12 +71,12 @@ Currently we are working very hard to complete Suika3.
 
 * Remaining Tasks
     * ✅ Final checking for API consistency and freeze the API. (March 7, 2026)
-    * Adjusting GUI functionality including GUI animations. (March 8, 2026)
-    * Engine Feature Freeze (March 8, 2026)
-    * Adding the exporter tool. (March 9, 2026)
-    * Adding a sample game. (March 10, 2026)
+    * Adjusting GUI functionality including GUI animations. (March 10, 2026)
+    * Engine Feature Freeze (March 15, 2026)
+    * Adding the exporter tool. (March 20, 2026)
+    * Adding a sample game. (March 30, 2026)
 
-* Quality Stabilization Period (March 10 - May 30, 2026)
+* Quality Stabilization Period (March 30 - May 30, 2026)
     * Milestone: Release Candidate 1 (March 30, 2026)
     * Milestone: Release Candidate 2 (April 30, 2026)
     * Milestone: Release Candidate 3 (May 30, 2026)
