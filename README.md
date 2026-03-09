@@ -5,9 +5,12 @@ Suika3
   <img src="https://raw.githubusercontent.com/suika3-community/suika3/refs/heads/main/docs/img/logo-small.png">
 </div>
 
-A next-generation visual novel engine for professional creators,
-designed to run natively across virtually all platforms,
-ensuring long-term support for the 2030s and beyond.
+A next-generation visual novel engine for professional studios and
+enterprise use, designed to run natively across virtually all
+platforms and built for long-term support through the 2030s, 2040s,
+and beyond — defining a new standard for visual novel culture and
+industry. An enterprise infrastructure with a community-friendly
+heart.
 
 ![platforms](https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/platforms.png)
 
@@ -54,10 +57,10 @@ Games made with Suika3 are powered by `NovelML 3.0` and `SuikaScript 3.0`.
 
 ---
 
-## Kanban (Status): Final Polishing for 1.0.0!
+## Kanban (Status)
 
-We are planning the 1.0.0 release on July 1 2026.
-Currently we are working very hard to complete Suika3.
+We are planning our first stable release `Suika3 26.07.0` on July 1 2026.
+Currently we are working very hard to complete the release.
 
 **Our current status is:**
 
@@ -68,19 +71,19 @@ Currently we are working very hard to complete Suika3.
 * ✅ Refactoring all C APIs. (January 2026 - February 2026)
 * ✅ Implementing all tags in C. (January 2026 - February 2026)
 * ✅ Wrapping all APIs in SuikaScript. (February 2026 - March 2026)
+* Planned First Stable Release (July 1, 2026)
 
 * Remaining Tasks
-    * ✅ Final checking for API consistency and freeze the API. (March 7, 2026)
-    * Adjusting GUI functionality including GUI animations. (March 10, 2026)
-    * Engine Feature Freeze (March 15, 2026)
-    * Adding the exporter tool. (March 20, 2026)
-    * Adding a sample game. (March 30, 2026)
+    * ✅ API Freeze (March 7, 2026)
+    * GUI Animation Implementation (March 10, 2026)
+    * Code Freeze (March 15, 2026)
+    * Sample Game Creation (March 30, 2026)
 
 * Quality Stabilization Period (March 30 - May 30, 2026)
-    * Milestone: Release Candidate 1 (March 30, 2026)
-    * Milestone: Release Candidate 2 (April 30, 2026)
-    * Milestone: Release Candidate 3 (May 30, 2026)
-    * Milestone: Release Candidate 4 / Golden Master (June 30, 2026)
+    * Milestone: `Suika3 26.07.0 RC1` (March 30, 2026)
+    * Milestone: `Suika3 26.07.0 RC2` (April 30, 2026)
+    * Milestone: `Suika3 26.07.0 RC3` (May 30, 2026)
+    * Milestone: `Suika3 26.07.0 RC4/GM` (June 30, 2026)
 
 * Documentation (Simultaneous with Quality Stabilization)
     * `C API`
@@ -90,12 +93,12 @@ Currently we are working very hard to complete Suika3.
     * ✅ `NovelML Tags`
     * `Getting Started`
     * `Plugin Development`
-    * ✅ `Build Instruction`
+    * ✅ `Build Instructions`
     * `System Requirement Specification`
     * `System Design Specification`
     * ✅ Website
 
-* 1.0.0 Release (July 1, 2026)
+* `Suika3 26.07.0` Release (July 1, 2026)
 
 ---
 
@@ -258,6 +261,12 @@ See the `game/` directory for:
 
 ## Why Suika3?: Our Philosophy
 
+We are not looking at the existing VN market. We aim to pioneer a
+mobile VN market that does not yet exist.
+
+Creators with different goals may also find excellent resources in
+other engines like Ren'Py, Unity, or Godot.
+
 ### Mission: Building a Sustainable Ecosystem
 
 Our dedication to the commercial success of visual novels is a
@@ -268,17 +277,20 @@ industry.
 
 Since the 2010s, the visual novel market has faced significant growth
 challenges. One critical bottleneck has been the **lack of
-high-performance free/libre software engines** capable of delivering a
-seamless **native experience on iOS and Android**.
+high-performance software engines** capable of delivering a seamless
+**native experience on iOS and Android**. While developers typically
+work on PCs, for most people today, the primary personal computer is a
+smartphone.
 
 Without accessible, professional-grade tools for modern mobile
 platforms, many creators have been restricted to limited distribution
 channels. As a result, the medium has struggled to reach a global,
 mobile-first audience, slowing its overall expansion.
 
-While free and hobbyist projects are culturally indispensable, we
-believe they may not be sufficient on their own to sustain an entire
-creative industry. A truly healthy ecosystem may require:
+While free and hobbyist projects are culturally noble, important, and
+indispensable, we believe they may not be sufficient on their own to
+sustain an entire creative industry. A truly healthy ecosystem may
+require:
 
 * **Commercially Viable Games** — Titles that reach players on their
     primary devices and generate the economic activity necessary for
@@ -292,8 +304,8 @@ creative industry. A truly healthy ecosystem may require:
     interest into a sustainable market where creativity can lead to
     self-reliance.
 
-...Is this overly assertive? In our view, it is a natural professional
-expectation for commercial success.
+In our view, it is a natural professional expectation for commercial
+success.
 
 ### Our Vision: Catalyst for Growth
 
@@ -301,9 +313,8 @@ We do not aim to provide just another tool. Our goal is to provide a
 **catalyst for growth**.
 
 By offering a "port-anywhere" engine that delivers native performance
-without the overhead of heavy commercial frameworks, we enable
-developers to focus on what matters most: **telling stories that
-endure.**
+without the overhead of heavy frameworks, we enable developers to
+focus on what matters most: **telling stories that endure.**
 
 Because we love visual novels, we are committed to pushing the medium
 forward and ensuring it remains a vibrant and economically viable art
@@ -311,23 +322,14 @@ form for decades to come.
 
 ### Our Values: Empowering Talents for Sustainable Careers
 
-Suika3 is dedicated to creators who dream of publishing and selling
-original visual novels on the App Store and Google Play, regardless of
-their hardware limitations.
-
 Our value is to empower talent—particularly in Asia and the Global
 South—to build sustainable careers through their storytelling. We
 believe that with the right tools, creativity can overcome economic
 barriers.
 
-Our commitment to free/libre software is rooted in a simple, practical
-goal: fostering sustainable economic independence. This mission is
-shaped by our core members' personal experiences in Asia and their
-journeys in overcoming adversity. We simply believe that talent, when
-equipped with the right tools, inevitably leads to self-reliance.
-
-Creators with different goals may also find excellent resources in
-other engines like Unity, Godot, or Ren'Py.
+Our commitment to the permissive license is for those people who
+publish and sell original visual novels on the App Store and Google
+Play, regardless of their software, hardware, and budget limitations.
 
 ---
 
@@ -629,8 +631,8 @@ Windows 2000.
 
 | Distribution      | Version               | CPU             | Status | Graphics                      |
 |-------------------|-----------------------|-----------------|--------|-------------------------------|
-| Raspberry Pi OS   | Debian 13             | arm64, armv7    | ✅     | X11, OpenGL ES                |
-| Ubuntu            | 24.04 / 22.04 / 20.04 | x86_64, arm64   | ✅     | X11, OpenGL 3                 |
+| Raspberry Pi OS   | Debian 13             | arm64, armv7    | ✅     | X11 + OpenGL ES               |
+| Ubuntu            | 24.04 / 22.04 / 20.04 | x86_64, arm64   | ✅     | X11 + OpenGL 3                |
 | Kubuntu           | 25.04                 | x86_64, arm64   | ✅     | Wayland + OpenGL 3            |
 | Linux Mint        | 22.3                  | x86_64          | ✅     | X11 + OpenGL 3                |
 | Fedora            | 43                    | x86_64          | ✅     | X11 + OpenGL 3                |
@@ -875,12 +877,6 @@ released under the permissive `ZLib License`.
 Suika3
 Copyright (c) 2026 The Suika3 Community
 ```
-
-We see Suika3 as part of a broader effort to help build a sustainable
-creative ecosystem for visual novels, guided by a clear mission,
-vision, and values. At the same time, you are absolutely welcome to
-use Suika3 simply as a useful open-source component within your own
-projects.
 
 ---
 
