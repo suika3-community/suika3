@@ -532,57 +532,104 @@ The source code tarballs for the libraries are included in this repository.
 
 ---
 
-## Compatibily List
+## Compatibility List
+
+Development of this project spans many years, so this list includes
+older operating systems. Some of them are no longer supported in the
+current codebase, they worked in earlier versions but were removed
+together with the software renderer.
 
 **Windows:**
 
-| OS      | Version | Patch | CPU    | Runtimes                                                                             | 32-bit Binary | 64-bit Binary | Direct3D |
-|---------|---------|-------|--------|--------------------------------------------------------------------------------------|---------------|---------------|----------|
-| Windows | XP      | SP3   | x86    | DirectX End-User Runtimes (June 2010)                                                | ✅            | -             | 9.0      |
-| Windows | XP      | SP3   | x64    | DirectX End-User Runtimes (June 2010)                                                | ✅            | ❌            | 9.0      |
-| Windows | Vista   |       | x86    | DirectX End-User Runtimes (June 2010)                                                | ✅            | -             | 9.0      |
-| Windows | Vista   |       | x64    | DirectX End-User Runtimes (June 2010)                                                | ✅            | ❌            | 9.0      |
-| Windows | Vista   | SP1   | x86    | DirectX End-User Runtimes (June 2010)                                                | ✅            | -             | 9.0      |
-| Windows | Vista   | SP1   | x64    | DirectX End-User Runtimes (June 2010), Microsoft Visual C++ Redistributable 2015     | ✅            | ✅            | 9.0      |
-| Windows | Vista   | SP2   | x86    | DirectX 11 Platform Update                                                           | ✅            | -             | 11.0     |
-| Windows | Vista   | SP2   | x64    | DirectX 11 Platform Update, Microsoft Visual C++ Redistributable 2015                | ✅            | ✅            | 11.0     |
-| Windows | 7       |       | x86    |                                                                                      | ✅            | -             | 11.0     |
-| Windows | 7       |       | x64    | Microsoft Visual C++ Redistributable 2015                                            | ✅            | ✅            | 11.0     |
-| Windows | 7       | SP1   | x86    |                                                                                      | ✅            | -             | 11.0     |
-| Windows | 7       | SP1   | x64    | Microsoft Visual C++ Redistributable 2015                                            | ✅            | ✅            | 11.0     |
-| Windows | 8       |       | x86    |                                                                                      | ✅            | -             | 11.0     |
-| Windows | 8       |       | x64    | Microsoft Visual C++ Redistributable 2015                                            | ✅            | ✅            | 11.0     |
-| Windows | 8.1     |       | x86    |                                                                                      | ✅            | -             | 11.0     |
-| Windows | 8.1     |       | x64    |                                                                                      | ✅            | ✅            | 11.0     |
-| Windows | 10      |       | x86    |                                                                                      | ✅            | -             | 12.0     |
-| Windows | 10      |       | x64    |                                                                                      | ✅            | ✅            | 12.0     |
-| Windows | 10      |       | arm64  |                                                                                      | ✅            | ✅            | 12.0     |
-| Windows | 11      |       | x64    |                                                                                      | ✅            | ✅            | 12.0     |
-| Windows | 11      |       | arm64  |                                                                                      | ✅            | ✅            | 12.0     |
+The official recommended binary is the 64-bit version.
 
-Note: playfield.exe is the 64-bit binary and playfield32.exe is the 32-bit one.
+| OS      | Version                     | Patch | CPU    | Runtimes                                        | 64-bit Binary | Direct3D |
+|---------|-----------------------------|-------|--------|-------------------------------------------------|---------------|----------|
+| Windows | 11                          |       | x64    | (None required)                                 | ✅            | 12.0     |
+| Windows | 11                          |       | arm64  | (None required)                                 | ✅            | 12.0     |
+| Windows | 10                          |       | x64    | (None required)                                 | ✅            | 12.0     |
+| Windows | 10                          |       | arm64  | (None required)                                 | ✅            | 12.0     |
+| Windows | 8.1                         |       | x64    | (None required)                                 | ✅            | 11.0     |
+| Windows | 8                           |       | x64    | Microsoft Visual C++ Redistributable 2015       | ✅            | 11.0     |
+| Windows | 7                           |       | x64    | UCRT Update (KB2999226)                         | ✅            | 11.0     |
+|         |                             |       |        | Microsoft Visual C++ Redistributable 2015       |               |          |
+| Windows | 7                           | SP1   | x64    | Microsoft Visual C++ Redistributable 2015       | ✅            | 11.0     |
+| Windows | Vista                       |       | x64    | (No UCRT)                                       | ❌            | -        |
+| Windows | Vista                       | SP1   | x64    | DirectX End-User Runtimes (June 2010)           | ✅            | 9.0      |
+| Windows |                             |       |        | Microsoft Visual C++ Redistributable 2015       |               |          |
+| Windows | Vista                       | SP2   | x64    | Platform Update for Windows Vista               | ✅            | 11.0     |
+|         |                             |       |        | Microsoft Visual C++ Redistributable 2015       |               |          |
+| Windows | XP Professional x64 Edition |       | x64    | (No UCRT)                                       | ❌            | -        |
+| Windows | XP Professional x64 Edition | SP1   | x64    | (No UCRT)                                       | ❌            | -        |
+| Windows | XP Professional x64 Edition | SP2   | x64    | (No UCRT)                                       | ❌            | -        |
+
+There is a 32-bit version for backward compatibility.
+
+| OS      | Version                     | Patch | CPU    | Runtimes                               | 32-bit Binary | Direct3D | Special   |
+|---------|-----------------------------|-------|--------|----------------------------------------|---------------|----------|-----------|
+| Windows | 11                          |       | x64    | (None required)                        | ✅            | 12.0     |           |
+| Windows | 11                          |       | arm64  | (None required)                        | ✅            | 12.0     |           |
+| Windows | 10                          |       | x86    | (None required)                        | ✅            | 12.0     |           |
+| Windows | 10                          |       | x64    | (None required)                        | ✅            | 12.0     |           |
+| Windows | 10                          |       | arm64  | (None required)                        | ✅            | 12.0     |           |
+| Windows | 8.1                         |       | x86    | (None required)                        | ✅            | 11.0     |           |
+| Windows | 8.1                         |       | x64    | (None required)                        | ✅            | 11.0     |           |
+| Windows | 8                           |       | x86    | (None required)                        | ✅            | 11.0     |           |
+| Windows | 8                           |       | x64    | (None required)                        | ✅            | 11.0     |           |
+| Windows | 7                           |       | x86    | (None required)                        | ✅            | 11.0     |           |
+| Windows | 7                           |       | x64    | (None required)                        | ✅            | 11.0     |           |
+| Windows | 7                           | SP1   | x86    | (None required)                        | ✅            | 11.0     |           |
+| Windows | 7                           | SP1   | x64    | (None required)                        | ✅            | 11.0     |           |
+| Windows | Vista                       |       | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |           |
+| Windows | Vista                       |       | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |           |
+| Windows | Vista                       | SP1   | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |           |
+| Windows | Vista                       | SP1   | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |           |
+| Windows | Vista                       | SP2   | x86    | DirectX 11 Platform Update             | ✅            | 11.0     |           |
+| Windows | Vista                       | SP2   | x64    | DirectX 11 Platform Update             | ✅            | 11.0     |           |
+| Windows | XP                          |       | x86    | DirectX 9.0b Runtime                   | ❌            | 9.0      | No XInput |
+| Windows | XP                          | SP1   | x86    | DirectX 9.0b Runtime                   | ✅            | 9.0      |           |
+| Windows | XP                          | SP2   | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |           |
+| Windows | XP                          | SP3   | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |           |
+| Windows | XP Professional x64 Edition |       | x64    | DirectX End-User Runtimes (June 2010)  | ❌            | 9.0      | No XInput |
+| Windows | XP Professional x64 Edition | SP1   | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |           |
+| Windows | XP Professional x64 Edition | SP2   | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |           |
+| Windows | 2000                        |       | x86    | DirectX End-User Runtimes (Dec 2006)   | ❌            | 9.0      | No XInput |
+| Windows | 2000                        | SP1   | x86    | DirectX End-User Runtimes (Dec 2006)   | ❌            | 9.0      | No XInput |
+| Windows | 2000                        | SP2   | x86    | DirectX End-User Runtimes (Dec 2006)   | ❌            | 9.0      | No XInput |
+| Windows | 2000                        | SP3   | x86    | DirectX End-User Runtimes (Dec 2006)   | ❌            | 9.0      | No XInput |
+| Windows | 2000                        | SP4   | x86    | DirectX End-User Runtimes (Dec 2006)   | ❌            | 9.0      | No XInput |
+| Windows | Me                          |       | x86    | -                                      | ❌            | -        | No DX9    |
+| Windows | 98                          |       | x86    | -                                      | ❌            | -        | No DX9    |
+| Windows | 98                          | SE    | x86    | -                                      | ❌            | -        | No DX9    |
+| Windows | 95                          |       | x86    | -                                      | ❌            | -        | No DX9    |
+| Windows | 95                          | OSR2  | x86    | -                                      | ❌            | -        | No DX9    |
 
 **macOS:**
 
-| OS                | Version | CPU    | Status |
-|-------------------|---------|--------|--------|
-| OS X El Capitan   | 10.11   | x86_64 | ✅     |
-| macOS Sierra      | 10.12   | x86_64 | ✅     |
-| macOS High Sierra | 10.13   | x86_64 | ✅     |
-| macOS Mojave      | 10.14   | x86_64 | ✅     |
-| macOS Catalina    | 10.15   | x86_64 | ✅     |
-| macOS Big Sur     | 11.0    | arm64  | ✅     |
-| macOS Big Sur     | 11.0    | x86_64 | ✅     |
-| macOS Monterey    | 12.0    | arm64  | ✅     |
-| macOS Monterey    | 12.0    | x86_64 | ✅     |
-| macOS Ventura     | 13.0    | arm64  | ✅     |
-| macOS Ventura     | 13.0    | x86_64 | ✅     |
-| macOS Sonoma      | 14.0    | arm64  | ✅     |
-| macOS Sonoma      | 14.0    | x86_64 | ✅     |
-| macOS Sequoia     | 15.0    | arm64  | ✅     |
-| macOS Sequoia     | 15.0    | x86_64 | ✅     |
-| macOS Tahoe       | 26.0    | arm64  | ✅     |
-| macOS Tahoe       | 26.0    | x86_64 | ✅     |
+| OS                     | Version | Mac CPU              | Status                       |
+|------------------------|---------|----------------------|------------------------------|
+| macOS Tahoe            | 26.0    | arm64 / x86_64       | ✅ OK                        |
+| macOS Sequoia          | 15.0    | arm64 / x86_64       | ✅ OK                        |
+| macOS Sonoma           | 14.0    | arm64 / x86_64       | ✅ OK                        |
+| macOS Ventura          | 13.0    | arm64 / x86_64       | ✅ OK                        |
+| macOS Monterey         | 12.0    | arm64 / x86_64       | ✅ OK                        |
+| macOS Big Sur          | 11.0    | arm64 / x86_64       | ✅ OK                        |
+| macOS Catalina         | 10.15   | x86_64               | ✅ OK                        |
+| macOS Mojave           | 10.14   | x86_64               | ✅ OK                        |
+| macOS High Sierra      | 10.13   | x86_64               | ✅ OK                        |
+| macOS Sierra           | 10.12   | x86_64               | ✅ OK                        |
+| OS X El Capitan        | 10.11   | x86_64               | ✅ OK                        |
+| OS X Yosemite          | 10.10   | x86_64               | ❌ No Metal                  |
+| OS X Mavericks         | 10.9    | x86_64               | ❌ No Metal                  |
+| OS X Mountain Lion     | 10.8    | x86_64               | ❌ No Metal                  |
+| Mac OS X Lion          | 10.7    | x86_64               | ❌ No Metal                  |
+| Mac OS X Snow Leopard  | 10.6    | i386 / x86_64        | ❌ No Metal, No AVFoundation |
+| Mac OS X Leopard       | 10.5    | ppc / ppc64 / i386   | ❌ No Metal, No AVFoundation |
+| Mac OS X Tiger         | 10.4    | ppc / ppc64 / i386   | ❌ No Metal, No AVFoundation |
+| Mac OS X Panther       | 10.3    | ppc                  | ❌ No Metal, No AVFoundation |
+| Mac OS X Jaguar        | 10.2    | ppc                  | ❌ No Metal, No AVFoundation |
+| Mac OS X Puma          | 10.1    | ppc                  | ❌ No Metal, No AVFoundation |
+| Mac OS X Cheetah       | 10.0    | ppc                  | ❌ No Metal, No AVFoundation |
 
 **Linux:**
 
@@ -593,33 +640,39 @@ Note: playfield.exe is the 64-bit binary and playfield32.exe is the 32-bit one.
 
 **iOS:**
 
-| OS     | Status |
-|--------|--------|
-| iOS 11 | ✅     |
-| iOS 12 | ✅     |
-| iOS 13 | ✅     |
-| iOS 14 | ✅     |
-| iOS 15 | ✅     |
-| iOS 16 | ✅     |
-| iOS 17 | ✅     |
-| iOS 18 | ✅     |
-| iOS 26 | ✅     |
+| OS     | Status   |
+|--------|----------|
+| iOS 26 | ✅       |
+| iOS 18 | ✅       |
+| iOS 17 | ✅       |
+| iOS 16 | ✅       |
+| iOS 15 | ✅       |
+| iOS 14 | ✅       |
+| iOS 13 | ✅       |
+| iOS 12 | ✅       |
+| iOS 11 | ✅       |
+| iOS 10 | ?        |
+| iOS 9  | ?        |
+| iOS 8  | ?        |
+| iOS 7  | No Metal |
 
 **Android:**
 
-| OS         | Status |
-|------------|--------|
-| Android 6  | ✅     |
-| Android 7  | ✅     |
-| Android 8  | ✅     |
-| Android 9  | ✅     |
-| Android 10 | ✅     |
-| Android 11 | ✅     |
-| Android 12 | ✅     |
-| Android 13 | ✅     |
-| Android 14 | ✅     |
-| Android 15 | ✅     |
-| Android 16 | ✅     |
+| OS          | Status | Special                      |
+|-------------|--------|------------------------------|
+| Android 16  | ✅     |                              |
+| Android 15  | ✅     |                              |
+| Android 14  | ✅     |                              |
+| Android 13  | ✅     |                              |
+| Android 12  | ✅     |                              |
+| Android 11  | ✅     |                              |
+| Android 10  | ✅     |                              |
+| Android 9   | ✅     |                              |
+| Android 8   | ✅     |                              |
+| Android 7   | ✅     | Change the build properties. |
+| Android 6   | ✅     | Change the build properties. |
+| Android 5   | ✅     | Change the build properties. |
+| Android 4.4 | ✅     | Change the build properties. |
 
 **OpenHarmony / HarmonyOS NEXT:**
 
@@ -635,7 +688,8 @@ Note: playfield.exe is the 64-bit binary and playfield32.exe is the 32-bit one.
 Playfield Engine is a part of the [NoctVM](https://noctvm.io/) ecosystem:
 
 - **NoctLang** — portable scripting language (used in this project)
-- **Playfield Engine* — go-anywhere 2D game engine (this project)
+- **Playfield Engine** — go-anywhere 2D game engine (this project)
+- **Suika3** — Commercial visual novel engine (uses this project)
 - NoctUI — a declarative UI library (not used in this project)
 
 Together, they form the foundation of the Noct ecosystem.
