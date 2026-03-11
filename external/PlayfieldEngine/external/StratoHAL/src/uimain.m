@@ -638,7 +638,7 @@ hal_make_real_path(
         // If the package:
         if(strcmp(fname, HAL_PACKAGE_FILE) == 0) {
             // Return a bundle resource path.
-            NSString *path = [[NSBundle mainBundle] pathForResource:@"assets" ofType:@"pak"];
+            NSString *path = [[NSBundle mainBundle] pathForResource:@"assets" ofType:@"arc"];
             const char *cstr = [path UTF8String];
             return strdup(cstr);
         }

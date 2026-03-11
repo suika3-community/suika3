@@ -459,7 +459,6 @@ endif()
 if(   STRATO_TARGET_WINDOWS
    OR STRATO_TARGET_GDK_WINDOWS
    OR STRATO_TARGET_GDK_XBOX_XS)
-  target_compile_definitions(strato PUBLIC HAL_TARGET_WINDOWS)
   enable_language(RC)
   set(CMAKE_CXX_STANDARD 11)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -480,17 +479,14 @@ endif()
 if(  STRATO_TARGET_LINUX
   OR STRATO_TARGET_LINUX_WAYLAND
   OR STRATO_TARGET_LINUX_GBM)
-  target_compile_definitions(strato PUBLIC HAL_TARGET_LINUX)
 endif()
 
 # iOS
 if(STRATO_TARGET_IOS)
-  target_compile_definitions(strato PUBLIC HAL_TARGET_IOS)
 endif()
 
 # Android
 if(STRATO_TARGET_ANDROID)
-  target_compile_definitions(strato PUBLIC HAL_TARGET_ANDROID)
 endif()
 
 # OpenHarmony

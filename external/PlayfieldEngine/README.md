@@ -556,7 +556,7 @@ The official recommended binary is the 64-bit version.
 | Windows | 7                           | SP1   | x64    | Microsoft Visual C++ Redistributable 2015       | ✅            | 11.0     |
 | Windows | Vista                       |       | x64    | (No UCRT)                                       | ❌            | -        |
 | Windows | Vista                       | SP1   | x64    | DirectX End-User Runtimes (June 2010)           | ✅            | 9.0      |
-| Windows |                             |       |        | Microsoft Visual C++ Redistributable 2015       |               |          |
+|         |                             |       |        | Microsoft Visual C++ Redistributable 2015       |               |          |
 | Windows | Vista                       | SP2   | x64    | Platform Update for Windows Vista               | ✅            | 11.0     |
 |         |                             |       |        | Microsoft Visual C++ Redistributable 2015       |               |          |
 | Windows | XP Professional x64 Edition |       | x64    | (No UCRT)                                       | ❌            | -        |
@@ -633,10 +633,14 @@ There is a 32-bit version for backward compatibility.
 
 **Linux:**
 
-* One of the following:
-    * X11 (X11 + GLX + OpenGL 3) [Default]
-    * Wayland (Wayland + EGL + OpenGL ES 2) [Optional]
-    * Framebuffer (GBM + DRM + EGL + OpenGL ES 2) [Optional]
+| Distribution      | Version               | CPU             | Status | Graphics                      |
+|-------------------|-----------------------|-----------------|--------|-------------------------------|
+| Raspberry Pi OS   | Debian 13             | arm64, armv7    | ✅     | X11, OpenGL ES                |
+| Ubuntu            | 24.04 / 22.04 / 20.04 | x86_64, arm64   | ✅     | X11, OpenGL 3                 |
+| Kubuntu           | 25.04                 | x86_64, arm64   | ✅     | Wayland + OpenGL 3            |
+| Linux Mint        | 22.3                  | x86_64          | ✅     | X11 + OpenGL 3                |
+| Fedora            | 43                    | x86_64          | ✅     | X11 + OpenGL 3                |
+| Odroid            |                       | arm64           | ✅     | GBM + DRM + EGL + OpenGL ES 2 |
 
 **iOS:**
 
