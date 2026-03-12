@@ -913,7 +913,7 @@
     },
     {
       "name": "macos-cli",
-      "configurePreset": "macos-cli"
+      "configurePreset": "macos-cli-debug"
     },
     {
       "name": "macos-cli-debug",
