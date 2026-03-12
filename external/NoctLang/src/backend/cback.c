@@ -77,6 +77,10 @@ cback_init(
 		return false;
 	}
 
+	fprintf(fp, "#include \"runtime.h\"\n");
+	fprintf(fp, "#include \"execution.h\"\n");
+	fprintf(fp, "\n");
+
 	return true;
 }
 
@@ -106,8 +110,6 @@ cback_translate_func(
 	func_count++;
 
 	/* Put a prologue code. */
-	fprintf(fp, "#include <noct/cback.h>\n");
-	fprintf(fp, "\n");
 	fprintf(fp, "bool L_%s(struct rt_env *env)\n", func->func_name);
 	fprintf(fp, "{\n");
 	fprintf(fp, "    struct rt_value tmpvar[%d];\n", func->tmpvar_size);
@@ -294,11 +296,11 @@ static INLINE bool cback_get_string(
 	fprintf(fp, "L_pc_%d:\n", (pc));
 
 /* Unary OP macro. */
-#define UNARY_OP(helper)							\
-	int dst, src;								\
-	GET_TMPVAR(&dst);							\
-	GET_TMPVAR(&src);							\
-	fprintf(fp, "if (!" #helper "(env, (int)dst, (int)src))");		\
+#define UNARY_OP(helper)						\
+	int dst, src;							\
+	GET_TMPVAR(&dst);						\
+	GET_TMPVAR(&src);						\
+	fprintf(fp, "if (!" #helper "(env, %d, %d))", dst, src);	\
 	fprintf(fp, "    return false;\n");
 
 /* Binary OP macro. */
@@ -307,7 +309,7 @@ static INLINE bool cback_get_string(
 	GET_TMPVAR(&dst);							\
 	GET_TMPVAR(&src1);							\
 	GET_TMPVAR(&src2);							\
-	fprintf(fp, "if (!" #helper "(env, (int)dst, (int)src1, (int)src2))");	\
+	fprintf(fp, "if (!" #helper "(env, %d, %d, %d))", dst, src1, src2);	\
 	fprintf(fp, "    return false;\n");
 
 /* Visit a LOP_LINEINFO instruction. */
@@ -581,6 +583,17 @@ cback_visit_neg_op(
 	return true;
 }
 
+/* Visit a LOP_NOT instruction. */
+static INLINE bool
+cback_visit_not_op(
+	struct lir_func *func,
+	int *pc)
+{
+	LABEL(*pc);
+	UNARY_OP(rt_not_helper);
+	return true;
+}
+
 /* Visit a LOP_LT instruction. */
 static INLINE bool
 cback_visit_lt_op(
@@ -717,7 +730,7 @@ cback_visit_loadsymbol_op(
 	GET_TMPVAR(&dst);
 	GET_STRING(&symbol, &len, &hash);
 
-	fprintf(fp, "    if (!rt_loadsymbol_helper(env, %d, \"%s\"))\n", dst, symbol);
+	fprintf(fp, "    if (!rt_loadsymbol_helper(env, %d, \"%s\", %uu, %uu))\n", dst, symbol, len, hash);
 	fprintf(fp, "        return false;\n");
 
 	return true;
@@ -760,7 +773,7 @@ cback_visit_loaddot_op(
 	GET_TMPVAR(&dict);
 	GET_STRING(&field, &len, &hash);
 
-	fprintf(fp, "    if (!rt_loaddot_helper(env, %d, %d, \"%s\"))\n", dst, dict, field);
+	fprintf(fp, "    if (!rt_loaddot_helper(env, %d, %d, \"%s\", %uu, %uu))\n", dst, dict, field, len, hash);
 	fprintf(fp, "        return false;\n");
 
 	return true;
@@ -999,6 +1012,10 @@ cback_visit_op(
 		break;
 	case OP_NEG:
 		if (!cback_visit_neg_op(func, pc))
+			return false;
+		break;
+	case OP_NOT:
+		if (!cback_visit_not_op(func, pc))
 			return false;
 		break;
 	case OP_LT:

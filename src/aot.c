@@ -2,7 +2,7 @@
 
 /*
  * Playfield Engine
- * Compiler (bytecode) main
+ * Compiler (AOT) main
  */
 
 /*-
@@ -36,12 +36,12 @@
 #include "ast.h"
 #include "hir.h"
 #include "lir.h"
+#include "cback.h"
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include <assert.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -51,21 +51,17 @@
 #include <unistd.h>
 #endif
 
-/* Bytecode File Header */
-#define BYTECODE_HEADER		"Noct Bytecode"
-
-/* Runtime's configuration. */
-extern bool noct_conf_use_jit;
-
 /* i18n.c */
-#if defined(USE_TRANSLATION)
+#if defined(NOCT_USE_TRANSLATION)
 void noct_init_locale(void);
 #endif
 
 /* Forward declaration. */
 static void show_usage(int argc, char *argv[]);
-static int command_compile(int argc, char *argv[]);
-static bool compile_source(const char *file_name);
+static int command_aot(int argc, char *argv[]);
+static bool do_transpile_c(const char *out_file, int in_file_count, const char *in_file[]);
+static bool add_file(const char *fname, bool (*add_file_hook)(const char *));
+static bool add_file_hook_c(const char *fname);
 static bool load_file_content(const char *fname, char **data, size_t *size);
 static int wide_printf(const char *format, ...);
 
@@ -73,6 +69,9 @@ static int wide_printf(const char *format, ...);
  * Main
  */
 
+/*
+ * The top level function for the C translation mode.
+ */
 int main(int argc, char *argv[])
 {
 #if defined(USE_TRANSLATION)
@@ -86,50 +85,66 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	return command_compile(argc, argv);
+	return command_aot(argc, argv);
 }
 
 /* Show the usage message. */
 static void show_usage(int argc, char *argv[])
 {
-	wide_printf("Script Compiler\n");
+	wide_printf("Script AOT Compiler\n");
 	wide_printf("Usage: %s <files>\n", argv[0]);
 }
 
-/*
- * Compile
- */
+/* Compile. */
+int command_aot(int argc, char *argv[])
+{
+	if (argc < 2) {
+		show_usage(argc, argv);
+		return 1;
+	}
 
-/* The top level function for the compile mode. */
-static int command_compile(int argc, char *argv[])
+	if (!do_transpile_c("library.c", 1, (const char **)&argv[1]))
+		return 1;
+
+	return 0;
+}
+
+/* Do C translation. */
+static bool do_transpile_c(const char *out_file, int in_file_count, const char *in_file[])
 {
 	int i;
 
-	/* For each argument file. */
-	for (i = 1; i < argc; i++) {
-		/* Compile a source to bytecode. */
-		if (!compile_source(argv[i]))
-			return 1;
+	/* Initialize the backend. */
+	if (!cback_init(out_file))
+		return false;
+
+	/* For each input file or directory. */
+	for (i = 0; i < in_file_count; i++) {
+		/* Recursively add files. */
+		if (!add_file(in_file[i], add_file_hook_c))
+			return false;
 	}
 
-	return 1;
+	/* Put a epilogue code. */
+	if (!cback_finalize_dll())
+		return false;
+
+	return true;
 }
 
-/* Compile a source file. */
-static bool compile_source(const char *file_name)
+/* "On file add" callback for the recursive file search. */
+static bool add_file_hook_c(const char *fname)
 {
-	char bc_fname[1024];
-	FILE *fp;
-	char *source_data, *dot;
-	size_t source_length;
-	int func_count, i, j;
+	char *data;
+	size_t len;
+	int func_count, j;
 
-	/* Load an argument source file. */
-	if (!load_file_content(file_name, &source_data, &source_length))
+	/* Load an argument file. */
+	if (!load_file_content(fname, &data, &len))
 		return false;
 
 	/* Do parse, build AST. */
-	if (!ast_build(file_name, source_data)) {
+	if (!ast_build(fname, data)) {
 		wide_printf(N_TR("Error: %s: %d: %s\n"),
 			    ast_get_file_name(),
 			    ast_get_error_line(),
@@ -146,77 +161,64 @@ static bool compile_source(const char *file_name)
 		return false;
 	}
 
-	/* Make an output file name. (*.pfc) */
-	strcpy(bc_fname, file_name);
-	dot = strstr(bc_fname, ".");
-	if (dot != NULL)
-		strcpy(dot, ".pfc");
-	else
-		strcat(bc_fname, ".pfc");
-
-	/* Open an output .nb bytecode file. */
-	fp = fopen(bc_fname, "wb");
-	if (fp == NULL) {
-		wide_printf(N_TR("Cannot open file %s.\n"), bc_fname);
-		return false;
-	}
-
-	/* Put a file header. */
-	func_count = hir_get_function_count();
-	fprintf(fp, "Noct Bytecode 1.0\n");
-	fprintf(fp, "Source\n");
-	fprintf(fp, "%s\n", file_name);
-	fprintf(fp, "Number Of Functions\n");
-	fprintf(fp, "%d\n", func_count);
-
 	/* For each HIR function. */
-	for (i = 0; i < func_count; i++) {
+	func_count = hir_get_function_count();
+	for (j = 0; j < func_count; j++) {
 		struct hir_block *hfunc;
 		struct lir_func *lfunc;
 
 		/* Transform HIR to LIR (bytecode). */
-		hfunc = hir_get_function(i);
+		hfunc = hir_get_function(j);
 		if (!lir_build(hfunc, &lfunc)) {
 			wide_printf(N_TR("Error: %s: %d: %s\n"),
 				    lir_get_file_name(),
 				    lir_get_error_line(),
 				    lir_get_error_message());
-			return false;
+			return false;;
 		}
 
-		/* Put a bytcode. */
-		fprintf(fp, "Begin Function\n");
-		fprintf(fp, "Name\n");
-		fprintf(fp, "%s\n", lfunc->func_name);
-		fprintf(fp, "Parameters\n");
-		fprintf(fp, "%d\n", lfunc->param_count);
-		for (j = 0; j < lfunc->param_count; j++)
-			fprintf(fp, "%s\n", lfunc->param_name[j]);
-		fprintf(fp, "Temporary Size\n");
-		fprintf(fp, "%d\n", lfunc->tmpvar_size);
-		fprintf(fp, "Bytecode Size\n");
-		fprintf(fp, "%d\n", lfunc->bytecode_size);
-		fwrite(lfunc->bytecode, (size_t)lfunc->bytecode_size, 1, fp);
-		fprintf(fp, "\nEnd Function\n");
+		/* Put a C function. */
+		if (!cback_translate_func(lfunc))
+			return false;
 
 		/* Free a single LIR. */
 		lir_cleanup(lfunc);
 	}
 
-	fclose(fp);
-
-	/* Free intermediates. */
+	/* Free intermediated. */
 	hir_cleanup();
 	ast_cleanup();
 
 	return true;
 }
 
-/*
- * Helpers
- */
+/* Print to console. (supports wide characters on Windows console.) */
+static int wide_printf(const char *format, ...)
+{
+	static char buf[4096];
+	va_list ap;
+	int size;
 
-/* Load a file. */
+	va_start(ap, format);
+	size = vsnprintf(buf, sizeof(buf), format, ap);
+	va_end(ap);
+
+#if !defined(_WIN32)
+	return printf("%s", buf);
+#else
+	/* MSVC or MinGW: Use wprintf() and wide-string. (Otherwise, we'll see garbages.) */
+	static wchar_t wbuf[4096];
+	DWORD dwWritten;
+	memset(wbuf, 0, sizeof(wbuf));
+	MultiByteToWideChar(CP_UTF8, 0, buf, -1, wbuf, sizeof(wbuf) / sizeof(wchar_t));
+	WriteConsoleW(GetStdHandle(STD_OUTPUT_HANDLE), wbuf, lstrlenW(wbuf), &dwWritten, NULL);
+	return size;
+#endif
+}
+
+/*
+ * Load a file.
+ */
 static bool load_file_content(const char *fname, char **data, size_t *size)
 {
 	FILE *fp;
@@ -254,30 +256,6 @@ static bool load_file_content(const char *fname, char **data, size_t *size)
 	return true;
 }
 
-/* Print to console. (supports wide characters on Windows console.) */
-static int wide_printf(const char *format, ...)
-{
-	static char buf[4096];
-	va_list ap;
-	int size;
-
-	va_start(ap, format);
-	size = vsnprintf(buf, sizeof(buf), format, ap);
-	va_end(ap);
-
-#if !defined(_WIN32)
-	return printf("%s", buf);
-#else
-	/* MSVC or MinGW: Use wprintf() and wide-string. (Otherwise, we'll see garbages.) */
-	static wchar_t wbuf[4096];
-	DWORD dwWritten;
-	memset(wbuf, 0, sizeof(wbuf));
-	MultiByteToWideChar(CP_UTF8, 0, buf, -1, wbuf, sizeof(wbuf) / sizeof(wchar_t));
-	WriteConsoleW(GetStdHandle(STD_OUTPUT_HANDLE), wbuf, lstrlenW(wbuf), &dwWritten, NULL);
-	return size;
-#endif
-}
-
 /*
  * For POSIX
  */
@@ -286,7 +264,7 @@ static int wide_printf(const char *format, ...)
 /*
  * Recursively add files.
  */
-bool add_file(const char *fname, bool (*add_file_hook)(const char *))
+static bool add_file(const char *fname, bool (*add_file_hook)(const char *))
 {
 	struct stat st;
 
@@ -358,7 +336,7 @@ static const char *win32_utf16_to_utf8(const wchar_t *utf16_message)
 /*
  * Recursively add files.
  */
-bool add_file(const char *fname, bool (*add_file_hook)(const char *))
+static bool add_file(const char *fname, bool (*add_file_hook)(const char *))
 {
 	WIN32_FIND_DATAW wfd;
 	HANDLE hFind;
@@ -424,4 +402,3 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     return main(argc, argv);
 }
 #endif
-

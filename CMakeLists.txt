@@ -547,6 +547,7 @@ if(   PLAYFIELD_TARGET_WINDOWS
    OR PLAYFIELD_TARGET_NETBSD
    OR PLAYFIELD_TARGET_OPENBSD)
   if(NOT PLAYFIELD_ENABLE_STATIC AND NOT PLAYFIELD_ENABLE_SHARED)
+    # Bytecode
     add_executable(
       playfield-compiler
       src/compiler.c
@@ -558,6 +559,21 @@ if(   PLAYFIELD_TARGET_WINDOWS
     target_link_libraries(playfield-compiler noctlang)
     if(UNIX)
       target_link_libraries(playfield-compiler m)
+    endif()
+
+    # AOT
+    add_executable(
+      playfield-aot
+      src/aot.c
+      external/NoctLang/src/backend/cback.c
+    )
+    target_include_directories(playfield-aot PRIVATE
+      external/NoctLang/src/core
+      external/NoctLang/src/backend
+    )
+    target_link_libraries(playfield-aot noctlang)
+    if(UNIX)
+      target_link_libraries(playfield-aot m)
     endif()
   endif()
 endif()
