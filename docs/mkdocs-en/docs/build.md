@@ -5,43 +5,58 @@ Suika3 fully utilizes the CMake build system.
 
 * Notes
     * Requires CMake 3.22 or later
-    * Windows: Visual Studio 2022 or 2026
-    * macOS: Tested on macOS 26 (Xcode required)
-    * Linux: Tested on Ubuntu 24.04 (X11 or Wayland required)
-    * A full build takes 5 seconds using Intel Core Ultra 5 228V
+    * Windows: Visual Studio 2022 or 2026 required
+    * macOS: Xcode 8.2.1 or later required
+    * Linux: gcc 4.4 or later required (clang is also supported)
+    * A full build takes:
+        * 20 seconds for Visual Studio 2026 on Intel Core i5 13400
+        * 5 seconds for Linux on Intel Core i5 13400
+        * 5 seconds for macOS on Apple M5
 
-## Windows (Visual Studio)
+---
+
+## Windows (Visual Studio 2026)
+
+Visual Studio is the recommended build environment for Windows, and used by the official binary.
 
 ### Prerequisite
 
-* `Visual Studio 2022` installed with C/C++ and CMake configured
+* `Windows 11` PC with an Intel, AMD, or Arm64 processor
+* `Visual Studio 2026` installed with C/C++ and CMake configured
 
 ### Steps
 
 * Clone the repository.
 * Open the top of the source code folder by Visual Studio.
-* Choose the `VS2022 MSVC x64 Release` target.
+* Wait for the CMake configuration to complete.
+* Choose the `VS2026 x64 Release` target.
 * Build the project.
 
-The target file `out/build/windows-msvc-x64-release/suika3.exe` will be created.
+The target file `out/build/windows-vs2026-x64-release/suika3.exe` will be created.
 
 ---
 
 ## Windows (WSL2)
 
+This method uses MinGW on WSL2 to create a Windows exe file.
+Note that it is possible to build Suika3 by MinGW,
+but not recommended because of false positives in antivirus software.
+
 ### Prerequisite
 
 * A `Windows 11` PC with an Intel, AMD, or Arm64 processor
 * A `WSL2` feature installed
-* `Ubuntu` or `Debian` installed
+* `Ubuntu` or `Debian` installed on WSL2
+
+```
+sudo apt-get install cmake ninja-build mingw-w64
+```
 
 ### Steps
 
 Open the terminal and type the following.
 
 ```
-sudo apt-get install cmake mingw-w64
-
 git clone https://github.com/suika3-community/suika3.git
 cd suika3
 cmake --preset windows-mingw-x86_64
@@ -55,6 +70,9 @@ The target file `build-mingw-x86_64/suika3.exe` will be created.
 ## Linux (X11)
 
 ### Prerequisite
+
+* A `Linux` machine with any processor
+* `X11` installed
 
 On Debian, Ubuntu, or Raspberry Pi OS:
 ```
@@ -79,11 +97,19 @@ cmake --build --preset linux-x11
 
 The target file `build-linux-x11/suika3` will be created.
 
+If you want to debug Suika3 with gdb, you can use the `linux-x11-debug` preset instead of `linux-x11`.
+
 ---
 
 ## Linux (Wayland)
 
+Note that our Wayland support is still experimental.
+It is compatible with KDE, but not showing a window frame on GNOME.
+
 ### Prerequisite
+
+* A `Linux` machine with any processor
+* `Wayland` installed
 
 On Debian or Ubuntu:
 ```
@@ -108,15 +134,19 @@ cmake --build --preset linux-wayland
 
 The target file `build-linux-wayland/suika3` will be created.
 
+If you want to debug Suika3 with gdb, you can use the `linux-wayland-debug` preset instead of `linux-wayland`.
+
 ---
 
-## macOS
+## macOS (App Bundle)
+
+This method creates an app bundle for macOS, and is used by the official binary.
 
 ### Prerequisite
 
 * A Mac with an Apple Silicon or Intel processor
-* `macOS 15` installed
-* `Xcode 16` installed
+* `macOS 11` or later installed
+* `Xcode` installed
 
 ### Steps
 
@@ -131,6 +161,60 @@ cmake --build --preset macos
 
 The target `build-macos/Suika3.app` will be created.
 
+### DMG Packaging
+
+If you want to distribute Suika3 for macOS, you need to create a DMG file with code signing and notirization.
+You have to own a `Developer ID Application` certificate in the keychain and logged in with an Apple Developer account on Xcode.
+Note that an app bundle distributed by a zip file cannot access outside the app bundle, so we use DMG here.
+
+```
+cd macos
+
+# Sign the app.
+codesign --timestamp --options runtime --entitlements ../resources/macos/macos.entitlements --deep --force --sign "Developer ID Application" Suika3.app
+
+# Notarize the app. (takes some time)
+ditto -c -k --sequesterRsrc --keepParent Suika3.app Suika3.zip
+xcrun notarytool submit Suika3.zip --apple-id "$APPLE_ID" --team-id "$TEAM_ID" --password "$APP_SECRET" --wait
+xcrun stapler staple Suika3.app
+
+# Create a DMG file.
+mkdir tmp
+cp -Rv Suika3.app tmp/Suika3.app
+hdiutil create -fs HFS+ -format UDBZ -srcfolder tmp -volname Suika3 Suika3.dmg
+
+# Sign the DMG file to allow access to files outside the bundle (avoid Gatekeeper issues).
+codesign --sign "Developer ID Application" Suika3.dmg
+```
+
+---
+
+## macOS (CLI)
+
+This method creates a command-line interface (CLI) version of Suika3 for macOS.
+It is useful for debugging and development, but not recommended for distribution because it does not have an app bundle.
+
+### Prerequisite
+
+* A Mac with an Apple Silicon or Intel processor
+* `macOS 11` or later installed
+* `Xcode` installed
+
+### Steps
+
+Open the terminal and type the following.
+
+```
+git clone https://github.com/suika3-community/suika3.git
+cd suika3
+cmake --preset macos-cli
+cmake --build --preset macos-cli
+```
+
+The target `build-macos/Suika3.app` will be created.
+
+If you want to debug Suika3 with lldb, you can use the `macos-cli-debug` preset instead of `macos`.
+
 ---
 
 ## iOS
@@ -138,15 +222,21 @@ The target `build-macos/Suika3.app` will be created.
 ### Prerequisite
 
 * A Mac with an Apple Silicon or Intel processor
-* `macOS 15` installed
-* `Xcode 16` installed
+* `macOS 11` or later installed
+* `Xcode` installed
 
 ### Steps
 
 * Pack assets into the `assets.arc` file.
-* Download the [Suika binary](https://github.com/suika3-community/suika/releases) and extract it.
+* Download [the official binary](https://github.com/suika3-community/suika/releases) and extract it.
 * Copy your `assets.arc` file into the `misc/ios/resources` folder.
 * Open the `misc/ios` folder by Xcode.
+* Build and run.
+
+### Build from Scratch
+
+If you want to build from scratch, use `cmake --preset ios-device` or `cmake --preset ios-simulator`,
+then copy the built `libsuika3.a` file into the `misc/ios/lib` folder, and open the `misc/ios` folder by Xcode.
 
 ---
 
@@ -158,9 +248,13 @@ The target `build-macos/Suika3.app` will be created.
 
 ### Steps
 
-* Download the [Suika binary](https://github.com/suika3-community/suika/releases) and extract it.
+* Download [the official binary](https://github.com/suika3-community/suika/releases) and extract it.
 * Copy your asset files into the `misc/android/app/src/main/assets` folder.
-* Open the `misc/android` folde by Android Studio
+* Open the `misc/android` folder by Android Studio.
+
+### Build from Scratch
+
+If you want to build from scratch, use `cmake --preset android-arm64`, then copy the built `libsuika3.so` file into the `misc/android/app/src/main/jniLibs/arm64-v8a` folder, and open the `misc/android` folder by Android Studio.
 
 ---
 
@@ -168,7 +262,7 @@ The target `build-macos/Suika3.app` will be created.
 
 ### Prerequisite
 
-* `emsdk` installed.
+* `emsdk` installed. (Any OS will do.)
 
 ### Steps
 
@@ -182,6 +276,14 @@ cmake --build --preset wasm
 ```
 
 The target file `wasm/index.html` will be created.
+
+### Testing
+
+To run the app, place your `assets.arc` file in the `wasm` folder first.
+
+After that, type `python -m http.server` and open `http://localhost:8000` in a browser window.
+
+On Windows, you can use `suika3-web.exe` instead of `python`. It runs a small web server and opens the browser automatically.
 
 ---
 
@@ -255,7 +357,7 @@ The target file `build-openbsd/suika3` will be created.
 
 ### Prerequisite
 
-* Full build of `LLVM-21` installed.
+* Full build of `LLVM-22` installed.
 
 ### Steps
 
@@ -271,3 +373,5 @@ cmake --build --preset unity-win64
 The target file `build-unity-win64/libsuika3.dll` will be created.
 
 Note: Replace `win64` to one of `switch`, `ps5`, and `xbox`.
+
+To use a vendor official SDK, open `cmake/toolchains/unity-*.cmake` and replace `CMAKE_C_COMPILER`, `CMAKE_CXX_COMPILER` and `CMAKE_AR`.
