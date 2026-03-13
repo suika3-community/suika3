@@ -42,6 +42,35 @@ static LPDIRECTINPUT8 pDI;
 static LPDIRECTINPUTDEVICE8W pGamepad;
 static DIDEVCAPS diDevCaps;
 
+static const DIOBJECTDATAFORMAT c_rgodfMyGamepad[] = {
+    { &GUID_XAxis,  offsetof(DIJOYSTATE2, lX),            DIDFT_AXIS   | DIDFT_ANYINSTANCE, 0 },
+    { &GUID_YAxis,  offsetof(DIJOYSTATE2, lY),            DIDFT_AXIS   | DIDFT_ANYINSTANCE, 0 },
+    { &GUID_RxAxis, offsetof(DIJOYSTATE2, lRx),           DIDFT_AXIS   | DIDFT_ANYINSTANCE, 0 },
+    { &GUID_RyAxis, offsetof(DIJOYSTATE2, lRy),           DIDFT_AXIS   | DIDFT_ANYINSTANCE, 0 },
+    { &GUID_ZAxis,  offsetof(DIJOYSTATE2, lZ),            DIDFT_AXIS   | DIDFT_ANYINSTANCE, 0 },
+    { &GUID_RzAxis, offsetof(DIJOYSTATE2, lRz),           DIDFT_AXIS   | DIDFT_ANYINSTANCE, 0 },
+
+    { &GUID_POV,    offsetof(DIJOYSTATE2, rgdwPOV[0]),    DIDFT_POV    | DIDFT_ANYINSTANCE, 0 },
+
+    { NULL,         offsetof(DIJOYSTATE2, rgbButtons[0]), DIDFT_BUTTON | DIDFT_ANYINSTANCE, 0 },
+    { NULL,         offsetof(DIJOYSTATE2, rgbButtons[1]), DIDFT_BUTTON | DIDFT_ANYINSTANCE, 0 },
+    { NULL,         offsetof(DIJOYSTATE2, rgbButtons[2]), DIDFT_BUTTON | DIDFT_ANYINSTANCE, 0 },
+    { NULL,         offsetof(DIJOYSTATE2, rgbButtons[3]), DIDFT_BUTTON | DIDFT_ANYINSTANCE, 0 },
+    { NULL,         offsetof(DIJOYSTATE2, rgbButtons[4]), DIDFT_BUTTON | DIDFT_ANYINSTANCE, 0 },
+    { NULL,         offsetof(DIJOYSTATE2, rgbButtons[5]), DIDFT_BUTTON | DIDFT_ANYINSTANCE, 0 },
+    { NULL,         offsetof(DIJOYSTATE2, rgbButtons[6]), DIDFT_BUTTON | DIDFT_ANYINSTANCE, 0 },
+    { NULL,         offsetof(DIJOYSTATE2, rgbButtons[7]), DIDFT_BUTTON | DIDFT_ANYINSTANCE, 0 },
+};
+
+static const DIDATAFORMAT c_dfMyGamepad = {
+    sizeof(DIDATAFORMAT),
+    sizeof(DIOBJECTDATAFORMAT),
+    DIDF_ABSAXIS,
+    sizeof(DIJOYSTATE2),
+    sizeof(c_rgodfMyGamepad) / sizeof(c_rgodfMyGamepad[0]),
+    (LPDIOBJECTDATAFORMAT)c_rgodfMyGamepad
+};
+
 static BOOL CALLBACK EnumGamepadCallback(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext);
 static BOOL CALLBACK EnumAxesCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID *pContext);
 
@@ -50,7 +79,12 @@ DInputInitialize(HINSTANCE hInst, HWND hWnd)
 {
     HRESULT hr;
 
-    hr = DirectInput8Create(hInst, DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID*)&pDI, NULL);
+    HMODULE hModule = LoadLibraryA("dinput8.dll");
+    HRESULT (*pDirectInput8Create)(HINSTANCE, DWORD, REFIID, LPVOID *, LPUNKNOWN) = (HRESULT (*)(HINSTANCE, DWORD, REFIID, LPVOID *, LPUNKNOWN))GetProcAddress(hModule, "DirectInput8Create");
+    if (pDirectInput8Create == NULL)
+        return FALSE;
+
+    hr = pDirectInput8Create(hInst, DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID*)&pDI, NULL);
     if (FAILED(hr))
     {
         hal_log_info("DirectInput initialize error.");
@@ -69,7 +103,7 @@ DInputInitialize(HINSTANCE hInst, HWND hWnd)
         return FALSE;
     }
 
-    hr = pGamepad->SetDataFormat(&c_dfDIJoystick2);
+    hr = pGamepad->SetDataFormat(&c_dfMyGamepad); // &c_dfDIJoystick2
     if (FAILED(hr))
     {
         hal_log_info("DirectInput gamepad data format error.");
@@ -181,7 +215,7 @@ VOID DInputUpdate(VOID)
     hal_callback_on_event_analog_input(HAL_ANALOG_X2, js.lRx);
     hal_callback_on_event_analog_input(HAL_ANALOG_Y2, js.lRy);
     hal_callback_on_event_analog_input(HAL_ANALOG_L, js.lZ);
-    hal_callback_on_event_analog_input(HAL_ANALOG_L, js.lRz);
+    hal_callback_on_event_analog_input(HAL_ANALOG_R, js.lRz);
 
     if (js.rgdwPOV[0] == 0)
     {

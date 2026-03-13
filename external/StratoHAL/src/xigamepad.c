@@ -34,12 +34,29 @@
 #include <windows.h>
 #include <xinput.h>
 
+static BOOL bInitFailed;
+static DWORD (*pXInputGetState)(DWORD, XINPUT_STATE *);
+
 VOID XInputUpdate(VOID)
 {
     XINPUT_STATE state;
     DWORD result;
 
-    result = XInputGetState(0, &state);
+    if (pXInputGetState == NULL)
+    {
+        if (bInitFailed)
+            return;
+
+        HMODULE hModule = LoadLibraryA("xinput1_3.dll");
+        pXInputGetState = (DWORD (*)(DWORD, XINPUT_STATE *))(void *)GetProcAddress(hModule, "XInputUpdate");
+        if (pXInputGetState == NULL)
+	{
+            bInitFailed = TRUE;
+            return;
+        }
+    }
+
+    result = pXInputGetState(0, &state);
     if (result != ERROR_SUCCESS)
         return;
 

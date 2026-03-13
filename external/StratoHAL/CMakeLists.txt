@@ -748,8 +748,6 @@ if(STRATO_TARGET_WINDOWS)
     gdi32
     ole32
     dsound
-    dinput8
-    xinput
     strmiids
     dxguid
   )

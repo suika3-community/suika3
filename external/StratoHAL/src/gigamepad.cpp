@@ -41,18 +41,18 @@ static IGameInput *g_gameInput = NULL;
 VOID GameInputInitialize(VOID)
 {
     if (g_gameInput)
-	return;
+        return;
 
     HRESULT hr = GameInputCreate(&g_gameInput);
     if (FAILED(hr))
-	g_gameInput = NULL;
+        g_gameInput = NULL;
 }
 
 VOID GameInputCleanup(VOID)
 {
     if (g_gameInput) {
-	g_gameInput->Release();
-	g_gameInput = NULL;
+        g_gameInput->Release();
+        g_gameInput = NULL;
     }
 }
 
