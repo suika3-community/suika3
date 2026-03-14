@@ -404,11 +404,8 @@
       "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-win95.cmake",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE":                         "Release",
-        "SUIKA_TARGET_WINDOWS":                     "ON",
-        "SUIKA_ENABLE_JIT":                         "ON",
-        "SUIKA_ENABLE_I18N":                        "ON",
-        "SUIKA_ENABLE_PACK":                        "ON",
-        "SUIKA_ENABLE_MEDIAFOUNDATION":             "OFF"
+        "SUIKA_TARGET_WINDOWS95":                   "ON",
+        "SUIKA_ENABLE_JIT":                         "ON"
       }
     },
     {
