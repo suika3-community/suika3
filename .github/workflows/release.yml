@@ -57,7 +57,7 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-  build-windows-mingww64:
+  build-windows-mingw-w64-win95:
     runs-on: ubuntu-latest
 
     steps:
@@ -79,7 +79,7 @@ jobs:
         run: |
           cmake --preset windows-mingw-win95
           cmake --build --preset windows-mingw-win95
-          i686-w64-mingw32-strip build-mingw-win95/suika3.exe
+          i586-w64-mingw32-strip build-mingw-win95/suika3.exe
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -475,7 +475,7 @@ jobs:
           retention-days: 7
 
   zip:
-    needs: [build-windows-vs2022, build-windows-mingww64, build-linux, build-macos, build-wasm, build-ios, build-android, build-openharmony, build-unity, build-mkdocs]
+    needs: [build-windows-vs2022, build-windows-mingw-w64-win95, build-linux, build-macos, build-wasm, build-ios, build-android, build-openharmony, build-unity, build-mkdocs]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
