@@ -3221,13 +3221,13 @@ load_gui_file(const char *file)
 					break;
 				}
 				if (c == ':' || c == '{' || c == '}') {
-					s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
+					s3_log_error(S3_TR("Invalid character \"%c\" while parsing anime file \"%s\" line %d."), c, file, line + 1);
 					st = ST_ERROR;
 					break;
 				}
 			}
 			if (c == '}' || c == ':') {
-				s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
+				s3_log_error(S3_TR("Invalid character \"%c\" while parsing anime file \"%s\" line %d."), c, file, line + 1);
 				st = ST_ERROR;
 				break;
 			}
@@ -3252,7 +3252,7 @@ load_gui_file(const char *file)
 				break;
 			}
 			if (len == sizeof(word) - 1) {
-				s3_log_error(S3_TR("Too long word while parsing anime file %s:%d"), file, line + 1);
+				s3_log_error(S3_TR("Too long word while parsing anime file \"%s\" line %d."), file, line + 1);
 				st = ST_ERROR;
 				break;
 			}
@@ -3269,7 +3269,7 @@ load_gui_file(const char *file)
 				len = 0;
 				break;
 			}
-			s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
+			s3_log_error(S3_TR("Invalid character \"%c\" while parsing anime file \"%s\" line %d."), c, file, line + 1);
 			st = ST_ERROR;
 			break;
 		case ST_KEY:
@@ -3280,7 +3280,7 @@ load_gui_file(const char *file)
 					break;
 				}
 				if (c == ':') {
-					s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
+					s3_log_error(S3_TR("Invalid character \"%c\" while parsing anime file \"%s\" line %d."), c, file, line + 1);
 					st = ST_ERROR;
 					break;
 				}
@@ -3290,7 +3290,7 @@ load_gui_file(const char *file)
 				}
 			}
 			if (c == '{' || c == '}') {
-				s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
+				s3_log_error(S3_TR("Invalid character \"%c\" while parsing anime file \"%s\" line %d."), c, file, line + 1);
 				st = ST_ERROR;
 				break;
 			}
@@ -3309,7 +3309,7 @@ load_gui_file(const char *file)
 				break;
 			}
 			if (len == sizeof(word) - 1) {
-				s3_log_error(S3_TR("Too long word while parsing anime file %s:%d"), file, line + 1);
+				s3_log_error(S3_TR("Too long word while parsing anime file \"%s\" line %d."), file, line + 1);
 				st = ST_ERROR;
 				break;
 			}
@@ -3326,7 +3326,7 @@ load_gui_file(const char *file)
 				len = 0;
 				break;
 			}
-			s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
+			s3_log_error(S3_TR("Invalid character \"%c\" while parsing anime file \"%s\" line %d."), c, file, line + 1);
 			st = ST_ERROR;
 			break;
 		case ST_VALUE:
@@ -3342,7 +3342,7 @@ load_gui_file(const char *file)
 				}
 			}
 			if (c == ':' || c == '{') {
-				s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
+				s3_log_error(S3_TR("Invalid character \"%c\" while parsing anime file \"%s\" line %d."), c, file, line + 1);
 				st = ST_ERROR;
 				break;
 			}
@@ -3370,7 +3370,7 @@ load_gui_file(const char *file)
 				break;
 			}
 			if (len == sizeof(word) - 1) {
-				s3_log_error(S3_TR("Too long word while parsing anime file %s:%d"), file, line + 1);
+				s3_log_error(S3_TR("Too long word while parsing anime file \"%s\" line %d."), file, line + 1);
 				st = ST_ERROR;
 				break;
 			}
@@ -3396,12 +3396,12 @@ load_gui_file(const char *file)
 				break;
 			}
 			if (c == '\r' || c == '\n') {
-				s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
+				s3_log_error(S3_TR("Invalid character \"%c\" while parsing anime file \"%s\" line %d."), c, file, line + 1);
 				st = ST_ERROR;
 				break;
 			}
 			if (len == sizeof(word) - 1) {
-				s3_log_error(S3_TR("Too long word while parsing anime file %s:%d"), file, line + 1);
+				s3_log_error(S3_TR("Too long word while parsing anime file \"%s\" line %d."), file, line + 1);
 				st = ST_ERROR;
 				break;
 			}
@@ -3423,7 +3423,7 @@ load_gui_file(const char *file)
 				len = 0;
 				break;
 			}
-			s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
+			s3_log_error(S3_TR("Invalid character \"%c\" while parsing anime file \"%s\" line %d."), c, file, line + 1);
 			st = ST_ERROR;
 			break;
 		}
@@ -3509,7 +3509,7 @@ set_global_key_value(
 		return true;
 	}
 
-	s3_log_error(S3_TR("Unknown global key %s found in GUI file %s line %d"), key, file, line);
+	s3_log_error(S3_TR("Unknown global key \"%s\" found in GUI file \"%s\" line %d."), key, file, line);
 	return false;
 }
 
@@ -3521,7 +3521,7 @@ add_button(
 {
 	/* If the number of buttons exceeds the limit. */
 	if (index >= S3_BUTTON_LAYERS) {
-		s3_log_error(S3_TR("Too many GUI buttons in GUI file %s"), file);
+		s3_log_error(S3_TR("Too many GUI buttons in GUI file \"%s\"."), file);
 		return false;
 	}
 
@@ -3530,7 +3530,7 @@ add_button(
 	/* Get an unused layer. */
 	button[index].bid = get_unused_bid();
 	if (button[index].bid == -1) {
-		s3_log_error(S3_TR("No available button-id for a GUI button in GUI file %s"), file);
+		s3_log_error(S3_TR("No available button-id for a GUI button in GUI file \"%s\"."), file);
 		return false;
 	}
 
@@ -3972,7 +3972,7 @@ set_button_key_value(
 		return true;
 	}
 
-	s3_log_error(S3_TR("Unknown button property %s found in GUI file %s line %d"), key, file, line);
+	s3_log_error(S3_TR("Unknown button property \"%s\" found in GUI file \"%s\" line %d."), key, file, line);
 	return false;
 }
 
@@ -4022,6 +4022,6 @@ get_type_for_name(
 			return type_array[i].value;
 
 	/* If not found. */
-	s3_log_error(S3_TR("Unknown button type name '%s' in GUI file %s line %d."), name, file, line);
+	s3_log_error(S3_TR("Unknown button type name \"%s\" in GUI file \"%s\" line %d."), name, file, line);
 	return TYPE_INVALID;
 }

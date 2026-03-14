@@ -182,7 +182,7 @@ s3_move_to_tag_file(const char *file)
 
 	/* Parse the file content. */
 	if (!parse_tag_document(buf, parse_tag_callback, &error_message, &error_line)) {
-		s3_log_error(S3_TR("%s:%d: %s\n"),  file, error_line, error_message);
+		s3_log_error(S3_TR("File %s: Line %d: %s"),  file, error_line, error_message);
 		free(buf);
 		return false;
 	}
@@ -1101,7 +1101,7 @@ parse_tag_document(
 	if (state == ST_INIT)
 		return true;
 
-	*error_msg = strdup(S3_TR("Unexpected EOF"));
+	*error_msg = strdup(S3_TR("Unexpected EOF."));
 	*error_line = line;
 	return false;
 }

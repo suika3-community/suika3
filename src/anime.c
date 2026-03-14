@@ -717,7 +717,7 @@ on_key_value(
 		/* Get the layer. */
 		cur_seq_layer = layer_name_to_index(val);
 		if (cur_seq_layer == -1) {
-			s3_log_error(S3_TR("Invalid layer name %s while parsing anime file %s:%d"), val, file, line + 1);
+			s3_log_error(S3_TR("Invalid layer name \"%s\" while parsing anime file \"%s\" line %d."), val, file, line + 1);
 			return false;
 		}
 
@@ -746,14 +746,14 @@ on_key_value(
 		return true;
 	}
 	if (cur_seq_layer == -1) {
-		s3_log_error(S3_TR("Layer not specifed while parsing anime file %s:%d"), file, line + 1);
+		s3_log_error(S3_TR("Layer not specifed while parsing anime file \"%s\" line %d."), file, line + 1);
 		return false;
 	}
 
 	/* Check the sequence length of the layer. */
 	top = context[cur_seq_layer].seq_count - 1;
 	if (top == SEQUENCE_COUNT) {
-		s3_log_error(S3_TR("Sequecen too long while parsing anime file %s:%d"), file, line + 1);
+		s3_log_error(S3_TR("Sequece too long while parsing anime file \"%s\" line %d."), file, line + 1);
 		return false;
 	}
 	assert(top >= 0);
@@ -819,7 +819,7 @@ on_key_value(
 	} else if (strcmp(key, "show-special") == 0) {
 		s->show_special = true;
 	} else {
-		s3_log_error(S3_TR("Unkwon key %s while parsing anime file %s:%d"), key, file, line + 1);
+		s3_log_error(S3_TR("Unkown key \"%s\" while parsing anime file \"%s\" line %d."), key, file, line + 1);
 		return false;
 	}
 
@@ -1461,13 +1461,13 @@ static bool load_anime_file(const char *file)
 					break;
 				}
 				if (c == ':' || c == '{' || c == '}') {
-					s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
+					s3_log_error(S3_TR("Invalid character \"%c\" while parsing anime file \"%s\" line %d."), c, file, line + 1);
 					st = ST_ERROR;
 					break;
 				}
 			}
 			if (c == '}' || c == ':') {
-				s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
+				s3_log_error(S3_TR("Invalid character \"%c\" while parsing anime file \"%s\" line %d."), c, file, line + 1);
 				st = ST_ERROR;
 				break;
 			}
@@ -1487,7 +1487,7 @@ static bool load_anime_file(const char *file)
 				break;
 			}
 			if (len == sizeof(word) - 1) {
-				s3_log_error(S3_TR("Too long word while parsing anime file %s:%d"), file, line + 1);
+				s3_log_error(S3_TR("Too long word while parsing anime file \"%s\" line %d."), file, line + 1);
 				st = ST_ERROR;
 				break;
 			}
@@ -1504,7 +1504,7 @@ static bool load_anime_file(const char *file)
 				len = 0;
 				break;
 			}
-			s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
+			s3_log_error(S3_TR("Invalid character \"%c\" while parsing anime file \"%s\" line %d."), c, file, line + 1);
 			st = ST_ERROR;
 			break;
 		case ST_KEY:
@@ -1515,7 +1515,7 @@ static bool load_anime_file(const char *file)
 					break;
 				}
 				if (c == ':') {
-					s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
+					s3_log_error(S3_TR("Invalid character \"%c\" while parsing anime file \"%s\" line %d."), c, file, line + 1);
 					st = ST_ERROR;
 					break;
 				}
@@ -1525,7 +1525,7 @@ static bool load_anime_file(const char *file)
 				}
 			}
 			if (c == '{' || c == '}') {
-				s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
+				s3_log_error(S3_TR("Invalid character \"%c\" while parsing anime file \"%s\" line %d."), c, file, line + 1);
 				st = ST_ERROR;
 				break;
 			}
@@ -1544,7 +1544,7 @@ static bool load_anime_file(const char *file)
 				break;
 			}
 			if (len == sizeof(word) - 1) {
-				s3_log_error(S3_TR("Too long word while parsing anime file %s:%d"), file, line + 1);
+				s3_log_error(S3_TR("Too long word while parsing anime file \"%s\" line %d."), file, line + 1);
 				st = ST_ERROR;
 				break;
 			}
@@ -1561,7 +1561,7 @@ static bool load_anime_file(const char *file)
 				len = 0;
 				break;
 			}
-			s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
+			s3_log_error(S3_TR("Invalid character \"%c\" while parsing anime file \"%s\" line %d."), c, file, line + 1);
 			st = ST_ERROR;
 			break;
 		case ST_VALUE:
@@ -1577,7 +1577,7 @@ static bool load_anime_file(const char *file)
 				}
 			}
 			if (c == ':' || c == '{') {
-				s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
+				s3_log_error(S3_TR("Invalid character \"%c\" while parsing anime file \"%s\" line %d."), c, file, line + 1);
 				st = ST_ERROR;
 				break;
 			}
@@ -1598,7 +1598,7 @@ static bool load_anime_file(const char *file)
 				break;
 			}
 			if (len == sizeof(word) - 1) {
-				s3_log_error(S3_TR("Too long word while parsing anime file %s:%d"), file, line + 1);
+				s3_log_error(S3_TR("Too long word while parsing anime file \"%s\" line %d."), file, line + 1);
 				st = ST_ERROR;
 				break;
 			}
@@ -1617,12 +1617,12 @@ static bool load_anime_file(const char *file)
 				break;
 			}
 			if (c == '\r' || c == '\n') {
-				s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
+				s3_log_error(S3_TR("Invalid character \"%c\" while parsing anime file \"%s\" line %d."), c, file, line + 1);
 				st = ST_ERROR;
 				break;
 			}
 			if (len == sizeof(word) - 1) {
-				s3_log_error(S3_TR("Too long word while parsing anime file %s:%d"), file, line + 1);
+				s3_log_error(S3_TR("Too long word while parsing anime file \"%s\" line %d."), file, line + 1);
 				st = ST_ERROR;
 				break;
 			}
@@ -1644,7 +1644,7 @@ static bool load_anime_file(const char *file)
 				len = 0;
 				break;
 			}
-			s3_log_error(S3_TR("Invalid character %c while parsing anime file %s:%d"), c, file, line + 1);
+			s3_log_error(S3_TR("Invalid character \"%c\" while parsing anime file \"%s\" line %d."), c, file, line + 1);
 			st = ST_ERROR;
 			break;
 		}

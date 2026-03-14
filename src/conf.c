@@ -1319,7 +1319,7 @@ static bool read_conf(void)
 		v = strtok(NULL, "=");
 		if (v == NULL || v[0] == '\0') {
 			s3_log_error(
-				S3_TR("Invalid config line at file %s line %d."),
+				S3_TR("Invalid config line at file \"%s\" line %d."),
 				S3_PATH_CONFIG,
 				line);
 			free(file_buf);
@@ -1385,7 +1385,7 @@ static bool save_value(const char *k, const char *v)
 		return true;
 	}
 
-	s3_log_error(S3_TR("Unknown config key %s"), k);
+	s3_log_error(S3_TR("Unknown config key \"%s\"."), k);
 
 	return false;
 }
@@ -1397,7 +1397,7 @@ static bool check_conf(void)
 
 	for (i = 0; i < RULE_TBL_SIZE; i++) {
 		if (rule_tbl[i].must && !loaded_tbl[i]) {
-			s3_log_error(S3_TR("Undefined config key %s"), rule_tbl[i].key);
+			s3_log_error(S3_TR("Undefined config key \"%s\"."), rule_tbl[i].key);
 			return false;
 		}
 	}

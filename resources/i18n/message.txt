@@ -1,0 +1,660 @@
+ID:File %s: Line %d: %s
+es:Archivo %s: Línea %d: %s
+fr:Fichier %s: Ligne %d: %s
+it:File %s: Linea %d: %s
+de:Datei %s: Zeile %d: %s
+el:Αρχείο %s: Γραμμή %d: %s
+ru:Файл %s: Строка %d: %s
+zh:文件 %s: 第 %d 行: %s
+tw:檔案 %s: 第 %d 行: %s
+ja:ファイル %s: %d 行目: %s
+---
+ID:File %s: Line %d: Tag %s: 
+es:Archivo %s: Línea %d: Etiqueta %s: 
+fr:Fichier %s: Ligne %d: Balise %s: 
+it:File %s: Linea %d: Tag %s: 
+de:Datei %s: Zeile %d: Tag %s: 
+el:Αρχείο %s: Γραμμή %d: Ετικέτα %s: 
+ru:Файл %s: Строка %d: Тег %s: 
+zh:文件 %s: 第 %d 行: 标签 %s: 
+tw:檔案 %s: 第 %d 行: 標籤 %s: 
+ja:ファイル %s: %d 行目: タグ %s: 
+---
+ID:File %s: Line %d: Runtime error.
+es:Archivo %s: Línea %d: Error de ejecución.
+fr:Fichier %s: Ligne %d: Erreur d'exécution.
+it:File %s: Linea %d: Erreur d'esecuzione.
+de:Datei %s: Zeile %d: Laufzeitfehler.
+el:Αρχείο %s: Γραμμή %d: Σφάλμα κατά την εκτέλεση.
+ru:Файл %s: Строка %d: Ошибка времени выполнения.
+zh:文件 %s: 第 %d 行: 运行时错误。
+tw:檔案 %s: 第 %d 行: 執行階段錯誤。
+ja:ファイル %s: %d 行目: 実行時エラー。
+---
+ID:%s:%d: Tag "%s" not found.
+es:%s:%d: No se encontró la etiqueta "%s".
+fr:%s:%d : Balise "%s" introuvable.
+it:%s:%d: Tag "%s" non trovato.
+de:%s:%d: Tag "%s" wurde nicht gefunden.
+el:%s:%d: Η ετικέτα "%s" δεν βρέθηκε.
+ru:%s:%d: Тег "%s" не найден.
+zh:%s:%d: 未找到标签 "%s"。
+tw:%s:%d: 找不到標籤 "%s"。
+ja:%s:%d: タグ "%s" がみつかりません。
+---
+ID:%s:%d: "Tag_%s" is not a function.
+es:%s:%d: "Tag_%s" no es una función.
+fr:%s:%d : "Tag_%s" n'est pas une fonction.
+it:%s:%d: "Tag_%s" non è una funzione.
+de:%s:%d: "Tag_%s" ist keine Funktion.
+el:%s:%d: Το "Tag_%s" δεν είναι συνάρτηση.
+ru:%s:%d: «Tag_%s» не является функцией.
+zh:%s:%d: "Tag_%s" 不是函数。
+tw:%s:%d: "Tag_%s" 不是函式。
+ja:%s:%d: "Tag_%s" は関数ではありません。
+---
+ID:Argument "%s" not specified.
+es:No se ha especificado el argumento "%s".
+fr:Argument "%s" non spécifié.
+it:Argomento "%s" non specificato.
+de:Argument "%s" nicht angegeben.
+el:Το όρισμα "%s" δεν έχει οριστεί.
+ru:Аргумент «%s» не указан.
+zh:未指定参数 "%s"。
+tw:未指定引數 "%s"。
+ja:引数 "%s" が指定されていません。
+---
+ID:Cannot play sound file "%s".
+es:No se puede reproducir el archivo de sonido "%s".
+fr:Impossible de lire le fichier sonore "%s".
+it:Impossibile riprodurre il file audio "%s".
+de:Sounddatei "%s" kann nicht abgespielt werden.
+el:Δεν είναι δυνατή η αναπαραγωγή του αρχείου ήχου "%s".
+ru:Невозможно воспроизвести звуковой файл «%s».
+zh:无法播放音频文件 "%s"。
+tw:無法播放音訊檔案 "%s"。
+ja:サウンドファイル "%s" を再生できません。
+---
+ID:Conifg "%s" not found.
+es:No se encontró la configuración "%s".
+fr:Configuration "%s" introuvable.
+it:Configurazione "%s" non trovata.
+de:Konfiguration "%s" nicht gefunden.
+el:Η ρύθμιση "%s" δεν βρέθηκε.
+ru:Конфигурация «%s» не найдена.
+zh:未找到配置 "%s"。
+tw:找不到設定 "%s"。
+ja:設定 "%s" が見つかりません。
+---
+ID:Duplicated config key %s.
+es:Clave de configuración duplicada %s.
+fr:Clé de configuration en double %s.
+it:Chiave di configurazione duplicata %s.
+de:Doppelter Konfigurationsschlüssel %s.
+el:Διπλότυπο κλειδί ρύθμισης %s.
+ru:Дублирующийся ключ конфигурации %s.
+zh:配置键 %s 重复。
+tw:設定鍵 %s 重複。
+ja:設定キー %s が重複しています。
+---
+ID:Error loading GUI file %s.
+es:Error al cargar el archivo GUI %s.
+fr:Erreur lors du chargement du fichier GUI %s.
+it:Errore durante il caricamento del file GUI %s.
+de:Fehler beim Laden der GUI-Datei %s.
+el:Σφάλμα κατά τη φόρτωση του αρχείου GUI %s.
+ru:Ошибка загрузки GUI-файла %s.
+zh:加载 GUI 文件 %s 時出错。
+tw:載入 GUI 檔案 %s 時發生錯誤。
+ja:GUIファイル %s の読み込み中にエラーが発生しました。
+---
+ID:Failed to write save data.
+es:Error al escribir los datos de guardado.
+fr:Échec de l'écriture des données de sauvegarde.
+it:Scrittura dei dati di salvataggio fallita.
+de:Fehler beim Schreiben der Spieldaten.
+el:Αποτυχία εγγραφής δεδομένων αποθήκευσης.
+ru:Ошибка записи данных сохранения.
+zh:保存数据写入失败。
+tw:儲存存檔資料失敗。
+ja:セーブデータの書き込みに失敗しました。
+---
+ID:File "%s" not exist.
+es:El archivo "%s" no existe.
+fr:Le fichier "%s" n'existe pas.
+it:Il file "%s" non esiste.
+de:Datei "%s" existiert nicht.
+el:Το αρχείο "%s" δεν υπάρχει.
+ru:Файл «%s» не существует.
+zh:文件 "%s" 不存在。
+tw:檔案 "%s" 不存在。
+ja:ファイル "%s" がありません。
+---
+ID:Internal error.
+es:Error interno.
+fr:Erreur interne.
+it:Errore interno.
+de:Interner Fehler.
+el:Εσωτερικό σφάλμα.
+ru:Внутренняя ошибка.
+zh:内部错误。
+tw:內部錯誤。
+ja:内部エラーが発生しました。
+---
+ID:Invalid EOF on GUI file %s.
+es:EOF no válido en el archivo GUI %s.
+fr:Fin de fichier (EOF) non valide dans le fichier GUI %s.
+it:EOF non valido nel file GUI %s.
+de:Ungültiges Dateiende (EOF) in GUI-Datei %s.
+el:Μη έγκυρο τέλος αρχείου (EOF) στο αρχείο GUI %s.
+ru:Недопустимый EOF в GUI-файле %s.
+zh:GUI 文件 %s 中的 EOF 无效。
+tw:GUI 檔案 %s 中的 EOF 無效。
+ja:GUIファイル %s の終端が不正です。
+---
+ID:Invalid EOF while parsing anime file %s
+es:EOF no válido al analizar el archivo de animación %s
+fr:Fin de fichier (EOF) non valide lors de l'analyse du fichier d'animation %s
+it:EOF non valido durante l'analisi del file di animazione %s
+de:Ungültiges Dateiende (EOF) beim Parsen der Animationsdatei %s
+el:Μη έγκυρο τέλος αρχείου (EOF) κατά την ανάλυση του αρχείου κινουμένων σχεδίων %s
+ru:Недопустимый EOF при анализе файла анимации %s
+zh:解析动画文件 %s 時遇到无效的 EOF。
+tw:解析動畫檔案 %s 時遇到無效的 EOF。
+ja:アニメーションファイル %s の解析中に不正な終端に達しました。
+---
+ID:Invalid accel type "%s".
+es:Tipo de aceleración "%s" no válido.
+fr:Type d'accélération "%s" non valide.
+it:Tipo di accelerazione "%s" non valido.
+de:Ungültiger Beschleunigungstyp "%s".
+el:Μη έγκυρος τύπος επιτάχυνσης "%s".
+ru:Недопустимый тип ускорения «%s».
+zh:加速类型 "%s" 无效。
+tw:加速類型 "%s" 無效。
+ja:加速タイプ "%s" は無効です。
+---
+ID:Invalid character "%c" while parsing anime file "%s" line %d.
+es:Carácter "%c" no válido al analizar el archivo de animación "%s" en la línea %d.
+fr:Caractère "%c" non valide lors de l'analyse du fichier d'animation "%s" ligne %d.
+it:Carattere "%c" non valido durante l'analisi del file di animazione "%s" riga %d.
+de:Ungültiges Zeichen "%c" beim Parsen der Animationsdatei "%s" Zeile %d.
+el:Μη έγκυρος χαρακτήρας "%c" κατά την ανάλυση του αρχείου κινουμένων σχεδίων "%s" γραμμή %d.
+ru:Недопустимый символ «%c» при анализе файла анимации «%s» в строке %d.
+zh:解析动画文件 "%s" 第 %d 行時发现无效字符 "%c"。
+tw:解析動畫檔案 "%s" 第 %d 行時發現無效字元 "%c"。
+ja:アニメーションファイル "%s" の %d 行目を解析中に無効な文字 "%c" が見つかりました。
+---
+ID:Invalid character.
+es:Carácter no válido.
+fr:Caractère non valide.
+it:Carattere non valido.
+de:Ungültiges Zeichen.
+el:Μη έγκυρος χαρακτήρας.
+ru:Недопустимый символ.
+zh:无效字符。
+tw:無效字元。
+ja:文字が不正です。
+---
+ID:Invalid fade method "%s".
+es:Método de desvanecimiento "%s" no válido.
+fr:Méthode de fondu "%s" non valide.
+it:Metodo di dissolvenza "%s" non valido.
+de:Ungültige Fade-Methode "%s".
+el:Μη έγκυρη μέθοδος εξασθένισης "%s".
+ru:Недопустимый метод затухания «%s».
+zh:渐变方法 "%s" 无效。
+tw:漸變方法 "%s" 無效。
+ja:フェードメソッド "%s" は無効です。
+---
+ID:Invalid fade type "%s".
+es:Tipo de desvanecimiento "%s" no válido.
+fr:Type de fondu "%s" non valide.
+it:Tipo di dissolvenza "%s" non valido.
+de:Ungültiger Fade-Typ "%s".
+el:Μη έγκυρος τύπος εξασθένισης "%s".
+ru:Недопустимый тип затухания «%s».
+zh:渐变类型 "%s" 无效。
+tw:漸變類型 "%s" 無效。
+ja:フェードタイプ "%s" は無効です。
+---
+ID:Invalid layer name "%s" while parsing anime file "%s" line %d.
+es:Nombre de capa "%s" no válido al analizar el archivo de animación "%s" en la línea %d.
+fr:Nom de calque "%s" non valide lors de l'analyse du fichier d'animation "%s" ligne %d.
+it:Nome livello "%s" non valido durante l'analisi del file di animazione "%s" riga %d.
+de:Ungültiger Ebenenname "%s" beim Parsen der Animationsdatei "%s" Zeile %d.
+el:Μη έγκυρο όνομα επιπέδου "%s" κατά την ανάλυση του αρχείου κινουμένων σχεδίων "%s" γραμμή %d.
+ru:Недопустимое имя слоя «%s» при анализе файла анимации «%s» в строке %d.
+zh:解析动画文件 "%s" 第 %d 行時发现无效图层名 "%s"。
+tw:解析動畫檔案 "%s" 第 %d 行時發現無效圖層名稱 "%s"。
+ja:アニメーションファイル "%s" の %d 行目を解析中に無効なレイヤー名 "%s" が見つかりました。
+---
+ID:Invalid layer name "%s".
+es:Nombre de capa "%s" no válido.
+fr:Nom de calque "%s" non valide.
+it:Nome livello "%s" non valido.
+de:Ungültiger Ebenenname "%s".
+el:Μη έγκυρο όνομα επιπέδου "%s".
+ru:Недопустимое имя слоя «%s».
+zh:图层名 "%s" 无效。
+tw:圖層名稱 "%s" 無效。
+ja:レイヤー名 "%s" は無効です。
+---
+ID:Invalid registered anime "%s".
+es:Animación registrada "%s" no válida.
+fr:Animation enregistrée "%s" non valide.
+it:Animazione registrata "%s" non valida.
+de:Ungültige registrierte Animation "%s".
+el:Μη έγκυρη εγγεγραμμένη κίνηση "%s".
+ru:Недопустимая зарегистрированная анимация «%s».
+zh:注册动画 "%s" 无效。
+tw:註冊動畫 "%s" 無效。
+ja:登録されているアニメーション "%s" は無効です。
+---
+ID:Invalid track "%s" specified.
+es:Pista "%s" especificada no válida.
+fr:Piste "%s" spécifiée non valide.
+it:Traccia "%s" specificata non valida.
+de:Ungültiger Track "%s" angegeben.
+el:Ορίστηκε μη έγκυρο κομμάτι "%s".
+ru:Указана недопустимая дорожка «%s».
+zh:指定的轨道 "%s" 无效。
+tw:指定的軌道 "%s" 無效。
+ja:トラック "%s" の指定が不正です。
+---
+ID:Label "%s" not found.
+es:No se encontró la etiqueta "%s".
+fr:Étiquette "%s" introuvable.
+it:Etichetta "%s" non trovata.
+de:Label "%s" wurde nicht gefunden.
+el:Η ετικέτα "%s" δεν βρέθηκε.
+ru:Метка «%s» не найдена.
+zh:未找到标签 "%s"。
+tw:找不到標籤 "%s"。
+ja:ラベル "%s" が見つかりません。
+---
+ID:Layer not specifed while parsing anime file "%s" line %d.
+es:No se especificó la capa al analizar el archivo de animación "%s" en la línea %d.
+fr:Calque non spécifié lors de l'analyse du fichier d'animation "%s" ligne %d.
+it:Livello non specificato durante l'analisi del file di animazione "%s" riga %d.
+de:Ebene nicht angegeben beim Parsen der Animationsdatei "%s" Zeile %d.
+el:Δεν ορίστηκε επίπεδο κατά την ανάλυση του αρχείου κινουμένων σχεδίων "%s" γραμμή %d.
+ru:Слой не указан при анализе файла анимации «%s» в строке %d.
+zh:解析动画文件 "%s" 第 %d 行時未指定图层。
+tw:解析動畫檔案 "%s" 第 %d 行時未指定圖層。
+ja:アニメーションファイル "%s" の %d 行目を解析中にレイヤーが指定されていません。
+---
+ID:Macro "%s" not found.
+es:No se encontró la macro "%s".
+fr:Macro "%s" introuvable.
+it:Macro "%s" non trovata.
+de:Makro "%s" wurde nicht gefunden.
+el:Η μακροεντολή "%s" δεν βρέθηκε.
+ru:Макрос «%s» не найден.
+zh:未找到宏 "%s"。
+tw:找不到巨集 "%s"。
+ja:マクロ "%s" が見つかりません。
+---
+ID:No LHS specified.
+es:No se ha especificado LHS (lado izquierdo).
+fr:Aucun membre de gauche (LHS) spécifié.
+it:Nessun LHS specificato.
+de:Kein LHS angegeben.
+el:Δεν ορίστηκε αριστερό μέλος (LHS).
+ru:Левая часть (LHS) не указана.
+zh:未指定左值。
+tw:未指定左值。
+ja:左辺が指定されていません。
+---
+ID:No RHS specified.
+es:No se ha especificado RHS (lado derecho).
+fr:Aucun membre de droite (RHS) spécifié.
+it:Nessun RHS specificato.
+de:Kein RHS angegeben.
+el:Δεν ορίστηκε δεξί μέλος (RHS).
+ru:Правая часть (RHS) не указана.
+zh:未指定右值。
+tw:未指定右值。
+ja:右辺が指定されていません。
+---
+ID:No available button-id for a GUI button in GUI file "%s".
+es:No hay ID de botón disponible para un botón GUI en el archivo GUI "%s".
+fr:Aucun ID de bouton disponible pour un bouton GUI dans le fichier GUI "%s".
+it:Nessun ID pulsante disponibile per un pulsante GUI nel file GUI "%s".
+de:Keine verfügbare Button-ID für einen GUI-Button in GUI-Datei "%s".
+el:Δεν υπάρχει διαθέσιμο ID κουμπιού για ένα κουμπί GUI στο αρχείο GUI "%s".
+ru:Нет доступного ID кнопки для GUI-кнопки в GUI-файле «%s».
+zh:GUI 文件 "%s" 中没有可用的按钮 ID。
+tw:GUI 檔案 "%s" 中沒有可用的按鈕 ID。
+ja:GUIファイル "%s" に使用可能なボタンIDがありません。
+---
+ID:No correspoinding "for" detected.
+es:No se detectó el "for" correspondiente.
+fr:Aucun "for" correspondant détecté.
+it:Nessun "for" corrispondente rilevato.
+de:Kein entsprechendes "for" gefunden.
+el:Δεν εντοπίστηκε αντίστοιχο "for".
+ru:Не обнаружен соответствующий цикл «for».
+zh:未发现对应的 "for"。
+tw:找不到對應的 "for"。
+ja:対応する "for" がありません。
+---
+ID:No correspoinding "if" detected.
+es:No se detectó el "if" correspondiente.
+fr:Aucun "if" correspondant détecté.
+it:Nessun "if" corrispondente rilevato.
+de:Kein entsprechendes "if" gefunden.
+el:Δεν εντοπίστηκε αντίστοιχο "if".
+ru:Не обнаружено соответствующее условие «if».
+zh:未发现对应的 "if"。
+tw:找不到對應的 "if"。
+ja:対応する "if" がありません。
+---
+ID:No correspoinding "while" detected.
+es:No se detectó el "while" correspondiente.
+fr:Aucun "while" correspondant détecté.
+it:Nessun "while" corrispondente rilevato.
+de:Kein entsprechendes "while" gefunden.
+el:Δεν εντοπίστηκε αντίστοιχο "while".
+ru:Не обнаружен соответствующий цикл «while».
+zh:未发现对应的 "while"。
+tw:找不到對應的 "while"。
+ja:対応する "while" がありません。
+---
+ID:No matching endif found.
+es:No se encontró un endif correspondiente.
+fr:Aucun endif correspondant trouvé.
+it:Nessun endif corrispondente trovato.
+de:Kein passendes endif gefunden.
+el:Δεν βρέθηκε αντίστοιχο endif.
+ru:Соответствующий endif не найден.
+zh:未找到匹配的 endif。
+tw:找不到對應的 endif。
+ja:endif が見つかりません。
+---
+ID:No matching endmacro found.
+es:No se encontró un endmacro correspondiente.
+fr:Aucun endmacro correspondant trouvé.
+it:Nessun endmacro corrispondente trovato.
+de:Kein passendes endmacro gefunden.
+el:Δεν βρέθηκε αντίστοιχο endmacro.
+ru:Соответствующий endmacro не найден.
+zh:未找到匹配的 endmacro。
+tw:找不到對應的 endmacro。
+ja:endmacro が見つかりません。
+---
+ID:No operator specified.
+es:No se especificó ningún operador.
+fr:Aucun opérateur spécifié.
+it:Nessun operatore specificato.
+de:Kein Operator angegeben.
+el:Δεν ορίστηκε τελεστής.
+ru:Оператор не указан.
+zh:未指定操作符。
+tw:未指定運算子。
+ja:演算子が指定されていません。
+---
+ID:Property name too long.
+es:Nombre de propiedad demasiado largo.
+fr:Nom de propriété trop long.
+it:Nome della proprietà troppo lungo.
+de:Eigenschaftsname zu lang.
+el:Το όνομα της ιδιότητας είναι πολύ μεγάλο.
+ru:Имя свойства слишком длинное.
+zh:属性名过长。
+tw:屬性名稱過長。
+ja:プロパティ名が長すぎます。
+---
+ID:Property value too long.
+es:Valor de propiedad demasiado largo.
+fr:Valeur de propriété trop longue.
+it:Valore della proprietà troppo lungo.
+de:Eigenschaftswert zu lang.
+el:Η τιμή της ιδιότητας είναι πολύ μεγάλη.
+ru:Значение свойства слишком длинное.
+zh:属性值过长。
+tw:屬性值過長。
+ja:プロパティ値が長すぎます。
+---
+ID:Rule file is missing.
+es:Falta el archivo de reglas.
+fr:Le fichier de règles est manquant.
+it:Il file delle regole è mancante.
+de:Regeldatei fehlt.
+el:Το αρχείο κανόνων λείπει.
+ru:Файл правил отсутствует.
+zh:缺少规则文件。
+tw:缺少規則檔案。
+ja:ルールファイルがありません。
+---
+ID:Rule file is not specified.
+es:No se ha especificado el archivo de reglas.
+fr:Le fichier de règles n'est pas spécifié.
+it:Il file delle regole non è specificato.
+de:Regeldatei nicht angegeben.
+el:Δεν ορίστηκε αρχείο κανόνων.
+ru:Файл правил не указан.
+zh:未指定规则文件。
+tw:未指定規則檔案。
+ja:ルールファイルが指定されていません。
+---
+ID:Save data version mismatched.
+es:La versión de los datos de guardado no coincide.
+fr:La version des données de sauvegarde ne correspond pas.
+it:Versione dei dati di salvataggio non corrispondente.
+de:Version der Spieldaten stimmt nicht überein.
+el:Αναντιστοιχία έκδοσης δεδομένων αποθήκευσης.
+ru:Версия данных сохранения не совпадает.
+zh:存档数据版本不匹配。
+tw:存檔版本不符。
+ja:セーブデータのバージョンが一致しません。
+---
+ID:Sequece too long while parsing anime file "%s" line %d.
+es:Secuencia demasiado larga al analizar el archivo de animación "%s" en la línea %d.
+fr:Séquence trop longue lors de l'analyse du fichier d'animation "%s" ligne %d.
+it:Sequenza troppo lunga durante l'analisi del file di animazione "%s" riga %d.
+de:Sequenz zu lang beim Parsen der Animationsdatei "%s" Zeile %d.
+el:Η σειρά είναι πολύ μεγάλη κατά την ανάλυση του αρχείου κινουμένων σχεδίων "%s" γραμμή %d.
+ru:Слишком длинная последовательность при анализе файла анимации «%s» в строке %d.
+zh:解析动画文件 "%s" 第 %d 行時序列过长。
+tw:解析動畫檔案 "%s" 第 %d 行時序列過長。
+ja:アニメーションファイル "%s" の %d 行目を解析中にシーケンスが長すぎます。
+---
+ID:Specified ID is already used in GUI file "%s" line %d.
+es:El ID especificado ya se está usando en el archivo GUI "%s" en la línea %d.
+fr:L'ID spécifié est déjà utilisé dans le fichier GUI "%s" ligne %d.
+it:L'ID specificato è già in uso nel file GUI "%s" riga %d.
+de:Die angegebene ID wird bereits in der GUI-Datei "%s" Zeile %d verwendet.
+el:Το καθορισμένο ID χρησιμοποιείται ήδη στο αρχείο GUI "%s" γραμμή %d.
+ru:Указанный ID уже используется в GUI-файле «%s» в строке %d.
+zh:指定的 ID 已在 GUI 文件 "%s" 第 %d 行中使用。
+tw:指定的 ID 已在 GUI 檔案 "%s" 第 %d 行中使用。
+ja:指定されたIDはGUIファイル "%s" の %d 行目ですでに使用されています。
+---
+ID:Tag name too long.
+es:Nombre de etiqueta demasiado largo.
+fr:Nom de balise trop long.
+it:Nome del tag troppo lungo.
+de:Tag-Name zu lang.
+el:Το όνομα της ετικέτας είναι πολύ μεγάλο.
+ru:Имя тега слишком длинное.
+zh:标签名过长。
+tw:標籤名稱過長。
+ja:タグ名が長すぎます。
+---
+ID:This API is not implemented yet.
+es:Esta API aún no se ha implementado.
+fr:Cette API n'est pas encore implémentée.
+it:Questa API non è ancora implementata.
+de:Diese API ist noch nicht implementiert.
+el:Αυτό το API δεν έχει υλοποιηθεί ακόμα.
+ru:Этот API еще не реализован.
+zh:该 API 尚未实现。
+tw:此 API 尚未實作。
+ja:このAPIはまだ実装されていません。
+---
+ID:Too long word while parsing anime file "%s" line %d.
+es:Palabra demasiado larga al analizar el archivo de animación "%s" en la línea %d.
+fr:Mot trop long lors de l'analyse du fichier d'animation "%s" ligne %d.
+it:Parola troppo lunga durante l'analisi del file di animazione "%s" riga %d.
+de:Wort zu lang beim Parsen der Animationsdatei "%s" Zeile %d.
+el:Η λέξη είναι πολύ μεγάλη κατά την ανάλυση του αρχείου κινουμένων σχεδίων "%s" γραμμή %d.
+ru:Слишком длинное слово при анализе файла анимации «%s» в строке %d.
+zh:解析动画文件 "%s" 第 %d 行時单词过长。
+tw:解析動畫檔案 "%s" 第 %d 行時單字過長。
+ja:アニメーションファイル "%s" の %d 行目を解析中に単語が長すぎます。
+---
+ID:Too many GUI buttons in GUI file "%s".
+es:Demasiados botones GUI en el archivo GUI "%s".
+fr:Trop de boutons GUI dans le fichier GUI "%s".
+it:Troppi pulsanti GUI nel file GUI "%s".
+de:Zu viele GUI-Buttons in GUI-Datei "%s".
+el:Πάρα πολλά κουμπιά GUI στο αρχείο GUI "%s".
+ru:Слишком много GUI-кнопок в GUI-файле «%s».
+zh:GUI 文件 "%s" 中的 GUI 按钮过多。
+tw:GUI 檔案 "%s" 中的 GUI 按鈕過多。
+ja:GUIファイル "%s" のGUIボタンが多すぎます。
+---
+ID:Too many drawmsg contexts.
+es:Demasiados contextos drawmsg.
+fr:Trop de contextes drawmsg.
+it:Troppi contesti drawmsg.
+de:Zu viele drawmsg-Kontexte.
+el:Πάρα πολλά περιβάλλοντα drawmsg.
+ru:Слишком много контекстов drawmsg.
+zh:drawmsg 上下文过多。
+tw:drawmsg 上下文過多。
+ja:drawmsg コンテキストが多すぎます。
+---
+ID:Too many macro calls.
+es:Demasiadas llamadas a macros.
+fr:Trop d'appels de macros.
+it:Troppe chiamate macro.
+de:Zu viele Makroaufrufe.
+el:Πάρα πολλές κλήσεις μακροεντολών.
+ru:Слишком много вызовов макросов.
+zh:宏调用过多。
+tw:巨集呼叫過多。
+ja:マクロの呼び出し回数が多すぎます。
+---
+ID:Too many nests.
+es:Demasiados anidamientos.
+fr:Trop d'imbrications.
+it:Troppi annidamenti.
+de:Zu viele Verschachtelungen.
+el:Πάρα πολλές εμφωλεύσεις.
+ru:Слишком много уровней вложенности.
+zh:嵌套过多。
+tw:巢狀層級過多。
+ja:ネストが深すぎます。
+---
+ID:Too many properties.
+es:Demasiadas propiedades.
+fr:Trop de propriétés.
+it:Troppe proprietà.
+de:Zu viele Eigenschaften.
+el:Πάρα πολλές ιδιότητες.
+ru:Слишком много свойств.
+zh:属性过多。
+tw:屬性過多。
+ja:プロパティが多すぎます。
+---
+ID:Too many registered animes.
+es:Demasiadas animaciones registradas.
+fr:Trop d'animations enregistrées.
+it:Troppe animazioni registrate.
+de:Zu viele registrierte Animationen.
+el:Πάρα πολλές εγγεγραμμένες κινήσεις.
+ru:Слишком много зарегистрированных анимаций.
+zh:注册动画过多。
+tw:註冊動畫過多。
+ja:登録されているアニメーションが多すぎます。
+---
+ID:Undefined config key "%s".
+es:Clave de configuración "%s" no definida.
+fr:Clé de configuration "%s" non définie.
+it:Chiave di configurazione "%s" non definita.
+de:Undefinierter Konfigurationsschlüssel "%s".
+el:Μη ορισμένο κλειδί ρύθμισης "%s".
+ru:Неопределенный ключ конфигурации «%s».
+zh:未定义的配置键 "%s"。
+tw:未定義的設定鍵 "%s"。
+ja:設定キー "%s" は定義されていません。
+---
+ID:Unexpected EOF.
+es:Fin de archivo (EOF) inesperado.
+fr:Fin de fichier (EOF) inattendue.
+it:EOF imprevisto.
+de:Unerwartetes Dateiende (EOF).
+el:Μη αναμενόμενο τέλος αρχείου (EOF).
+ru:Непредвиденный конец файла (EOF).
+zh:意外的 EOF。
+tw:未預期的 EOF。
+ja:予期しないファイル終端です。
+---
+ID:Unknown button property "%s" found in GUI file "%s" line %d.
+es:Se encontró una propiedad de botón "%s" desconocida en el archivo GUI "%s" en la línea %d.
+fr:Propriété de bouton "%s" inconnue dans le fichier GUI "%s" ligne %d.
+it:Proprietà pulsante "%s" sconosciuta nel file GUI "%s" riga %d.
+de:Unbekannte Button-Eigenschaft "%s" in GUI-Datei "%s" Zeile %d gefunden.
+el:Βρέθηκε άγνωστη ιδιότητα κουμπιού "%s" στο αρχείο GUI "%s" γραμμή %d.
+ru:Неизвестное свойство кнопки «%s» в GUI-файле «%s» в строке %d.
+zh:在 GUI 文件 "%s" 第 %d 行发现未知的按钮属性 "%s"。
+tw:在 GUI 檔案 "%s" 第 %d 行發現未知的按鈕屬性 "%s"。
+ja:GUIファイル "%s" の %d 行目に未知のボタンプロパティ "%s" があります。
+---
+ID:Unknown button type name "%s" in GUI file "%s" line %d.
+es:Nombre de tipo de botón "%s" desconocido en el archivo GUI "%s" en la línea %d.
+fr:Nom de type de bouton "%s" inconnu dans le fichier GUI "%s" ligne %d.
+it:Nome tipo pulsante "%s" sconosciuto nel file GUI "%s" riga %d.
+de:Unbekannter Button-Typname "%s" in GUI-Datei "%s" Zeile %d.
+el:Άγνωστο όνομα τύπου κουμπιού "%s" στο αρχείο GUI "%s" γραμμή %d.
+ru:Неизвестное имя типа кнопки «%s» в GUI-файле «%s» в строке %d.
+zh:GUI 文件 "%s" 第 %d 行发现未知的按钮类型 "%s"。
+tw:GUI 檔案 "%s" 第 %d 行發現未知的按鈕類型 "%s"。
+ja:GUIファイル "%s" の %d 行目に未知のボタンタイプ "%s" があります。
+---
+ID:Unknown config key "%s".
+es:Clave de configuración "%s" desconocida.
+fr:Clé de configuration "%s" inconnue.
+it:Chiave di configurazione "%s" sconosciuta.
+de:Unbekannter Konfigurationsschlüssel "%s".
+el:Άγνωστο κλειδί ρύθμισης "%s".
+ru:Неизвестный ключ конфигурации «%s».
+zh:未知的配置键 "%s"。
+tw:未知的設定鍵 "%s"。
+ja:未知の設定キー "%s" です。
+---
+ID:Unknown global key "%s" found in GUI file "%s" line %d.
+es:Se encontró una clave global "%s" desconocida en el archivo GUI "%s" en la línea %d.
+fr:Clé globale "%s" inconnue dans le fichier GUI "%s" ligne %d.
+it:Chiave globale "%s" sconosciuta nel file GUI "%s" riga %d.
+de:Unbekannter globaler Schlüssel "%s" in GUI-Datei "%s" Zeile %d gefunden.
+el:Βρέθηκε άγνωστο παγκόσμιο κλειδί "%s" στο αρχείο GUI "%s" γραμμή %d.
+ru:Неизвестный глобальный ключ «%s» в GUI-файле «%s» в строке %d.
+zh:在 GUI 文件 "%s" 第 %d 行发现未知的全局键 "%s"。
+tw:在 GUI 檔案 "%s" 第 %d 行發現未知的全域鍵 "%s"。
+ja:GUIファイル "%s" の %d 行目に未知のグローバルキー "%s" があります。
+---
+ID:Unkwon key "%s" while parsing anime file "%s" line %d.
+es:Clave "%s" desconocida al analizar el archivo de animación "%s" en la línea %d.
+fr:Clé "%s" inconnue lors de l'analyse du fichier d'animation "%s" ligne %d.
+it:Chiave "%s" sconosciuta durante l'analisi del file di animazione "%s" riga %d.
+de:Unbekannter Schlüssel "%s" beim Parsen der Animationsdatei "%s" Zeile %d.
+el:Άγνωστο κλειδί "%s" κατά την ανάλυση του αρχείου κινουμένων σχεδίων "%s" γραμμή %d.
+ru:Неизвестный ключ «%s» при анализе файла анимации «%s» в строке %d.
+zh:解析动画文件 "%s" 第 %d 行時发现未知键 "%s"。
+tw:解析動畫檔案 "%s" 第 %d 行時發現未知鍵 "%s"。
+ja:アニメーションファイル "%s" の %d 行目を解析中に未知のキー "%s" が見つかりました。
+---
+ID:Invalid config line at file "%s" line %d.
+es:Línea de configuración no válida en el archivo "%s" en la línea %d.
+fr:Ligne de configuration non valide dans le fichier "%s" ligne %d.
+it:Linea di configurazione non valida nel file "%s" riga %d.
+de:Ungültige Konfigurationszeile in Datei "%s" Zeile %d.
+el:Μη έγκυρη γραμμή ρύθμισης στο αρχείο "%s" γραμμή %d.
+ru:Недопустимая строка конфигурации в файле «%s» в строке %d.
+zh:文件 "%s" 第 %d 行配置无效。
+tw:檔案 "%s" 第 %d 行設定無効。
+ja:ファイル "%s" の %d 行目の設定が不正です。
+---

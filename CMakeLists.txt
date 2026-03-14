@@ -525,6 +525,9 @@ if(   SUIKA_TARGET_WINDOWS
     external/PlayfieldEngine/src/compiler.c
   )
   target_include_directories(suika3-compiler PRIVATE
+    include
+    external/PlayfieldEngine/include
+    external/PlayfieldEngine/external/StratoHAL/include
     external/PlayfieldEngine/external/NoctLang/src/core
     external/PlayfieldEngine/external/NoctLang/src/backend
   )
@@ -540,6 +543,9 @@ if(   SUIKA_TARGET_WINDOWS
     external/PlayfieldEngine/external/NoctLang/src/backend/cback.c
   )
   target_include_directories(suika3-aot PRIVATE
+    include
+    external/PlayfieldEngine/include
+    external/PlayfieldEngine/external/StratoHAL/include
     external/PlayfieldEngine/external/NoctLang/src/core
     external/PlayfieldEngine/external/NoctLang/src/backend
   )

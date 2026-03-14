@@ -17,7 +17,7 @@
         "SUIKA_TARGET_WINDOWS":         "ON",
         "SUIKA_ENABLE_JIT":             "ON",
         "SUIKA_ENABLE_I18N":            "ON",
-        "SUIKA_ENABLE_PACK":            "ON",
+        "SUIKA_ENABLE_PACK":            "ON"
       },
       "condition": {
         "type": "equals",
@@ -38,7 +38,7 @@
         "SUIKA_TARGET_WINDOWS":         "ON",
         "SUIKA_ENABLE_JIT":             "ON",
         "SUIKA_ENABLE_I18N":            "ON",
-        "SUIKA_ENABLE_PACK":            "ON",
+        "SUIKA_ENABLE_PACK":            "ON"
       },
       "condition": {
         "type": "equals",
@@ -59,8 +59,7 @@
         "SUIKA_TARGET_WINDOWS":         "ON",
         "SUIKA_ENABLE_JIT":             "ON",
         "SUIKA_ENABLE_I18N":            "ON",
-        "SUIKA_ENABLE_PACK":            "ON",
-        "SUIKA_ENABLE_MEDIAFOUNDATION": "ON"
+        "SUIKA_ENABLE_PACK":            "ON"
       },
       "condition": {
         "type": "equals",
@@ -81,8 +80,7 @@
         "SUIKA_TARGET_WINDOWS":         "ON",
         "SUIKA_ENABLE_JIT":             "ON",
         "SUIKA_ENABLE_I18N":            "ON",
-        "SUIKA_ENABLE_PACK":            "ON",
-        "SUIKA_ENABLE_MEDIAFOUNDATION": "ON"
+        "SUIKA_ENABLE_PACK":            "ON"
       },
       "condition": {
         "type": "equals",
@@ -103,8 +101,7 @@
         "SUIKA_TARGET_WINDOWS":         "ON",
         "SUIKA_ENABLE_JIT":             "ON",
         "SUIKA_ENABLE_I18N":            "ON",
-        "SUIKA_ENABLE_PACK":            "ON",
-        "SUIKA_ENABLE_MEDIAFOUNDATION": "ON"
+        "SUIKA_ENABLE_PACK":            "ON"
       },
       "condition": {
         "type": "equals",
@@ -125,8 +122,7 @@
         "SUIKA_TARGET_WINDOWS":         "ON",
         "SUIKA_ENABLE_JIT":             "ON",
         "SUIKA_ENABLE_I18N":            "ON",
-        "SUIKA_ENABLE_PACK":            "ON",
-        "SUIKA_ENABLE_MEDIAFOUNDATION": "ON"
+        "SUIKA_ENABLE_PACK":            "ON"
       },
       "condition": {
         "type": "equals",
@@ -144,8 +140,7 @@
       "cacheVariables": {
         "SUIKA_TARGET_GDK_WINDOWS":     "ON",
         "SUIKA_ENABLE_JIT":             "ON",
-        "SUIKA_ENABLE_I18N":            "ON",
-        "SUIKA_ENABLE_MEDIAFOUNDATION": "ON"
+        "SUIKA_ENABLE_I18N":            "ON"
       },
       "condition": {
         "type": "equals",
@@ -163,8 +158,7 @@
       "cacheVariables": {
         "SUIKA_TARGET_GDK_XBOX_XS":     "ON",
         "SUIKA_ENABLE_JIT":             "OFF",
-        "SUIKA_ENABLE_I18N":            "OFF",
-        "SUIKA_ENABLE_MEDIAFOUNDATION": "ON"
+        "SUIKA_ENABLE_I18N":            "OFF"
       },
       "condition": {
         "type": "equals",
@@ -185,8 +179,7 @@
         "CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION": "10.0",
         "SUIKA_TARGET_UWP":                         "ON",
         "SUIKA_ENABLE_JIT":                         "OFF",
-        "SUIKA_ENABLE_I18N":                        "OFF",
-        "SUIKA_ENABLE_MEDIAFOUNDATION":             "ON"
+        "SUIKA_ENABLE_I18N":                        "OFF"
       },
       "condition": {
         "type": "equals",
@@ -207,8 +200,7 @@
         "SUIKA_TARGET_WINDOWS":                     "ON",
         "SUIKA_ENABLE_JIT":                         "ON",
         "SUIKA_ENABLE_I18N":                        "ON",
-        "SUIKA_ENABLE_PACK":                        "ON",
-        "SUIKA_ENABLE_MEDIAFOUNDATION":             "OFF"
+        "SUIKA_ENABLE_PACK":                        "ON"
       },
       "condition": {
         "type": "equals",
@@ -229,8 +221,7 @@
         "SUIKA_TARGET_WINDOWS":                     "ON",
         "SUIKA_ENABLE_JIT":                         "ON",
         "SUIKA_ENABLE_I18N":                        "ON",
-        "SUIKA_ENABLE_PACK":                        "ON",
-        "SUIKA_ENABLE_MEDIAFOUNDATION":             "OFF"
+        "SUIKA_ENABLE_PACK":                        "ON"
       },
       "condition": {
         "type": "equals",
@@ -251,8 +242,7 @@
         "SUIKA_TARGET_WINDOWS":                     "ON",
         "SUIKA_ENABLE_JIT":                         "ON",
         "SUIKA_ENABLE_I18N":                        "ON",
-        "SUIKA_ENABLE_PACK":                        "ON",
-        "SUIKA_ENABLE_MEDIAFOUNDATION":             "ON"
+        "SUIKA_ENABLE_PACK":                        "ON"
       },
       "condition": {
         "type": "equals",
@@ -273,8 +263,7 @@
         "SUIKA_TARGET_WINDOWS":                     "ON",
         "SUIKA_ENABLE_JIT":                         "ON",
         "SUIKA_ENABLE_I18N":                        "ON",
-        "SUIKA_ENABLE_PACK":                        "ON",
-        "SUIKA_ENABLE_MEDIAFOUNDATION":             "ON"
+        "SUIKA_ENABLE_PACK":                        "ON"
       },
       "condition": {
         "type": "equals",
@@ -295,8 +284,7 @@
         "SUIKA_TARGET_WINDOWS":                     "ON",
         "SUIKA_ENABLE_JIT":                         "ON",
         "SUIKA_ENABLE_I18N":                        "ON",
-        "SUIKA_ENABLE_PACK":                        "ON",
-        "SUIKA_ENABLE_MEDIAFOUNDATION":             "ON"
+        "SUIKA_ENABLE_PACK":                        "ON"
       },
       "condition": {
         "type": "equals",
@@ -317,8 +305,7 @@
         "SUIKA_TARGET_WINDOWS":                     "ON",
         "SUIKA_ENABLE_JIT":                         "ON",
         "SUIKA_ENABLE_I18N":                        "ON",
-        "SUIKA_ENABLE_PACK":                        "ON",
-        "SUIKA_ENABLE_MEDIAFOUNDATION":             "ON"
+        "SUIKA_ENABLE_PACK":                        "ON"
       },
       "condition": {
         "type": "equals",
@@ -336,8 +323,7 @@
       "cacheVariables": {
         "SUIKA_TARGET_GDK_WINDOWS":                 "ON",
         "SUIKA_ENABLE_JIT":                         "ON",
-        "SUIAK_ENABLE_I18N":                        "OFF",
-        "SUIKA_ENABLE_MEDIAFOUNDATION":             "ON"
+        "SUIAK_ENABLE_I18N":                        "OFF"
       },
       "condition": {
         "type": "equals",
@@ -355,8 +341,7 @@
       "cacheVariables": {
         "SUIKA_TARGET_GDK_XBOX_XS":                 "ON",
         "SUIKA_ENABLE_JIT":                         "OFF",
-        "SUIKA_ENABLE_I18N":                        "OFF",
-        "SUIKA_ENABLE_MEDIAFOUNDATION":             "ON"
+        "SUIKA_ENABLE_I18N":                        "OFF"
       },
       "condition": {
         "type": "equals",
@@ -375,8 +360,7 @@
         "SUIKA_TARGET_WINDOWS":                     "ON",
         "SUIKA_ENABLE_JIT":                         "ON",
         "SUIKA_ENABLE_I18N":                        "ON",
-        "SUIKA_ENABLE_PACK":                        "ON",
-        "SUIKA_ENABLE_MEDIAFOUNDATION":             "ON"
+        "SUIKA_ENABLE_PACK":                        "ON"
       }
     },
     {
@@ -391,7 +375,6 @@
         "SUIKA_ENABLE_JIT":                         "ON",
         "SUIKA_ENABLE_I18N":                        "ON",
         "SUIKA_ENABLE_PACK":                        "ON",
-        "SUIKA_ENABLE_MEDIAFOUNDATION":             "ON"
       }
     },
     {
@@ -403,7 +386,9 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE":                         "Release",
         "SUIKA_TARGET_WINDOWS95":                   "ON",
-        "SUIKA_ENABLE_JIT":                         "ON"
+        "SUIKA_ENABLE_JIT":                         "ON",
+        "SUIKA_ENABLE_I18N":                        "OFF",
+        "SUIKA_ENABLE_PACK":                        "OFF",
       }
     },
     {
@@ -418,7 +403,6 @@
         "SUIKA_ENABLE_JIT":                         "ON",
         "SUIKA_ENABLE_I18N":                        "ON",
         "SUIKA_ENABLE_PACK":                        "ON",
-        "SUIKA_ENABLE_MEDIAFOUNDATION":             "ON"
       }
     },
     {
