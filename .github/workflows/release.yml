@@ -491,6 +491,7 @@ jobs:
           mkdir dist/misc/wasm
           mkdir dist/misc/ios
           mkdir dist/misc/android
+          mkdir dist/misc/openharmony
           mkdir dist/misc/unity
 
       - name: Download Windows artifacts
