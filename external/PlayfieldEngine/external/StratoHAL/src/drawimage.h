@@ -118,20 +118,20 @@ DRAW_IMAGE_ALPHA(
 			dst_a = 1.0f - src_a;
 
 			/* Multiply the alpha value and the source pixel value. */
-			src_r = src_a * (float)hal_get_pixel_r(src_pix);
-			src_g = src_a * (float)hal_get_pixel_g(src_pix);
-			src_b = src_a * (float)hal_get_pixel_b(src_pix);
+			src_r = src_a * (float)((src_pix >> 16) & 0xff);
+			src_g = src_a * (float)((src_pix >> 8) & 0xff);
+			src_b = src_a * (float)(src_pix & 0xff);
 
 			/* Multiply the alpha value and the destination pixel value. */
-			dst_r = dst_a * (float)hal_get_pixel_r(dst_pix);
-			dst_g = dst_a * (float)hal_get_pixel_g(dst_pix);
-			dst_b = dst_a * (float)hal_get_pixel_b(dst_pix);
+			dst_r = dst_a * (float)((dst_pix >> 16) & 0xff);
+			dst_g = dst_a * (float)((dst_pix >> 8) & 0xff);
+			dst_b = dst_a * (float)(dst_pix & 0xff);
 
 			/* Store to the destination. */
-			*dst_ptr++ = hal_make_pixel(0xff,
-						    (uint32_t)(src_r + dst_r),
-						    (uint32_t)(src_g + dst_g),
-						    (uint32_t)(src_b + dst_b));
+			*dst_ptr++ = 0xff000000 |
+				     ((uint32_t)(src_r + dst_r) << 16) |
+				     ((uint32_t)(src_g + dst_g) << 8) |
+				     (uint32_t)(src_b + dst_b);
 		}
 		src_ptr += src_line_inc;
 		dst_ptr += dst_line_inc;
@@ -180,23 +180,23 @@ DRAW_IMAGE_GLYPH(
 			dst_a = 1.0f - src_a;
 
 			/* Multiply the alpha value and the source pixel value. */
-			src_r = src_a * (float)hal_get_pixel_r(src_pix);
-			src_g = src_a * (float)hal_get_pixel_g(src_pix);
-			src_b = src_a * (float)hal_get_pixel_b(src_pix);
+			src_r = src_a * (float)((src_pix >> 16) & 0xff);
+			src_g = src_a * (float)((src_pix >> 8) & 0xff);
+			src_b = src_a * (float)(src_pix & 0xff);
 
 			/* Multiply the alpha value and the destination pixel value. */
-			dst_r = dst_a * (float)hal_get_pixel_r(dst_pix);
-			dst_g = dst_a * (float)hal_get_pixel_g(dst_pix);
-			dst_b = dst_a * (float)hal_get_pixel_b(dst_pix);
+			dst_r = dst_a * (float)((dst_pix >> 16) & 0xff);
+			dst_g = dst_a * (float)((dst_pix >> 8) & 0xff);
+			dst_b = dst_a * (float)(dst_pix & 0xff);
 			dst_a_i = hal_get_pixel_a(dst_pix);
 
 			alpha_i = src_a > dst_a ? (uint32_t)(src_a * 255.0f) : dst_a_i;
 
 			/* Store to the destination. */
-			*dst_ptr++ = hal_make_pixel(alpha_i,
-						    (uint32_t)(src_r + dst_r),
-						    (uint32_t)(src_g + dst_g),
-						    (uint32_t)(src_b + dst_b));
+			*dst_ptr++ = 0xff000000 |
+				     ((uint32_t)(src_r + dst_r) << 16) |
+				     ((uint32_t)(src_g + dst_g) << 8) |
+				     (uint32_t)(src_b + dst_b);
 		}
 		src_ptr += src_line_inc;
 		dst_ptr += dst_line_inc;
@@ -242,21 +242,21 @@ DRAW_IMAGE_EMOJI(
 			src_a = a * ((float)hal_get_pixel_a(src_pix) / 255.0f);
 			dst_a = 1.0f - src_a;
 
-			src_r = src_a * (float)hal_get_pixel_r(src_pix);
-			src_g = src_a * (float)hal_get_pixel_g(src_pix);
-			src_b = src_a * (float)hal_get_pixel_b(src_pix);
+			src_r = src_a * (float)((src_pix) >> 16);
+			src_g = src_a * (float)((src_pix) >> 8);
+			src_b = src_a * (float)(src_pix & 0xff);
 
-			dst_r = dst_a * (float)hal_get_pixel_r(dst_pix);
-			dst_g = dst_a * (float)hal_get_pixel_g(dst_pix);
-			dst_b = dst_a * (float)hal_get_pixel_b(dst_pix);
+			dst_r = dst_a * (float)((dst_pix) >> 16);
+			dst_g = dst_a * (float)((dst_pix) >> 8);
+			dst_b = dst_a * (float)(dst_pix & 0xff);
 			dst_a_i = hal_get_pixel_a(dst_pix);
 
 			alpha_i = src_a > dst_a ? (uint32_t)(src_a * 255.0f) : dst_a_i;
 
-			*dst_ptr++ = hal_make_pixel(alpha_i,
-						    (uint32_t)(src_r + dst_r),
-						    (uint32_t)(src_g + dst_g),
-						    (uint32_t)(src_b + dst_b));
+			*dst_ptr++ = (alpha_i << 24) |
+				     ((uint32_t)(src_r + dst_r) << 16) |
+				     ((uint32_t)(src_g + dst_g) << 8) |
+				     (uint32_t)(src_b + dst_b);
 		}
 		src_ptr += src_line_inc;
 		dst_ptr += dst_line_inc;
@@ -306,14 +306,14 @@ DRAW_IMAGE_ADD(
 			src_a = a * ((float)hal_get_pixel_a(src_pix) / 255.0f);
 
 			/* Multiply the alpha value and the source pixel value. */
-			src_r = (uint32_t)(src_a * ((float)hal_get_pixel_r(src_pix) / 255.0f) * 255.0f);
-			src_g = (uint32_t)(src_a * ((float)hal_get_pixel_g(src_pix) / 255.0f) * 255.0f);
-			src_b = (uint32_t)(src_a * ((float)hal_get_pixel_b(src_pix) / 255.0f) * 255.0f);
+			src_r = (uint32_t)(src_a * ((float)((src_pix >> 16) & 0xff) / 255.0f) * 255.0f);
+			src_g = (uint32_t)(src_a * ((float)((src_pix >> 8) & 0xff) / 255.0f) * 255.0f);
+			src_b = (uint32_t)(src_a * ((float)(src_pix & 0xff) / 255.0f) * 255.0f);
 
 			/* Multiply the alpha value and the destination pixel value. */
-			dst_r = hal_get_pixel_r(dst_pix);
-			dst_g = hal_get_pixel_g(dst_pix);
-			dst_b = hal_get_pixel_b(dst_pix);
+			dst_r = (dst_pix >> 16) & 0xff;
+			dst_g = (dst_pix >> 8) & 0xff;
+			dst_b = dst_pix & 0xff;
 
 			/* Add with saturation. */
 			add_r = src_r + dst_r;
@@ -327,10 +327,10 @@ DRAW_IMAGE_ADD(
 				add_b = 255;
 
 			/* Store to the destination. */
-			*dst_ptr++ = hal_make_pixel(0xff,
-						    add_r,
-						    add_g,
-						    add_b);
+			*dst_ptr++ = 0xff000000 |
+				     (add_r << 16) |
+				     (add_g << 8) |
+				     add_b;
 		}
 		src_ptr += src_line_inc;
 		dst_ptr += dst_line_inc;
@@ -380,14 +380,14 @@ DRAW_IMAGE_SUB(
 			src_a = a * ((float)hal_get_pixel_a(src_pix) / 255.0f);
 
 			/* Multiply the alpha value and the source pixel value. */
-			src_r = (uint32_t)(src_a * ((float)hal_get_pixel_r(src_pix) / 255.0f) * 255.0f);
-			src_g = (uint32_t)(src_a * ((float)hal_get_pixel_g(src_pix) / 255.0f) * 255.0f);
-			src_b = (uint32_t)(src_a * ((float)hal_get_pixel_b(src_pix) / 255.0f) * 255.0f);
+			src_r = (uint32_t)(src_a * ((float)((src_pix >> 16) & 0xff) / 255.0f) * 255.0f);
+			src_g = (uint32_t)(src_a * ((float)((src_pix >> 8) & 0xff) / 255.0f) * 255.0f);
+			src_b = (uint32_t)(src_a * ((float)(src_pix & 0xff) / 255.0f) * 255.0f);
 
 			/* Multiply the alpha value and the destination pixel value. */
-			dst_r = hal_get_pixel_r(dst_pix);
-			dst_g = hal_get_pixel_g(dst_pix);
-			dst_b = hal_get_pixel_b(dst_pix);
+			dst_r = (dst_pix >> 16) & 0xff;
+			dst_g = (dst_pix >> 8) & 0xff;
+			dst_b = dst_pix & 0xff;
 
 			/* Add with saturation. */
 			add_r = dst_r - src_r;
@@ -401,10 +401,10 @@ DRAW_IMAGE_SUB(
 				add_b = 0;
 
 			/* Store to the destination. */
-			*dst_ptr++ = hal_make_pixel(0xff,
-						    add_r,
-						    add_g,
-						    add_b);
+			*dst_ptr++ = 0xff000000 |
+				     (add_r << 16) |
+				     (add_g << 8) |
+				     add_b;
 		}
 		src_ptr += src_line_inc;
 		dst_ptr += dst_line_inc;
@@ -452,20 +452,21 @@ DRAW_IMAGE_DIM(
 			dst_a = 1.0f - src_a;
 
 			/* Multiply 0.5 x alpha value and the source pixel value. */
-			src_r = src_a * 0.5f * (float)hal_get_pixel_r(src_pix);
-			src_g = src_a * 0.5f * (float)hal_get_pixel_g(src_pix);
-			src_b = src_a * 0.5f * (float)hal_get_pixel_b(src_pix);
+			src_r = src_a * 0.5f * (float)((src_pix >> 16) & 0xff);
+			src_g = src_a * 0.5f * (float)((src_pix >> 8) & 0xff);
+			src_b = src_a * 0.5f * (float)(src_pix & 0xff);
 
 			/* Multiply the alpha value and the destination pixel value. */
-			dst_r = dst_a * (float)hal_get_pixel_r(dst_pix);
-			dst_g = dst_a * (float)hal_get_pixel_g(dst_pix);
-			dst_b = dst_a * (float)hal_get_pixel_b(dst_pix);
+			dst_r = dst_a * (float)((dst_pix >> 16) & 0xff);
+			dst_g = dst_a * (float)((dst_pix >> 8) & 0xff);
+			dst_b = dst_a * (float)(dst_pix & 0xff);
 
 			/* Store to the destination. */
-			*dst_ptr++ = hal_make_pixel(0xff,
-						    (uint32_t)(src_r + dst_r),
-						    (uint32_t)(src_g + dst_g),
-						    (uint32_t)(src_b + dst_b));
+			*dst_ptr++ = 
+				0xff000000 |
+				((uint32_t)(src_r + dst_r) << 16) |
+				((uint32_t)(src_g + dst_g) << 8) |
+				(uint32_t)(src_b + dst_b);
 		}
 		src_ptr += src_line_inc;
 		dst_ptr += dst_line_inc;
@@ -587,20 +588,21 @@ DRAW_IMAGE_MELT(
 			dst_a = 1.0f - src_a;
 
 			/* Multiply alpha. */
-			src_r = src_a * (float)hal_get_pixel_r(src_pix);
-			src_g = src_a * (float)hal_get_pixel_g(src_pix);
-			src_b = src_a * (float)hal_get_pixel_b(src_pix);
+			src_r = src_a * (float)((src_pix >> 16) & 0xff);
+			src_g = src_a * (float)((src_pix >> 8) & 0xff);
+			src_b = src_a * (float)(src_pix & 0xff);
 
 			/* Multiply the alpha value and the destination pixel value. */
-			dst_r = dst_a * (float)hal_get_pixel_r(dst_pix);
-			dst_g = dst_a * (float)hal_get_pixel_g(dst_pix);
-			dst_b = dst_a * (float)hal_get_pixel_b(dst_pix);
+			dst_r = dst_a * (float)((dst_pix >> 16) & 0xff);
+			dst_g = dst_a * (float)((dst_pix >> 8) & 0xff);
+			dst_b = dst_a * (float)(dst_pix & 0xff);
 
 			/* Store to the destination. */
-			dst_ptr[x] = hal_make_pixel(0xff,
-						    (uint32_t)(src_r + dst_r),
-						    (uint32_t)(src_g + dst_g),
-						    (uint32_t)(src_b + dst_b));
+			dst_ptr[x] =
+				0xff000000 |
+				((uint32_t)(src_r + dst_r) << 16) |
+				((uint32_t)(src_g + dst_g) << 8) |
+				(uint32_t)(src_b + dst_b);
 		}
 		dst_ptr += dw;
 		src_ptr += sw;
@@ -696,20 +698,21 @@ DRAW_IMAGE_SCALE(
 			dst_a = 1.0f - src_a;
 
 			/* Multiply alpha to a source pixel. */
-			src_r = src_a * (float)hal_get_pixel_r(src_pix);
-			src_g = src_a * (float)hal_get_pixel_g(src_pix);
-			src_b = src_a * (float)hal_get_pixel_b(src_pix);
+			src_r = src_a * (float)((src_pix >> 16) & 0xff);
+			src_g = src_a * (float)((src_pix >> 8) & 0xff);
+			src_b = src_a * (float)(src_pix & 0xff);
 
 			/* Multiply alpha to a destination pixel. */
-			dst_r = dst_a * (float)hal_get_pixel_r(dst_pix);
-			dst_g = dst_a * (float)hal_get_pixel_g(dst_pix);
-			dst_b = dst_a * (float)hal_get_pixel_b(dst_pix);
+			dst_r = dst_a * (float)((dst_pix >> 16) & 0xff);
+			dst_g = dst_a * (float)((dst_pix >> 8) & 0xff);
+			dst_b = dst_a * (float)(dst_pix & 0xff);
 
 			/* Store to the destination. */
-			dst_ptr[real_dst_width * i + j] = hal_make_pixel(0xff,
-									 (uint32_t)(src_r + dst_r),
-									 (uint32_t)(src_g + dst_g),
-									 (uint32_t)(src_b + dst_b));
+			dst_ptr[real_dst_width * i + j] =
+				0xff000000 |
+				((uint32_t)(src_r + dst_r) << 16) |
+				((uint32_t)(src_g + dst_g) << 8) |
+				(uint32_t)(src_b + dst_b);
 		}
 	}
 
@@ -795,20 +798,21 @@ DRAW_IMAGE_3D_ALPHA(
 			dst_a = 1.0f - src_a;
 
 			/* Multiply the alpha value and the source pixel value. */
-			src_r = src_a * (float)hal_get_pixel_r(src_pix);
-			src_g = src_a * (float)hal_get_pixel_g(src_pix);
-			src_b = src_a * (float)hal_get_pixel_b(src_pix);
+			src_r = src_a * (float)((src_pix >> 16) & 0xff);
+			src_g = src_a * (float)((src_pix >> 8) & 0xff);
+			src_b = src_a * (float)(src_pix & 0xff);
 
 			/* Multiply the alpha value and the destination pixel value. */
-			dst_r = dst_a * (float)hal_get_pixel_r(dst_pix);
-			dst_g = dst_a * (float)hal_get_pixel_g(dst_pix);
-			dst_b = dst_a * (float)hal_get_pixel_b(dst_pix);
+			dst_r = dst_a * (float)((dst_pix >> 16) & 0xff);
+			dst_g = dst_a * (float)((dst_pix >> 8) & 0xff);
+			dst_b = dst_a * (float)(dst_pix & 0xff);
 
 			/* Store to the destination. */
-			dst_pixel[y * dw + x] = hal_make_pixel(0xff,
-							       (uint32_t)(src_r + dst_r),
-							       (uint32_t)(src_g + dst_g),
-							       (uint32_t)(src_b + dst_b));
+			dst_pixel[y * dw + x] =
+				0xff000000 |
+				((uint32_t)(src_r + dst_r) << 16) |
+				((uint32_t)(src_g + dst_g) << 8) |
+				(uint32_t)(src_b + dst_b);
 
 			tx += tx_inc;
 			ty += ty_inc;
@@ -881,14 +885,14 @@ DRAW_IMAGE_3D_ADD(
 			src_a = a * ((float)hal_get_pixel_a(src_pix) / 255.0f);
 
 			/* Multiply the alpha value and the source pixel value. */
-			src_r = (uint32_t)(src_a * ((float)hal_get_pixel_r(src_pix) / 255.0f) * 255.0f);
-			src_g = (uint32_t)(src_a * ((float)hal_get_pixel_g(src_pix) / 255.0f) * 255.0f);
-			src_b = (uint32_t)(src_a * ((float)hal_get_pixel_b(src_pix) / 255.0f) * 255.0f);
+			src_r = (uint32_t)(src_a * ((float)((src_pix >> 16) & 0xff) / 255.0f) * 255.0f);
+			src_g = (uint32_t)(src_a * ((float)((src_pix >> 8) & 0xff) / 255.0f) * 255.0f);
+			src_b = (uint32_t)(src_a * ((float)(src_pix & 0xff) / 255.0f) * 255.0f);
 
 			/* Multiply the alpha value and the destination pixel value. */
-			dst_r = hal_get_pixel_r(dst_pix);
-			dst_g = hal_get_pixel_g(dst_pix);
-			dst_b = hal_get_pixel_b(dst_pix);
+			dst_r = (dst_pix >> 16) & 0xff;
+			dst_g = (dst_pix >> 8) & 0xff;
+			dst_b = dst_pix & 0xff;
 
 			/* Add with saturation. */
 			add_r = src_r + dst_r;
@@ -902,10 +906,11 @@ DRAW_IMAGE_3D_ADD(
 				add_b = 255;
 
 			/* Store to the destination. */
-			dst_pixel[y * dw + x] = hal_make_pixel(0xff,
-							       add_r,
-							       add_g,
-							       add_b);
+			dst_pixel[y * dw + x] =
+				0xff000000 |
+				(add_r << 16) |
+				(add_g << 8) |
+				add_b;
 
 			tx += tx_inc;
 			ty += ty_inc;
@@ -999,10 +1004,11 @@ DRAW_IMAGE_3D_SUB(
 				add_b = 0;
 
 			/* Store to the destination. */
-			dst_pixel[y * dw + x] = hal_make_pixel(0xff,
-							       add_r,
-							       add_g,
-							       add_b);
+			dst_pixel[y * dw + x] =
+				0xff000000 |
+				(add_r << 16) |
+				(add_g << 8) |
+				add_b;
 
 			tx += tx_inc;
 			ty += ty_inc;
@@ -1084,10 +1090,11 @@ DRAW_IMAGE_3D_DIM(
 			dst_b = dst_a * (float)hal_get_pixel_b(dst_pix);
 
 			/* Store to the destination. */
-			dst_pixel[y * dw + x] = hal_make_pixel(0xff,
-							       (uint32_t)(src_r + dst_r),
-							       (uint32_t)(src_g + dst_g),
-							       (uint32_t)(src_b + dst_b));
+			dst_pixel[y * dw + x] =
+				0xff000000 |
+				((uint32_t)(src_r + dst_r) << 16) |
+				((uint32_t)(src_g + dst_g) << 8) |
+				(uint32_t)(src_b + dst_b);
 
 			tx += tx_inc;
 			ty += ty_inc;

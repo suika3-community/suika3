@@ -726,6 +726,13 @@ if(STARATO_TARGET_OPENHARMONY)
   target_compile_definitions(strato PRIVATE HAL_USE_GLES)
 endif()
 
+# Software rendering.
+if(   STRATO_TARGET_LINUX_X11SOFT
+   OR STRATO_TARGET_SOLARIS11
+   OR STRATO_TARGET_GENERICUNIX)
+  target_compile_definitions(strato PUBLIC HAL_USE_X11_SOFTRENDER)
+endif()
+
 #
 # CFLAGS
 #

@@ -809,7 +809,7 @@
       "generator":      "Unix Makefiles",
       "binaryDir":      "${sourceDir}/build-unix",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE":             "Release",
+        "CMAKE_BUILD_TYPE":             "Debug",
         "CMAKE_C_COMPILER":             "cc",
         "CMAKE_CXX_COMPILER":           "c++",
         "PLAYFIELD_TARGET_GENERICUNIX": "ON",

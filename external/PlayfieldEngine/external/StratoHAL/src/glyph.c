@@ -861,9 +861,9 @@ draw_glyph_func(
 	}
 
 	/* Draw. */
-	color_r = (float)hal_get_pixel_r(color);
-	color_g = (float)hal_get_pixel_g(color);
-	color_b = (float)hal_get_pixel_b(color);
+	color_r = (float)((color >> 16) & 0xff);
+	color_g = (float)((color >> 8) & 0xff);
+	color_b = (float)(color & 0xff);
 	dst_ptr = image + image_real_y * image_width + image_real_x;
 	src_ptr = font + font_real_y * font_width + font_real_x;
 	for (py = font_real_y; py < font_real_y + font_real_height; py++) {
@@ -880,18 +880,19 @@ draw_glyph_func(
 
 			/* Get a destination pixel. */
 			dst_pix	= *dst_ptr;
-			dst_r  = dst_a * (float)hal_get_pixel_r(dst_pix);
-			dst_g  = dst_a * (float)hal_get_pixel_g(dst_pix);
-			dst_b  = dst_a * (float)hal_get_pixel_b(dst_pix);
+			dst_r  = dst_a * (float)((dst_pix >> 16) & 0xff);
+			dst_g  = dst_a * (float)((dst_pix >> 8) & 0xff);
+			dst_b  = dst_a * (float)(dst_pix & 0xff);
 			dst_a2 = src_pix + hal_get_pixel_a(dst_pix);
 			if (dst_a2 > 255)
 				dst_a2 = 255;
 
 			/* Compose and store. */
-			*dst_ptr++ = hal_make_pixel((uint32_t)dst_a2,
-						    (uint32_t)(src_r + dst_r),
-						    (uint32_t)(src_g + dst_g),
-						    (uint32_t)(src_b + dst_b));
+			*dst_ptr++ =
+				(dst_a2 << 24) |
+				((uint32_t)(src_r + dst_r) << 16) |
+				((uint32_t)(src_g + dst_g) << 8) |
+				(uint32_t)(src_b + dst_b);
 		}
 		dst_ptr += image_width - font_real_width;
 		src_ptr += font_width - font_real_width;
@@ -955,11 +956,6 @@ draw_glyph_dim_func(
 		font_real_height -= (image_real_y + font_real_height) -
 				    image_height;
 	}
-
-	color = hal_make_pixel(255,
-			       hal_get_pixel_r(color),
-			       hal_get_pixel_g(color),
-			       hal_get_pixel_b(color));
 
 	/* Draw. */
 	dst_ptr = image + image_real_y * image_width + image_real_x;

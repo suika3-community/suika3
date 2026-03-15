@@ -232,7 +232,7 @@ struct hal_image {
         defined(HAL_TARGET_WINDOWS) || \
         defined(HAL_TARGET_MACOS) || \
         defined(HAL_TARGET_IOS) || \
-        (defined(HAL_TARGET_POSIX) && defined(HAL_USE_X11_SOFTRENDER)) || \
+        defined(HAL_USE_X11_SOFTRENDER) || \
 	defined(HAL_TARGET_UNITY) \
     )
 #define ORDER_BGRA	/* Use BGRA on Direct3D and Metal. */
@@ -276,9 +276,9 @@ hal_get_pixel_r(
 	hal_pixel_t p)
 {
 #ifdef ORDER_RGBA
-	return (p >> 16) & 0xff;
-#else
 	return p & 0xff;
+#else
+	return (p >> 16) & 0xff;
 #endif
 }
 
@@ -289,11 +289,7 @@ static INLINE uint32_t
 hal_get_pixel_g(
 	hal_pixel_t p)
 {
-#ifdef ORDER_RGBA
 	return (p >> 8) & 0xff;
-#else
-	return (p >> 8) & 0xff;
-#endif
 }
 
 /*
@@ -304,9 +300,9 @@ hal_get_pixel_b(
 	hal_pixel_t p)
 {
 #ifdef ORDER_RGBA
-	return p & 0xff;
-#else
 	return (p >> 16) & 0xff;
+#else
+	return p & 0xff;
 #endif
 }
 

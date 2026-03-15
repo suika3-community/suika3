@@ -1222,15 +1222,34 @@ hal_render_image_normal(
 	if (src_height == -1)
 		src_height = src_image->height;
 
-	hal_draw_image_alpha(back_image,
-			     dst_left,
-			     dst_top,
-			     src_image,
-			     src_width,
-			     src_height,
-			     src_left,
-			     src_top,
-			     alpha);
+	if (dst_width != src_width ||
+	    dst_height != src_height) {
+		hal_draw_image_3d_alpha(back_image,
+					dst_left,
+					dst_top,
+					dst_left + dst_width,
+					dst_top,
+					dst_left,
+					dst_top + dst_height,
+					dst_left + dst_width,
+					dst_top + dst_height,
+					src_image,
+					src_left,
+					src_top,
+					src_width,
+					src_height,
+					alpha);
+	} else {
+		hal_draw_image_alpha(back_image,
+				     dst_left,
+				     dst_top,
+				     src_image,
+				     src_width,
+				     src_height,
+				     src_left,
+				     src_top,
+				     alpha);
+	}
 }
 
 /*
@@ -1258,15 +1277,34 @@ hal_render_image_add(
 	if (src_height == -1)
 		src_height = src_image->height;
 
-	hal_draw_image_add(back_image,
-			   dst_left,
-			   dst_top,
-			   src_image,
-			   src_width,
-			   src_height,
-			   src_left,
-			   src_top,
-			   alpha);
+	if (dst_width != src_width ||
+	    dst_height != src_height) {
+		hal_draw_image_3d_add(back_image,
+				      dst_left,
+				      dst_top,
+				      dst_left + dst_width,
+				      dst_top,
+				      dst_left,
+				      dst_top + dst_height,
+				      dst_left + dst_width,
+				      dst_top + dst_height,
+				      src_image,
+				      src_left,
+				      src_top,
+				      src_width,
+				      src_height,
+				      alpha);
+	} else {
+		hal_draw_image_add(back_image,
+				   dst_left,
+				   dst_top,
+				   src_image,
+				   src_width,
+				   src_height,
+				   src_left,
+				   src_top,
+				   alpha);
+	}
 }
 
 /*
@@ -1294,15 +1332,34 @@ hal_render_image_sub(
 	if (src_height == -1)
 		src_height = src_image->height;
 
-	hal_draw_image_sub(back_image,
-			   dst_left,
-			   dst_top,
-			   src_image,
-			   src_width,
-			   src_height,
-			   src_left,
-			   src_top,
-			   alpha);
+	if (dst_width != src_width ||
+	    dst_height != src_height) {
+		hal_draw_image_3d_sub(back_image,
+				      dst_left,
+				      dst_top,
+				      dst_left + dst_width,
+				      dst_top,
+				      dst_left,
+				      dst_top + dst_height,
+				      dst_left + dst_width,
+				      dst_top + dst_height,
+				      src_image,
+				      src_left,
+				      src_top,
+				      src_width,
+				      src_height,
+				      alpha);
+	} else {
+		hal_draw_image_sub(back_image,
+				   dst_left,
+				   dst_top,
+				   src_image,
+				   src_width,
+				   src_height,
+				   src_left,
+				   src_top,
+				   alpha);
+	}
 }
 
 /*
@@ -1330,15 +1387,34 @@ hal_render_image_dim(
 	if (src_height == -1)
 		src_height = src_image->height;
 
-	hal_draw_image_dim(back_image,
-			   dst_left,
-			   dst_top,
-			   src_image,
-			   src_width,
-			   src_height,
-			   src_left,
-			   src_top,
-			   alpha);
+	if (dst_width != src_width ||
+	    dst_height != src_height) {
+		hal_draw_image_3d_dim(back_image,
+				      dst_left,
+				      dst_top,
+				      dst_left + dst_width,
+				      dst_top,
+				      dst_left,
+				      dst_top + dst_height,
+				      dst_left + dst_width,
+				      dst_top + dst_height,
+				      src_image,
+				      src_left,
+				      src_top,
+				      src_width,
+				      src_height,
+				      alpha);
+	} else {
+		hal_draw_image_dim(back_image,
+				   dst_left,
+				   dst_top,
+				   src_image,
+				   src_width,
+				   src_height,
+				   src_left,
+				   src_top,
+				   alpha);
+	}
 }
 
 /*

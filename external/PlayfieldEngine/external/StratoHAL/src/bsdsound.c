@@ -454,7 +454,7 @@ mul_add_pcm(
 
 #endif /* defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__SunOS) */
 
-#if !defined(__FreeBSD__) && defined(__NetBSD__) && defined(__OpenBSD__) && defined(__SunOS)
+#if !defined(__linux) && !defined(__FreeBSD__) && defined(__NetBSD__) && defined(__OpenBSD__) && defined(__SunOS)
 
 bool
 init_sound(void)
