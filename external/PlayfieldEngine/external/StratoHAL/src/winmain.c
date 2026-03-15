@@ -65,7 +65,7 @@ typedef wchar_t TCHAR;
 #define tstrdup		_wcsdup
 #define tfopen		_wfopen
 #else
-#define RICHEDIT	"RICHEDIT50"
+#define RICHEDIT	"RICHEDIT"
 #define CONSOLAS	"Times New Roman"
 #define CONSOLE		"Console"
 #define _T(s)		s

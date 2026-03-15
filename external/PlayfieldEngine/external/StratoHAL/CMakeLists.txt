@@ -24,6 +24,7 @@ option(STRATO_TARGET_FREEBSD          "Build for FreeBSD X11"              OFF)
 option(STRATO_TARGET_FREEBSD_WAYLAND  "Build for FreeBSD Wayland"          OFF)
 option(STRATO_TARGET_NETBSD           "Build for NetBSD"                   OFF)
 option(STRATO_TARGET_OPENBSD          "Build for OpenBSD"                  OFF)
+option(STRATO_TARGET_SOLARIS11        "Build for Solaris 11"               OFF)
 option(STRATO_TARGET_GDK_WINDOWS      "Build for GDK for Desktop"          OFF)
 option(STRATO_TARGET_GDK_XBOX_XS      "Build for GDK for Xbox Series X|S"  OFF)
 option(STRATO_TARGET_UWP              "Build for UWP"                      OFF)
@@ -58,6 +59,7 @@ if(   STRATO_TARGET_WINDOWS
    OR STRATO_TARGET_FREEBSD_WAYLAND
    OR STRATO_TARGET_NETBSD
    OR STRATO_TARGET_OPENBSD
+   OR STRATO_TARGET_SOLARIS11
    OR STRATO_TARGET_GDK_WINDOWS
    OR STRATO_TARGET_GDK_XBOX_XS
    OR STRATO_TARGET_UWP
@@ -66,22 +68,40 @@ if(   STRATO_TARGET_WINDOWS
 else()
   if(WIN32)
     set(STRATO_TARGET_WINDOWS    ON)
+    message(STATUS "Targeting Windows.")
   endif()
   if(APPLE AND NOT IOS)
     set(STRATO_TARGET_MACOS      ON)
+    message(STATUS "Targeting macOS.")
   endif()
   if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     set(STRATO_TARGET_LINUX      ON)
+    message(STATUS "Targeting Linux.")
   endif()
   if(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
     set(STRATO_TARGET_FREEBSD    ON)
+    message(STATUS "Targeting FreeBSD.")
   endif()
   if(CMAKE_SYSTEM_NAME STREQUAL "NetBSD")
     set(STRATO_TARGET_NETBSD     ON)
+    message(STATUS "Targeting NetBSD.")
   endif()
   if(CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")
     set(STRATO_TARGET_OPENBSD    ON)
+    message(STATUS "Targeting OpenBSD.")
   endif()
+  if(CMAKE_SYSTEM_NAME STREQUAL "Solaris")
+    set(STRATO_TARGET_SOLARIS11  ON)
+  endif()
+
+  if(CMAKE_SYSTEM_NAME STREQUAL "SunOS")
+    if(CMAKE_SYSTEM_VERSION VERSION_GREATER_EQUAL "5.11")
+      set(STRATO_TARGET_SOLARIS11 ON)
+      message(STATUS "Targeting Solaris 11.")
+    else()
+      error("Solaris 10 is not supported yet.")
+    endif()
+endif()
   # No automatic detection for:
   #  - iOS
   #  - Android
@@ -154,7 +174,8 @@ if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_LINUX_X11SOFT
    OR STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_NETBSD
-   OR STRATO_TARGET_OPENBSD)
+   OR STRATO_TARGET_OPENBSD
+   OR STRATO_TARGET_SOLARIS11)
   find_library(X11_LIBRARY X11 REQUIRED)
   find_library(XPM_LIBRARY Xpm REQUIRED)
   find_library(GL_LIBRARY GL REQUIRED)
@@ -251,8 +272,7 @@ endif()
 if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_NETBSD
-   OR STRATO_TARGET_OPENBSD
-)
+   OR STRATO_TARGET_OPENBSD)
   set(STRATO_SOURCES
       src/image.c
       src/glyph.c
@@ -312,13 +332,15 @@ if(STRATO_TARGET_LINUX_FBDEV)
 endif()
 
 # For Linux X11 Software Rendering.
-if(STRATO_TARGET_LINUX_X11SOFT)
+if(   STRATO_TARGET_LINUX_X11SOFT
+   OR STRATO_TARGET_SOLARIS11)
   set(STRATO_SOURCES
       src/image.c
       src/glyph.c
       src/wave.c
       src/stdfile.c
       src/asound.c
+      src/bsdsound.c
       src/evgamepad.c
       src/x11softmain.c
       src/icon.c
@@ -666,6 +688,11 @@ if(STRATO_TARGET_OPENBSD)
   target_include_directories(strato PUBLIC /usr/local/include /usr/X11R6/include)
 endif()
 
+# Solaris11: Add -I/usr/local/include -I/usr/X11R6/include
+if(STRATO_TARGET_SOLARIS11)
+  target_include_directories(strato PUBLIC /usr/local/include /usr/X11R6/include)
+endif()
+
 # Android: Add -DHAL_USE_GLES
 if(STARATO_TARGET_ANDROID)
   target_compile_definitions(strato PRIVATE HAL_USE_GLES)
@@ -783,18 +810,16 @@ if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_NETBSD
    OR STRATO_TARGET_OPENBSD
-)
-  # Add -lm -lpthread -lXpm -lX11 -lGL -lGLX
-  target_link_libraries(
-    strato
-    PUBLIC
-    m
-    pthread
-    Xpm
-    X11
-    GL
-    ${GLX_LIBRARY}  # We need this on systems with older Mesa.
-  )
+   OR STRATO_TARGET_SOLARIS11)
+  # Base
+  target_link_libraries(strato PUBLIC m pthread Xpm X11)
+
+  # Mesa
+  if(    NOT STRATO_TARGET_LINUX_X11SOFT
+     AND NOT STRATO_TARGET_LINUX_SOLARIS11)
+    # We need GLX on systems with older Mesa.
+    target_link_libraries(strato PUBLIC GL ${GLX_LIBRARY})
+  endif()
 
   # GStreamer
   if(STRATO_ENABLE_GST)
@@ -879,6 +904,11 @@ endif()
 # OpenHarmony: Add -lGLESv2 -lOpenSLES -llibrawfile.z.so
 if(STRATO_TARGET_OPENHARMONY)
   target_link_libraries(strato PUBLIC m GLESv2 OpenSLES librawfile.z.so)
+endif()
+
+# Solaris11: Add -L/usr/local/lib -L/usr/X11R6/lib
+if(STRATO_TARGET_SOLARIS11)
+  target_link_directories(strato PUBLIC /usr/local/lib /usr/X11R6/lib)
 endif()
 
 # GDK link options.

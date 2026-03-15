@@ -763,6 +763,19 @@
         "PLAYFIELD_TARGET_OPENBSD":    "ON",
         "PLAYFIELD_ENABLE_PACK":       "ON"
       }
+    },
+    {
+      "name":           "solaris11",
+      "displayName":    "Solaris 11",
+      "generator":      "Unix Makefiles",
+      "binaryDir":      "${sourceDir}/build-solaris11",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Debug",
+        "CMAKE_C_COMPILER":            "cc",
+        "CMAKE_CXX_COMPILER":          "CC",
+        "PLAYFIELD_TARGET_SOLARIS11":  "ON",
+        "PLAYFIELD_ENABLE_PACK":       "ON"
+      }
     }
   ],
 
@@ -954,6 +967,10 @@
     {
       "name": "openbsd",
       "configurePreset": "openbsd"
+    },
+    {
+      "name": "solaris11",
+      "configurePreset": "solaris11"
     }
   ]
 }

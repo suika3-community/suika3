@@ -144,15 +144,16 @@ Currently we are focusing on `C API` for use with derrived engines.
 
 |Type       |OS              |Status       |Confirm Date |Confirmed On                        |
 |-----------|----------------|-------------|-------------|------------------------------------|
-|Desktop    |Windows         |✅ Works     |1 March 2026 |Windows 11 x64                      |
-|           |macOS           |✅ Works     |1 March 2026 |macOS 26 Arm64                      |
-|           |Linux           |✅ Works     |1 March 2026 |Ubuntu 24.04 LTS x86_64             |
-|Mobile     |iOS             |✅ Works     |1 March 2026 |iPhone iOS 26                       |
+|Desktop    |Windows         |✅ Works     |1 Mar 2026 |Windows 11 x64                      |
+|           |macOS           |✅ Works     |1 Mar 2026 |macOS 26 Arm64                      |
+|           |Linux           |✅ Works     |1 Mar 2026 |Ubuntu 24.04 LTS x86_64             |
+|Mobile     |iOS             |✅ Works     |1 Mar 2026 |iPhone iOS 26                       |
 |           |Android         |✅ Works     |22 Sep 2025  |Android 16                          |
-|           |HarmonyOS NEXT  |✅ Initial   |9 March 2026 |DevEco Studio 6                     |
+|           |HarmonyOS NEXT  |✅ Initial   |9 Mar 2026 |DevEco Studio 6                     |
 |BSD        |FreeBSD         |✅ Works     |22 Sep 2025  |FreeBSD 14.3 amd64                  |
 |           |NetBSD          |✅ Works     |22 Sep 2025  |NetBSD 10.1 amd64                   |
 |           |OpenBSD         |✅ Works     |22 Sep 2025  |OpenBSD 7.7 amd64                   |
+|UNIX       |Solaris 11      |✅ Works     |16 Mar 2026  |Solaris 11.4 SunCC                  |
 |Others     |WebAssembly     |✅ Works     |22 Sep 2025  |Chrome                              |
 |           |Chromebook      |✅ Works     |22 Sep 2025  |Chrome [Here](https://noctvm.io/w/) |
 |           |Unity           |✅ Works     |22 Sep 2025  |Unity 6.2 Windows 11 x86_64         |
@@ -443,6 +444,7 @@ and build configurations.
 |freebsd                        |FreeBSD          |Clang      |build-freebsd                          |playfield        |Executable     |
 |netbsd                         |NetBSD           |GCC        |build-netbsd                           |playfield        |Executable     |
 |openbsd                        |OpenBSD          |Clang      |build-openbsd                          |playfield        |Executable     |
+|solaris11                      |Solaris 11       |SunCC      |build-solaris11                        |playfield        |Executable     |
 |wasm                           |WebAssembly      |Emscripten |build-wasm                             |index.html       |HTML + Wasm    |
 |wasm-local                     |Chromebook       |Emscripten |build-wasm-local                       |index.html       |HTML + Wasm    |
 |ios-device                     |iOS Device       |Clang      |build-ios-device                       |libplayfield.a   |Static Library |
