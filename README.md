@@ -9,7 +9,7 @@ rendering architecture for mobile app store compliance.
 <div align="center">
   <img src="https://raw.githubusercontent.com/suika3-community/suika3/refs/heads/main/docs/img/logo-small.png" alt="Suika3 Logo"><br>
   Our slogan is "Visual Novel Anywhere!"<br>
-  <img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/platforms.png" alt="Suika3 runs virtually all platforms."><br>
+  <img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/platforms.png" alt="Suika3 runs everywhere."><br>
 </div>
 
 ---
@@ -19,8 +19,8 @@ rendering architecture for mobile app store compliance.
 - **Target:** Mobile-first VN engine that runs anywhere
 - **High-Performance:** Native, written in C
 - **Hybrid Scripting:** JIT VM with AOT fallback for App Store compliance
-- **Virtually All Platforms:**
-    * **Desktop:** Windows, macOS, Linux, Chromebook, Raspberry Pi, *BSD
+- **Runs Everywhere:**
+    * **Desktop:** Windows, macOS, Linux, Chromebook, Raspberry Pi, *BSD, Solaris
     * **Mobile:** iOS, Android, HarmonyOS NEXT
     * **Web:** WebAssembly
     * **Console:** Xbox GDK, PS5 and Switch via Unity Integration
@@ -90,6 +90,9 @@ Suika3 is engineered with modern techniques, and delivers:
 
 - **Jot-and-Run**: A powerful markup language designed to bring your
   stories to life in an instant.
+
+- **Battery-Friendly:** Idle CPU and GPU usages are around 1%, making
+  it perfect for long-play on mobile devices.
 
 - **Long-Term Support:** Our codebase is so portable and designed to
   support future platforms through the 2030s, 2040s, and beyond.
@@ -416,6 +419,7 @@ alternative, StratoHAL covers:
 |               |ChromeOS            |WebGL 2                  |OpenAL (Emscripten)   |Emscripten (C)       |
 |               |Linux               |OpenGL 3                 |ALSA                  |C, X11 or Wayland    |
 |               |*BSD                |OpenGL 3                 |OSS (/dev/dsp)        |C, X11               |
+|               |Solaris 11          |Software                 |OSS (/dev/dsp)        |C, X11               |
 |               |Qt                  |OpenGL 3                 |Qt Sound              |Qt                   |
 |Mobile         |iOS                 |Metal                    |Audio Unit            |UIKit (Objective-C)  |
 |               |Android             |OpenGL ES 2              |OpenSL ES             |Android NDK          |
@@ -457,6 +461,8 @@ to cover most gaming consoles and smartphones, including:
 - ✅ RISC-V 32 (for future devices) [jit-riscv32.c](https://github.com/suika3-community/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-riscv32.c)
 - ✅ RISC-V 64 (for future devices) [jit-riscv64.c](https://github.com/suika3-community/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-riscv64.c)
 
+These architectures are well-supported, we can say at least they all pass [the test suite](external/PlayfieldEngine/external/NoctLang/tests/run-syntax.sh).
+
 However, the following are not supported yet because of the lack of development machines:
 
 - ❌ SH-4 (Dreamcast)
@@ -478,26 +484,28 @@ Please see [AOT](docs/mkdocs-en/docs/aot.md) for more details.
 
 ### Script Execution Mode
 
-|Platform       |Mode               |
-|---------------|-------------------|
-|Windows x86    |JIT                |
-|Windows x64    |JIT                |
-|Windows arm64  |JIT                |
-|macOS x86_64   |JIT                |
-|macOS arm64    |JIT                |
-|Linux x86      |JIT                |
-|Linux x86_64   |JIT                |
-|Linux armv7    |JIT                |
-|Linux arm64    |JIT                |
-|iOS            |Interpreter or AOT |
-|Android        |Interpreter or AOT |
-|HarmonyOS NEXT |Interpreter or AOT |
-|WebAssembly    |Interpreter or AOT |
-|Unity Plugin   |Interpreter or AOT |
-|Xbox           |Interpreter or AOT |
-|FreeBSD        |JIT                |
-|NetBSD         |JIT                |
-|OpenBSD        |Interpreter or AOT |
+|Platform          |Mode               |
+|------------------|-------------------|
+|Windows x86       |JIT                |
+|Windows x64       |JIT                |
+|Windows arm64     |JIT                |
+|macOS x86_64      |JIT                |
+|macOS arm64       |JIT                |
+|Linux x86         |JIT                |
+|Linux x86_64      |JIT                |
+|Linux armv7       |JIT                |
+|Linux arm64       |JIT                |
+|iOS               |Interpreter or AOT |
+|Android           |Interpreter or AOT |
+|HarmonyOS NEXT    |Interpreter or AOT |
+|WebAssembly       |Interpreter or AOT |
+|Unity Plugin      |Interpreter or AOT |
+|Xbox              |Interpreter or AOT |
+|FreeBSD           |JIT                |
+|NetBSD            |JIT                |
+|OpenBSD           |Interpreter or AOT |
+|Solaris 11 x86_64 |JIT                |
+|Solaris 11 Sparc  |Interpreter or AOT |
 
 ### Runtime Footprint
 
@@ -734,6 +742,12 @@ Suika3 provides the 32-bit classic binary `suika3-95.exe` for early Win32 compat
 | API 20     | ✅     |
 | API 12     | ✅     |
 
+### Solaris
+
+| OS         | Status |
+|------------|--------|
+| Solaris 11 | ✅     |
+
 ---
 
 ## Documentation
@@ -864,6 +878,7 @@ configurations.
 |freebsd                        |FreeBSD               |Clang      |build-freebsd                          |suika3        |Executable     |
 |netbsd                         |NetBSD                |GCC        |build-netbsd                           |suika3        |Executable     |
 |openbsd                        |OpenBSD               |Clang      |build-openbsd                          |suika3        |Executable     |
+|solaris11                      |Solaris11             |SunCC      |build-solaris11                        |suika3        |Executable     |
 |wasm                           |WebAssembly           |Emscripten |build-wasm                             |index.html    |HTML + Wasm    |
 |wasm-local                     |Chromebook            |Emscripten |build-wasm-local                       |index.html    |HTML + Wasm    |
 |ios-device                     |iOS Device            |Clang      |build-ios-device                       |libsuika3.a   |Static Library |
@@ -938,15 +953,6 @@ Adopter**, we warmly invite you to join our community.
 
 If you prefer to adopt tools with an established track record, you may
 wish to revisit the project once Suika3 has matured further.
-
-```
-                              ----------------
-                    ------------------------------------
-             -------------------------------------------------
--------------------------------------------------------------------------
- Innovators | Early Adopters | Early Majority | Late Majority | Laggards 
-2.5%          13.5%              34%             34%          16%
-```
 
 ---
 
@@ -1028,11 +1034,13 @@ tampering. The obfuscation key can be changed in "key.h".)
 
 ## Versioning Policy
 
-* 26.07.0: Initial release of Suika3 (July 2026)
-* 27.01.0: First major update with new features and improvements (January 2027)
-* 27.07.0: Second major update with additional features and optimizations (July 2027)
-* 28.01.0: Third major update with further enhancements and bug fixes (January 2028)
-* ...
+`Year.Month.Patch-Level`
+
+- 26.07.0: Initial release of Suika3 (July 2026)
+- 27.01.0: First major update with new features and improvements (January 2027)
+- 27.07.0: Second major update with additional features and optimizations (July 2027)
+- 28.01.0: Third major update with further enhancements and bug fixes (January 2028)
+- ...
 
 ---
 
@@ -1274,7 +1282,7 @@ Play, regardless of their software, hardware, and budget limitations.
 - [JIT is disabled on iOS/console, so what should I do?](#jit-is-disabled-on-iosconsole-so-what-should-i-do)
 - [Are scripts safe? Can they access files or the network?](#are-scripts-safe-can-they-access-files-or-the-network)
 - [Is it easy to pass the store review?](#is-it-easy-to-pass-the-store-review)
-- [Is "Supports virtually all platforms" really true?](#is-supports-virtually-all-platforms-really-true)
+- [Is "Supports all modern platforms" really true?](#is-supports-all-modern-platforms-really-true)
 - [What does "via Unity" mean for console support?](#what-does-via-unity-mean-for-console-support)
 - [To what extent is HarmonyOS NEXT supported?](#to-what-extent-is-harmonyos-next-supported)
 - [Can you reproduce "2.5-4.5x times faster"? What are the measurement conditions?](#can-you-reproduce-25-45x-times-faster-what-are-the-measurement-conditions)
@@ -1371,7 +1379,7 @@ cannot guarantee the outcome of store reviews, as they can be up to
 the game quality including graphical design, user experience, and
 content.
 
-### Is "Supports virtually all platforms" really true?
+### Is "Supports all modern platforms" really true?
 
 It's understandable that you find this hard to believe, but everything
 is working according to our checks. However, when you ship it as a
