@@ -193,7 +193,7 @@ DRAW_IMAGE_GLYPH(
 			alpha_i = src_a > dst_a ? (uint32_t)(src_a * 255.0f) : dst_a_i;
 
 			/* Store to the destination. */
-			*dst_ptr++ = 0xff000000 |
+			*dst_ptr++ = (alpha_i << 24) |
 				     ((uint32_t)(src_r + dst_r) << 16) |
 				     ((uint32_t)(src_g + dst_g) << 8) |
 				     (uint32_t)(src_b + dst_b);
