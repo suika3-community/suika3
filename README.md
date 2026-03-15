@@ -62,9 +62,6 @@ Although Suika3 is designed as a professional tool, you are absolutely
 welcome to use it just for fun — after all, fun is the driving force
 behind every great community.
 
-Our goal is to establish a portable runtime architecture for
-commercial visual novels across modern mobile and desktop platforms.
-
 ---
 
 ## Key Features
