@@ -1,42 +1,109 @@
-Suika3 — Visual Novel Technology
-=================================
+Suika3
+======
 
-<div align="center">
-  <img src="https://raw.githubusercontent.com/suika3-community/suika3/refs/heads/main/docs/img/logo-small.png">
-</div>
+Suika3 is a portable visual novel engine designed to run on virtually
+all platforms — from smartphones and consoles to legacy systems —
+using a JIT/AOT hybrid scripting architecture for mobile app store
+compliance.
 
-A next-generation visual novel engine for professional studios and
-enterprise use, designed to run natively across virtually all
-platforms and built for long-term support through the 2030s, 2040s,
-and beyond — defining a new standard for visual novel culture and
-industry. An enterprise infrastructure with a community-friendly
-heart.
-
-![platforms](https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/platforms.png)
+<div align="center"> <img
+  src="https://raw.githubusercontent.com/suika3-community/suika3/refs/heads/main/docs/img/logo-small.png"
+  alt="Suika3 Logo"><br> Our slogan is "Visual Novel Anywhere!"<br>
+  <img
+  src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/platforms.png"
+  alt="Suika3 runs virtually all platforms."><br> <img
+  src="screenshots.png"> </div>
 
 ---
 
 ## TL;DR
 
-- *Target:** Mobile including iOS and Android alongside desktop and
-   web
+- **Target:** Mobile-first VN engine that runs anywhere
 - **High-Performance:** Native, written in C
-- **Better Scripting:** JIT VM with AOT fallback for App Store
-    compliance
+- **Better Scripting:** JIT VM with AOT fallback for App Store compliance
 - **Virtually All Platforms:**
-    * **Desktop:** Windows, macOS, Linux, Chromebook, Raspberry Pi
+    * **Desktop:** Windows, macOS, Linux, Chromebook, Raspberry Pi, *BSD
     * **Mobile:** iOS, Android, HarmonyOS NEXT
     * **Web:** WebAssembly
     * **Console:** Xbox GDK, PS5 and Switch via Unity Integration
+- **Users:** Professional creators, indie studios, enterprise companies, and hobbyists.
 - [Join Discord](https://discord.gg/YZsq9u9Mgr)
+
+To build and run:
+```
+./configure --prefix=/usr/local
+make
+make install
+cd game
+suika3
+```
+
+---
+
+## Introduction
+
+Suika3 is a production-grade visual novel engine specifically
+engineered for commercial mobile app development, maintained by the
+`Suika3 Community`, led by Awe Morris.
+
+Games made with Suika3 are powered by `NovelML 3.0` and `SuikaScript 3.0`.
+
+- **NovelML 3.0**: A tag-based, human-readable, extensible DSL
+  designed specifically for visual novels. It features concise,
+  declarative tags for seamless dialogue and scene control. Developers
+  can add custom tags by SuikaScript.
+
+- **SuikaScript 3.0**: The robust extension language for Suika3. It
+  utilizes a high-speed JIT compiler on desktop platforms and can be
+  compiled into native binaries for production or mobile
+  environments.
+
+Although Suika3 is designed as a professional tool, you are absolutely
+welcome to use it just for fun — after all, fun is the driving force
+behind every great community.
+
+Our goal is to establish a portable runtime architecture for
+commercial visual novels across modern mobile and desktop platforms.
+
+---
+
+## Key Features
+
+Engineered with state-of-the-art techniques in computer science & engineering, Suika3 delivers:
+
+- **High Performance**: Powered by the Suika JIT VM, it delivers
+2.5-4.5x execution speed compared to our interpreter backend.
+(The exact speedup varies by CPU architecture)
+
+- **Lightweight**: Engineered to run smoothly at 60 fps even on low-spec
+hardware such as Raspberry Pi in developing regions.
+
+- **True Portability**: Designed with a "port anywhere" strategy,
+ensuring compatibility with almost every modern platform.
+
+- **Extensible**: NovelML can be seamlessly extended using
+  SuikaScript. Developers can implement custom tags simply by writing
+  a SuikaScript function named `Tag_*()`.
+
+- **Reliable**: We do enterprise-grade Quality Assurance to deliver
+reliable software.
+
+- **Mobile UI/UX:** The default UX is mobile-first with a hamburger
+menu. Desktop-style tiny buttons on message windows are not a
+primary target due to mobile usability and store review risks.
+
+- **Jot-and-Run**: A powerful markup language designed to bring your
+stories to life in an instant.
+
+- **Long-Term Support:** Our codebase is so portable that it will be
+able to support future platforms through the 2030s, 2040s, and
+beyond.
 
 ---
 
 ## Index
 
-- [Introduction](#introduction)
 - [Kanban](#kanban-status)
-- [Key Features](#key-features)
 - [Getting Started Guide](#getting-started-guide)
 - [Building Locally](#building-locally)
 - [Quick Look](#quick-look)
@@ -68,32 +135,6 @@ heart.
 
 ---
 
-## Introduction
-
-Suika3 is a high-performance, production-grade visual novel engine
-specifically engineered for commercial mobile app development,
-maintained by the `Suika3 Community` and led by Awe Morris.
-
-Engineered with state-of-the-art techniques in computer science,
-Suika3 delivers native performance and true portability, empowering
-creators worldwide to build timeless experiences that endure for
-decades.
-
-Games made with Suika3 are powered by `NovelML 3.0` and `SuikaScript 3.0`.
-
-* **NovelML 3.0**: A tag-based, human-readable markup language
-  designed specifically for visual novels. It features concise,
-  declarative tags for seamless dialogue and scene
-  control. Developers can also extend its capabilities by defining
-  custom tags using SuikaScript.
-
-* **SuikaScript 3.0**: The robust extension language for Suika3. It
-  utilizes a high-speed JIT compiler on desktop platforms and can be
-  compiled into native binaries for production or mobile
-  environments.
-
----
-
 ## Kanban (Status)
 
 We are planning our first stable release `Suika3 26.07.0` on July 1 2026.
@@ -105,62 +146,35 @@ Currently we are working very hard to complete the release.
 * ✅ Implementing the scripting language. (NoctLang) (December 2024 - March 2025)
 * ✅ Implementing the 2D game engine. (Playfield Engine) (March 2025 - October 2025)
 * ✅ Implementing the tag execution engine. (Suika3) (January 2026 - February 2026)
-* ✅ Refactoring all C functions and make them "C API". (January 2026 - February 2026)
+* ✅ Refactoring all C functions into a stable "C API". (January 2026 - February 2026)
 * ✅ Implementing all tags in C. (January 2026 - February 2026)
 * ✅ Wrapping "C API" for SuikaScript. (February 2026 - March 2026)
 * Planned First Stable Release (July 1, 2026)
 
 * Remaining Tasks
-    * ✅ API Freeze (March 7, 2026)
-    * ✅ GUI Animation Implementation (March 10, 2026)
-    * ✅ Code Freeze (March 12, 2026)
-    * Sample Game Creation (March 30, 2026)
-    * Documentation (March 15 - June 30, Simultaneous with Quality Stabilization)
-        * ✅ Website
-        * ✅ `SuikaScript Syntax`
-        * ✅ `SuikaScript API`
-        * ✅ `NovelML Tags`
-        * ✅ `Build Instructions`
-        * ✅ `NovelML Syntax`
-        * `Getting Started`
-        * `Plugin Development`
-        * `System Requirement Specification`
-        * `System Design Specification`
+* ✅ API Freeze (March 7, 2026)
+* ✅ GUI Animation Implementation (March 10, 2026)
+* ✅ Code Freeze (March 12, 2026)
+* Sample Game Creation (March 30, 2026)
+* Documentation (March 15 - June 30, Simultaneous with Quality Stabilization)
+* ✅ Website
+* ✅ `SuikaScript Syntax`
+* ✅ `SuikaScript API`
+* ✅ `NovelML Tags`
+* ✅ `Build Instructions`
+* ✅ `NovelML Syntax`
+* `Getting Started`
+* `Plugin Development`
+* `System Requirement Specification`
+* `System Design Specification`
 
 * Quality Stabilization Period (March 30 - June 30, 2026)
-    * Milestone: `Suika3 26.07.0 RC1` (March 30, 2026)
-    * Milestone: `Suika3 26.07.0 RC2` (April 30, 2026)
-    * Milestone: `Suika3 26.07.0 RC3` (May 30, 2026)
-    * Milestone: `Suika3 26.07.0 RC4/GM` (June 30, 2026)
+* Milestone: `Suika3 26.07.0 RC1` (March 30, 2026)
+* Milestone: `Suika3 26.07.0 RC2` (April 30, 2026)
+* Milestone: `Suika3 26.07.0 RC3` (May 30, 2026)
+* Milestone: `Suika3 26.07.0 RC4/GM` (June 30, 2026)
 
 * `Suika3 26.07.0` Release (July 1, 2026)
-
----
-
-## Key Features
-
-* **High Performance**: Powered by the Suika JIT VM, it delivers
-    2.5-4.5x execution speed compared to our interpreter backend.
-    (The exact speedup varies by CPU architecture)
-
-* **Lightweight**: Engineered to run smoothly at 60 fps even on low-spec
-    hardware such as Raspberry Pi in developing regions.
-
-* **Universal Platform**: Designed with a "port anywhere" strategy,
-    ensuring compatibility with almost every modern platform.
-
-* **Extensible**: NovelML can be seamlessly expanded by developers
-    using SuikaScript.
-
-* **Reliable**: Built on the proven codebase of Suika2 and integrated
-    with the modern Playfield Engine.
-
-* **Jot-and-Run**: A powerful markup language designed to bring your
-    stories to life in an instant.
-
-* **Mobile UI/UX:** The default UX is mobile-first with a hamburger
-    menu. Desktop-style tiny buttons on message windows are not a
-    primary target due to mobile usability and store review risks.
 
 ---
 
@@ -179,11 +193,11 @@ Let's get the engine running so you can see the magic happen!
 
 ### 2. Personalize Your Story (`start.novel`)
 
-Now, lets make the game say exactly what you want.
+Now, let's make the game say exactly what you want.
 
 - **Open:** Find the `start.novel` file in your project folder and
-    open it with your favorite text editor. It is written in
-    `NovelML`.
+open it with your favorite text editor. It is written in
+`NovelML`.
 - **Edit:** Replace the existing text with the following command:
 ```
 [text text="Hello, world! This is my first game."]
@@ -199,16 +213,16 @@ You can easily change the look and feel of your game window.
 ```
 // Called when the window is opened.
 func setup() {
-    return {
-        width:      1280,            // The width of your game
-        height:     720,             // The height of your game
-        title:      "My First Game", // Your game's title
-        fullscreen: false            // Set to true for full-screen mode
-    };
+return {
+width:      1280,            // The width of your game
+height:     720,             // The height of your game
+title:      "My First Game", // Your game's title
+fullscreen: false            // Set to true for full-screen mode
+};
 }
 ```
 
-## 4. Under the Hood (Advanced Tips)
+### 4. Under the Hood (Advanced Tips)
 
 The bottom part of your `main.pf` file contains the core engine logic
 in `SuikaScript`. It's best to leave these functions as they are
@@ -221,23 +235,23 @@ unless you are doing advanced customization:
 ```
 // Called before the game starts.
 func start() {
-    // Load plugins here.
-    // Suika.loadPlugin("testplugin");
+// Load plugins here.
+// Suika.loadPlugin("testplugin");
 
-    // Do not delete the following line.
-    Suika.start();
+// Do not delete the following line.
+Suika.start();
 }
 
 // Called before a frame rendering.
 func update() {
-    // Do not delete the following line.
-    Suika.update();
+// Do not delete the following line.
+Suika.update();
 }
 
 // Called every frame rendering.
 func render() {
-    // Do not delete the following line.
-    Suika.render();
+// Do not delete the following line.
+Suika.render();
 }
 ```
 
@@ -245,23 +259,6 @@ func render() {
 > These functions are the core mechanism of the `Playfield Engine` that
 > powers Suika3. Suika.start(), Suika.update(), and Suika.render() must
 > remain in place for the game to function properly.
-
----
-
-## Building Locally
-
-Refer to [build.md](docs/mkdocs-en/docs/build.md) for platform-specific instructions.
-
-**Generic Linux instruction:**
-```
-git clone https://github.com/suika3-community/suika3.git
-cd suika3
-./configure --prefix=/usr/local
-make
-make install
-cd game
-suika3
-```
 
 ---
 
@@ -283,24 +280,30 @@ suika3
 
 # Show options.
 [choose
-  name="choose_result"
-  text1="March"
-  text2="April"
-  text3="May"
+name="choose_result"
+text1="March"
+text2="April"
+text3="May"
 ]
 
 # Branch by the choose's result.
 [if lhs="${choose_result}" op="==" rhs="March"]
-    [set name="name" value="March"]
+[set name="name" value="March"]
 [elseif lhs="${choose_result}" op="==" rhs="April"]
-    [set name="name" value="April"]
+[set name="name" value="April"]
 [else]
-    [set name="name" value="May"]
+[set name="name" value="May"]
 [endif]
 
 # Show a text.
 [text name="${name}" text="Hello! My name is ${name}."]
 ```
+
+---
+
+## Build Locally
+
+Refer to [build.md](docs/mkdocs-en/docs/build.md) for platform-specific instructions.
 
 ---
 
@@ -318,28 +321,28 @@ See the `game/` directory for:
 ### Why SuikaScript?
 
 * **Instant Iteration:** No compile cycles, no waiting. The built-in
-    JIT compiler runs your scripts immediately after editing, so you
-    can tweak gameplay and see results in real-time.
+JIT compiler runs your scripts immediately after editing, so you
+can tweak gameplay and see results in real-time.
 
 * **True Native Performance:** Run extensions at full speed on iOS,
-    Android, and consoles. Even on platforms where JIT is restricted,
-    you never have to sacrifice performance thanks to AOT.
+Android, and consoles. Even on platforms where JIT is restricted,
+you never have to sacrifice performance thanks to AOT.
 
 * **Sandbox Model:** Scripts cannot access arbitrary
-    files/network. Only game assets and save data are accessible via
-    engine-managed APIs.
+files/network. Only game assets and save data are accessible via
+engine-managed APIs.
 
 * **Smooth Store Approval:** Dramatically lower the risk of
-    rejection. Since final builds consist of native code via AOT,
-    you'll breeze through App Store and console certifications.
+rejection. Since final builds consist of native code via AOT,
+you'll breeze through App Store and console certifications.
 
 * **Easy to Learn, Powerful to Use:** The JavaScript-inspired syntax
-    is friendly for beginners, yet offers the deep flexibility
-    experienced developers expect for complex systems.
+is friendly for beginners, yet offers the deep flexibility
+experienced developers expect for complex systems.
 
 * **Long-term Stability:** Because we develop the language in-house,
-    you're shielded from breaking changes in upstream projects. We own
-    and control the full stack, so your scripts stay compatible forever.
+you're shielded from breaking changes in upstream projects. We own
+and control the full stack, so your scripts stay compatible forever.
 
 ---
 
@@ -378,16 +381,16 @@ This means that Suika3 is fully extensible using the Playfield API.
 ```
 
 * **Scripting**:
-  Integrates [NoctLang](https://github.com/awemorris/NoctLang),
-  a tiny yet mighty language designed for game scripting.
+Integrates [NoctLang](https://github.com/awemorris/NoctLang),
+a tiny yet mighty language designed for game scripting.
 
 * **Rendering**:
-  Supports native DirectX 9/11/12, Metal, OpenGL, OpenGL ES, and WebGL
-  for wide compatibility.
+Supports native DirectX 9/11/12, Metal, OpenGL, OpenGL ES, and WebGL
+for wide compatibility.
 
 * **Audio**:
-  Provides lightweight audio support through native DirectSound or XAudio2 (Windows),
-  Audio Unit (macOS/iOS), ALSA (Linux), OSS (BSD), and other APIs.
+Provides lightweight audio support through native DirectSound or XAudio2 (Windows),
+Audio Unit (macOS/iOS), ALSA (Linux), OSS (BSD), and other APIs.
 
 ### StratoHAL
 
@@ -439,13 +442,16 @@ instant startup, and tight integration with the engine.
 
 The built-in JIT compiler supports a wide range of CPU architectures, including:
 
-* Intel x86 (32-bit)
-* AMD64/x86_64 (64-bit)
-* ARMv7 (32-bit)
-* Arm64 (64-bit)
-* RISC-V (32-bit/64-bit)
-* PowerPC/POWER (32-bit/64-bit)
-* MIPS (32-bit/64-bit)
+* Intel x86 (Xbox)
+* AMD64/x86_64 (PS4/PS5/Xbox One/Xbox series X|S)
+* ARMv5-ARMv7 (Nintendo DS/PS Vita)
+* Arm64 (Switch/Switch2)
+* RISC-V 32
+* RISC-V 64
+* PowerPC 32 (Wii/GameCube)
+* PowerPC 64 (PS3/Xbox 360)
+* MIPS32 (PS1/PSP)
+* MIPS64 (N64/PS2)
 
 For platforms where JIT is restricted (such as mobile or consoles),
 NoctLang can fall back to interpreter mode, and AOT (ahead-of-time)
@@ -477,14 +483,10 @@ even in tightly controlled environments.
 
 ### Runtime Footprint
 
-|Platform       |Binary Size    |Memory Usage (GC)                                              |
-|---------------|---------------|---------------------------------------------------------------|
-|All targets    |~2 MB          |Allocates 256 MB at startup for GC; does not exceed that limit |
+The footprint of Suika3 is smaller than Web-based apps.
 
-The garbage collector commits 256 MB at startup because currently 256
-MB is the maximum heap size in the default configuration.  So the
-required system memory size is 256 MB. (However, this can be adjusted
-to a smaller or larger values.)
+- Binary sizes are around 2 MB on most platforms.
+- Memory usage on Windows 11 is around 250~300 MB.
 
 ---
 
@@ -501,12 +503,12 @@ The system categorizes objects into two groups to optimize memory
 management:
 
 * Young Generation: Most objects die young. Suika3 handles these using
-  a high-speed Copying Algorithm (Semi-space Copy GC), which clears
-  out temporary data in a flash. (typically < 0.1ms)
+a high-speed Copying Algorithm (Semi-space Copy GC), which clears
+out temporary data in a flash. (typically < 0.1ms)
 
 * Old Generation: Long-lived objects are moved here. This area uses a
-  Mark-Sweep-Compact GC algorithm, which periodically reorganizes
-  memory to prevent fragmentation. (typically 10-300ms)
+Mark-Sweep-Compact GC algorithm, which periodically reorganizes
+memory to prevent fragmentation. (typically 10-300ms)
 
 ### Frame-Synchronized Latency Hiding
 
@@ -707,16 +709,16 @@ Documentation is also available at [the Website](https://suika3.vn/docs/)
 and it is synchronized to the latest.
 
 * For Basic Usage:
-    * [NovelML 3.0 Syntax Reference](docs/mkdocs-en/docs/novelml-syntax.md)
-    * [NovelML 3.0 Tag Reference](docs/mkdocs-en/docs/tags.md)
+* [NovelML 3.0 Syntax Reference](docs/mkdocs-en/docs/novelml-syntax.md)
+* [NovelML 3.0 Tag Reference](docs/mkdocs-en/docs/tags.md)
 * For Advanced Usage:
-    * [SuikaScript 3.0 Syntax Reference](docs/mkdocs-en/docs/syntax.md)
-    * [SuikaScript 3.0 API Reference](docs/mkdocs-en/docs/api.md)
-    * [AOT Instructions](docs/mkdocs-en/docs/aot.md)
+* [SuikaScript 3.0 Syntax Reference](docs/mkdocs-en/docs/syntax.md)
+* [SuikaScript 3.0 API Reference](docs/mkdocs-en/docs/api.md)
+* [AOT Instructions](docs/mkdocs-en/docs/aot.md)
 * For Plugin Developers:
-    * [Plugin Development](docs/mkdocs-en/docs/plugin.md)
+* [Plugin Development](docs/mkdocs-en/docs/plugin.md)
 * For Community Developers:
-    * [Build Instruction](docs/mkdocs-en/docs/build.md)
+* [Build Instruction](docs/mkdocs-en/docs/build.md)
 
 ---
 
@@ -749,13 +751,13 @@ If you want to help us reach more developers, here is how you can contribute:
 
 0.  Do `grep -r _TR()` and detect original messages.
 1.  **Locate the Files**: Translation assets are managed across three core directories:
-    * `resources/i18n/message.txt` (Suika3 part, `S3_TR()`)
-    * `external/PlayfieldEngine/resources/i18n/message.txt` (Playfield Engine part, `PF_TR()`)
-    * `external/PlayfieldEngine/external/NoctLang/i18n/message.txt` (NoctLang part, `N_TR()`)
-    * `external/PlayfieldEngine/external/StratoHAL/i18n/message.txt` (StratoHAL part, `HAL_TR()`)
+* `resources/i18n/message.txt` (Suika3 part, `S3_TR()`)
+* `external/PlayfieldEngine/resources/i18n/message.txt` (Playfield Engine part, `PF_TR()`)
+* `external/PlayfieldEngine/external/NoctLang/i18n/message.txt` (NoctLang part, `N_TR()`)
+* `external/PlayfieldEngine/external/StratoHAL/i18n/message.txt` (StratoHAL part, `HAL_TR()`)
 2.  **Submit Your Changes**: 
-    * Found a typo or a weird machine translation? Feel free to open a **Pull Request**.
-    * Want to add a new language? Please open an **Issue** first so we can coordinate!
+* Found a typo or a weird machine translation? Feel free to open a **Pull Request**.
+* Want to add a new language? Please open an **Issue** first so we can coordinate!
 
 > [!TIP]
 > Manual/Professional translations are prioritized over machine-generated content. Your human touch makes a huge difference!
@@ -854,12 +856,12 @@ This is not a weekend project but a mature codebase evolved over 25+ years.
 * **Proven Stability:** Includes core modules refined since 2001.
 
 * **Modern Architecture:** Features a clean HAL (Hardware Abstraction
-    Layer) separated in 2016 and high-performance GPU rendering
-    implemented in 2022.
+Layer) separated in 2016 and high-performance GPU rendering
+implemented in 2022.
 
 * **Native Multi-Platform:** Built mostly with C, and the platform
-    native languages, including C++ (DirectX), Swift (macOS/iOS),
-    Objective-C (macOS/iOS), C# (Unity) and Shaders (HLSL/GLSL/Metal).
+native languages, including C++ (DirectX), Swift (macOS/iOS),
+Objective-C (macOS/iOS), C# (Unity) and Shaders (HLSL/GLSL/Metal).
 
 ---
 
@@ -876,15 +878,15 @@ We are committed to delivering a production-grade engine. Our QA
 roadmap is as follows:
 
 1.  **Release Candidate (RC) Phase**: Upon reaching the RC milestone,
-    we will initiate rigorous tracking of all identified issues.
-	See [BUGS.md](BUGS.md)
+we will initiate rigorous tracking of all identified issues.
+See [BUGS.md](BUGS.md)
 
 2.  **Data-Driven Hardening**: We will analyze bug discovery and
-    resolution rates to quantify the software's stability.
+resolution rates to quantify the software's stability.
 
 3.  **Commercial-Grade Standards**: Our final goal is to achieve a
-    level of robustness that meets the requirements of commercial
-    visual novel productions.
+level of robustness that meets the requirements of commercial
+visual novel productions.
 
 While the engine is still "young" in terms of uptime, the underlying
 architecture inherits over two decades of development philosophy,
@@ -904,12 +906,12 @@ If you prefer to wait until the project has established a track
 record, you are very welcome to revisit the project in a few years.
 
 ```
-                             ---------------
-                   ------------------------------------
-             -------------------------------------------------
+---------------
+------------------------------------
+-------------------------------------------------
 -------------------------------------------------------------------------
- Innovators | Early Adoptors | Early Majority | Late Majority | Laggards 
-    2.5%          13.5%              34%             34%          16%
+Innovators | Early Adopters | Early Majority | Late Majority | Laggards 
+2.5%          13.5%              34%             34%          16%
 ```
 
 ---
@@ -920,19 +922,19 @@ record, you are very welcome to revisit the project in a few years.
 src/                               # Engine source code
 include/                           # Public headers
 resources/                         # Assets and resources for the engine
-  projects/                          # Official project base for iOS, Android, etc.
+projects/                          # Official project base for iOS, Android, etc.
 cmake/                             # CMake configuration files and presets
 docs/                              # Documentation source files (MkDocs)
 external/                          # Third-party libraries and dependencies
-  PlayfieldEngine/                   # The core 2D game engine
-    external/                          # Sub-dependencies of Playfield Engine
-      NoctLang/                          # Scripting language used by the engine
-        include/                           # Public headers for NoctLang
-        src/                               # Source code for NoctLang
-          core/                              # Core implementation of NoctLang
-      StratoHAL/                         # Hardware Abstraction Layer for cross-platform support
-        include/                           # Public headers for StratoHAL
-	src/                               # Source code for StratoHAL
+PlayfieldEngine/                   # The core 2D game engine
+external/                          # Sub-dependencies of Playfield Engine
+NoctLang/                          # Scripting language used by the engine
+include/                           # Public headers for NoctLang
+src/                               # Source code for NoctLang
+core/                              # Core implementation of NoctLang
+StratoHAL/                         # Hardware Abstraction Layer for cross-platform support
+include/                           # Public headers for StratoHAL
+src/                               # Source code for StratoHAL
 ```
 
 ---
@@ -940,11 +942,11 @@ external/                          # Third-party libraries and dependencies
 ## Asset File Formats
 
 * Images:
-    * Supported formats: PNG, JPEG, WebP.
+* Supported formats: PNG, JPEG, WebP.
 * Audio:
-    * Supported formats: Ogg Vorbis, 44100Hz, Stereo or Monaural.
+* Supported formats: Ogg Vorbis, 44100Hz, Stereo or Mono.
 * Fonts:
-    * Supported formats: TrueType (TTF), OpenType (OTF)
+* Supported formats: TrueType (TTF), OpenType (OTF)
 
 ---
 
@@ -952,7 +954,7 @@ external/                          # Third-party libraries and dependencies
 
 To generate `assets.arc` from your game assets, please use the
 `suika3-pack` tool provided in this repository. This tool will create
-a obfuscated archive of your assets that can be efficiently loaded by
+an obfuscated archive of your assets that can be efficiently loaded by
 the engine. (The obfuscation algorithm is a key rotating XOR, and it
 is not intended for strong security. It can help prevent casual
 tampering. The obfuscation key can be changed in "key.h".)
@@ -1035,10 +1037,10 @@ Copyright (c) 2026 The Suika3 Community
 For general inquiries, bug reports, and technical assistance:
 
 * **GitHub Issues**: Preferred for formal bug tracking and feature
-    requests.
+requests.
 
 * **[Discord Server](https://discord.gg/YZsq9u9Mgr)**: The best place
-    for real-time discussions and quick questions.
+for real-time discussions and quick questions.
 
 We strive to provide timely support and help creators bring their
 stories to life.
@@ -1046,7 +1048,7 @@ stories to life.
 ### Professional & Enterprise Support
 
 While the **Suika3 Community** provides active support through GitHub
-and Discord, we recognize that **commercial projects** often require
+and Discord, we understand that commercial productions often require
 dedicated support or guaranteed response times.
 
 For studios and developers requiring **formal maintenance contracts,
@@ -1085,20 +1087,20 @@ Our community warmly welcomes developers of all backgrounds, including
 but not limited to:
 
 * **Identity & Expression:** Race, ethnicity, nationality, language,
-    gender identity and expression, sexual orientation, and sex
-    characteristics.
+gender identity and expression, sexual orientation, and sex
+characteristics.
 
 * **Personal Attributes:** Age, body size, personal appearance, illness,
-    and neurodiversity.
+and neurodiversity.
 
 * **Life Context:** Faiths, beliefs, disability (e.g. visibility, but
-    not limited), level of experience, education, and socio-economic
-    status.
+not limited), level of experience, education, and socio-economic
+status.
 
 * **Justice & Inclusion:** We explicitly welcome individuals with past
-    criminal records, firmly believing in the power of second chances
-    and the inherent value of every contributor who participates
-    respectfully.
+criminal records, firmly believing in the power of second chances
+and the inherent value of every contributor who participates
+respectfully.
 
 ### Governance
 
@@ -1138,23 +1140,23 @@ Please also see [MANIFESTO.md](MANIFESTO.md) for our manifesto.
 Suika3 represents the culmination of over two decades of relentless innovation and development:
 
 * **Suika Studio (2001–2004)**: The origin of our codebase, featuring
-  our first GUI-based editors.
+our first GUI-based editors.
 
 * **Unfruitiful (2005–2015)**: A decade of R&D focused on establishing
-  a robust portability layer for cross-platform support.
+a robust portability layer for cross-platform support.
 
 * **Suika2 (2016–2024)**: The cornerstone of our current architecture
-  and the fruit of a decade of dedicated R&D. It delivers a full
-  visual novel experience with extensive platform compatibility.
-  Several games with Suika3 were sold on App Store.
+and the fruit of a decade of dedicated R&D. It delivers a full
+visual novel experience with extensive platform compatibility.
+Several games with Suika3 were sold on App Store.
 
 * **Playfield Engine (2025–)**: A versatile 2D engine derived from the
-  core portability layer of the Suika series.
+core portability layer of the Suika series.
 
 * **Suika3 (2026–)**: By synthesizing these legacies and introducing
-  **NovelML 3.0 / SuikaScript 3.0**, Suika3 delivers the rock-solid
-  stability of its predecessors alongside the cutting-edge flexibility
-  of modern technology.
+**NovelML 3.0 / SuikaScript 3.0**, Suika3 delivers the rock-solid
+stability of its predecessors alongside the cutting-edge flexibility
+of modern technology.
 
 ---
 
@@ -1192,16 +1194,16 @@ sustain an entire creative industry. A truly healthy ecosystem may
 require:
 
 * **Commercially Viable Games** — Titles that reach players on their
-    primary devices and generate the economic activity necessary for
-    creators to build long-term careers.
+primary devices and generate the economic activity necessary for
+creators to build long-term careers.
 
 * **Economic Independence** — Empowering talent, particularly in Asia
-    and the Global South, to overcome economic barriers through
-    storytelling.
+and the Global South, to overcome economic barriers through
+storytelling.
 
 * **A Living Industry** — Transforming the medium from a niche
-    interest into a sustainable market where creativity can lead to
-    self-reliance.
+interest into a sustainable market where creativity can lead to
+self-reliance.
 
 In our view, it is a natural professional expectation for commercial
 success.
@@ -1239,7 +1241,7 @@ Play, regardless of their software, hardware, and budget limitations.
 ## FAQ
 
 * [What's this?](#whats-this)
-* [Is this a competitor to existing engines such as Ren'Py, Unity, or God?](#is-this-a-competitor-to-existing-engines-such-as-renpy-unity-or-godot)
+* [Is this a competitor to existing engines such as Ren'Py, Unity, or Godot?](#is-this-a-competitor-to-existing-engines-such-as-renpy-unity-or-godot)
 * [Is this okay to use for now?](#is-this-okay-to-use-for-now)
 * [Doesn't "over 25 years of maturity" contradict "zero operational use"?](#doesnt-over-25-years-of-maturity-contradict-zero-operational-use)
 * [Oh it's bus factor 1, isn't it?](#oh-its-bus-factor-1-isnt-it)
@@ -1250,7 +1252,7 @@ Play, regardless of their software, hardware, and budget limitations.
 * [JIT is disabled on iOS/console, so what should I do?](#jit-is-disabled-on-iosconsole-so-what-should-i-do)
 * [Are scripts safe? Can they access files or the network?](#are-scripts-safe-can-they-access-files-or-the-network)
 * [Is it easy to pass the store review?](#is-it-easy-to-pass-the-store-review)
-* [Is "Supports virtuall all platforms" really true?](#is-supports-virtuall-all-platforms-really-true)
+* [Is "Supports virtually all platforms" really true?](#is-supports-virtually-all-platforms-really-true)
 * [What does "via Unity" mean for console support?](#what-does-via-unity-mean-for-console-support)
 * [To what extent is HarmonyOS NEXT supported?](#to-what-extent-is-harmonyos-next-supported)
 * [Can you reproduce "2.5-4.5x times faster"? What are the measurement conditions?](#can-you-reproduce-25-45x-times-faster-what-are-the-measurement-conditions)
@@ -1348,7 +1350,7 @@ cannot guarantee the outcome of store reviews, as they can be up to
 the game quality including graphical design, user experience, and
 content.
 
-### Is "Supports virtuall all platforms" really true?
+### Is "Supports virtually all platforms" really true?
 
 It's understandable that you find this hard to believe, but everything
 is working according to our checks. However, when you ship it as a
@@ -1479,7 +1481,7 @@ information on supported platforms and their requirements.
   * GPU: DirectX 9 / OpenGL 3.0 / OpenGL ES 2.0 / Metal 1.0
   * Disk: 2MB + assets
 
-* Minumum Configuration for Embedded Devices
+* Minimum Configuration for Embedded Devices
   * Display: Any size, 24bpp required
   * CPU: 200MHz
   * RAM: 32MB
