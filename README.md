@@ -3,8 +3,8 @@ Suika3
 
 Suika3 is a portable visual novel engine designed to run on a wide
 range of platforms — from smartphones and consoles to legacy systems
-— using a JIT/AOT hybrid scripting architecture for mobile app store
-compliance.
+— using a custom JIT/AOT hybrid scripting runtime and C-based
+rendering architecture for mobile app store compliance.
 
 <div align="center">
   <img src="https://raw.githubusercontent.com/suika3-community/suika3/refs/heads/main/docs/img/logo-small.png" alt="Suika3 Logo"><br>
@@ -18,7 +18,7 @@ compliance.
 
 - **Target:** Mobile-first VN engine that runs anywhere
 - **High-Performance:** Native, written in C
-- **Better Scripting:** JIT VM with AOT fallback for App Store compliance
+- **Hybrid Scripting:** JIT VM with AOT fallback for App Store compliance
 - **Virtually All Platforms:**
     * **Desktop:** Windows, macOS, Linux, Chromebook, Raspberry Pi, *BSD
     * **Mobile:** iOS, Android, HarmonyOS NEXT
@@ -64,7 +64,8 @@ behind every great community.
 
 ## Key Features
 
-Engineered with state-of-the-art techniques in computer science & engineering, Suika3 delivers:
+With lead developer's 10+ years of R&D experience in computer science,
+Suika3 is engineered with modern techniques, and delivers:
 
 - **High Performance**: Powered by the Suika JIT VM, it delivers
   2.5-4.5x faster execution speed compared to our interpreter backend
@@ -90,7 +91,7 @@ Engineered with state-of-the-art techniques in computer science & engineering, S
 - **Jot-and-Run**: A powerful markup language designed to bring your
   stories to life in an instant.
 
-- **Long-Term Support:** Our codebase is so portable and design to
+- **Long-Term Support:** Our codebase is so portable and designed to
   support future platforms through the 2030s, 2040s, and beyond.
 
 ---
@@ -442,23 +443,38 @@ SuikaScript = NoctLang + Suika3 API
 scripting.  With a game-oriented syntax, it emphasizes clarity,
 instant startup, and tight integration with the engine.
 
-The built-in JIT compiler supports a wide range of CPU architectures, including:
+The built-in JIT compiler supports a wide range of CPU architectures
+to cover most gaming consoles and smartphones, including:
 
-* Intel x86 (Xbox)
-* AMD64/x86_64 (PS4/PS5/Xbox One/Xbox series X|S)
-* ARMv5-ARMv7 (Nintendo DS/PS Vita)
-* Arm64 (Switch/Switch2)
-* PowerPC 32 (Wii/GameCube)
-* PowerPC 64 (PS3/Xbox 360)
-* MIPS32 (PS1/PSP)
-* MIPS64 (N64/PS2)
-* RISC-V 32
-* RISC-V 64
+- ✅ Intel x86 (Xbox) [jit-x86.c](https://github.com/suika3-community/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-x86.c)
+- ✅ AMD64/x86_64 (PS4/PS5/Xbox One/Xbox series X|S) [jit-x86_64.c](https://github.com/suika3-community/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-x86_64.c)
+- ✅ ARMv5-ARMv7 (Nintendo DS/PS Vita) [jit-arm32.c](https://github.com/suika3-community/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-arm32.c)
+- ✅ Arm64 (Switch/Switch2) [jit-arm64.c](https://github.com/suika3-community/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-arm64.c)
+- ✅ PowerPC 32 (Wii/GameCube) [jit-ppc32.c](https://github.com/suika3-community/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-ppc32.c)
+- ✅ PowerPC 64 (PS3/Xbox 360) [jit-ppc64.c](https://github.com/suika3-community/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-ppc64.c)
+- ✅ MIPS32 (PS1/PSP) [jit-mips32.c](https://github.com/suika3-community/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-mips32.c)
+- ✅ MIPS64 (N64/PS2) [jit-mips64.c](https://github.com/suika3-community/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-mips64.c)
+- ✅ RISC-V 32 (for future devices) [jit-riscv32.c](https://github.com/suika3-community/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-riscv32.c)
+- ✅ RISC-V 64 (for future devices) [jit-riscv64.c](https://github.com/suika3-community/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-riscv64.c)
+
+However, the following are not supported yet because of the lack of development machines:
+
+- ❌ SH-4 (Dreamcast)
+- ❌ Sun SPARC
+- ❌ HP PA-RISC
+- ❌ Motorola 68000
+- ❌ Loongson
+- ❌ IBM Z
+- **Challenge:** If you have one, please provide a ssh access to the development environment for 3 days. We can port there.
+
+### AOT Compilation
 
 For platforms where JIT is restricted (such as mobile or consoles),
 NoctLang can fall back to interpreter mode, and AOT (ahead-of-time)
 compilation using a C source backend — ensuring full compatibility
 even in tightly controlled environments.
+
+Please see [AOT](docs/mkdocs-en/docs/aot.md) for more details.
 
 ### Script Execution Mode
 
@@ -485,10 +501,18 @@ even in tightly controlled environments.
 
 ### Runtime Footprint
 
-The footprint of Suika3 is smaller than Web-based apps.
+The footprint of Suika3 is very small.
 
-- Binary sizes are around 2 MB on most platforms.
-- Memory usage on Windows 11 is around 250~300 MB.
+| OS           | Binary Size  | Memory Usage                |
+|--------------|--------------|-----------------------------|
+| Windows 11   | 2 MB         | 300 MB in the task manager  |
+| Windows 2000 | 3 MB         | 8 MB in the task manager    |
+
+> [!TIPS]
+> Due to the modern graphics architecture, game applications using
+> DirectX 12 typically consume at least 300 MB of memory even before
+> loading any game assets. The engine itself consumes only 8 MB on
+> Windows 2000.
 
 ---
 
@@ -498,6 +522,9 @@ Suika3 features a high-performance generational garbage collector,
 inspired by the architecture of the Java HotSpot VM. This design
 ensures that developers can focus on creation without being
 interrupted by the dreaded "GC spikes" or frame drops.
+
+Objects in scripts (strings, dictionaries) are managed by GC,
+while large assets such as textures are managed by native code.
 
 ### Core Mechanism: Generational GC
 
@@ -511,6 +538,10 @@ management:
 * Old Generation: Long-lived objects are moved here. This area uses a
   Mark-Sweep-Compact GC algorithm, which periodically reorganizes
   memory to prevent fragmentation. (typically 10-300ms)
+
+For more detailed implementation, please check
+[gc.h](external/PlayfieldEngine/external/NoctLang/src/core/gc.h) and
+[gc.c](external/PlayfieldEngine/external/NoctLang/src/core/gc.c).
 
 ### Frame-Synchronized Latency Hiding
 
@@ -1266,7 +1297,7 @@ professional studios and commercial app development in mind. It aims
 for high performance, long-term maintainability, and broad platform
 support through native implementations (primarily in C).
 
-### Is this a competitor toexisting engines such as Ren'Py, Unity, or Godot?
+### Is this a competitor to existing engines such as Ren'Py, Unity, or Godot?
 
 Rather than being competitors, we target different problem
 areas. Suika3 clearly states its direction as "creating a
@@ -1441,8 +1472,8 @@ For Japanese and CJK games, Suika3 supports:
 * Ruby annotations
 * Vertical writing
 
-Note that Right-To-Left writing system is currently not implemeted yet
-because of the lack of the speakers in the development team.
+Note that Right-To-Left writing system is currently not implemented
+yet because of the lack of the speakers in the development team.
 
 ### Where should I go if I'm in trouble?
 
