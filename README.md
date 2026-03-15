@@ -18,16 +18,53 @@ heart.
 
 ## TL;DR
 
-* *Target:** Mobile including iOS and Android alongside desktop and web
-* **High-Performance:** Native, written in C
-* **Better Scripting:** JIT VM with AOT fallback for App Store compliance
-* **Virtually All Platforms:**
+- *Target:** Mobile including iOS and Android alongside desktop and
+   web
+- **High-Performance:** Native, written in C
+- **Better Scripting:** JIT VM with AOT fallback for App Store
+    compliance
+- **Virtually All Platforms:**
     * **Desktop:** Windows, macOS, Linux, Chromebook, Raspberry Pi
     * **Mobile:** iOS, Android, HarmonyOS NEXT
     * **Web:** WebAssembly
     * **Console:** Xbox GDK, PS5 and Switch via Unity Integration
+- [Join Discord](https://discord.gg/YZsq9u9Mgr)
 
-[Join Discord](https://discord.gg/YZsq9u9Mgr)
+---
+
+## Index
+
+- [Introduction](#introduction)
+- [Kanban](#kanban-status)
+- [Key Features](#key-features)
+- [Getting Started Guide](#getting-started-guide)
+- [Building Locally](#building-locally)
+- [Quick Look](#quick-look)
+- [Examples](#examples)
+- [Why SuikaScript?](#why-suikascript)
+- [Technical Overview](#technical-overview)
+- [Garbage Collection](#garbage-collection)
+- [Compatibility List](#compatibility-list)
+- [Documentation](#documentation)
+- [Internationalization](#internationalization)
+- [Third-party Libraries](#third-party-libraries)
+- [CMake Presets](#cmake-presets)
+- [Codebase & Maturity](#codebase-maturity)
+- [Quality Assurance](#quality-assurance)
+- [Adoption Status](#adoption-status)
+- [Repository Structure](#repository-structure)
+- [Asset File Formats](#asset-file-formats)
+- [Game Packaging & Distribution](#game-packaging-distribution)
+- [Engine Feature List](#engine-feature-list)
+- [Screenshots](#screenshots)
+- [Versioning Policy](#versioning-policy)
+- [License](#license)
+- [Support & Contact](#support-contact)
+- [Community](#community)
+- [Contribution](#contribution)
+- [Lineage: The Grand Journey](#lineage-the-grand-journey)
+- [Why Suika3?: Our Philosophy](#why-suika3-our-philosophy)
+- [FAQ](#faq)
 
 ---
 
@@ -127,28 +164,103 @@ Currently we are working very hard to complete the release.
 
 ---
 
-## Getting Started
+## Getting Started Guide
 
-A quick path to try Suika3 locally.
+This guide will help you jump-start your very first visual novel
+project in just a few easy steps.
 
-### Using prebuilt binary
+### 1. Your First Run
 
-Please download from [Releases](releases).
+Let's get the engine running so you can see the magic happen!
 
-### Building locally
+- **Download:** Grab the latest release ZIP file from the official source.
+- **Extract:** Right-click the ZIP file and select "Extract All" to a folder of your choice.
+- **Launch:** Open the folder and run `suika3.exe`. A sample game will start immediately!
+
+### 2. Personalize Your Story (`start.novel`)
+
+Now, lets make the game say exactly what you want.
+
+- **Open:** Find the `start.novel` file in your project folder and
+    open it with your favorite text editor. It is written in
+    `NovelML`.
+- **Edit:** Replace the existing text with the following command:
+```
+[text text="Hello, world! This is my first game."]
+```
+- **Test:** Save the file and run `suika3.exe` again. You should see your new message on the screen!
+
+### 3. Customize the Screen (`main.pf`)
+
+You can easily change the look and feel of your game window.
+
+- **Locate:** Open the `main.pf` file in your editor.
+- **Modify:** Look for the `func setup()` section. You can change the resolution and the title of your window here:
+```
+// Called when the window is opened.
+func setup() {
+    return {
+        width:      1280,            // The width of your game
+        height:     720,             // The height of your game
+        title:      "My First Game", // Your game's title
+        fullscreen: false            // Set to true for full-screen mode
+    };
+}
+```
+
+## 4. Under the Hood (Advanced Tips)
+
+The bottom part of your `main.pf` file contains the core engine logic
+in `SuikaScript`. It's best to leave these functions as they are
+unless you are doing advanced customization:
+
+- `func start()`: This is called once when your game launches.
+- `func update()`: This runs every single frame to handle game logic.
+- `func render()`: This draws everything on the screen after the update is done.
+
+```
+// Called before the game starts.
+func start() {
+    // Load plugins here.
+    // Suika.loadPlugin("testplugin");
+
+    // Do not delete the following line.
+    Suika.start();
+}
+
+// Called before a frame rendering.
+func update() {
+    // Do not delete the following line.
+    Suika.update();
+}
+
+// Called every frame rendering.
+func render() {
+    // Do not delete the following line.
+    Suika.render();
+}
+```
+
+> [!TIPS]
+> These functions are the core mechanism of the `Playfield Engine` that
+> powers Suika3. Suika.start(), Suika.update(), and Suika.render() must
+> remain in place for the game to function properly.
+
+---
+
+## Building Locally
 
 Refer to [build.md](docs/mkdocs-en/docs/build.md) for platform-specific instructions.
 
-**Generic instruction:**
+**Generic Linux instruction:**
 ```
 git clone https://github.com/suika3-community/suika3.git
 cd suika3
-mkdir build
-cd build
-cmake ..
-cmake --build .
-cp -R ../game/* .
-./suika3
+./configure --prefix=/usr/local
+make
+make install
+cd game
+suika3
 ```
 
 ---
@@ -190,46 +302,10 @@ cp -R ../game/* .
 [text name="${name}" text="Hello! My name is ${name}."]
 ```
 
-### SuikaScript
-
-`main.pf` file looks like:
-
-```
-// Called when the window is opened.
-func setup() {
-    // Return the window settings.
-    return {
-        width:      1280,
-        height:     720,
-        title:      "My First Game",
-	fullscreen: false
-    };
-}
-
-// Called before the game starts.
-func start() {
-    // Do not delete the following line.
-    Suika.start();
-}
-
-// Called before a frame rendering.
-func update() {
-    // Do not delete the following line.
-    Suika.update();
-}
-
-// Called every frame rendering.
-func render() {
-    // Do not delete the following line.
-    Suika.render();
-}
-```
-
 ---
 
 ## Examples
 
-Sorry we are currently preparing examples.
 A sample game is planned to be built in the end of March 2026.
 
 See the `game/` directory for:
@@ -264,84 +340,6 @@ See the `game/` directory for:
 * **Long-term Stability:** Because we develop the language in-house,
     you're shielded from breaking changes in upstream projects. We own
     and control the full stack, so your scripts stay compatible forever.
-
----
-
-## Why Suika3?: Our Philosophy
-
-We are not looking at the existing VN market. We aim to pioneer a
-mobile VN market that does not yet exist.
-
-Creators with different goals may also find excellent resources in
-other engines like Ren'Py, Unity, or Godot.
-
-### Mission: Building a Sustainable Ecosystem
-
-Our dedication to the commercial success of visual novels is a
-strategic response to the long-term health of the medium. We believe
-that for visual novels to flourish in the 2030s, they must transcend
-hobbyist boundaries and re-establish themselves as a thriving creative
-industry.
-
-Since the 2010s, the visual novel market has faced significant growth
-challenges. One critical bottleneck has been the **lack of
-high-performance software engines** capable of delivering a seamless
-**native experience on iOS and Android**. While developers typically
-work on PCs, for most people today, the primary personal computer is a
-smartphone.
-
-Without accessible, professional-grade tools for modern mobile
-platforms, many creators have been restricted to limited distribution
-channels. As a result, the medium has struggled to reach a global,
-mobile-first audience, slowing its overall expansion.
-
-While free and hobbyist projects are culturally noble, important, and
-indispensable, we believe they may not be sufficient on their own to
-sustain an entire creative industry. A truly healthy ecosystem may
-require:
-
-* **Commercially Viable Games** — Titles that reach players on their
-    primary devices and generate the economic activity necessary for
-    creators to build long-term careers.
-
-* **Economic Independence** — Empowering talent, particularly in Asia
-    and the Global South, to overcome economic barriers through
-    storytelling.
-
-* **A Living Industry** — Transforming the medium from a niche
-    interest into a sustainable market where creativity can lead to
-    self-reliance.
-
-In our view, it is a natural professional expectation for commercial
-success.
-
-Please note that this philosophy does not reject hobbyist or
-experimental projects. We simply focus on a different problem space:
-sustainability at scale.
-
-### Our Vision: Catalyst for Growth
-
-We do not aim to provide just another tool. Our goal is to provide a
-**catalyst for growth**.
-
-By offering a "port-anywhere" engine that delivers native performance
-without the overhead of heavy frameworks, we enable developers to
-focus on what matters most: **telling stories that endure.**
-
-Because we love visual novels, we are committed to pushing the medium
-forward and ensuring it remains a vibrant and economically viable art
-form for decades to come.
-
-### Our Values: Empowering Talents for Sustainable Careers
-
-Our value is to empower talent—particularly in Asia and the Global
-South—to build sustainable careers through their storytelling. We
-believe that with the right tools, creativity can overcome economic
-barriers.
-
-Our commitment to the permissive license is for those people who
-publish and sell original visual novels on the App Store and Google
-Play, regardless of their software, hardware, and budget limitations.
 
 ---
 
@@ -490,7 +488,7 @@ to a smaller or larger values.)
 
 ---
 
-## Garbage Collection (GC) in Suika3
+## Garbage Collection
 
 Suika3 features a high-performance generational garbage collector,
 inspired by the architecture of the Java HotSpot VM. This design
@@ -722,7 +720,7 @@ and it is synchronized to the latest.
 
 ---
 
-## Localization / Internationalization
+## Internationalization
 
 Suika3 supports the following languages, and the translation is in progress.
 
@@ -879,6 +877,7 @@ roadmap is as follows:
 
 1.  **Release Candidate (RC) Phase**: Upon reaching the RC milestone,
     we will initiate rigorous tracking of all identified issues.
+	See [BUGS.md](BUGS.md)
 
 2.  **Data-Driven Hardening**: We will analyze bug discovery and
     resolution rates to quantify the software's stability.
@@ -949,7 +948,7 @@ external/                          # Third-party libraries and dependencies
 
 ---
 
-## Game Packaging / Distribution
+## Game Packaging & Distribution
 
 To generate `assets.arc` from your game assets, please use the
 `suika3-pack` tool provided in this repository. This tool will create
@@ -1159,6 +1158,84 @@ Suika3 represents the culmination of over two decades of relentless innovation a
 
 ---
 
+## Why Suika3?: Our Philosophy
+
+We are not looking at the existing VN market. We aim to pioneer a
+mobile VN market that does not yet exist.
+
+Creators with different goals may also find excellent resources in
+other engines like Ren'Py, Unity, or Godot.
+
+### Mission: Building a Sustainable Ecosystem
+
+Our dedication to the commercial success of visual novels is a
+strategic response to the long-term health of the medium. We believe
+that for visual novels to flourish in the 2030s, they must transcend
+hobbyist boundaries and re-establish themselves as a thriving creative
+industry.
+
+Since the 2010s, the visual novel market has faced significant growth
+challenges. One critical bottleneck has been the **lack of
+high-performance software engines** capable of delivering a seamless
+**native experience on iOS and Android**. While developers typically
+work on PCs, for most people today, the primary personal computer is a
+smartphone.
+
+Without accessible, professional-grade tools for modern mobile
+platforms, many creators have been restricted to limited distribution
+channels. As a result, the medium has struggled to reach a global,
+mobile-first audience, slowing its overall expansion.
+
+While free and hobbyist projects are culturally noble, important, and
+indispensable, we believe they may not be sufficient on their own to
+sustain an entire creative industry. A truly healthy ecosystem may
+require:
+
+* **Commercially Viable Games** — Titles that reach players on their
+    primary devices and generate the economic activity necessary for
+    creators to build long-term careers.
+
+* **Economic Independence** — Empowering talent, particularly in Asia
+    and the Global South, to overcome economic barriers through
+    storytelling.
+
+* **A Living Industry** — Transforming the medium from a niche
+    interest into a sustainable market where creativity can lead to
+    self-reliance.
+
+In our view, it is a natural professional expectation for commercial
+success.
+
+Please note that this philosophy does not reject hobbyist or
+experimental projects. We simply focus on a different problem space:
+sustainability at scale.
+
+### Our Vision: Catalyst for Growth
+
+We do not aim to provide just another tool. Our goal is to provide a
+**catalyst for growth**.
+
+By offering a "port-anywhere" engine that delivers native performance
+without the overhead of heavy frameworks, we enable developers to
+focus on what matters most: **telling stories that endure.**
+
+Because we love visual novels, we are committed to pushing the medium
+forward and ensuring it remains a vibrant and economically viable art
+form for decades to come.
+
+### Our Values: Empowering Talents for Sustainable Careers
+
+Our value is to empower talent—particularly in Asia and the Global
+South—to build sustainable careers through their storytelling. We
+believe that with the right tools, creativity can overcome economic
+barriers.
+
+Our commitment to the permissive license is for those people who
+publish and sell original visual novels on the App Store and Google
+Play, regardless of their software, hardware, and budget limitations.
+
+---
+
 ## FAQ
 
 * [What's this?](#whats-this)
@@ -1311,13 +1388,13 @@ func main() {
 }
 ```
 
-| Machine                 | JIT (s)      | Interpreter (s)       | Scaling (JIT vs Interpreter) | Note                    |
-|-------------------------|--------------|-----------------------|------------------------------|-------------------------|
-| Intel Core i9 12900H    | 3.32         | 13.2s                 | 4.0x                         |                         |
-| Intel Core Ultra 5 228V | 5.78s        | 15.6                  | 2.7x                         |                         |
-| Intel Xeon Silver 4114  | 8.08         | 36.4s                 | 4.5x                         |                         |
-| Apple M5                | 2.77         | 10.6s                 | 3.8x                         |                         |
-| IBM POWER8              | 43.719       | 117.8s                | 2.7x                         |                         |
+| Machine                 | JIT (s)      | Interpreter (s)       | Scaling (JIT vs Interpreter) |
+|-------------------------|--------------|-----------------------|------------------------------|
+| Intel Core i9 12900H    | 3.32         | 13.2s                 | 4.0x                         |
+| Intel Core Ultra 5 228V | 5.78s        | 15.6                  | 2.7x                         |
+| Intel Xeon Silver 4114  | 8.08         | 36.4s                 | 4.5x                         |
+| Apple M5                | 2.77         | 10.6s                 | 3.8x                         |
+| IBM POWER8              | 43.719       | 117.8s                | 2.7x                         |
 
 In a real game app, the performance difference may vary depending on
 the your logic and the amount of script execution. However, we have

@@ -700,7 +700,7 @@ jobs:
       - name: Copy documents
         run: |
           tar xzf mkdocs/documents.tar.gz -C dist/misc/
-          cp docs/readme/readme.txt dist/
+          cp README.md dist/misc/
 
       - name: Get current date
         id: date

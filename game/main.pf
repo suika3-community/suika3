@@ -5,12 +5,15 @@ func setup() {
         width:      1280,
         height:     720,
         title:      "My First Game",
-	fullscreen: false
+        fullscreen: false
     };
 }
 
 // Called before the game starts.
 func start() {
+    // Load plugins here.
+	// Suika.loadPlugin("testplugin");
+
     // Do not delete the following line.
     Suika.start();
 }
