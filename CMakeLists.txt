@@ -12,6 +12,8 @@ option(SUIKA_TARGET_MACOS            "Build for macOS"                       OFF
 option(SUIKA_TARGET_LINUX            "Build for Linux X11"                   OFF)
 option(SUIKA_TARGET_LINUX_WAYLAND    "Build for Linux Wayland"               OFF)
 option(SUIKA_TARGET_LINUX_GBM        "Build for Linux Framebuffer"           OFF)
+option(SUIKA_TARGET_LINUX_FBDEV      "Build for Linux fbdev Framebuffer"     OFF)
+option(SUIKA_TARGET_LINUX_X11SOFT    "Build for Linux X11 Softrender"        OFF)
 option(SUIKA_TARGET_IOS              "Build for iOS"                         OFF)
 option(SUIKA_TARGET_ANDROID          "Build for Android"                     OFF)
 option(SUIKA_TARGET_OPENHARMONY      "Build for HarmonyOS NEXT"              OFF)
@@ -22,6 +24,7 @@ option(SUIKA_TARGET_FREEBSD          "Build for FreeBSD X11"                 OFF
 option(SUIKA_TARGET_FREEBSD_WAYLAND  "Build for FreeBSD Wayland"             OFF)
 option(SUIKA_TARGET_NETBSD           "Build for NetBSD X11"                  OFF)
 option(SUIKA_TARGET_OPENBSD          "Build for OpenBSD X11"                 OFF)
+option(SUIKA_TARGET_SOLARIS11        "Build for Solaris 11"                  OFF)
 
 # Options
 option(SUIKA_ENABLE_JIT              "Enable JIT"                         OFF)
@@ -45,6 +48,8 @@ if(   SUIKA_TARGET_WINDOWS
    OR SUIKA_TARGET_LINUX
    OR SUIKA_TARGET_LINUX_WAYLAND
    OR SUIKA_TARGET_LINUX_GBM
+   OR SUIKA_TARGET_LINUX_FBDEV
+   OR SUIKA_TARGET_LINUX_X11SOFT
    OR SUIKA_TARGET_IOS
    OR SUIKA_TARGET_ANDROID
    OR SUIKA_TARGET_OPENHARMONY
@@ -55,6 +60,7 @@ if(   SUIKA_TARGET_WINDOWS
    OR SUIKA_TARGET_FREEBSD_WAYLAND
    OR SUIKA_TARGET_NETBSD
    OR SUIKA_TARGET_OPENBSD
+   OR SUIKA_TARGET_SOLARIS11
 )
   # A target and options are manually specified.
 else()   
@@ -103,6 +109,12 @@ else()
     set(SUIKA_ENABLE_PACK       ON)
   endif()
 
+  if(CMAKE_SYSTEM_NAME STREQUAL "SunOS")
+    set(SUIKA_TARGET_SOLARIS11  ON)
+    set(SUIKA_ENABLE_I18N       ON)
+    set(SUIKA_ENABLE_PACK       ON)
+  endif()
+
   # No automatic detection for:
   #  - Android
   #  - HarmonyOS NEXT
@@ -130,6 +142,10 @@ elseif(SUIKA_TARGET_LINUX_WAYLAND)
   set(PLAYFIELD_TARGET_LINUX_WAYLAND ON)
 elseif(SUIKA_TARGET_LINUX_GBM)
   set(PLAYFIELD_TARGET_LINUX_GBM ON)
+elseif(SUIKA_TARGET_LINUX_FBDEV)
+  set(PLAYFIELD_TARGET_LINUX_FBDEV ON)
+elseif(SUIKA_TARGET_LINUX_GBM)
+  set(PLAYFIELD_TARGET_LINUX_X11SOFT ON)
 elseif(SUIKA_TARGET_IOS)
   set(PLAYFIELD_TARGET_IOS ON)
 elseif(SUIKA_TARGET_ANDROID)
@@ -150,6 +166,8 @@ elseif(SUIKA_TARGET_NETBSD)
   set(PLAYFIELD_TARGET_NETBSD ON)
 elseif(SUIKA_TARGET_OPENBSD)
   set(PLAYFIELD_TARGET_OPENBSD ON)
+elseif(SUIKA_TARGET_SOLARIS11)
+  set(PLAYFIELD_TARGET_SOLARIS11 ON)
 elseif(SUIKA_TARGET_GDK_WINDOWS)
   set(PLAYFIELD_TARGET_GDK_WINDOWS ON)
 elseif(SUIKA_TARGET_GDK_XBOX_XS)
@@ -513,10 +531,13 @@ if(   SUIKA_TARGET_WINDOWS
    OR SUIKA_TARGET_LINUX
    OR SUIKA_TARGET_LINUX_WAYLAND
    OR SUIKA_TARGET_LINUX_GBM
+   OR SUIKA_TARGET_LINUX_FBDEV
+   OR SUIKA_TARGET_LINUX_X11SOFT
    OR SUIKA_TARGET_FREEBSD
    OR SUIKA_TARGET_FREEBSD_WAYLAND
    OR SUIKA_TARGET_NETBSD
-   OR SUIKA_TARGET_OPENBSD)
+   OR SUIKA_TARGET_OPENBSD
+   OR SUIKA_TARGET_SOLARIS11)
   # Bytecode
   add_executable(
     suika3-compiler
@@ -606,10 +627,13 @@ endif()
 if (   SUIKA_TARGET_LINUX
     OR SUIKA_TARGET_LINUX_WAYLAND
     OR SUIKA_TARGET_LINUX_GBM
+    OR SUIKA_TARGET_LINUX_FBDEV
+    OR SUIKA_TARGET_LINUX_X11SOFT
     OR SUIKA_TARGET_FREEBSD
     OR SUIKA_TARGET_FREEBSD_WAYLAND
     OR SUIKA_TARGET_NETBSD
-    OR SUIKA_TARGET_OPENBSD)
+    OR SUIKA_TARGET_OPENBSD
+    OR SUIKA_TARGET_SOLARIS11)
 
   include(GNUInstallDirs)
 

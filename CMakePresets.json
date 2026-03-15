@@ -518,7 +518,7 @@
     },
     {
       "name":           "linux-gbm-rot90",
-      "displayName":    "Linux Framebuffer",
+	"displayName":    "Linux GBM Framebuffer (OpenGL)",
       "generator":      "Ninja",
       "binaryDir":      "${sourceDir}/build-linux-gbm-rot90",
       "cacheVariables": {
@@ -528,6 +528,32 @@
         "SUIKA_ENABLE_I18N":           "ON",
         "SUIKA_ENABLE_PACK":           "ON",
         "SUIKA_ENABLE_ROT90":          "ON"
+      }
+    },
+    {
+      "name":           "linux-fbdev",
+      "displayName":    "Linux fbdev Framebuffer (softrender)",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-linux-fbdev",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "SUIKA_TARGET_LINUX_FBDEV":    "ON",
+        "SUIKA_ENABLE_JIT":            "ON",
+        "SUIKA_ENABLE_I18N":           "ON",
+        "SUIKA_ENABLE_PACK":           "ON"
+      }
+    },
+    {
+      "name":           "linux-x11-soft",
+      "displayName":    "Linux X11 (softrender)",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-linux-x11-soft",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "SUIKA_TARGET_LINUX_X11SOFT":  "ON",
+        "SUIKA_ENABLE_JIT":            "ON",
+        "SUIKA_ENABLE_I18N":           "ON",
+        "SUIKA_ENABLE_PACK":           "ON"
       }
     },
     {
@@ -783,6 +809,19 @@
       "binaryDir":      "${sourceDir}/build-openbsd",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE":            "Release",
+        "SUIKA_TARGET_OPENBSD":        "ON",
+        "SUIKA_ENABLE_PACK":           "ON"
+      }
+    },
+    {
+      "name":           "solaris11",
+      "displayName":    "Solaris 11",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-solaris11",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "CMAKE_C_COMPILER":            "cc",
+        "CMAKE_CXX_COMPILER":          "CC",
         "SUIKA_TARGET_OPENBSD":        "ON",
         "SUIKA_ENABLE_PACK":           "ON"
       }
