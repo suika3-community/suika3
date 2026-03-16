@@ -21,30 +21,30 @@ jobs:
 
       - name: Configure (x64)
         run: >
-          cmake --preset windows-vs2022-x64-release
+          cmake --preset windows-vs2022-x64
           -DFLEX_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_flex.exe"
           -DBISON_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_bison.exe"
 
       - name: Build (x64)
-        run: cmake --build --preset windows-vs2022-x64-release --config Release --parallel
+        run: cmake --build --preset windows-vs2022-x64 --config Release --parallel
 
       - name: Configure (x86)
         run: >
-          cmake --preset windows-vs2022-x86-release
+          cmake --preset windows-vs2022-x86
           -DFLEX_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_flex.exe"
           -DBISON_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_bison.exe"
 
       - name: Build (x86)
-        run: cmake --build --preset windows-vs2022-x86-release --config Release --parallel
+        run: cmake --build --preset windows-vs2022-x86 --config Release --parallel
 
       - name: Configure (arm64)
         run: >
-          cmake --preset windows-vs2022-arm64-release
+          cmake --preset windows-vs2022-arm64
           -DFLEX_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_flex.exe"
           -DBISON_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_bison.exe"
 
       - name: Build (arm64)
-        run: cmake --build --preset windows-vs2022-arm64-release --config Release --parallel
+        run: cmake --build --preset windows-vs2022-arm64 --config Release --parallel
 
       - name: Upload Windows EXEs
         uses: actions/upload-artifact@v4
@@ -134,6 +134,11 @@ jobs:
           cp -Rv Suika3.app tmp/Suika3.app
           hdiutil create -fs HFS+ -format UDBZ -srcfolder tmp -volname Suika3 Suika3.dmg
           codesign --sign "Developer ID Application" Suika3.dmg
+          cd ..
+          cmake --preset macos-lib
+          cmake --build --preset macos-lib
+          xcodebuild -create-xcframework -library build-macos-lib/libsuika3.a -headers include -output Suika3.xcframework
+          tar czf Suika3.xcframework.tar.gz Suika3.xcframework
 
       - name: Upload macOS
         uses: actions/upload-artifact@v4
@@ -142,6 +147,9 @@ jobs:
           path: |
             build-macos/Suika3.dmg
             build-macos/suika3-pack
+            build-macos/suika3-bytecomp
+            build-macos/suika3-aotcomp
+            Suika3.xcframework.tar.gz
           if-no-files-found: error
           retention-days: 7
 
@@ -502,10 +510,10 @@ jobs:
 
       - name: Copy for Windows.
         run: |
-          cp windows/build/windows-vs2022-x64-release/Release/suika3.exe dist/
-          cp windows/build/windows-vs2022-x86-release/Release/suika3-pack.exe dist/misc/windows/
-          cp windows/build/windows-vs2022-x86-release/Release/suika3-web.exe dist/misc/wasm/
-          cp windows/build/windows-vs2022-arm64-release/Release/suika3.exe dist/misc/windows/suika3-arm64.exe
+          cp windows/build/windows-vs2022-x64/Release/suika3.exe dist/
+          cp windows/build/windows-vs2022-x86/Release/suika3-pack.exe dist/misc/windows/
+          cp windows/build/windows-vs2022-x86/Release/suika3-web.exe dist/misc/wasm/
+          cp windows/build/windows-vs2022-arm64/Release/suika3.exe dist/misc/windows/suika3-arm64.exe
           cp game/main.pf dist/
           cp game/start.novel dist/
           cp game/config.ini dist/
@@ -533,6 +541,19 @@ jobs:
         run: |
           cp macos/Suika3.dmg dist/misc/macos/
           cp macos/suika3-pack dist/misc/macos/
+
+      - name: Copy for macOS project.
+        run: |
+          mkdir dist/misc/macos/project/Resources/
+          cp resources/assets.arc dist/misc/macos/project/Resources/
+          mkdir dist/misc/macos/project/Resources/video
+          mkdir dist/misc/macos/project/Game.xcodeproj
+          cp resources/projects/macos/Game.xcodeproj/project.pbxproj dist/misc/macos/project/Game.xcodeproj/
+          mkdir dist/misc/macos/project/Game
+          tar xfz macos/Playfield.xcframework.tar.gz -C dist/misc/macos/project/Game/
+          cp -R resources/projects/macos/Game/Assets.xcassets dist/misc/macos/project/Game/
+          cp resources/projects/macos/Game/main.m dist/misc/macos/project/Game/
+          cp resources/macos/macos.entitlements dist/misc/macos/project/Game/
 
       - name: Download Linux artifacts
         uses: actions/download-artifact@v4
