@@ -8,11 +8,13 @@ Suika3
 Suika3 is a portable visual novel engine designed to run on a wide
 range of platforms — from smartphones and consoles to legacy systems
 — using a custom JIT/AOT hybrid scripting runtime and C-based
-rendering architecture for mobile app store compliance.
+rendering & audio architecture for mobile app store compliance.
 
 <div align="center">
-  <img src="https://github.com/suika3-community/suika3/blob/main/docs/img/screenshot-20260317.webpg" alt="Suika3 Screensho"><br>
+  <img src="https://github.com/suika3-community/suika3/blob/main/docs/img/screenshot-20260317.webp" alt="Suika3 Screensho"><br>
 </div>
+
+---
 
 <div align="center">
   Our slogan is "Visual Novel Anywhere!"<br>
