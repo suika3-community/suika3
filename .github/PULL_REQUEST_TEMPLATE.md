@@ -96,10 +96,3 @@ Please confirm the following:
 
 Add any additional context, screenshots, benchmarks, or questions for
 the reviewers.
-
----
-
-## Code of Conduct
-
-By submitting this pull request, I agree to follow the project's
-Code of Conduct and to participate in the review process respectfully.

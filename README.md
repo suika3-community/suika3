@@ -601,12 +601,11 @@ Compilation stages are as below.
 
 ```
  +-----+     +-----+     +-----+     +-----+
- | SRC | --> | AST | --> | HIR | --> | LIR | ----> [Interpreter]
- +-----+     +-----+     +-----+     +-----+
-                                        |
-                                        +--------> [JIT Code Generator]
-                                        |
-                                        +--------> [C Source Backend]
+ | SRC | --> | AST | --> | HIR | --> | LIR | -----> [Interpreter Backend]
+ +-----+     +-----+     +-----+     +-----+   |
+                                               +--> [JIT Backend]
+                                               |
+                                               +--> [C Backend]
 ```
 
 The separation of HIR and LIR enables:
