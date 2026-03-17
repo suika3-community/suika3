@@ -1319,6 +1319,7 @@ Play, regardless of their software, hardware, and budget limitations.
 - [What are the minimum requirements?](#what-are-the-minimum-requirements)
 - [What does "Supported" mean?](#what-does-supported-mean)
 - [Will there be breaking changes? What is the compatibility policy?](#will-there-be-breaking-changes-what-is-the-compatibility-policy)
+- [Does it support DLC or in-app purchases?](#does-it-support-dlc-or-in-app-purchases)
 
 ### What's this?
 
@@ -1556,3 +1557,49 @@ will be added instead. If behavior must be altered, a flag will be
 provided to configure the behavior mode. Note that save data
 specifications may not be compatible across releases. For a single
 product, please fix and lock the major release version to be used.
+
+### Does it support DLC or in-app purchases?
+
+No, it doesn't, and there are no plans to support them.
+
+Instead, please assume a subscription-based distribution model, like
+Apple Arcade. In this model, a visual novel becomes a work that is
+read for a long time—much like a book—and is monetized through
+continuous viewing and playtime, similar to YouTube videos.
+
+The visual novel market on mobile cannot survive unless it adapts to
+this long-tail distribution.
+
+Even if the project is supported by a small number of core fans, I
+recommend selling merchandise rather than relying on DLC. Additional
+content should be provided as free app updates rather than being split
+into paid segments; the work should always remain a single, unified
+experience.
+
+At present, this remains a forward-looking perspective. However,
+in-app monetization models—particularly those resembling gambling
+mechanics—may face increasing regulatory restrictions depending on
+regional policies. It is possible that such regulations could expand
+and become a broader global standard over time.
+
+For this reason, building a business model that does not rely on
+in-app purchases is not only a risk mitigation strategy, but also a
+path toward more sustainable revenue. More importantly, it allows each
+work to remain available, discoverable, and continuously
+played—enabling it to be appreciated and loved over the long term.
+
+Furthermore, platform holders are the core of distribution and
+essential business partners. On mobile and consoles, it’s necessary
+to design projects based not only on "what you want to create" but
+also on "what kind of experience the platformer expects." This might
+seem like a different dimension from pure artistic creation. However,
+as a professional creator, this is an indispensable process for
+delivering your work sustainably.
+
+Game subscription services are still an emerging and evolving
+market. By contributing to its growth at this stage, creators are well
+positioned to build strong relationships with platform holders and
+benefit from increased visibility and support. Early participation in
+shaping the ecosystem is likely to be rewarded as the market matures.
+
+This is the core strategy of the Suika3 project.
