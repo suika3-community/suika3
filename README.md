@@ -25,7 +25,7 @@
   <img src="https://img.shields.io/badge/Console-Switch%20%2F%20PS5%20%2F%20Xbox-blue">
   <img src="https://img.shields.io/badge/Web-Emscripten-blue">
   <img src="https://img.shields.io/badge/UNIX-FreeBSD%20%2F%20NetBSD%20%2F%20OpenBSD%20%2F%20Solaris%2011-blue">
-  <img src="https://img.shields.io/badge/Store-App%20Store%20%2F%20Play%20Store%20%2F%20Microsoft%20Store%20%2F%20-blue">
+  <img src="https://img.shields.io/badge/Store-App%20Store%20%2F%20Play%20Store%20%2F%20Microsoft%20Store%20%2F%20Steam%20%2F%20itch%2eio-green">
   <br><br>
 </div>
 
