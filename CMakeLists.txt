@@ -36,6 +36,7 @@ option(SUIKA_TARGET_HAIKU            "Build for Haiku OS (Soft3D)"              
 # Options
 option(SUIKA_ENABLE_STATIC           "Build a static library"                         OFF)
 option(SUIKA_ENABLE_SHARED           "Build a dynamic library"                        OFF)
+option(SUIKA_ENABLE_OBJECT           "Build an object library"                        OFF)
 option(SUIKA_ENABLE_DIST             "Build for OS package"                           OFF)
 option(SUIKA_ENABLE_JIT              "Enable JIT"                                     OFF)
 option(SUIKA_ENABLE_I18N             "Enable translation"                             OFF)
@@ -185,7 +186,9 @@ endif()
 #
 
 # Build Playfield Engine as a library.
-if(SUIKA_ENABLE_STATIC OR SUIKA_TARGET_SHARED)
+if(   SUIKA_ENABLE_STATIC
+   OR SUIKA_TARGET_SHARED
+   OR SUIKA_TARGET_OBJECT)
   set(PLAYFIELD_ENABLE_OBJECT ON)
 else()
   set(PLAYFIELD_ENABLE_STATIC ON)
@@ -321,7 +324,9 @@ endif()
 # Apple Quirks (Universal Binary 2)
 #
 
-if(SUIKA_TARGET_MACOS)
+if(   SUIKA_TARGET_MACOS
+   OR SUIKA_TARGET_MACOS_CLI
+   OR SUIKA_TARGET_MACOS_LIB)
   set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64" CACHE STRING "" FORCE)
 endif()
 
@@ -629,7 +634,7 @@ endif()
 
 if(SUIKA_ENABLE_PACK)
   if (SUIKA_TARGET_WINDOWS)
-    set(SUIKA_PACK_RESOURCE external/PlayfieldEngine/resources/windows/pack-resource.rc)
+    set(SUIKA_PACK_RESOURCE resources/windows/pack-resource.rc)
   endif()
 
   add_executable(
@@ -660,7 +665,7 @@ endif()
 
 if(SUIKA_ENABLE_BYTECOMP)
   if (SUIKA_TARGET_WINDOWS)
-    set(SUIKA_BYTECOMP_RESOURCE external/PlayfieldEngine/resources/windows/bytecomp-resource.rc)
+    set(SUIKA_BYTECOMP_RESOURCE resources/windows/bytecomp-resource.rc)
   endif()
 
   add_executable(
@@ -694,7 +699,7 @@ endif()
 
 if(SUIKA_ENABLE_AOTCOMP)
   if (SUIKA_TARGET_WINDOWS)
-    set(SUIKA_AOTCOMP_RESOURCE external/PlayfieldEngine/resources/windows/aotcomp-resource.rc)
+    set(SUIKA_AOTCOMP_RESOURCE resources/windows/aotcomp-resource.rc)
   endif()
 
   add_executable(
@@ -735,7 +740,6 @@ if(SUIKA_ENABLE_WEBSERVER)
   add_executable(
     suika3-web
     external/PlayfieldEngine/src/webserver.c
-    external/PlayfieldEngine/resources/windows/web-resource.rc
     ${SUIKA_WEB_RESOURCE}
   )
 
