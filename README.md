@@ -4,10 +4,10 @@ Suika3
 <img src="https://raw.githubusercontent.com/suika3-community/suika3/refs/heads/main/docs/img/logo-small.png" alt="Suika3 Logo" align="right" width="120" hspace="20">
 
 Suika3 is a portable visual novel engine designed to run on a wide
-range of platforms — from smartphones and consoles to legacy systems
-— using a custom JIT/AOT hybrid scripting compiler and C89-based
-rendering & audio runtime for mobile app store compliance. Our slogan
-is "Visual Novel Anywhere!"
+range of platforms (PC/iOS/Android/Web/etc.) using a custom JIT/AOT
+hybrid scripting infrastructure and C89-based rendering & audio
+runtime for mobile app store compliance. Our slogan is "Visual Novel
+Anywhere!"
 
 <br clear="left">
 
