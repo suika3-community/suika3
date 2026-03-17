@@ -15,6 +15,7 @@ Suika3
   <img src="https://img.shields.io/badge/Console-Switch%20%2F%20PS5%20%2F%20Xbox-blue">
   <img src="https://img.shields.io/badge/Web-Emscripten-blue">
   <img src="https://img.shields.io/badge/UNIX-FreeBSD%20%2F%20NetBSD%20%2F%20OpenBSD%20%2F%20Solaris%2011-blue">
+  <br>
 </div>
 
 Suika3 is a portable visual novel engine designed to run on a wide
