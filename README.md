@@ -1,3 +1,10 @@
+<h1 align="center" style="border-bottom: none">
+  <b>
+    <a href="https://suika3.vn">Suika3</a><br>
+  </b>
+  The Next-Generation Visual Novel Engine<br>
+</h1>
+
 Suika3
 ======
 
@@ -19,9 +26,11 @@ Suika3
 </div>
 
 Suika3 is a portable visual novel engine designed to run on a wide
-range of platforms (PC/iOS/Android/Web/etc.) using a custom JIT/AOT
-hybrid scripting infrastructure and C89-based rendering & audio
-runtime for mobile app store compliance.
+range of platforms.
+
+Our custom JIT/AOT hybrid scripting infrastructure and C89-based
+rendering & audio runtime enables your game compliant to mobile app
+stores.
 
 <!-- SCREENSHOT -->
 <div align="center">
