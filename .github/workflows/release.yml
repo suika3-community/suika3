@@ -182,10 +182,10 @@ jobs:
 
       - name: Build for x86_64 (X11)
         run: |
-          cmake --preset linux-x11
-          cmake --build --preset linux-x11
+          cmake --preset linux
+          cmake --build --preset linux
           mkdir -p AppDir/usr/bin
-          cp build-linux-x11/suika3 AppDir/usr/bin/
+          cp build-linux/suika3 AppDir/usr/bin/
           cp resources/linux/AppRun AppDir/
           cp suika3.desktop AppDir/
           cp resources/icon.png AppDir/suika3.png
@@ -395,16 +395,19 @@ jobs:
           path: llvm-21
           key: llvm-21
 
-      - name: Install deps
+      - name: Install apt packages
         run: |
           sudo apt-get update
           sudo apt-get install -y cmake ninja-build flex bison mingw-w64
 
-      - name: Setup for Unity
-        if: steps.cache.outputs.cache-hit != 'true'
+      - name: Setup LLVM for Unity
+        if: steps.cache-llvm.outputs.cache-hit != 'true'
         run: |
           curl -L -o llvm.tar.xz https://github.com/llvm/llvm-project/releases/download/llvmorg-21.1.8/LLVM-21.1.8-Linux-X64.tar.xz
           mkdir llvm-21 && tar -xJf llvm.tar.xz -C llvm-21 --strip-components=1
+
+      - name: Check for LLVM PATH
+        run: |
           echo "`pwd`/llvm-21/bin" >> $GITHUB_PATH
           clang --version
 

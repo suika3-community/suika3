@@ -634,7 +634,19 @@ if(SUIKA_ENABLE_PACK)
 
   add_executable(
     suika3-pack
+    external/PlayfieldEngine/external/StratoHAL/src/archive.c
+    external/PlayfieldEngine/src/pack.c
     ${SUIKA_PACK_RESOURCE}
+  )
+
+  target_include_directories(
+    suika3-pack
+    PRIVATE
+    include
+    external/PlayfieldEngine/include
+    external/PlayfieldEngine/external/StratoHAL/include
+    external/PlayfieldEngine/external/NoctLang/src/core
+    external/PlayfieldEngine/external/NoctLang/src/backend
   )
 
   target_link_libraries(suika3-pack stratopack)
