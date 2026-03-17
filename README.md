@@ -21,7 +21,7 @@
 <div align="center">
   <p>
     Our custom JIT-VM / AOT-fallback scripting infrastructure lets you
-    publish the exact same game across both PC and app stores,
+    publish the exact same game across both Steam and App Store,
     eliminating traditional porting headaches!
   </p>
   <img src="https://img.shields.io/badge/Desktop-Windows%20%2F%20macOS%20%2F%20Linux%20%2F%20Chromebook%20%2F%20Raspberry%20Pi-blue">
@@ -51,14 +51,15 @@
 
 ## TL;DR
 
-- **Target:** Mobile-first VN engine that runs anywhere
+- **Target:** Mobile-first, yet runs anywhere
 - **High-Performance:** Native, written in C
 - **Hybrid Scripting:** JIT VM with AOT fallback for App Store compliance
 - **Broad Platforms:**
-    * **Desktop:** Windows, macOS, Linux, Chromebook, Raspberry Pi, *BSD, Solaris
-    * **Mobile:** iOS, Android, HarmonyOS NEXT
-    * **Web:** WebAssembly
-    * **Console:** Xbox GDK, PS5 and Switch via Unity Integration, devkit required
+    - **Desktop:** Windows, macOS, Linux, Chromebook, Raspberry Pi
+    - **Mobile:** iOS, Android, HarmonyOS NEXT
+    - **Web:** WebAssembly
+    - **Console:** Xbox GDK, PS5 and Switch via Unity Integration, devkit required
+    - **More:** FreeBSD, NetBSD, OpenBSD, Solaris, Haiku
 - **Users:** Professional creators, indie studios, enterprise teams.
 
 To build and run:

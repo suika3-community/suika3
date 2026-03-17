@@ -803,7 +803,7 @@
         {
             "name":           "freebsd",
             "displayName":    "FreeBSD X11 OpenGL",
-            "generator":      "Ninja",
+            "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-freebsd",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
@@ -817,7 +817,7 @@
         {
             "name":           "freebsd-wayland",
             "displayName":    "FreeBSD Wayland",
-            "generator":      "Ninja",
+            "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-freebsd",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
@@ -831,7 +831,7 @@
         {
             "name":           "freebsd-x11soft",
             "displayName":    "FreeBSD X11 Soft3D",
-            "generator":      "Ninja",
+            "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-freebsd-x11soft",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
@@ -845,7 +845,7 @@
         {
             "name":           "netbsd",
             "displayName":    "NetBSD X11 OpenGL",
-            "generator":      "Ninja",
+            "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-netbsd",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
@@ -859,7 +859,7 @@
         {
             "name":           "netbsd-x11soft",
             "displayName":    "NetBSD X11 Soft3D",
-            "generator":      "Ninja",
+            "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-netbsd-x11soft",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
@@ -873,7 +873,7 @@
         {
             "name":           "openbsd",
             "displayName":    "OpenBSD X11 OpenGL",
-            "generator":      "Ninja",
+            "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-openbsd",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
@@ -887,7 +887,7 @@
         {
             "name":           "openbsd-x11soft",
             "displayName":    "OpenBSD X11 Soft3D",
-            "generator":      "Ninja",
+            "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-openbsd-x11soft",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
@@ -960,6 +960,21 @@
                 "SUIKA_ENABLE_PACK":           "ON",
                 "SUIKA_ENABLE_BYTECOMP":       "ON",
                 "SUIKA_ENABLE_AOTCOMP":        "ON"
+            }
+        },
+        {
+            "name":           "haiku",
+            "displayName":    "Haiku",
+            "generator":      "Unix Makefiles",
+            "binaryDir":      "${sourceDir}/build-haiku",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":             "Release",
+                "CMAKE_C_COMPILER":             "gcc",
+                "CMAKE_CXX_COMPILER":           "g++",
+                "SUIKA_TARGET_HAIKU":           "ON",
+                "SUIKA_ENABLE_PACK":            "ON",
+                "SUIKA_ENABLE_BYTECOMP":        "ON",
+                "SUIKA_ENABLE_AOTCOMP":         "ON"
             }
         }
     ],
@@ -1179,6 +1194,10 @@
         {
             "name": "unix",
             "configurePreset": "unix"
+        },
+        {
+            "name": "haiku",
+            "configurePreset": "haiku"
         }
     ]
 }
