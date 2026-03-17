@@ -48,7 +48,7 @@ option(PLAYFIELD_ENABLE_WEBSERVER        "Enable Web server"                    
 option(PLAYFIELD_ENABLE_EDITOR           "Enable simple editor for Windows"           OFF)
 option(PLAYFIELD_ENABLE_ROT90            "Rotate screen for GBM"                      OFF)
 option(PLAYFIELD_ENABLE_GST              "Enable Gstreamer support"                   OFF)
-option(PLAYFIELD_ENABLE_MAIN2            "Enable macOS main2()                        OFF)
+option(PLAYFIELD_ENABLE_MAIN2            "Enable macOS main2()"                       OFF)
 
 # For derived projects
 option(PLAYFIELD_ENABLE_INITHOOK         "Enable the inithook function"               OFF)
@@ -662,7 +662,7 @@ if(PLAYFIELD_ENABLE_PACK)
     add_executable(
       playfield-pack
       src/pack.c
-      ${PLAYFIELD_PACK_RESOURCE}}
+      ${PLAYFIELD_PACK_RESOURCE}
     )
 
     target_link_libraries(playfield-pack stratopack)
