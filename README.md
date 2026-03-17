@@ -10,10 +10,12 @@ Suika3
   <img src="https://img.shields.io/badge/License-ZLib-purple.svg">
 </div>
 
+<div>
 Suika3 is a portable visual novel engine designed to run on a wide
 range of platforms (PC/iOS/Android/Web/etc.) using a custom JIT/AOT
 hybrid scripting infrastructure and C89-based rendering & audio
 runtime for mobile app store compliance.
+</div>
 
 <div align="center">
   <img src="https://github.com/suika3-community/suika3/blob/main/docs/img/screenshot-20260317.webp" alt="Suika3 Screenshot"><br>
