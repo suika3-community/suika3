@@ -24,30 +24,30 @@ jobs:
 
       - name: Configure (x86)
         run: >
-          cmake --preset windows-vs2022-x86-release
+          cmake --preset windows-vs2022-x86
           -DFLEX_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_flex.exe"
           -DBISON_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_bison.exe"
 
       - name: Build (x86)
-        run: cmake --build --preset windows-vs2022-x86-release --config Release --parallel
+        run: cmake --build --preset windows-vs2022-x86 --config Release --parallel
 
       - name: Configure (x64)
         run: >
-          cmake --preset windows-vs2022-x64-release
+          cmake --preset windows-vs2022-x64
           -DFLEX_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_flex.exe"
           -DBISON_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_bison.exe"
 
       - name: Build (x64)
-        run: cmake --build --preset windows-vs2022-x64-release --config Release --parallel
+        run: cmake --build --preset windows-vs2022-x64 --config Release --parallel
 
       - name: Configure (arm64)
         run: >
-          cmake --preset windows-vs2022-arm64-release
+          cmake --preset windows-vs2022-arm64
           -DFLEX_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_flex.exe"
           -DBISON_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_bison.exe"
 
       - name: Build (arm64)
-        run: cmake --build --preset windows-vs2022-arm64-release --config Release --parallel
+        run: cmake --build --preset windows-vs2022-arm64 --config Release --parallel
 
       - name: Upload Windows EXEs
         uses: actions/upload-artifact@v4
@@ -129,10 +129,12 @@ jobs:
 
       - name: Build for x86_64
         run: |
-          cmake -B build -DCMAKE_BUILD_TYPE=Release
-          cmake --build build --config Release
+          cmake --preset linux
+          cmake --build --preset linux
+          #cmake -B build -DCMAKE_BUILD_TYPE=Release
+          #cmake --build build --config Release
           mkdir -p AppDir/usr/bin
-          cp build/playfield AppDir/usr/bin/
+          cp build-linux/playfield AppDir/usr/bin/
           cp resources/linux/AppRun AppDir/
           cp playfield.desktop AppDir/
           cp resources/icon.png AppDir/playfield.png
@@ -221,6 +223,11 @@ jobs:
           cp -Rv Playfield.app tmp/Playfield.app
           hdiutil create -fs HFS+ -format UDBZ -srcfolder tmp -volname Playfield Playfield.dmg
           codesign --sign "Developer ID Application" Playfield.dmg
+          cd ..
+          cmake --preset macos-lib
+          cmake --build --preset macos-lib
+          xcodebuild -create-xcframework -library build-macos-lib/libplayfield.a -headers include -output Playfield.xcframework
+          tar czf Playfield.xcframework.tar.gz Playfield.xcframework
 
       - name: Upload macOS
         uses: actions/upload-artifact@v4
@@ -229,6 +236,9 @@ jobs:
           path: |
             build-macos/Playfield.dmg
             build-macos/playfield-pack
+            build-macos/suika3-bytecomp
+            build-macos/suika3-aotcomp
+            Playfield.xcframework.tar.gz
           if-no-files-found: error
           retention-days: 7
 
@@ -402,19 +412,22 @@ jobs:
           path: llvm-21
           key: llvm-21
 
-      - name: Set up dependencies
+      - name: Install apt packages
         run: git submodule update --init
 
-      - name: Install deps
+      - name: Install apt packages
         run: |
           sudo apt-get update
           sudo apt-get install -y cmake ninja-build flex bison mingw-w64
 
-      - name: Setup for Unity
-        if: steps.cache.outputs.cache-hit != 'true'
+      - name: Setup LLVM for Unity
+        if: steps.cache-llvm.outputs.cache-hit != 'true'
         run: |
           curl -L -o llvm.tar.xz https://github.com/llvm/llvm-project/releases/download/llvmorg-21.1.8/LLVM-21.1.8-Linux-X64.tar.xz
           mkdir llvm-21 && tar -xJf llvm.tar.xz -C llvm-21 --strip-components=1
+
+      - name: Setup PATH for LLVM
+        run: |
           echo "`pwd`/llvm-21/bin" >> $GITHUB_PATH
           clang --version
 
@@ -508,6 +521,7 @@ jobs:
           mkdir dist/misc
           mkdir dist/misc/windows
           mkdir dist/misc/macos
+          mkdir dist/misc/macos/project
           mkdir dist/misc/linux
           mkdir dist/misc/wasm
           mkdir dist/misc/ios
@@ -523,11 +537,11 @@ jobs:
 
       - name: Copy for Windows.
         run: |
-          cp windows/build/windows-vs2022-x64-release/Release/playfield.exe dist/
-          cp windows/build/windows-vs2022-x64-release/Release/playfield-editor.exe dist/
-          cp windows/build/windows-vs2022-x86-release/Release/playfield-pack.exe dist/misc/windows/
-          cp windows/build/windows-vs2022-x86-release/Release/playfield-web.exe dist/misc/wasm/
-          cp windows/build/windows-vs2022-arm64-release/Release/playfield.exe dist/misc/windows/playfield-arm64.exe
+          cp windows/build/windows-vs2022-x64/Release/playfield.exe dist/
+          cp windows/build/windows-vs2022-x64/Release/playfield-editor.exe dist/
+          cp windows/build/windows-vs2022-x86/Release/playfield-pack.exe dist/misc/windows/
+          cp windows/build/windows-vs2022-x86/Release/playfield-web.exe dist/misc/wasm/
+          cp windows/build/windows-vs2022-arm64/Release/playfield.exe dist/misc/windows/playfield-arm64.exe
           cp samples/shoot/main.pf dist/
 
       - name: Download mingw artifacts
@@ -546,10 +560,24 @@ jobs:
           name: macos
           path: macos
 
-      - name: Copy for macOS.
+      - name: Copy for macOS app.
         run: |
-          cp macos/Playfield.dmg dist/misc/macos/
-          cp macos/playfield-pack dist/misc/macos/
+          ls -lha macos/
+          cp macos/build-macos/Playfield.dmg dist/misc/macos/
+          cp macos/build-macos/playfield-pack dist/misc/macos/
+
+      - name: Copy for macOS project.
+        run: |
+          mkdir dist/misc/macos/project/Resources/
+          cp resources/assets.arc dist/misc/macos/project/Resources/
+          mkdir dist/misc/macos/project/Resources/video
+          mkdir dist/misc/macos/project/Game.xcodeproj
+          cp resources/projects/macos/Game.xcodeproj/project.pbxproj dist/misc/macos/project/Game.xcodeproj/
+          mkdir dist/misc/macos/project/Game
+          tar xfz macos/Playfield.xcframework.tar.gz -C dist/misc/macos/project/Game/
+          cp -R resources/projects/macos/Game/Assets.xcassets dist/misc/macos/project/Game/
+          cp resources/projects/macos/Game/main.m dist/misc/macos/project/Game/
+          cp resources/macos/macos.entitlements dist/misc/macos/project/Game/
 
       - name: Download Linux artifacts
         uses: actions/download-artifact@v4

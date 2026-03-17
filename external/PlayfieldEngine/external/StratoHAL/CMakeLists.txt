@@ -6,36 +6,42 @@ project(StratoHAL LANGUAGES C CXX)
 #
 
 # Target
-option(STRATO_TARGET_WINDOWS          "Build for Windows 2000 or later"    OFF)
-option(STRATO_TARGET_WINDOWS95        "Build for Windows 95/98/Me"         OFF)
-option(STRATO_TARGET_MACOS            "Build for macOS"                    OFF)
-option(STRATO_TARGET_LINUX            "Build for Linux X11"                OFF)
-option(STRATO_TARGET_LINUX_WAYLAND    "Build for Linux Wayland"            OFF)
-option(STRATO_TARGET_LINUX_GBM        "Build for Linux GBM Framebuffer"    OFF)
-option(STRATO_TARGET_LINUX_FBDEV      "Build for Linux fbdev Framebuffer"  OFF)
-option(STRATO_TARGET_LINUX_X11SOFT    "Build for Linux X11 Soft Render"    OFF)
-option(STRATO_TARGET_IOS              "Build for iOS"                      OFF)
-option(STRATO_TARGET_ANDROID          "Build for Android"                  OFF)
-option(STRATO_TARGET_OPENHARMONY      "Build for OpenHarmony"              OFF)
-option(STRATO_TARGET_WASM             "Build for Emscripten"               OFF)
-option(STRATO_TARGET_WASM_LOCAL       "Build for Emscripten (local file)"  OFF)
-option(STRATO_TARGET_UNITY            "Build for Unity"                    OFF)
-option(STRATO_TARGET_FREEBSD          "Build for FreeBSD X11"              OFF)
-option(STRATO_TARGET_FREEBSD_WAYLAND  "Build for FreeBSD Wayland"          OFF)
-option(STRATO_TARGET_NETBSD           "Build for NetBSD"                   OFF)
-option(STRATO_TARGET_OPENBSD          "Build for OpenBSD"                  OFF)
-option(STRATO_TARGET_SOLARIS11        "Build for Solaris 11"               OFF)
-option(STRATO_TARGET_GENERICUNIX      "Build for Unknown UNIX"             OFF)
-option(STRATO_TARGET_GDK_WINDOWS      "Build for GDK for Desktop"          OFF)
-option(STRATO_TARGET_GDK_XBOX_XS      "Build for GDK for Xbox Series X|S"  OFF)
-option(STRATO_TARGET_UWP              "Build for UWP"                      OFF)
+option(STRATO_TARGET_WINDOWS          "Build for Windows 2000 or later"         OFF)
+option(STRATO_TARGET_WINDOWS95        "Build for Windows 95/98/Me"              OFF)
+option(STRATO_TARGET_MACOS            "Build for macOS"                         OFF)
+option(STRATO_TARGET_LINUX            "Build for Linux (X11, OpenGL)"           OFF)
+option(STRATO_TARGET_LINUX_WAYLAND    "Build for Linux (Wayland, OpenGL)"       OFF)
+option(STRATO_TARGET_LINUX_GBM        "Build for Linux (GBM, OpenGL ES)"        OFF)
+option(STRATO_TARGET_LINUX_FBDEV      "Build for Linux (fbdev, Soft3D)"         OFF)
+option(STRATO_TARGET_LINUX_X11SOFT    "Build for Linux (X11, Soft3D)"           OFF)
+option(STRATO_TARGET_IOS              "Build for iOS"                           OFF)
+option(STRATO_TARGET_ANDROID          "Build for Android (OpenGL ES)"           OFF)
+option(STRATO_TARGET_OPENHARMONY      "Build for OpenHarmony (OpenGL)"          OFF)
+option(STRATO_TARGET_WASM             "Build for Emscripten (WebGL)"            OFF)
+option(STRATO_TARGET_WASM_LOCAL       "Build for Emscripten Local (WebGL)"      OFF)
+option(STRATO_TARGET_UNITY            "Build for Unity"                         OFF)
+option(STRATO_TARGET_FREEBSD          "Build for FreeBSD (X11, OpenGL)"         OFF)
+option(STRATO_TARGET_FREEBSD_WAYLAND  "Build for FreeBSD (Wayland, OpenGL)"     OFF)
+option(STRATO_TARGET_FREEBSD_X11SOFT  "Build for FreeBSD (X11, Soft3D)"         OFF)
+option(STRATO_TARGET_NETBSD           "Build for NetBSD (X11, OpenGL)"          OFF)
+option(STRATO_TARGET_NETBSD_X11SOFT   "Build for NetBSD (X11, Soft3D)"          OFF)
+option(STRATO_TARGET_OPENBSD          "Build for OpenBSD (X11, OpenGL)"         OFF)
+option(STRATO_TARGET_OPENBSD_X11SOFT  "Build for OpenBSD (X11, Soft3D)"         OFF)
+option(STRATO_TARGET_SOLARIS11        "Build for Solaris 11 (X11, Soft3D)"      OFF)
+option(STRATO_TARGET_GENERICUNIX      "Build for Unknown UNIX (X11, Soft3D)"    OFF)
+option(STRATO_TARGET_HAIKU            "Build for Haiku OS (Soft3D)"             OFF)
+option(STRATO_TARGET_GDK_WINDOWS      "Build for GDK for Desktop"               OFF)
+option(STRATO_TARGET_GDK_XBOX_XS      "Build for GDK for Xbox Series X|S"       OFF)
 
 # Options
-option(STRATO_ENABLE_I18N             "Enable translation"                 OFF)
-option(STRATO_ENABLE_OBJECT           "Build an object library"            OFF)
-option(STRATO_ENABLE_SHARED           "Use shared libraries"               OFF)
-option(STRATO_ENABLE_ROT90            "Rotate screen"                      OFF)
-option(STRATO_ENABLE_GST              "Enable GStreamer support"           OFF)
+option(STRATO_ENABLE_OBJECT           "Build an object library"                 OFF)
+option(STRATO_ENABLE_STATIC           "Build a static library"                  OFF)
+option(STRATO_ENABLE_SHARED           "Build a shared libraries"                OFF)
+option(STRATO_ENABLE_DIST             "Link shared libraries"                   OFF)
+option(STRATO_ENABLE_PACK             "Build packager"                          OFF)
+option(STRATO_ENABLE_I18N             "Enable translation"                      OFF)
+option(STRATO_ENABLE_ROT90            "Rotate screen"                           OFF)
+option(STRATO_ENABLE_GST              "Enable Gstreamer support"                OFF)
 
 #
 # Automatic Target Detection
@@ -45,6 +51,7 @@ option(STRATO_ENABLE_GST              "Enable GStreamer support"           OFF)
 if(   STRATO_TARGET_WINDOWS
    OR STRATO_TARGET_WINDOWS95
    OR STRATO_TARGET_MACOS
+   OR STRATO_TARGET_MACOS_LIB
    OR STRATO_TARGET_LINUX
    OR STRATO_TARGET_LINUX_WAYLAND
    OR STRATO_TARGET_LINUX_GBM
@@ -58,42 +65,70 @@ if(   STRATO_TARGET_WINDOWS
    OR STRATO_TARGET_UNITY
    OR STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_FREEBSD_WAYLAND
+   OR STRATO_TARGET_FREEBSD_X11SOFT
    OR STRATO_TARGET_NETBSD
+   OR STRATO_TARGET_NETBSD_X11SOFT
    OR STRATO_TARGET_OPENBSD
+   OR STRATO_TARGET_OPENBSD_X11SOFT
    OR STRATO_TARGET_SOLARIS11
+   OR STRATO_TARGET_GENERICUNIX
+   OR STRATO_TARGET_HAIKU
    OR STRATO_TARGET_GDK_WINDOWS
    OR STRATO_TARGET_GDK_XBOX_XS
-   OR STRATO_TARGET_UWP
 )
   # A target and options are manually specified.
 else()
+  # Detect OS.
   if(WIN32)
-    set(STRATO_TARGET_WINDOWS    ON)
     message(STATUS "Targeting Windows.")
+    set(STRATO_TARGET_WINDOWS                     ON)
+    set(STRATO_ENABLE_STATIC                      ON)
+
   elseif(APPLE AND NOT IOS)
-    set(STRATO_TARGET_MACOS      ON)
     message(STATUS "Targeting macOS.")
+    set(STRATO_TARGET_MACOS                       ON)
+    set(STRATO_ENABLE_SHARED                      ON)
+    set(STRATO_ENABLE_DIST                        ON)
+
   elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    set(STRATO_TARGET_LINUX      ON)
     message(STATUS "Targeting Linux.")
+    set(STRATO_TARGET_LINUX                       ON)
+    set(STRATO_ENABLE_SHARED                      ON)
+    set(STRATO_ENABLE_DIST                        ON)
+
   elseif(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
-    set(STRATO_TARGET_FREEBSD    ON)
     message(STATUS "Targeting FreeBSD.")
+    set(STRATO_TARGET_FREEBSD_X11SOFT             ON)
+    set(STRATO_ENABLE_SHARED                      ON)
+    set(STRATO_ENABLE_DIST                        ON)
+
   elseif(CMAKE_SYSTEM_NAME STREQUAL "NetBSD")
-    set(STRATO_TARGET_NETBSD     ON)
     message(STATUS "Targeting NetBSD.")
+    set(STRATO_TARGET_NETBSD_X11SOFT              ON)
+    set(STRATO_ENABLE_SHARED                      ON)
+    set(STRATO_ENABLE_DIST                        ON)
+
   elseif(CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")
-    set(STRATO_TARGET_OPENBSD    ON)
     message(STATUS "Targeting OpenBSD.")
-  elseif(CMAKE_SYSTEM_NAME STREQUAL "Solaris")
-    set(STRATO_TARGET_SOLARIS11  ON)
-  elseif(    CMAKE_SYSTEM_NAME STREQUAL "SunOS"
-         AND CMAKE_SYSTEM_VERSION VERSION_GREATER_EQUAL "5.11")
-      set(STRATO_TARGET_SOLARIS11 ON)
-      message(STATUS "Targeting Solaris 11.")
+    set(STRATO_TARGET_OPENBSD_X11SOFT             ON)
+    set(STRATO_ENABLE_SHARED                      ON)
+    set(STRATO_ENABLE_DIST                        ON)
+
+  elseif(CMAKE_SYSTEM_NAME STREQUAL "SunOS" AND CMAKE_SYSTEM_VERSION VERSION_GREATER_EQUAL "5.11")
+    message(STATUS "Targeting Solaris 11.")
+    set(STRATO_TARGET_SOLARIS11                   ON)
+    set(STRATO_ENABLE_SHARED                      ON)
+    set(STRATO_ENABLE_DIST                        ON)
+
+  elseif(CMAKE_SYSTEM_NAME STREQUAL "Haiku")
+    message(STATUS "Targeting Haiku OS.")
+    set(STRATO_TARGET_HAIKU                       ON)
+
   else()
-      set(STRATO_TARGET_GENERICUNIX ON)
-      message(STATUS "Targeting generic UNIX.")
+    message("No supported OS detected. Trying to build for UNIX with X11")
+    set(STRATO_TARGET_GENERICUNIX                 ON)
+    set(STRATO_ENABLE_STATIC                      ON)
+
   endif()
 
   # No automatic detection for:
@@ -103,8 +138,9 @@ else()
   #  - Wasm (Emscripten)
   #  - Unity
   #  - GDK (Windows or Xbox)
-  #  - UWP
 endif()
+
+# ---
 
 #
 # Build Type
@@ -135,11 +171,13 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU"
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2 -g0 -DNDEBUG")
 endif()
 
+# ---
+
 #
 # Dependency
 #
 
-if(STRATO_ENABLE_SHARED)
+if(STRATO_ENABLE_DIST)
   # Use system installations.
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
   find_package(PNG REQUIRED)
@@ -152,7 +190,7 @@ if(STRATO_ENABLE_SHARED)
   find_package(BZip2 REQUIRED)
   find_package(ZLIB REQUIRED)
 else()
-  # Build the dependencies.
+  # Build the dependencies statically.
   include(cmake/zlib.cmake)
   include(cmake/libpng.cmake)
   include(cmake/jpeg.cmake)
@@ -164,55 +202,81 @@ else()
   include(cmake/freetype.cmake)
 endif()
 
+# libX11
 if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_LINUX_X11SOFT
    OR STRATO_TARGET_FREEBSD
+   OR STRATO_TARGET_FREEBSD_X11SOFT
    OR STRATO_TARGET_NETBSD
+   OR STRATO_TARGET_NETBSD_X11SOFT
    OR STRATO_TARGET_OPENBSD
+   OR STRATO_TARGET_OPENBSD_X11SOFT
    OR STRATO_TARGET_SOLARIS11
    OR STRATO_TARGET_GENERICUNIX)
   # Common
   find_library(X11_LIBRARY X11 REQUIRED)
   find_library(XPM_LIBRARY Xpm REQUIRED)
-
-  # GL
-  if(   STRATO_TARGET_LINUX
-     OR STRATO_TARGET_FREEBSD
-     OR STRATO_TARGET_NETBSD
-     OR STRATO_TARGET_OPENBSD)
-    find_library(GL_LIBRARY GL REQUIRED)
-  endif()
-
-  # GLX (for older mesa)
-  if(   STRATO_TARGET_LINUX
-     OR STRATO_TARGET_FREEBSD)
-    find_library(GLX_LIBRARY GLX)
-  endif()
-
-  # Gstreamer
-  if(STRATO_ENABLE_GST)
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(GST REQUIRED IMPORTED_TARGET gstreamer-1.0 gstreamer-video-1.0)
-  endif()
 endif()
 
+# libGL and libGLX
 if(   STRATO_TARGET_LINUX
+   OR STRATO_TARGET_FREEBSD
+   OR STRATO_TARGET_NETBSD
+   OR STRATO_TARGET_OPENBSD
+   OR STRATO_TARGET_GENERICUNIX)
+  find_library(GL_LIBRARY GL REQUIRED)
+endif()
+
+# GLX (for older Mesa on Linux and FreeBSD)
+if(   STRATO_TARGET_LINUX
+   OR STRATO_TARGET_FREEBSD)
+  find_library(GLX_LIBRARY GLX)
+endif()
+
+# libEGL
+if(   STRATO_TARGET_LINUX_GBM
+   OR STRATO_TARGET_LINUX_WAYLAND
+   OR STRATO_TARGET_FREEBSD_WAYLAND)
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(EGL REQUIRED egl)
+endif()
+
+# libGLESv2
+if(   STRATO_TARGET_LINUX_GBM
+   OR STRATO_TARGET_LINUX_WAYLAND
+   OR STRATO_TARGET_FREEBSD_WAYLAND)
+  pkg_check_modules(GLES2 REQUIRED glesv2)
+endif()
+
+# Gstreamer
+if(STRATO_ENABLE_GST)
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(GST REQUIRED IMPORTED_TARGET gstreamer-1.0 gstreamer-video-1.0)
+endif()
+
+# ALSA
+if(   STRATO_TARGET_LINUX
+   OR STRATO_TARGET_LINUX_WAYLAND
+   OR STRATO_TARGET_LINUX_GBM
+   OR STRATO_TARGET_LINUX_FBDEV
    OR STRATO_TARGET_LINUX_X11SOFT)
   find_library(ALSA_LIBRARY asound REQUIRED)
 endif()
 
+# GBM and DRM
 if(STRATO_TARGET_LINUX_GBM)
   find_library(GBM_LIBRARY gbm REQUIRED)
   find_library(DRM_LIBRARY drm REQUIRED)
 endif()
 
+# Wayland
 if(   STRATO_TARGET_LINUX_WAYLAND
    OR STRATO_TARGET_FREEBSD_WAYLAND)
   find_package(PkgConfig REQUIRED)
   pkg_check_modules(WAYLAND REQUIRED wayland-client wayland-egl)
-  pkg_check_modules(EGL     REQUIRED egl)
-  pkg_check_modules(GLES2   REQUIRED glesv2)
 endif()
+
+# ---
 
 #
 # Checks
@@ -235,13 +299,17 @@ if(HAVE_SYS_TYPES_H)
   add_definitions(-DHAVE_SYS_TYPES_H=1)
 endif()
 
+# ---
+
 #
 # Main Target
 #
 
-# For Windows.
+# Windows
 if(   STRATO_TARGET_WINDOWS
    OR STRATO_TARGET_WINDOWS95)
+  set(CMAKE_CXX_STANDARD 11)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
   set(STRATO_SOURCES
     src/image.c
     src/glyph.c
@@ -261,8 +329,9 @@ if(   STRATO_TARGET_WINDOWS
   )
 endif()
 
-# For macOS.
+# macOS
 if(STRATO_TARGET_MACOS)
+  enable_language(OBJC)
   set(STRATO_SOURCES
     src/image.c
     src/glyph.c
@@ -275,7 +344,7 @@ if(STRATO_TARGET_MACOS)
   )
 endif()
 
-# For Linux and *BSD. (X11)
+# X11 OpenGL
 if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_NETBSD
@@ -296,50 +365,11 @@ if(   STRATO_TARGET_LINUX
     )
 endif()
 
-# For Linux Wayland.
-if(   STRATO_TARGET_LINUX_WAYLAND
-   OR STRATO_TARGET_FREEBSD_WAYLAND)
-  set(STRATO_SOURCES
-      src/image.c
-      src/glyph.c
-      src/wave.c
-      src/stdfile.c
-      src/wlmain.c
-      src/glrender.c
-      src/asound.c
-      src/evgamepad.c
-    )
-endif()
-
-# For Linux GBM Framebuffer.
-if(STRATO_TARGET_LINUX_GBM)
-  set(STRATO_SOURCES
-      src/image.c
-      src/glyph.c
-      src/wave.c
-      src/stdfile.c
-      src/gbmmain.c
-      src/glrender.c
-      src/asound.c
-      src/evgamepad.c
-    )
-endif()
-
-# For Linux fbdev Framebuffer.
-if(STRATO_TARGET_LINUX_FBDEV)
-  set(STRATO_SOURCES
-      src/image.c
-      src/glyph.c
-      src/wave.c
-      src/stdfile.c
-      src/fbmain.c
-      src/asound.c
-      src/evgamepad.c
-    )
-endif()
-
-# For Linux X11 Software Rendering.
+# X11 Soft3D
 if(   STRATO_TARGET_LINUX_X11SOFT
+   OR STRATO_TARGET_FREEBSD_X11SOFT
+   OR STRATO_TARGET_NETBSD_X11SOFT
+   OR STRATO_TARGET_OPENBSD_X11SOFT
    OR STRATO_TARGET_SOLARIS11
    OR STRATO_TARGET_GENERICUNIX)
   set(STRATO_SOURCES
@@ -356,7 +386,49 @@ if(   STRATO_TARGET_LINUX_X11SOFT
     )
 endif()
 
-# For Emscripten.
+# Wayland
+if(   STRATO_TARGET_LINUX_WAYLAND
+   OR STRATO_TARGET_FREEBSD_WAYLAND)
+  set(STRATO_SOURCES
+      src/image.c
+      src/glyph.c
+      src/wave.c
+      src/stdfile.c
+      src/wlmain.c
+      src/glrender.c
+      src/asound.c
+      src/evgamepad.c
+    )
+endif()
+
+# GBM
+if(STRATO_TARGET_LINUX_GBM)
+  set(STRATO_SOURCES
+      src/image.c
+      src/glyph.c
+      src/wave.c
+      src/stdfile.c
+      src/gbmmain.c
+      src/glrender.c
+      src/asound.c
+      src/evgamepad.c
+    )
+endif()
+
+# fbdev
+if(STRATO_TARGET_LINUX_FBDEV)
+  set(STRATO_SOURCES
+      src/image.c
+      src/glyph.c
+      src/wave.c
+      src/stdfile.c
+      src/fbmain.c
+      src/asound.c
+      src/evgamepad.c
+    )
+endif()
+
+#  Emscripten
 if(STRATO_TARGET_WASM)
   set(STRATO_SOURCES
     src/image.c
@@ -369,7 +441,7 @@ if(STRATO_TARGET_WASM)
   )
 endif()
 
-# For Emscripten (local file).
+# Emscripten Local
 if(STRATO_TARGET_WASM_LOCAL)
   set(STRATO_SOURCES
     src/image.c
@@ -382,8 +454,9 @@ if(STRATO_TARGET_WASM_LOCAL)
   )
 endif()
 
-# For iOS.
+# iOS
 if(STRATO_TARGET_IOS)
+  enable_language(OBJC)
   set(STRATO_SOURCES
     src/image.c
     src/glyph.c
@@ -396,7 +469,7 @@ if(STRATO_TARGET_IOS)
   )
 endif()
 
-# For Android.
+# Android
 if(STRATO_TARGET_ANDROID)
   set(STRATO_SOURCES
     src/image.c
@@ -409,7 +482,7 @@ if(STRATO_TARGET_ANDROID)
   )
 endif()
 
-# For OpenHarmony.
+# HarmonyOS NEXT / OpenHarmony
 if(STRATO_TARGET_OPENHARMONY)
   set(STRATO_SOURCES
     src/image.c
@@ -422,7 +495,7 @@ if(STRATO_TARGET_OPENHARMONY)
   )
 endif()
 
-# For Unity.
+# Unity
 if(STRATO_TARGET_UNITY)
   set(STRATO_SOURCES
     src/image.c
@@ -432,7 +505,7 @@ if(STRATO_TARGET_UNITY)
   )
 endif()
 
-# For GDK (Windows or Xbox).
+# GDK
 if(   STRATO_TARGET_GDK_WINDOWS
    OR STRATO_TARGET_GDK_XBOX_XS)
   set(STRATO_SOURCES
@@ -447,8 +520,10 @@ if(   STRATO_TARGET_GDK_WINDOWS
   )
 endif()
 
-# For UWP.
+# UWP
 if(STRATO_TARGET_UWP)
+  set(CMAKE_CXX_STANDARD 11)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
   set(STRATO_SOURCES
     src/image.c
     src/glyph.c
@@ -458,177 +533,56 @@ if(STRATO_TARGET_UWP)
   )
 endif()
 
-# For translation.
+# I18N
 if(STRATO_ENABLE_I18N)
   set(STRATO_I18N_SOURCES
     src/translation.c
   )
 endif()
 
-if(STRATO_ENABLE_SHARED)
-  add_library(strato SHARED
-    ${STRATO_SOURCES}
+# Deps (merge third-party library objects into the target)
+if(NOT STRATO_ENABLE_DIST)
+  set(STRATO_DEPS
+      $<TARGET_OBJECTS:png>
+      $<TARGET_OBJECTS:jpeg>
+      $<TARGET_OBJECTS:webp>
+      $<TARGET_OBJECTS:vorbisfile>
+      $<TARGET_OBJECTS:vorbis>
+      $<TARGET_OBJECTS:ogg>
+      $<TARGET_OBJECTS:freetype>
+      $<TARGET_OBJECTS:brotlidec>
+      $<TARGET_OBJECTS:brotlicommon>
+      $<TARGET_OBJECTS:bz2>
+      $<TARGET_OBJECTS:z>
   )
+endif()
+
+# Library type.
+if(STRATO_ENABLE_STATIC)
+  set(STRATO_LIB_TYPE STATIC)
+elseif(STRATO_ENABLE_SHARED)
+  set(STRATO_LIB_TYPE SHARED)
 elseif(STRATO_ENABLE_OBJECT)
-  add_library(strato OBJECT
-    ${STRATO_SOURCES}
-    ${STRATO_I18N_SOURCES}
-    $<TARGET_OBJECTS:png>
-    $<TARGET_OBJECTS:jpeg>
-    $<TARGET_OBJECTS:webp>
-    $<TARGET_OBJECTS:vorbisfile>
-    $<TARGET_OBJECTS:vorbis>
-    $<TARGET_OBJECTS:ogg>
-    $<TARGET_OBJECTS:freetype>
-    $<TARGET_OBJECTS:brotlidec>
-    $<TARGET_OBJECTS:brotlicommon>
-    $<TARGET_OBJECTS:bz2>
-    $<TARGET_OBJECTS:z>
-  )
-else()
-  add_library(strato STATIC
-    ${STRATO_SOURCES}
-    ${STRATO_I18N_SOURCES}
-    $<TARGET_OBJECTS:png>
-    $<TARGET_OBJECTS:jpeg>
-    $<TARGET_OBJECTS:webp>
-    $<TARGET_OBJECTS:vorbisfile>
-    $<TARGET_OBJECTS:vorbis>
-    $<TARGET_OBJECTS:ogg>
-    $<TARGET_OBJECTS:freetype>
-    $<TARGET_OBJECTS:brotlidec>
-    $<TARGET_OBJECTS:brotlicommon>
-    $<TARGET_OBJECTS:bz2>
-    $<TARGET_OBJECTS:z>
-  )
+  set(STRATO_LIB_TYPE OBJECT)
 endif()
 
-# Windows
-if(   STRATO_TARGET_WINDOWS
-   OR STRATO_TARGET_WINDOWS95
-   OR STRATO_TARGET_GDK_WINDOWS
-   OR STRATO_TARGET_GDK_XBOX_XS)
-  enable_language(RC)
-  set(CMAKE_CXX_STANDARD 98)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-  add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
-  file(ARCHIVE_EXTRACT
-    INPUT       ${CMAKE_CURRENT_SOURCE_DIR}/lib/archive/dx12headers.tar.gz
-    DESTINATION ${CMAKE_BINARY_DIR}
-  )
-endif()
-
-# macOS
-if(STRATO_TARGET_MACOS)
-  enable_language(OBJC)
-endif()
-
-# Linux
-if(  STRATO_TARGET_LINUX
-  OR STRATO_TARGET_LINUX_WAYLAND
-  OR STRATO_TARGET_LINUX_GBM
-  OR STRATO_TARGET_LINUX_FBDEV
-  OR STRATO_TARGET_LINUX_X11SOFT)
-endif()
-
-# iOS
-if(STRATO_TARGET_IOS)
-endif()
-
-# Android
-if(STRATO_TARGET_ANDROID)
-endif()
-
-# OpenHarmony
-if(STRATO_TARGET_OPENHARMONY)
-  target_compile_definitions(strato PUBLIC HAL_TARGET_OPENHARMONY HAL_USE_GLES)
-endif()
-
-# *BSD
-if(STRATO_TARGET_FREEBSD)
-  target_compile_definitions(strato PUBLIC HAL_TARGET_FREEBSD)
-endif()
-if(STRATO_TARGET_NETBSD)
-  target_compile_definitions(strato PUBLIC HAL_TARGET_NETBSD)
-endif()
-if(STRATO_TARGET_OPENBSD)
-  target_compile_definitions(strato PUBLIC HAL_TARGET_OPENBSD)
-endif()
-
-# For Unity
-if(STRATO_TARGET_UNITY)
-  target_compile_definitions(strato PUBLIC HAL_TARGET_UNITY HAL_USE_CSHARP)
-
-  if(STRATO_TARGET_UNITY_SWITCH)
-    target_compile_definitions(strato PRIVATE HAL_UNITY_SWITCH)
-  elseif(STRATO_TARGET_UNITY_PS5)
-    target_compile_definitions(strato PRIVATE HAL_UNITY_PS5)
-  elseif(STRATO_TARGET_UNITY_XBOX)
-    target_compile_definitions(strato PRIVATE HAL_UNITY_GAMECORE_XBOXSERIES)
-  endif()
-endif()
-
-# For GDK (Windows or Xbox).
-if(STRATO_TARGET_GDK_WINDOWS)
-  target_compile_definitions(strato PRIVATE HAL_TARGET_GDK_WINDOWS)
-endif()
-if(STRATO_TARGET_GDK_XBOX_XS)
-  target_compile_definitions(strato PRIVATE HAL_TARGET_GDK_XBOX_XS)
-endif()
-
-# For UWP.
-if(STRATO_TARGET_UWP)
-  target_compile_definitions(strato PRIVATE HAL_TARGET_UWP)
-  set(CMAKE_CXX_STANDARD 11)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-  file(ARCHIVE_EXTRACT
-    INPUT       ${CMAKE_CURRENT_SOURCE_DIR}/lib/archive/dx12headers.tar.gz
-    DESTINATION ${CMAKE_BINARY_DIR}
-  )
-  add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
-  add_compile_definitions(BZ_STRICT_ANSI)
-endif()
-
-# For translation.
-if(STRATO_ENABLE_I18N)
-  target_compile_definitions(strato PRIVATE HAL_USE_TRANSLATION)
-endif()
-
-#
-# Archiver Target
-#
-
-if(    NOT STRATO_TARGET_WASM
-   AND NOT STRATO_TARGET_ANDROID
-   AND NOT STRATO_TARGET_IOS
-   AND NOT STRATO_TARGET_UNITY
+# Target.
+add_library(
+  strato
+  ${STRATO_LIB_TYPE}
+  ${STRATO_SOURCES}
+  ${STRATO_I18N_SOURCES}
+  ${STRATO_DEPS}
 )
-  add_library(
-    stratopack
-    STATIC
-    src/archive.c
-  )
-  target_include_directories(stratopack PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-endif()
+
+# ---
 
 #
 # CPPFLAGS
 #
 
-# -Dinclude
 target_include_directories(strato PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-# -DHAL_USE_SHARED if we use dynamic linking.
-if(STRATO_ENABLE_SHARED)
-  target_compile_definitions(strato PRIVATE HAL_USE_SHARED)
-endif()
-
-# -DUSE_JIT if we use JIT.
-if(STRATO_ENABLE_JIT)
-  target_compile_definitions(strato PRIVATE USE_JIT)
-endif()
-
-# Add library header directories.
 target_include_directories(strato PRIVATE ${PNG_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${JPEG_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${WEBP_INCLUDE_DIRS})
@@ -639,69 +593,68 @@ target_include_directories(strato PRIVATE ${BROTLI_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${BZIP2_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${ZLIB_INCLUDE_DIRS})
 
-# Windows: Add -Ires -Idx12headers/include/directx -Idx12headers/include/fxguids
+if(STRATO_ENABLE_SHARED)
+  target_compile_definitions(strato PRIVATE HAL_USE_SHARED)
+endif()
+
+if(STRATO_ENABLE_JIT)
+  target_compile_definitions(strato PRIVATE USE_JIT)
+endif()
+
+# Windows
 if(   STRATO_TARGET_WINDOWS
-   OR STRATO_TARGET_WINDOWS95)
-  target_include_directories(strato PRIVATE
+   OR STRATO_TARGET_WINDOWS95
+   OR STRATO_TARGET_GDK_WINDOWS
+   OR STRATO_TARGET_GDK_XBOX_XS)
+  add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+
+  target_compile_definitions(strato PRIVATE HAL_USE_MFVIDEO HAL_USE_DSVIDEO)
+
+  target_include_directories(
+    strato
+    PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/res
     ${CMAKE_BINARY_DIR}/dx12headers/include/directx
     ${CMAKE_BINARY_DIR}/dx12headers/include/dxguids
   )
-  target_compile_definitions(strato PRIVATE HAL_USE_MFVIDEO HAL_USE_DSVIDEO)
-endif()
 
-# Linux X11: Add -DHAS_USE_GL -DHAL_USE_X11 -DHAL_GSTREAMER
-if(   STRATO_TARGET_LINUX
-   OR STRATO_TARGET_FREEBSD)
-  target_compile_definitions(strato PRIVATE HAL_USE_GL HAL_USE_X11)
-
-  if(STRATO_ENABLE_GST)
-    target_compile_definitions(strato PRIVATE HAL_USE_GSTREAMER)
+  # DX12 header
+  if(STRATO_TARGET_WINDOWS OR STRATO_TARGET_WINDOWS95)
+    file(ARCHIVE_EXTRACT
+      INPUT       ${CMAKE_CURRENT_SOURCE_DIR}/lib/archive/dx12headers.tar.gz
+      DESTINATION ${CMAKE_BINARY_DIR}
+    )
   endif()
 endif()
 
-# Linux Wayland: Add -DHAS_USE_GLES -DHAL_USE_WAYLAND
-if(   STRATO_TARGET_LINUX_WAYLAND
-   OR STRATO_TARGET_FREEBSD_WAYLAND)
-  target_compile_definitions(strato PRIVATE HAL_USE_GLES HAL_USE_WAYLAND HAL_USE_GSTREAMER)
+# macOS library
+if(STRATO_TARGET_MACOS)
+  if(STRATO_ENABLE_OBJECT)
+    target_compile_definitions(strato PUBLIC HAL_USE_MAIN2)
+  endif()
 endif()
 
-# Linux Framebuffer: Add -DHAL_USE_GLES
-if(STRATO_TARGET_LINUX_GBM)
-  target_compile_definitions(strato PRIVATE HAL_USE_GLES)
-endif()
-
-# Linux GBM Framebuffer
-if(STRATO_TARGET_LINUX_GBM AND STRATO_ENABLE_ROT90)
-  target_compile_definitions(strato PRIVATE HAL_USE_ROT90)
-endif()
-
-# Linux fbdev Framebuffer
-if(STRATO_TARGET_LINUX_FBDEV AND STRATO_ENABLE_ROT90)
-  target_compile_definitions(strato PRIVATE HAL_USE_ROT90)
-endif()
-
-# FreeBSD: Add -I/usr/local/include
+# FreeBSD
 if(STRATO_TARGET_FREEBSD)
   target_include_directories(strato PUBLIC /usr/local/include)
 endif()
 
-# NetBSD: Add -I/usr/local/include -I/usr/X11R7/include
+# NetBSD
 if(STRATO_TARGET_NETBSD)
   target_include_directories(strato PUBLIC /usr/local/include /usr/X11R7/include)
 endif()
 
-# OpenBSD: Add -I/usr/local/include -I/usr/X11R6/include
+# OpenBSD
 if(STRATO_TARGET_OPENBSD)
   target_include_directories(strato PUBLIC /usr/local/include /usr/X11R6/include)
 endif()
 
-# Solaris11: Add -I/usr/local/include -I/usr/X11R6/include
+# Solaris11
 if(STRATO_TARGET_SOLARIS11)
   target_include_directories(strato PUBLIC /usr/local/include /usr/X11R6/include)
 endif()
 
-# Generic Unknown UNIX:
+# Generic Unknown UNIX
 if(STRATO_TARGET_GENERICUNIX)
   target_include_directories(
     strato
@@ -716,33 +669,99 @@ if(STRATO_TARGET_GENERICUNIX)
   )
 endif()
 
-# Android: Add -DHAL_USE_GLES
-if(STARATO_TARGET_ANDROID)
-  target_compile_definitions(strato PRIVATE HAL_USE_GLES)
+# OpenHarmony
+if(STRATO_TARGET_OPENHARMONY)
+  target_compile_definitions(strato PUBLIC HAL_TARGET_OPENHARMONY)
 endif()
 
-# OpenHarmony: Add -DHAL_USE_GLES
-if(STARATO_TARGET_OPENHARMONY)
+# Unity
+if(STRATO_TARGET_UNITY)
+  target_compile_definitions(strato PUBLIC HAL_TARGET_UNITY HAL_USE_CSHARP)
+  if(STRATO_TARGET_UNITY_SWITCH)
+    target_compile_definitions(strato PRIVATE HAL_UNITY_SWITCH)
+  elseif(STRATO_TARGET_UNITY_PS5)
+    target_compile_definitions(strato PRIVATE HAL_UNITY_PS5)
+  elseif(STRATO_TARGET_UNITY_XBOX)
+    target_compile_definitions(strato PRIVATE HAL_UNITY_GAMECORE_XBOXSERIES)
+  endif()
+endif()
+
+# GLES
+if(   STRATO_TARGET_LINUX_GBM
+   OR STRATO_TARGET_LINUX_WAYLAND
+   OR STRATO_TARGET_FREEBSD_WAYLAND
+   OR STRATO_TARGET_ANDROID
+   OR STRATO_TARGET_OPENHARMONY)
   target_compile_definitions(strato PRIVATE HAL_USE_GLES)
+  target_compile_definitions(strato PUBLIC HAL_USE_GLES)
+endif()
+
+# Wayland
+if(   STRATO_TARGET_LINUX_WAYLAND
+   OR STRATO_TARGET_FREEBSD_WAYLAND)
+  target_compile_definitions(strato PRIVATE HAL_USE_WAYLAND)
+endif()
+
+# GBM
+if(STRATO_TARGET_LINUX_GBM)
+  target_include_directories(strato PRIVATE /usr/include/libdrm)
+endif()
+
+# fbdev
+if(STRATO_TARGET_LINUX_FBDEV)
+  target_include_directories(strato PRIVATE /usr/include/libdrm)
+endif()
+
+# GDK
+if(STRATO_TARGET_GDK_WINDOWS)
+  target_compile_definitions(strato PRIVATE HAL_TARGET_GDK_WINDOWS)
+endif()
+if(STRATO_TARGET_GDK_XBOX_XS)
+  target_compile_definitions(strato PRIVATE HAL_TARGET_GDK_XBOX_XS)
+endif()
+
+# UWP
+if(STRATO_TARGET_UWP)
+  add_compile_definitions(_CRT_SECURE_NO_WARNINGS BZ_STRICT_ANSI)
+  target_compile_definitions(strato PRIVATE HAL_TARGET_UWP)
+  file(ARCHIVE_EXTRACT
+    INPUT       ${CMAKE_CURRENT_SOURCE_DIR}/lib/archive/dx12headers.tar.gz
+    DESTINATION ${CMAKE_BINARY_DIR}
+  )
+endif()
+
+# Gstreamer
+if(STRATO_ENABLE_GST)
+  target_compile_definitions(strato PRIVATE HAL_USE_GSTREAMER)
+endif()
+
+# Translation
+if(STRATO_ENABLE_I18N)
+  target_compile_definitions(strato PRIVATE HAL_USE_TRANSLATION)
+endif()
+
+# Rotation
+if(STRATO_ENABLE_ROT90)
+  target_compile_definitions(strato PRIVATE HAL_USE_ROT90)
 endif()
 
 # Software rendering.
 if(   STRATO_TARGET_LINUX_X11SOFT
+   OR STRATO_TARGET_FREEBSD_X11SOFT
+   OR STRATO_TARGET_NETBSD_X11SOFT
+   OR STRATO_TARGET_OPENBSD_X11SOFT
    OR STRATO_TARGET_SOLARIS11
    OR STRATO_TARGET_GENERICUNIX)
   target_compile_definitions(strato PUBLIC HAL_USE_X11_SOFTRENDER)
 endif()
 
+# ---
+
 #
-# CFLAGS
+# CLFAGS
 #
 
-# macOS and iOS
-if(STRATO_TARGET_MACOS OR STRATO_TARGET_IOS)
-  target_compile_options(strato PUBLIC -fmodules)
-endif()
-
-# Windows compile options.
+# Windows
 if(   STRATO_TARGET_WINDOWS
    OR STRATO_TARGET_WINDOWS95
    OR STRATO_TARGET_GDK_WINDOWS
@@ -769,13 +788,22 @@ if(STRATO_TARGET_WINDOWS95)
   endif()
 endif()
 
+# Apple
+if(STRATO_TARGET_MACOS OR STRATO_TARGET_IOS)
+  target_compile_options(strato PUBLIC -fmodules)
+endif()
+
+# ---
+
 #
-# Link
+# LDFLAGS
 #
 
 # Libraries.
 if(STRATO_ENABLE_SHARED)
-  target_link_libraries(strato PUBLIC
+  target_link_libraries(
+    strato
+    PUBLIC
     ${PNG_LIBRARIES}
     ${JPEG_LIBRARIES}
     ${WEBP_LIBRARIES}
@@ -790,32 +818,23 @@ if(STRATO_ENABLE_SHARED)
   )
 endif()
 
-# Windows link options.
+# Windows
 if(   STRATO_TARGET_WINDOWS
    OR STRATO_TARGET_WINDOWS95)
-  # DLLs.
   target_link_libraries(strato PUBLIC
     gdi32
     ole32
-#   dsound
-#   strmiids
     dxguid
   )
 
-#  target_link_libraries(strato PUBLIC mf mfplat mfuuid mfreadwrite evr)
-
-  # -mwindows -municode
   if(MINGW)
     target_link_options(strato PUBLIC -mwindows)
-    if(STRATO_TARGET_WINDOWS)
-      target_link_options(strato PUBLIC -municode)
-    endif()
-    if(STRATO_TARGET_WINDOWS95)
-      add_definitions(-UUNICODE -U_UNICODE)
-    endif()
   endif()
 
-  # /SUBSYSTEM:WINDOWS
+  if(MINGW AND STRATO_TARGET_WINDOWS)
+    target_link_options(strato PUBLIC -municode)
+  endif()
+
   if(MSVC)
     target_link_options(strato PUBLIC
       /SUBSYSTEM:WINDOWS
@@ -825,7 +844,7 @@ if(   STRATO_TARGET_WINDOWS
   endif()
 endif()
 
-# macOS link options.
+# macOS
 if(STRATO_TARGET_MACOS)
   target_link_libraries(strato PUBLIC
     "-framework AppKit"
@@ -834,30 +853,41 @@ if(STRATO_TARGET_MACOS)
   )
 endif()
 
-# Linux and *BSD. (X11)
+# X11
 if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_LINUX_X11SOFT
+   OR STRATO_TARGET_FREEBSD
+   OR STRATO_TARGET_FREEBSD_X11SOFT
+   OR STRATO_TARGET_NETBSD
+   OR STRATO_TARGET_NETBSD_X11SOFT
+   OR STRATO_TARGET_OPENBSD
+   OR STRATO_TARGET_OPENBSD_X11SOFT
+   OR STRATO_TARGET_SOLARIS11
+   OR STRATO_TARGET_GENERICUNIX)
+  target_link_libraries(strato PUBLIC m pthread Xpm X11)
+endif()
+
+# OpenGL
+if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_NETBSD
    OR STRATO_TARGET_OPENBSD
    OR STRATO_TARGET_SOLARIS11)
-  # Base
-  target_link_libraries(strato PUBLIC m pthread Xpm X11)
-
-  # Mesa
-  if(    NOT STRATO_TARGET_LINUX_X11SOFT
-     AND NOT STRATO_TARGET_LINUX_SOLARIS11)
-    # We need GLX on systems with older Mesa.
-    target_link_libraries(strato PUBLIC GL ${GLX_LIBRARY})
-  endif()
-
-  # GStreamer
-  if(STRATO_ENABLE_GST)
-    target_link_libraries(strato PUBLIC PkgConfig::GST)
-  endif()
+  target_link_libraries(strato PUBLIC GL ${GLX_LIBRARY})
 endif()
 
-# Linux Wayland.
+# GLX
+if(   STRATO_TARGET_LINUX
+   OR STRATO_TARGET_FREEBSD)
+  target_link_libraries(strato PUBLIC ${GLX_LIBRARY})
+endif()
+
+# GStreamer
+if(STRATO_ENABLE_GST)
+  target_link_libraries(strato PUBLIC PkgConfig::GST)
+endif()
+
+# Wayland
 if(   STRATO_TARGET_LINUX_WAYLAND
    OR STRATO_TARGET_FREEBSD_WAYLAND)
   target_link_libraries(
@@ -872,9 +902,8 @@ if(   STRATO_TARGET_LINUX_WAYLAND
   )
 endif()
 
-# Linux GBM framebuffer.
+# GBM
 if(STRATO_TARGET_LINUX_GBM)
-  # Add -lm -lpthread -lgbm -ldrm -lEGL -lGLESv2 -lasound
   target_link_libraries(
     strato
     PUBLIC
@@ -884,14 +913,11 @@ if(STRATO_TARGET_LINUX_GBM)
     drm
     EGL
     GLESv2
-    asound
   )
-  target_include_directories(strato PUBLIC /usr/include/libdrm)
 endif()
 
-# Linux GBM framebuffer.
+# fbdev
 if(STRATO_TARGET_LINUX_FBDEV)
-  # Add -lm -lpthread -lasound
   target_link_libraries(
     strato
     PUBLIC
@@ -902,7 +928,7 @@ if(STRATO_TARGET_LINUX_FBDEV)
   target_include_directories(strato PUBLIC /usr/include/libdrm)
 endif()
 
-# Linux X11: Add -lasound
+# Linux
 if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_LINUX_WAYLAND
    OR STRATO_TARGET_LINUX_GBM
@@ -911,37 +937,40 @@ if(   STRATO_TARGET_LINUX
   target_link_libraries(strato PUBLIC asound)
 endif()
 
-# FreeBSD: Add -L/usr/local/lib -L/usr/X11R7/lib
-if(STRATO_TARGET_FREEBSD)
+# FreeBSD
+if(   STRATO_TARGET_FREEBSD
+   OR STRATO_TARGET_FREEBSD_WAYLAND)
   target_link_directories(strato PUBLIC /usr/local/lib /usr/X11R7/lib)
 endif()
 
-# NetBSD: Add -L/usr/local/lib -L/usr/X11R7/lib
-if(STRATO_TARGET_NETBSD)
+# NetBSD
+if(   STRATO_TARGET_NETBSD
+   OR STRATO_TARGET_NETBSD_X11SOFT)
   target_link_directories(strato PUBLIC /usr/local/lib /usr/X11R7/lib)
 endif()
 
-# OpenBSD: Add -L/usr/local/lib -L/usr/X11R6/lib
-if(STRATO_TARGET_OPENBSD)
+# OpenBSD
+if(   STRATO_TARGET_OPENBSD
+   OR STRATO_TARGET_OPENBSD_X11SOFT)
   target_link_directories(strato PUBLIC /usr/local/lib /usr/X11R6/lib)
 endif()
 
-# Android: Add -lGLESv3 -lOpenSLES -llog
+# Android
 if(STRATO_TARGET_ANDROID)
   target_link_libraries(strato PUBLIC -lm -lGLESv3 -lOpenSLES -llog)
 endif()
 
-# OpenHarmony: Add -lGLESv2 -lOpenSLES -llibrawfile.z.so
+# OpenHarmony
 if(STRATO_TARGET_OPENHARMONY)
   target_link_libraries(strato PUBLIC m GLESv2 OpenSLES librawfile.z.so)
 endif()
 
-# Solaris11: Add -L/usr/local/lib -L/usr/X11R6/lib
+# Solaris11
 if(STRATO_TARGET_SOLARIS11)
   target_link_directories(strato PUBLIC /usr/local/lib /usr/X11R6/lib)
 endif()
 
-# Generic Unknown UNIX:
+# Generic Unknown UNIX
 if(STRATO_TARGET_GENERICUNIX)
   target_link_directories(
     strato
@@ -956,7 +985,7 @@ if(STRATO_TARGET_GENERICUNIX)
   )
 endif()
 
-# GDK link options.
+# GDK
 if(   STRATO_TARGET_GDK_WINDOWS
    OR STRATO_TARGET_GDK_XBOX_XS)
 
@@ -984,7 +1013,6 @@ if(   STRATO_TARGET_GDK_WINDOWS
 
   target_link_libraries(strato PUBLIC "${XGAMERUNTIME_LIB}" user32 advapi32 gdi32 ole32 uuid appnotify gameinput xaudio2)
 
-  # /SUBSYSTEM:WINDOWS
   if(MSVC)
     target_link_options(strato PUBLIC
       /SUBSYSTEM:WINDOWS
@@ -994,13 +1022,30 @@ if(   STRATO_TARGET_GDK_WINDOWS
   endif()
 endif()
 
-# UWP.
+# UWP
 if(STRATO_TARGET_UWP)
   target_link_libraries(strato PUBLIC windowsapp d3d12 dxgi dxguid xaudio2 gameinput)
 endif()
 
+# ---
+
 #
-# Custom
+# Archiver Target
+#
+
+if(STRATO_ENABLE_PACK)
+  add_library(
+    stratopack
+    STATIC
+    src/archive.c
+  )
+  target_include_directories(stratopack PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+endif()
+
+# ---
+
+#
+# Wayland Custom Process
 #
 
 if(   STRATO_TARGET_LINUX_WAYLAND

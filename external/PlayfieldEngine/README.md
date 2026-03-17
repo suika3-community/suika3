@@ -128,9 +128,17 @@ Playfield Engine running on Windows XP — because why not:
 
 <img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-xp.png" width="320" alt="Playfield Engine running on Windows XP">
 
-Playfield Engine running on NetBSD — Of course it runs!: 
+Playfield Engine running on Windows 2000:
+
+<img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-win2000.png" width="320" alt="Playfield Engine running on Windows 2000">
+
+Playfield Engine running on NetBSD — Of course it runs!:
 
 <img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-netbsd.png" width="320" alt="Playfield Engine running on NetBSD">
+
+Playfield Engine running on Solaris 11:
+
+<img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-solaris11.png" width="320" alt="Playfield Engine running on Solaris 11">
 
 ---
 
