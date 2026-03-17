@@ -2,11 +2,8 @@
   <b>
     <a href="https://suika3.vn">Suika3</a><br>
   </b>
-  The Next-Generation Visual Novel Engine<br>
+  &#x1f31f; The Next-Generation Visual Novel Engine &#x1f31f;<br>
 </h1>
-
-Suika3
-======
 
 <!-- LOGO -->
 <div align="center">
