@@ -46,6 +46,7 @@ option(SUIKA_ENABLE_AOTCOMP          "Enable AOT compiler"                      
 option(SUIKA_ENABLE_WEBSERVER        "Enable simple Web server"                       OFF)
 option(SUIKA_ENABLE_ROT90            "Rotate screen"                                  OFF)
 option(SUIKA_ENABLE_GST              "Enable Gstreamer support"                       OFF)
+option(SUIKA_ENABLE_MAIN2            "Enable macOS main2()"                           OFF)
 option(SUIKA_ENABLE_INSTALL          "Enable installation"                            OFF)
 
 # ---
@@ -285,6 +286,10 @@ endif()
 # Gstreamer
 if(SUIKA_ENABLE_GST)
   set(PLAYFIELD_ENABLE_GST ON)
+endif()
+
+if(SUIKA_ENABLE_MAIN2)
+  set(PLAYFIELD_ENABLE_MAIN2 ON)
 endif()
 
 # libstratopack

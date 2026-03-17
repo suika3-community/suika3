@@ -42,6 +42,7 @@ option(STRATO_ENABLE_PACK             "Build packager"                          
 option(STRATO_ENABLE_I18N             "Enable translation"                      OFF)
 option(STRATO_ENABLE_ROT90            "Rotate screen"                           OFF)
 option(STRATO_ENABLE_GST              "Enable Gstreamer support"                OFF)
+option(STRATO_ENABLE_MAIN2            "Enable macOS main2()"                    OFF)
 
 #
 # Automatic Target Detection
@@ -629,7 +630,7 @@ endif()
 
 # macOS library
 if(STRATO_TARGET_MACOS)
-  if(STRATO_ENABLE_OBJECT)
+  if(STRATO_ENABLE_MAIN2)
     target_compile_definitions(strato PUBLIC HAL_USE_MAIN2)
   endif()
 endif()

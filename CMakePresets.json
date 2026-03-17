@@ -459,6 +459,7 @@
                 "CMAKE_BUILD_TYPE":            "Release",
                 "CMAKE_OSX_DEPLOYMENT_TARGET": "10.11",
                 "SUIKA_TARGET_MACOS_LIB":      "ON",
+                "SUIKA_ENABLE_MAIN2":          "ON",
                 "SUIKA_ENABLE_STATIC":         "ON",
                 "SUIKA_ENABLE_JIT":            "ON",
                 "SUIKA_ENABLE_I18N":           "ON",
