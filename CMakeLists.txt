@@ -599,6 +599,11 @@ if(SUIKA_TARGET_WINDOWS95)
   endif()
 endif()
 
+# macOS
+if(SUIKA_TARGET_MACOS_LIB)
+  target_link_options(suika3 PRIVATE -ObjC -all_load)
+endif()
+
 # Emscripten
 if(SUIKA_TARGET_WASM)
   # Make the output name "index.html"
