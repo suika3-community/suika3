@@ -79,7 +79,7 @@ static void showLogAtExit(void);
 // main
 //
 
-#if defined(USE_MAIN2)
+#if defined(HAL_USE_MAIN2)
 #define main main2
 #endif
 
@@ -92,7 +92,7 @@ int main(int argc, const char *argv[]) {
 
     // Run.
     [NSApplication sharedApplication];
-    [NSApp setDelegate:[[AppDelegate alloc] init]];
+    [NSApp setDelegate:[[NSClassFromString(@"AppDelegate") alloc] init]];
     [NSApp run];
 
     showLogAtExit();

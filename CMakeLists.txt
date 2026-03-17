@@ -6,43 +6,53 @@ project(playfield LANGUAGES C CXX)
 #
 
 # Targets
-option(PLAYFIELD_TARGET_WINDOWS          "Build for Windows XP or later"         OFF)
-option(PLAYFIELD_TARGET_WINDOWS95        "Build for Windows 95/98/Me/2000"       OFF)
-option(PLAYFIELD_TARGET_MACOS            "Build for macOS"                       OFF)
-option(PLAYFIELD_TARGET_LINUX            "Build for Linux X11"                   OFF)
-option(PLAYFIELD_TARGET_LINUX_WAYLAND    "Build for Linux Wayland"               OFF)
-option(PLAYFIELD_TARGET_LINUX_GBM        "Build for Linux GBM Framebuffer"       OFF)
-option(PLAYFIELD_TARGET_LINUX_FBDEV      "Build for Linux fbdev Framebuffer"     OFF)
-option(PLAYFIELD_TARGET_LINUX_X11SOFT    "Build for Linux X11 Softrender"        OFF)
-option(PLAYFIELD_TARGET_IOS              "Build for iOS"                         OFF)
-option(PLAYFIELD_TARGET_ANDROID          "Build for Android"                     OFF)
-option(PLAYFIELD_TARGET_OPENHARMONY      "Build for OpenHarmony"                 OFF)
-option(PLAYFIELD_TARGET_WASM             "Build for Emscripten"                  OFF)
-option(PLAYFIELD_TARGET_WASM_LOCAL       "Build for Emscripten (local file)"     OFF)
-option(PLAYFIELD_TARGET_UNITY            "Build for Unity"                       OFF)
-option(PLAYFIELD_TARGET_FREEBSD          "Build for FreeBSD X11"                 OFF)
-option(PLAYFIELD_TARGET_FREEBSD_WAYLAND  "Build for FreeBSD Wayland"             OFF)
-option(PLAYFIELD_TARGET_NETBSD           "Build for NetBSD X11"                  OFF)
-option(PLAYFIELD_TARGET_OPENBSD          "Build for OpenBSD X11"                 OFF)
-option(PLAYFIELD_TARGET_SOLARIS11        "Build for Solaris 11"                  OFF)
-option(PLAYFIELD_TARGET_GENERICUNIX      "Build for Unknown UNIX"                OFF)
-option(PLAYFIELD_TARGET_GDK_WINDOWS      "Build for GDK for Desktop"             OFF)
-option(PLAYFIELD_TARGET_GDK_XBOX_XS      "Build for GDK for Xbox Series X|S"     OFF)
-option(PLAYFIELD_TARGET_UWP              "Build for UWP"                         OFF)
+option(PLAYFIELD_TARGET_WINDOWS          "Build for Windows XP or later"              OFF)
+option(PLAYFIELD_TARGET_WINDOWS95        "Build for Windows 95/98/Me/2000"            OFF)
+option(PLAYFIELD_TARGET_MACOS            "Build for macOS (app)"                      OFF)
+option(PLAYFIELD_TARGET_MACOS_CLI        "Build for macOS (CLI)"                      OFF)
+option(PLAYFIELD_TARGET_MACOS_LIB        "Build for macOS (library)"                  OFF)
+option(PLAYFIELD_TARGET_LINUX            "Build for Linux (X11, OpenGL)"              OFF)
+option(PLAYFIELD_TARGET_LINUX_WAYLAND    "Build for Linux (Wayland, OpenGL)"          OFF)
+option(PLAYFIELD_TARGET_LINUX_GBM        "Build for Linux (GBM, OpenGL ES)"           OFF)
+option(PLAYFIELD_TARGET_LINUX_FBDEV      "Build for Linux (fbdev, Soft3D)"            OFF)
+option(PLAYFIELD_TARGET_LINUX_X11SOFT    "Build for Linux (X11, Soft3D)"              OFF)
+option(PLAYFIELD_TARGET_IOS              "Build for iOS"                              OFF)
+option(PLAYFIELD_TARGET_ANDROID          "Build for Android (OpenGL ES, OpenSL ES)"   OFF)
+option(PLAYFIELD_TARGET_OPENHARMONY      "Build for OpenHarmony (OpenGL ES)"          OFF)
+option(PLAYFIELD_TARGET_WASM             "Build for Emscripten (WebGL)"               OFF)
+option(PLAYFIELD_TARGET_WASM_LOCAL       "Build for Emscripten Local (WebGL)"         OFF)
+option(PLAYFIELD_TARGET_UNITY            "Build for Unity"                            OFF)
+option(PLAYFIELD_TARGET_FREEBSD          "Build for FreeBSD (X11, OpenGL)"            OFF)
+option(PLAYFIELD_TARGET_FREEBSD_WAYLAND  "Build for FreeBSD (Wayland, OpenGL)"        OFF)
+option(PLAYFIELD_TARGET_FREEBSD_X11SOFT  "Build for FreeBSD (X11, Soft3D)"            OFF)
+option(PLAYFIELD_TARGET_NETBSD           "Build for NetBSD (X11, OpenGL)"             OFF)
+option(PLAYFIELD_TARGET_NETBSD_X11SOFT   "Build for NetBSD (X11, Soft3D)"             OFF)
+option(PLAYFIELD_TARGET_OPENBSD          "Build for OpenBSD (X11, OpenGL)"            OFF)
+option(PLAYFIELD_TARGET_OPENBSD_X11SOFT  "Build for OpenBSD (X11, Soft3D)"            OFF)
+option(PLAYFIELD_TARGET_SOLARIS11        "Build for Solaris 11 (X11, Soft3D)"         OFF)
+option(PLAYFIELD_TARGET_GENERICUNIX      "Build for Unknown UNIX (X11, Soft3D)"       OFF)
+option(PLAYFIELD_TARGET_GDK_WINDOWS      "Build for GDK for Desktop"                  OFF)
+option(PLAYFIELD_TARGET_GDK_XBOX_XS      "Build for GDK for Xbox Series X|S"          OFF)
 
 # Options
-option(PLAYFIELD_ENABLE_JIT              "Enable JIT"                         OFF)
-option(PLAYFIELD_ENABLE_I18N             "Enable translation"                 OFF)
-option(PLAYFIELD_ENABLE_BUNDLE           "Enable macOS bundle"                OFF)
-option(PLAYFIELD_ENABLE_PACK             "Enable packager"                    OFF)
-option(PLAYFIELD_ENABLE_STATIC           "Build a static library"             OFF)
-option(PLAYFIELD_ENABLE_SHARED           "Build a dynamic library"            OFF)
-option(PLAYFIELD_ENABLE_DIST             "Build for packages"                 OFF)
-option(PLAYFIELD_ENABLE_ROT90            "Rotate screen for GBM"              OFF)
-option(PLAYFIELD_ENABLE_GST              "Enable GStreamer support"           OFF)
+option(PLAYFIELD_ENABLE_STATIC           "Build a static library"                     OFF)
+option(PLAYFIELD_ENABLE_SHARED           "Build a dynamic library"                    OFF)
+option(PLAYFIELD_ENABLE_OBJECT           "Build an object library"                    OFF)
+option(PLAYFIELD_ENABLE_DIST             "Link shared libraries"                      OFF)
+option(PLAYFIELD_ENABLE_JIT              "Enable JIT"                                 OFF)
+option(PLAYFIELD_ENABLE_I18N             "Enable translation"                         OFF)
+option(PLAYFIELD_ENABLE_PACK             "Enable packager"                            OFF)
+option(PLAYFIELD_ENABLE_BYTECOMP         "Enable bytecode compiler"                   OFF)
+option(PLAYFIELD_ENABLE_AOTCOMP          "Enable AOT compiler"                        OFF)
+option(PLAYFIELD_ENABLE_WEBSERVER        "Enable Web server"                          OFF)
+option(PLAYFIELD_ENABLE_EDITOR           "Enable simple editor for Windows"           OFF)
+option(PLAYFIELD_ENABLE_ROT90            "Rotate screen for GBM"                      OFF)
+option(PLAYFIELD_ENABLE_GST              "Enable Gstreamer support"                   OFF)
 
 # For derived projects
-option(PLAYFIELD_ENABLE_INITHOOK    "Enable the inithook function"  OFF)
+option(PLAYFIELD_ENABLE_INITHOOK         "Enable the inithook function"               OFF)
+
+# ---
 
 #
 # Automatic Target Detection
@@ -52,6 +62,8 @@ option(PLAYFIELD_ENABLE_INITHOOK    "Enable the inithook function"  OFF)
 if(   PLAYFIELD_TARGET_WINDOWS
    OR PLAYFIELD_TARGET_WINDOWS95
    OR PLAYFIELD_TARGET_MACOS
+   OR PLAYFIELD_TARGET_MACOS_CLI
+   OR PLAYFIELD_TARGET_MACOS_LIB
    OR PLAYFIELD_TARGET_LINUX
    OR PLAYFIELD_TARGET_LINUX_WAYLAND
    OR PLAYFIELD_TARGET_LINUX_GBM
@@ -65,8 +77,10 @@ if(   PLAYFIELD_TARGET_WINDOWS
    OR PLAYFIELD_TARGET_UNITY
    OR PLAYFIELD_TARGET_FREEBSD
    OR PLAYFIELD_TARGET_FREEBSD_WAYLAND
+   OR PLAYFIELD_TARGET_FREEBSD_X11SOFT
    OR PLAYFIELD_TARGET_NETBSD
-   OR PLAYFIELD_TARGET_OPENBSD
+   OR PLAYFIELD_TARGET_NETBSD_X11SOFT
+   OR PLAYFIELD_TARGET_OPENBSD_X11SOFT
    OR PLAYFIELD_TARGET_SOLARIS11
    OR PLAYFIELD_TARGET_GENERICUNIX
    OR PLAYFIELD_TARGET_GDK_WINDOWS
@@ -76,57 +90,65 @@ if(   PLAYFIELD_TARGET_WINDOWS
   # A target and options are manually specified.
 else()   
   if(WIN32)
-    # Windows is detected.
-    set(PLAYFIELD_TARGET_WINDOWS    ON)
-    set(PLAYFIELD_ENABLE_JIT        ON)
-    set(PLAYFIELD_ENABLE_I18N       ON)
-    set(PLAYFIELD_ENABLE_PACK       ON)
-  endif()
+    set(PLAYFIELD_TARGET_WINDOWS                  ON)
+    set(PLAYFIELD_ENABLE_JIT                      ON)
+    set(PLAYFIELD_ENABLE_I18N                     ON)
+    set(PLAYFIELD_ENABLE_PACK                     ON)
+    set(PLAYFIELD_ENABLE_WEBSERVER                ON)
 
-  if(APPLE AND NOT IOS)
-    # macOS is detected.
-    set(PLAYFIELD_TARGET_MACOS      ON)
-    set(PLAYFIELD_ENABLE_JIT        ON)
-    set(PLAYFIELD_ENABLE_I18N       ON)
-    set(PLAYFIELD_ENABLE_BUNDLE     ON)
-    set(PLAYFIELD_ENABLE_PACK       ON)
-  endif()
+  elseif(APPLE AND NOT IOS)
+    set(PLAYFIELD_TARGET_MACOS_CLI                ON)
+    set(PLAYFIELD_ENABLE_JIT                      ON)
+    set(PLAYFIELD_ENABLE_I18N                     ON)
+    set(PLAYFIELD_ENABLE_BUNDLE                   ON)
+    set(PLAYFIELD_ENABLE_PACK                     ON)
 
-  if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    # Linux is detected.
-    set(PLAYFIELD_TARGET_LINUX      ON)
-    set(PLAYFIELD_ENABLE_JIT        ON)
-    set(PLAYFIELD_ENABLE_I18N       ON)
-    set(PLAYFIELD_ENABLE_PACK       ON)
-  endif()
+  elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(PLAYFIELD_TARGET_LINUX                    ON)
+    set(PLAYFIELD_ENABLE_JIT                      ON)
+    set(PLAYFIELD_ENABLE_I18N                     ON)
+    set(PLAYFIELD_ENABLE_PACK                     ON)
 
-  if(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
-    set(PLAYFIELD_TARGET_FREEBSD    ON)
-    set(PLAYFIELD_ENABLE_JIT        ON)
-    set(PLAYFIELD_ENABLE_I18N       ON)
-    set(PLAYFIELD_ENABLE_PACK       ON)
-  endif()
+  elseif(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
+    set(PLAYFIELD_TARGET_FREEBSD_X11SOFT          ON)
+    set(PLAYFIELD_ENABLE_JIT                      ON)
+    set(PLAYFIELD_ENABLE_I18N                     ON)
+    set(PLAYFIELD_ENABLE_PACK                     ON)
 
-  if(CMAKE_SYSTEM_NAME STREQUAL "NetBSD")
-    set(PLAYFIELD_TARGET_NETBSD     ON)
-    set(PLAYFIELD_ENABLE_JIT        ON)
-    set(PLAYFIELD_ENABLE_I18N       ON)
-    set(PLAYFIELD_ENABLE_PACK       ON)
-  endif()
+  elseif(CMAKE_SYSTEM_NAME STREQUAL "NetBSD")
+    set(PLAYFIELD_TARGET_NETBSD_X11SOFT           ON)
+    set(PLAYFIELD_ENABLE_JIT                      ON)
+    set(PLAYFIELD_ENABLE_I18N                     ON)
+    set(PLAYFIELD_ENABLE_PACK                     ON)
 
-  if(CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")
-    set(PLAYFIELD_TARGET_OPENBSD    ON)
-    set(PLAYFIELD_ENABLE_I18N       ON)
-    set(PLAYFIELD_ENABLE_PACK       ON)
-  endif()
+  elseif(CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")
+    set(PLAYFIELD_TARGET_OPENBSD_X11SOFT          ON)
+    set(PLAYFIELD_ENABLE_JIT                      OFF)
+    set(PLAYFIELD_ENABLE_I18N                     ON)
+    set(PLAYFIELD_ENABLE_PACK                     ON)
 
-  if(CMAKE_SYSTEM_NAME STREQUAL "SunOS")
-    set(PLAYFIELD_TARGET_SOLARIS11  ON)
-    set(PLAYFIELD_ENABLE_I18N       ON)
-    set(PLAYFIELD_ENABLE_PACK       ON)
+  elseif(CMAKE_SYSTEM_NAME STREQUAL "SunOS" AND CMAKE_SYSTEM_VERSION VERSION_GREATER_EQUAL "5.11")
+    set(PLAYFIELD_TARGET_SOLARIS11                ON)
+    set(PLAYFIELD_ENABLE_JIT                      ON)
+    set(PLAYFIELD_ENABLE_I18N                     ON)
+    set(PLAYFIELD_ENABLE_PACK                     ON)
+
+  elseif(CMAKE_SYSTEM_NAME STREQUAL "Haiku")
+    set(PLAYFIELD_TARGET_HAIKU                    ON)
+    set(PLAYFIELD_ENABLE_JIT                      ON)
+    set(PLAYFIELD_ENABLE_I18N                     ON)
+    set(PLAYFIELD_ENABLE_PACK                     ON)
+
+  else()
+    set(STRATO_TARGET_GENERICUNIX                 ON)
+    set(PLAYFIELD_ENABLE_JIT                      ON)
+    set(PLAYFIELD_ENABLE_I18N                     ON)
+    set(PLAYFIELD_ENABLE_PACK                     ON)
+
   endif()
 
   # No automatic detection for:
+  #  - iOS
   #  - Android
   #  - OpenHarmony
   #  - Wasm (Emscripten)
@@ -135,8 +157,10 @@ else()
   #  - UWP
 endif()
 
+# ---
+
 #
-# NoctLang Configuration
+# NoctLang Configuration Propagation
 #
 
 # Use Math.* API.
@@ -176,28 +200,26 @@ endif()
 set(NOCTLANG_DISABLE_INSTALL ON)
 
 # Magic:
-#  For iOS/Android/OpenHarmony/Unity,
 #  merge object files that consists in libnoctlang.a into libplayfield.a.
-if(   PLAYFIELD_TARGET_IOS
-   OR PLAYFIELD_TARGET_ANDROID
-   OR PLAYFIELD_TARGET_OPENHARMONY
-   OR PLAYFIELD_TARGET_UNITY
-)
+if(   PLAYFIELD_ENABLE_STATIC
+   OR PLAYFIELD_ENABLE_SHARED
+   OR PLAYFIELD_ENABLE_OBJECT)
   # For library generation.
   set(NOCTLANG_ENABLE_OBJECT ON)
 else()
   if(PLAYFIELD_ENABLE_DIST)
     # For dynamically linked binaries.
-    #set(NOCTLANG_ENABLE_SHARED ON)
-    set(NOCTLANG_ENABLE_STATIC ON)
+    set(NOCTLANG_ENABLE_STATIC ON)  # This will be changed to SHARED after NoctLang is packaged by OS.
   else()
     # For statically linked binaries.
     set(NOCTLANG_ENABLE_STATIC ON)
   endif()
 endif()
 
+# ---
+
 #
-# Strato Configuration
+# Strato Configuration Propagation
 #
 
 # Set the target and its specific options.
@@ -206,6 +228,10 @@ if(PLAYFIELD_TARGET_WINDOWS)
 elseif(PLAYFIELD_TARGET_WINDOWS95)
   set(STRATO_TARGET_WINDOWS95 ON)
 elseif(PLAYFIELD_TARGET_MACOS)
+  set(STRATO_TARGET_MACOS ON)
+elseif(PLAYFIELD_TARGET_MACOS_CLI)
+  set(STRATO_TARGET_MACOS ON)
+elseif(PLAYFIELD_TARGET_MACOS_LIB)
   set(STRATO_TARGET_MACOS ON)
 elseif(PLAYFIELD_TARGET_LINUX)
   set(STRATO_TARGET_LINUX ON)
@@ -233,14 +259,22 @@ elseif(PLAYFIELD_TARGET_FREEBSD)
   set(STRATO_TARGET_FREEBSD ON)
 elseif(PLAYFIELD_TARGET_FREEBSD_WAYLAND)
   set(STRATO_TARGET_FREEBSD_WAYLAND ON)
+elseif(PLAYFIELD_TARGET_FREEBSD_X11SOFT)
+  set(STRATO_TARGET_FREEBSD_X11SOFT ON)
 elseif(PLAYFIELD_TARGET_NETBSD)
   set(STRATO_TARGET_NETBSD ON)
+elseif(PLAYFIELD_TARGET_NETBSD_X11SOFT)
+  set(STRATO_TARGET_NETBSD_X11SOFT ON)
 elseif(PLAYFIELD_TARGET_OPENBSD)
   set(STRATO_TARGET_OPENBSD ON)
+elseif(PLAYFIELD_TARGET_OPENBSD_X11SOFT)
+  set(STRATO_TARGET_OPENBSD_X11SOFT ON)
 elseif(PLAYFIELD_TARGET_SOLARIS11)
   set(STRATO_TARGET_SOLARIS11 ON)
 elseif(PLAYFIELD_TARGET_GENERICUNIX)
   set(STRATO_TARGET_GENERICUNIX ON)
+elseif(PLAYFIELD_TARGET_HAIKU)
+  set(STRATO_TARGET_HAIKU ON)
 elseif(PLAYFIELD_TARGET_GDK_WINDOWS)
   set(STRATO_TARGET_GDK_WINDOWS ON)
 elseif(PLAYFIELD_TARGET_GDK_XBOX_XS)
@@ -257,22 +291,19 @@ elseif(PLAYFIELD_TARGET_UNITY_XBOX)
   set(STRATO_TARGET_UNITY_XBOX)
 endif()
 
-# Merge subproject objects into libplayfield.
-if(   PLAYFIELD_TARGET_IOS
-   OR PLAYFIELD_TARGET_ANDROID
-   OR PLAYFIELD_TARGET_OPENHARMONY
-   OR PLAYFIELD_TARGET_UNITY
-)
-  # For library generation.
+# Linking
+if(   PLAYFIELD_ENABLE_STATIC
+   OR PLAYFIELD_ENABLE_SHARED
+   OR PLAYFIELD_ENABLE_OBJECT)
+  # If we make a library, StratoHAL must be objects.
   set(STRATO_ENABLE_OBJECT ON)
 else()
+  # If we make an executable, StratoHAL should be a static library.
+  set(STRATO_ENABLE_STATIC ON)
+
+  # If we use dynamic link for dependencies.
   if(PLAYFIELD_ENABLE_DIST)
-    # For dynamically linked binaries.
-    #set(STRATO_ENABLE_SHARED ON)
-    set(STRATO_ENABLE_STATIC ON)
-  else()
-    # For statically linked binaries.
-    set(STRATO_ENABLE_STATIC ON)
+    set(STRATO_ENABLE_DIST ON)
   endif()
 endif()
 
@@ -289,6 +320,13 @@ endif()
 if(PLAYFIELD_ENABLE_GST)
   set(STRATO_ENABLE_GST ON)
 endif()
+
+# libstratopack
+if(PLAYFIELD_ENABLE_PACK)
+  set(STRATO_ENABLE_PACK ON)
+endif()
+
+# ---
 
 #
 # Release/Debug
@@ -319,13 +357,19 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU"
   set(CMAKE_OBJC_FLAGS_RELEASE "${CMAKE_OBJC_FLAGS_RELEASE} -O2 -g0 -DNDEBUG")
 endif()
 
+# ---
+
 #
 # Apple Quirks
 #
 
-if(PLAYFIELD_TARGET_MACOS)
+if(   PLAYFIELD_TARGET_MACOS
+   OR PLAYFIELD_TARGET_MACOS_CLI
+   OR PLAYFIELD_TARGET_MACOS_LIB)
   set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64" CACHE STRING "" FORCE)
 endif()
+
+# ---
 
 #
 # Dependencies
@@ -336,6 +380,8 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/NoctLang)
 
 # StratoHAL
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/StratoHAL)
+
+# ---
 
 #
 # Checks
@@ -357,6 +403,8 @@ check_include_file("sys/types.h" HAVE_SYS_TYPES_H)
 if(HAVE_SYS_TYPES_H)
   add_definitions(-DHAVE_SYS_TYPES_H=1)
 endif()
+
+# ---
 
 #
 # Main Target
@@ -393,28 +441,17 @@ if(   PLAYFIELD_TARGET_IOS
    OR PLAYFIELD_TARGET_OPENHARMONY
    OR PLAYFIELD_TARGET_UNITY
    OR PLAYFIELD_ENABLE_STATIC
+   OR PLAYFIELD_ENABLE_SHARED
 )
-  # Make a library.
   if(PLAYFIELD_ENABLE_SHARED)
     set(PLAYFIELD_LIB_TYPE SHARED)
   else()
     set(PLAYFIELD_LIB_TYPE STATIC)
   endif()
-  if(PLAYFIELD_ENABLE_DIST)
-    add_library(
-      playfield
-      ${PLAYFIELD_LIB_TYPE}
-      ${PLAYFIELD_BASE_SOURCES}
-      ${PLAYFIELD_I18N_SOURCES}
-      ${PLAYFIELD_RESOURCES}
-    )
-  else()
-    add_library(
-      playfield
-      ${PLAYFIELD_LIB_TYPE}
-      ${PLAYFIELD_BASE_SOURCES}
-      ${PLAYFIELD_I18N_SOURCES}
-      ${PLAYFIELD_RESOURCES}
+
+  if(NOT PLAYFIELD_ENABLE_DIST)
+    set(
+      PLAYFIELD_DEPS
       $<TARGET_OBJECTS:png>
       $<TARGET_OBJECTS:jpeg>
       $<TARGET_OBJECTS:webp>
@@ -426,8 +463,18 @@ if(   PLAYFIELD_TARGET_IOS
       $<TARGET_OBJECTS:brotlicommon>
       $<TARGET_OBJECTS:bz2>
       $<TARGET_OBJECTS:z>
-    )
+    )      
   endif()
+
+  # Make a library.
+  add_library(
+    playfield
+    ${PLAYFIELD_LIB_TYPE}
+    ${PLAYFIELD_BASE_SOURCES}
+    ${PLAYFIELD_I18N_SOURCES}
+    ${PLAYFIELD_RESOURCES}
+    ${PLAYFIELD_DEPS}
+  )
 else()
   # Make an executable.
   add_executable(
@@ -438,13 +485,12 @@ else()
   )
 endif()
 
-# Link NoctLang and Strato
-target_link_libraries(playfield PUBLIC
-  noctlang
-  strato
-)
+# ---
 
-# -Iinclude
+#
+# CPPFLAGS
+#
+
 target_include_directories(
   playfield
   PUBLIC
@@ -452,51 +498,103 @@ target_include_directories(
   external/NoctLang/src/core
 )
 
-# -DUSE_JIT
+# JIT
 if(PLAYFIELD_ENABLE_JIT)
   target_compile_definitions(playfield PRIVATE PF_USE_JIT)
 endif()
 
-# -DUSE_TRANSLATION
+# I18N
 if(PLAYFIELD_ENABLE_I18N)
   target_compile_definitions(playfield PRIVATE PF_USE_TRANSLATION)
 endif()
 
-# -DUSE_SHARED
+# DLL
 if(PLAYFIELD_ENABLE_SHARED)
   target_compile_definitions(playfield PRIVATE PF_USE_SHARED)
 endif()
 
-# -DUSE_UNITY
+# Unity
 if(PLAYFIELD_TARGET_UNITY)
   target_compile_definitions(playfield PRIVATE PF_TARGET_UNITY)
 endif()
 
-# Library mode
+# Init Hook
 if(PLAYFIELD_ENABLE_INITHOOK)
   target_compile_definitions(playfield PRIVATE PF_USE_INITHOOK)
 endif()
 
-# Windows quirks
+# Windows
+if(PLAYFIELD_TARGET_WINDOWS)
+  if(MSVC)
+    add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+  endif()
+endif()
+
+# Windows 95
+if(PLAYFIELD_TARGET_WINDOWS95)
+  if(MSVC)
+    add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+  else()
+    add_compile_definitions(_WIN32_WINNT=0x0400 __USE_MINGW_ANSI_STDIO=1)
+  endif()
+endif()
+
+# Emscripten
+if(PLAYFIELD_TARGET_WASM AND NOT PLAYFIELD_ENABLE_STATIC)
+  target_compile_definitions(playfield PRIVATE USE_EMSCRIPTEN)
+endif()
+
+# ---
+
+#
+# CFLAGS
+#
+
+# Windows
 if(PLAYFIELD_TARGET_WINDOWS)
   if(MSVC)
     target_compile_options(playfield PUBLIC /utf-8)
-    target_link_options(playfield PUBLIC /SUBSYSTEM:WINDOWS)
-    add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
   else()
     target_compile_options(playfield PUBLIC -municode -finput-charset=utf-8 -fexec-charset=utf-8)
-    target_link_options(playfield PUBLIC -mwindows -static)
   endif()
 endif()
+
+# Windows 95
 if(PLAYFIELD_TARGET_WINDOWS95)
   if(MSVC)
     target_compile_options(playfield PUBLIC /utf-8)
-    target_link_options(playfield PUBLIC /SUBSYSTEM:WINDOWS)
-    add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
   else()
     target_compile_options(playfield PUBLIC -finput-charset=utf-8 -fexec-charset=shift-jis)
+  endif()
+endif()
+
+# ---
+
+#
+# LDFLAGS
+#
+
+# Link NoctLang and Strato
+target_link_libraries(playfield PUBLIC
+  noctlang
+  strato
+)
+
+# Windows
+if(PLAYFIELD_TARGET_WINDOWS)
+  if(MSVC)
+    target_link_options(playfield PUBLIC /SUBSYSTEM:WINDOWS)
+  else()
+    target_link_options(playfield PUBLIC -mwindows -static)
+  endif()
+endif()
+
+# Windows 95
+if(PLAYFIELD_TARGET_WINDOWS95)
+  if(MSVC)
+    target_link_options(playfield PUBLIC /SUBSYSTEM:WINDOWS)
+  else()
     target_link_options(playfield PUBLIC -mwindows -static -static-libgcc)
-    add_compile_definitions(_WIN32_WINNT=0x0400 __USE_MINGW_ANSI_STDIO=1)
   endif()
 endif()
 
@@ -505,11 +603,6 @@ if(PLAYFIELD_TARGET_WASM AND NOT PLAYFIELD_ENABLE_STATIC)
   # Make the output name "index.html"
   set(CMAKE_EXECUTABLE_SUFFIX ".html")
   set_target_properties(playfield PROPERTIES OUTPUT_NAME index)
-
-  # -DUSE_EMSCRIPTEN
-  target_compile_definitions(playfield PRIVATE USE_EMSCRIPTEN)
-
-  # Link options.
   target_link_options(playfield PRIVATE
     -o index.html
     -sSINGLE_FILE=1
@@ -525,16 +618,11 @@ if(PLAYFIELD_TARGET_WASM AND NOT PLAYFIELD_ENABLE_STATIC)
   )
 endif()
 
-# Emscripten
+# Emscripten Local
 if(PLAYFIELD_TARGET_WASM_LOCAL AND NOT PLAYFIELD_ENABLE_STATIC)
   # Make the output name "index.html"
   set(CMAKE_EXECUTABLE_SUFFIX ".html")
   set_target_properties(playfield PROPERTIES OUTPUT_NAME index)
-
-  # -DUSE_EMSCRIPTEN
-  target_compile_definitions(playfield PRIVATE USE_EMSCRIPTEN)
-
-  # Link options.
   target_link_options(playfield PRIVATE
     -o index.html
     -sSINGLE_FILE=1
@@ -551,6 +639,8 @@ if(PLAYFIELD_TARGET_WASM_LOCAL AND NOT PLAYFIELD_ENABLE_STATIC)
     --profiling-funcs
   )
 endif()
+
+# ---
 
 #
 # Packager Target
@@ -572,82 +662,108 @@ if(PLAYFIELD_ENABLE_PACK)
   target_link_libraries(playfield-pack stratopack)
 endif()
 
+# ---
+
 #
-# Compiler Target
+# Bytecode Compiler Target
 #
 
-if(   PLAYFIELD_TARGET_WINDOWS
-   OR PLAYFIELD_TARGET_MACOS
-   OR PLAYFIELD_TARGET_LINUX
-   OR PLAYFIELD_TARGET_LINUX_WAYLAND
-   OR PLAYFIELD_TARGET_LINUX_GBM
-   OR PLAYFIELD_TARGET_LINUX_FBDEV
-   OR PLAYFIELD_TARGET_LINUX_X11SOFT
-   OR PLAYFIELD_TARGET_FREEBSD
-   OR PLAYFIELD_TARGET_FREEBSD_WAYLAND
-   OR PLAYFIELD_TARGET_NETBSD
-   OR PLAYFIELD_TARGET_OPENBSD
-   OR PLAYFIELD_TARGET_SOLARIS11
-   OR PLAYFIELD_TARGET_GENERICUNIX)
-  if(NOT PLAYFIELD_ENABLE_STATIC AND NOT PLAYFIELD_ENABLE_SHARED)
-    # Bytecode
-    add_executable(
-      playfield-compiler
-      src/compiler.c
-    )
-    target_include_directories(playfield-compiler PRIVATE
-      include
-      external/StratoHAL/include
-      external/NoctLang/src/core
-      external/NoctLang/src/backend
-    )
-    target_link_libraries(playfield-compiler noctlang)
-    if(UNIX)
-      target_link_libraries(playfield-compiler m)
-    endif()
+if(PLAYFIELD_ENABLE_BYTECOMP)
+  if(PLAYFIELD_TARGET_WINDOWS OR PLAYFIELD_TARGET_WINDOWS95)
+    set(PLAYFIELD_BYTECOMP_RESOURCE resources/windows/bytecomp-resource.rc)
+  endif()
 
-    # AOT
-    add_executable(
-      playfield-aot
-      src/aot.c
-      external/NoctLang/src/backend/cback.c
-    )
-    target_include_directories(playfield-aot PRIVATE
-      include
-      external/StratoHAL/include
-      external/NoctLang/src/core
-      external/NoctLang/src/backend
-    )
-    target_link_libraries(playfield-aot noctlang)
-    if(UNIX)
-      target_link_libraries(playfield-aot m)
-    endif()
+  add_executable(
+    playfield-bytecomp
+    src/compiler.c
+    ${PLAYFIELD_BYTECOMP_RESOURCE}
+  )
+
+  target_include_directories(
+    playfield-bytecomp
+    PRIVATE
+    include
+    external/StratoHAL/include
+    external/NoctLang/src/core
+    external/NoctLang/src/backend
+  )
+
+  target_link_libraries(playfield-bytecomp noctlang)
+
+  if(UNIX)
+    target_link_libraries(playfield-bytecomp m)
   endif()
 endif()
+
+# ---
+
+#
+# AOT Compiler Target
+#
+
+if(PLAYFIELD_ENABLE_AOTCOMP)
+  if(PLAYFIELD_TARGET_WINDOWS OR PLAYFIELD_TARGET_WINDOWS95)
+    set(PLAYFIELD_AOTCOMP_RESOURCE resources/windows/aotcomp-resource.rc)
+  endif()
+
+  add_executable(
+    playfield-aotcomp
+    src/aot.c
+    external/NoctLang/src/backend/cback.c
+    ${PLAYFIELD_AOTCOMP_RESOURCE}
+  )
+
+  target_include_directories(
+    playfield-aotcomp
+    PRIVATE
+    include
+    external/StratoHAL/include
+    external/NoctLang/src/core
+    external/NoctLang/src/backend
+  )
+
+  target_link_libraries(playfield-aotcomp noctlang)
+
+  if(UNIX)
+    target_link_libraries(playfield-aotcomp m)
+  endif()
+endif()
+
+# ---
 
 #
 # Web Server Target
 #
 
-if(PLAYFIELD_TARGET_WINDOWS AND NOT PLAYFIELD_ENABLE_STATIC)
+if(PLAYFIELD_ENABLE_WEBSERVER)
+  if(PLAYFIELD_TARGET_WINDOWS OR PLAYFIELD_TARGET_WINDOWS95)
+    set(PLAYFIELD_WEB_RESOURCE resources/windows/web-resource.rc)
+  endif()
+
   add_executable(
     playfield-web
     src/webserver.c
-    resources/windows/web-resource.rc
+    ${PLAYFIELD_WEB_RESOURCE}
   )
-  target_link_libraries(playfield-web wsock32 ws2_32)
+
+  if(PLAYFIELD_TARGET_WINDOWS OR PLAYFIELD_TARGET_WINDOWS95)
+    target_link_libraries(playfield-web wsock32 ws2_32)
+  endif()
 endif()
+
+# ---
 
 #
 # Editor Target
 #
 
-if(PLAYFIELD_TARGET_WINDOWS AND MSVC AND NOT PLAYFIELD_ENABLE_STATIC)
+if(PLAYFIELD_ENABLE_EDITOR)
   add_executable(
     playfield-editor
     src/editor.c
     resources/windows/editor-resource.rc
   )
+
   if(MSVC)
     target_compile_options(playfield-editor PRIVATE /utf-8)
     target_compile_definitions(playfield-editor PRIVATE UNICODE _UNICODE)
@@ -658,11 +774,15 @@ if(PLAYFIELD_TARGET_WINDOWS AND MSVC AND NOT PLAYFIELD_ENABLE_STATIC)
   endif()
 endif()
 
+# ---
+
 #
 # macOS Bundle
 #
 
-if(PLAYFIELD_TARGET_MACOS AND NOT PLAYFIELD_ENABLE_STATIC AND PLAYFIELD_ENABLE_BUNDLE)
+if(PLAYFIELD_TARGET_MACOS
+   AND NOT PLAYFIELD_ENABLE_STATIC
+   AND NOT PLAYFIELD_ENABLE_SHARED)
   # Use capital name.
   set_target_properties(playfield PROPERTIES OUTPUT_NAME "Playfield")
 
@@ -690,6 +810,8 @@ if(PLAYFIELD_TARGET_MACOS AND NOT PLAYFIELD_ENABLE_STATIC AND PLAYFIELD_ENABLE_B
   )
   target_sources(playfield PRIVATE ${APP_GAME_DATA})
 endif()
+
+# ---
 
 #
 # GDK Packaging
@@ -733,8 +855,10 @@ if(PLAYFIELD_TARGET_GDK_WINDOWS)
 endif()
 endif()
 
+# ---
+
 #
-# Install
+# UNIX Install
 #
 
 if(   PLAYFIELD_TARGET_LINUX
@@ -744,30 +868,44 @@ if(   PLAYFIELD_TARGET_LINUX
    OR PLAYFIELD_TARGET_LINUX_X11SOFT
    OR PLAYFIELD_TARGET_FREEBSD
    OR PLAYFIELD_TARGET_FREEBSD_WAYLAND
+   OR PLAYFIELD_TARGET_FREEBSD_X11SOFT
    OR PLAYFIELD_TARGET_NETBSD
+   OR PLAYFIELD_TARGET_NETBSD_X11SOFT
    OR PLAYFIELD_TARGET_OPENBSD
+   OR PLAYFIELD_TARGET_OPENBSD_X11SOFT
    OR PLAYFIELD_TARGET_SOLARIS11
-   OR PLAYFIELD_TARGET_GENERICUNIX)
+   OR PLAYFIELD_TARGET_GENERICUNIX
+   OR PLAYFIELD_TARGET_HAIKU)
   if(NOT PLAYFIELD_ENABLE_STATIC AND NOT PLAYFIELD_ENABLE_SHARED)
     include(GNUInstallDirs)
 
     install(TARGETS playfield RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-    install(TARGETS playfield-compiler RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(TARGETS playfield-bytecomp RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(TARGETS playfield-aotcomp RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
     install(TARGETS playfield-pack RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
     if(   PLAYFIELD_TARGET_FREEBSD
        OR PLAYFIELD_TARGET_FREEBSD_WAYLAND
+       OR PLAYFIELD_TARGET_FREEBSD_X11SOFT
        OR PLAYFIELD_TARGET_NETBSD
-       OR PLAYFIELD_TARGET_OPENBSD)
+       OR PLAYFIELD_TARGET_NETBSD_X11SOFT
+       OR PLAYFIELD_TARGET_OPENBSD
+       OR PLAYFIELD_TARGET_OPENBSD_X11SOFT)
+      # BSD manpage
       install(
         FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/playfield.1.mdoc"
         DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
         RENAME      "playfield.1"
       )
       install(
-        FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/playfield-compiler.1.mdoc"
+        FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/playfield-bytecomp.1.mdoc"
         DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
-        RENAME      "playfield-compiler.1"
+        RENAME      "playfield-bytecomp.1"
+      )
+      install(
+        FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/playfield-aotcomp.1.mdoc"
+        DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
+        RENAME      "playfield-aotcomp.1"
       )
       install(
         FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/playfield-pack.1.mdoc"
@@ -775,9 +913,11 @@ if(   PLAYFIELD_TARGET_LINUX
         RENAME      "playfield-pack.1"
       )
     else()
+      # UNIX and Linux manpage
       install(
         FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/playfield.1"
-                    "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/playfield-compiler.1"
+                    "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/playfield-bytecomp.1"
+                    "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/playfield-aotcomp.1"
                     "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/playfield-pack.1"
         DESTINATION "${CMAKE_INSTALL_MANDIR}/man1"
       )
