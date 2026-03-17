@@ -408,11 +408,12 @@ jobs:
 
       - name: Setup PATH for LLVM
         run: |
-          echo "`pwd`/llvm-21/bin" >> $GITHUB_PATH
-          clang --version
+          $(pwd)/llvm-21/binclang --version
+          echo $(pwd)/llvm-21/bin >> $GITHUB_PATH
 
       - name: Build for Unity
         run: |
+          clang --version
           cmake --preset unity-win64
           cmake --build --preset unity-win64
           cmake --preset unity-switch
