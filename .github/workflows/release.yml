@@ -408,7 +408,7 @@ jobs:
 
       - name: Setup PATH for LLVM
         run: |
-          $(pwd)/llvm-21/binclang --version
+          $(pwd)/llvm-21/bin/clang --version
           echo $(pwd)/llvm-21/bin >> $GITHUB_PATH
 
       - name: Build for Unity
