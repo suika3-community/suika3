@@ -15,7 +15,7 @@ runtime for mobile app store compliance.
 </div>
 
 <div align="center">
-  <span font-size="6em;">Visual Novel Anywhere!</span>
+  <span font-size="6em">Visual Novel Anywhere!</span>
   <img src="https://github.com/suika3-community/suika3/blob/main/docs/img/platforms.png" alt="Suika3 runs everywhere."><br>
 </div>
 
