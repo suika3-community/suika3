@@ -406,7 +406,7 @@ jobs:
           curl -L -o llvm.tar.xz https://github.com/llvm/llvm-project/releases/download/llvmorg-21.1.8/LLVM-21.1.8-Linux-X64.tar.xz
           mkdir llvm-21 && tar -xJf llvm.tar.xz -C llvm-21 --strip-components=1
 
-      - name: Check for LLVM PATH
+      - name: Setup PATH for LLVM
         run: |
           echo "`pwd`/llvm-21/bin" >> $GITHUB_PATH
           clang --version
