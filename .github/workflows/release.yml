@@ -543,8 +543,8 @@ jobs:
 
       - name: Copy for macOS.
         run: |
-          cp macos/Suika3.dmg dist/misc/macos/
-          cp macos/suika3-pack dist/misc/macos/
+          cp macos/build-macos/Suika3.dmg dist/misc/macos/
+          cp macos/build-macos/suika3-pack dist/misc/macos/
 
       - name: Copy for macOS project.
         run: |
