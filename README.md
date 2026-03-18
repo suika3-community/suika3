@@ -11,9 +11,9 @@
     Suika3 is a production-grade visual novel engine designed to run natively across a wide range of platforms
   </p>
   <a href="https://discord.gg/YZsq9u9Mgr"><img src="https://img.shields.io/badge/Suika3.VN-Discord-orange"></a>
-  <img src="https://img.shields.io/github/stars/suika3-community/suika3.svg?style=flat&logo=github&colorB=deeppink&label=stars">
+  <img src="https://img.shields.io/github/stars/suika3-community/suika3.svg?style=flat&logo=github&colorB=orange&label=stars">
   <img src="https://img.shields.io/github/forks/suika3-community/suika3.svg">
-  <img src="https://img.shields.io/badge/License-ZLib-purple.svg">
+  <img src="https://img.shields.io/badge/License-ZLib-orange.svg">
 </div>
 
 ---
@@ -1255,8 +1255,8 @@ close collaboration with the community.
 
 ### Lead Maintainers
 
-- Awe Morris (Design and Implementation)
-- Aitsuki (Security Inspection)
+- Awe Morris (Systems Engineer)
+- Aitsuki (Security Analyst)
 
 ---
 
