@@ -65,6 +65,9 @@ static bool is_continuous_swipe_enabled;
 /* Is full screen mode? */
 static bool is_full_screen;
 
+/* Is video playing? */
+static bool is_video_playing;
+
 /* Window configuration. */
 static char *window_title;
 static int screen_width;
@@ -1142,6 +1145,8 @@ hal_play_video(
 
 	free(path);
 
+	is_video_playing = true;
+
 	return true;
 }
 
@@ -1161,6 +1166,8 @@ hal_stop_video(void)
 		v.src = "";
 		v.load();
 	);
+
+	is_video_playing = false;
 }
 
 /*
@@ -1171,12 +1178,19 @@ hal_is_video_playing(void)
 {
 	int ended;
 
+	if (!is_video_playing)
+		return false;
+
 	ended = EM_ASM_INT(
 		var v = document.getElementById("video");
 		return v.ended;
 	);
+	if (ended) {
+		is_video_playing = false;
+		return false;
+	}
 
-	return !ended;
+	return true;
 }
 
 /*

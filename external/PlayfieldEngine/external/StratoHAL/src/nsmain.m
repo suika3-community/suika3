@@ -102,7 +102,7 @@ int main(int argc, const char *argv[]) {
 
 static void checkBundleResource(int argc, const char *argv[])
 {
-    if (argc > 2) {
+    if (argc >= 2) {
         if (strcmp(argv[1], ".") == 0) {
             is_bundled = false;
             return;
@@ -153,7 +153,8 @@ static void checkBundleResource(int argc, const char *argv[])
                                         defer:NO];
 
     // Make a view controller.
-    [self.window setContentViewController:[[ViewController alloc] init]];
+    theViewController = [[ViewController alloc] init];
+    [self.window setContentViewController:theViewController];
     [self.window makeKeyAndOrderFront:nil];
 
     // Make a menu bar.
@@ -377,7 +378,7 @@ static void initGamepad(void)
             if (pressed)
                 hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_R);
             else
-                hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_A);
+                hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_R);
         };
         controller.extendedGamepad.leftThumbstick.xAxis.valueChangedHandler = ^(GCControllerAxisInput *axis, float value) {
             hal_callback_on_event_analog_input(HAL_ANALOG_X1, (int)(value * 32767));
@@ -836,17 +837,23 @@ static void initGamepad(void)
 
 // Called when a video playback is finished. (GameViewControllerProtocol)
 - (void)onPlayEnd:(NSNotification *)notification {
+    [_avPlayer pause];
+    [_avPlayerLayer removeFromSuperlayer];
+    _avPlayerLayer = nil;
     [_avPlayer replaceCurrentItemWithPlayerItem:nil];
+    _avPlayer = nil;
     _isVideoPlaying = NO;
 }
 
 // Stop a video playback. (GameViewControllerProtocol)
 - (void)stopVideo {
     if (_avPlayer != nil) {
-        [_avPlayer replaceCurrentItemWithPlayerItem:nil];
-        _isVideoPlaying = NO;
-        _avPlayer = nil;
+        [_avPlayer pause];
+        [_avPlayerLayer removeFromSuperlayer];
         _avPlayerLayer = nil;
+        [_avPlayer replaceCurrentItemWithPlayerItem:nil];
+        _avPlayer = nil;
+        _isVideoPlaying = NO;
     }
 }
 

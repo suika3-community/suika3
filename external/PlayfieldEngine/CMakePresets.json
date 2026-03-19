@@ -198,6 +198,30 @@
             }
         },
         {
+            "name":           "windows-vs2026-x86-xp",
+            "displayName":    "!VS2026 MSVC x86 XP Release",
+            "generator":      "Visual Studio 18 2026",
+            "architecture":   "Win32",
+            "toolset":        "v141_xp",
+            "binaryDir":      "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_CONFIGURATION_TYPES":    "Release",
+                "CMAKE_BUILD_TYPE":             "Release",
+                "PLAYFIELD_ENABLE_JIT":         "ON",
+                "PLAYFIELD_ENABLE_I18N":        "ON",
+                "PLAYFIELD_ENABLE_PACK":        "ON",
+                "PLAYFIELD_ENABLE_BYTECOMP":    "ON",
+                "PLAYFIELD_ENABLE_AOTCOMP":     "ON",
+                "PLAYFIELD_ENABLE_WEBSERVER":   "ON",
+                "PLAYFIELD_ENABLE_EDITOR":      "OFF"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
             "name":           "windows-vs2026-x64",
             "displayName":    "!VS2026 MSVC x64 Release",
             "generator":      "Visual Studio 18 2026",
@@ -262,6 +286,30 @@
                 "PLAYFIELD_ENABLE_AOTCOMP":     "ON",
                 "PLAYFIELD_ENABLE_WEBSERVER":   "ON",
                 "PLAYFIELD_ENABLE_EDITOR":      "ON"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name":           "windows-vs2026-uwp",
+            "displayName":    "!VS2026 UWP x64",
+            "generator":      "Visual Studio 18 2026",
+            "architecture":   "x64",
+            "binaryDir":      "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_SYSTEM_NAME":                        "WindowsStore",
+                "CMAKE_SYSTEM_VERSION":                     "10.0",
+                "CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION": "10.0",
+                "PLAYFIELD_TARGET_UWP":                     "ON",
+                "PLAYFIELD_ENABLE_JIT":                     "OFF",
+                "PLAYFIELD_ENABLE_I18N":                    "OFF",
+                "PLAYFIELD_ENABLE_PACK":                    "OFF",
+                "PLAYFIELD_ENABLE_BYTECOMP":                "OFF",
+                "PLAYFIELD_ENABLE_AOTCOMP":                 "OFF",
+                "PLAYFIELD_ENABLE_EDITOR":                  "OFF"
             },
             "condition": {
                 "type": "equals",
@@ -592,7 +640,7 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-linux-x11soft",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":               "Release",
+                "CMAKE_BUILD_TYPE":               "Debug",
                 "PLAYFIELD_TARGET_LINUX_X11SOFT": "ON",
                 "PLAYFIELD_ENABLE_JIT":           "ON",
                 "PLAYFIELD_ENABLE_I18N":          "ON",
@@ -971,7 +1019,7 @@
         {
             "name":           "haiku",
             "displayName":    "Haiku",
-            "generator":      "Ninja",
+            "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-haiku",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":             "Release",

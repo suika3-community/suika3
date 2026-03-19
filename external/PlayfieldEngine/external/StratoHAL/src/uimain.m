@@ -140,6 +140,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 // Called when the view is loaded.
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    theViewController = self;
     
     // Initialize the file HAL.
     if(!init_file())
@@ -261,7 +263,7 @@ static void initGamepad(void)
             if (pressed)
                 hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_R);
             else
-                hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_A);
+                hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_R);
         };
         controller.extendedGamepad.leftThumbstick.xAxis.valueChangedHandler = ^(GCControllerAxisInput *axis, float value) {
             hal_callback_on_event_analog_input(HAL_ANALOG_X1, (int)(value * 32767));
@@ -372,17 +374,23 @@ static void initGamepad(void)
 
 // Called when a video playback is finished.
 - (void)onPlayEnd:(NSNotification *)notification {
+    [_avPlayer pause];
+    [_avPlayerLayer removeFromSuperlayer];
+    _avPlayerLayer = nil;
     [_avPlayer replaceCurrentItemWithPlayerItem:nil];
+    _avPlayer = nil;
     _isVideoPlaying = NO;
 }
 
 // Stop a video playback.
 - (void)stopVideo {
     if (_avPlayer != nil) {
-        [_avPlayer replaceCurrentItemWithPlayerItem:nil];
-        _isVideoPlaying = NO;
-        _avPlayer = nil;
+        [_avPlayer pause];
+        [_avPlayerLayer removeFromSuperlayer];
         _avPlayerLayer = nil;
+        [_avPlayer replaceCurrentItemWithPlayerItem:nil];
+        _avPlayer = nil;
+        _isVideoPlaying = NO;
     }
 }
 
@@ -590,7 +598,7 @@ bool
 hal_make_save_directory(void)
 {
     @autoreleasepool {
-        NSString *path = [NSString stringWithFormat:@"%@/%@/%s/sav",
+        NSString *path = [NSString stringWithFormat:@"%@/%@/%s/save",
                           NSHomeDirectory(),
                           @"/Library/Application Support",
                           window_title];
@@ -614,7 +622,7 @@ hal_make_real_path(
 {
     @autoreleasepool {
         // If a save file:
-            if(strncmp(fname, "save/", 5) == 0) {
+        if(strncmp(fname, "save/", 5) == 0) {
             // Return a "Application Support" path.
             NSString *path = [NSString stringWithFormat:@"%@/%@/%s/save/%s",
                               NSHomeDirectory(),
@@ -628,10 +636,18 @@ hal_make_real_path(
         // If an mp4 file:
         if(strncmp(fname, "video/", 4) == 0) {
             // Return an bundle resource path.
-            *strstr(fname, ".") = '\0';
-            NSString *basename = [NSString stringWithFormat:@"video/%s", fname];
+            char *s = strdup(fname);
+            if (s == NULL) {
+                hal_log_out_of_memory();
+                return NULL;
+            }
+            char *nul = strstr(s, ".");
+            if (nul != NULL)
+                *nul = '\0';
+            NSString *basename = [NSString stringWithFormat:@"video/%s", s];
             NSString *path = [[NSBundle mainBundle] pathForResource:basename ofType:@"mp4"];
             const char *cstr = [path UTF8String];
+            free(s);
             return strdup(cstr);
         }
 

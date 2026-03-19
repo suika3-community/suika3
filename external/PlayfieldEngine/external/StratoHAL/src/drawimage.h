@@ -741,7 +741,6 @@ DRAW_IMAGE_3D_ALPHA(
 	int sw, dw, dst_y_max;
 	uint32_t *dst_pixel, *src_pixel;
 	uint32_t src_pix, dst_pix;
-	uint32_t add_r, add_g, add_b;
 	float a, src_r, src_g, src_b, src_a, dst_r, dst_g, dst_b, dst_a;
 
 	scanline_conversion((float)x1,
