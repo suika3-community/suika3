@@ -388,6 +388,8 @@ static void draw_save_button(int button_index);
 static int draw_save_text_item(int button_index, int x, int y, const char *text, bool multiline);
 static void process_save(int button_index);
 static void process_load(int button_index);
+static void process_auto_mode(void);
+static void process_skip_mode(void);
 static bool init_history_buttons(void);
 static void draw_history_buttons(void);
 static void draw_history_button(int button_index);
@@ -889,7 +891,6 @@ static void process_input(void)
 	if (is_bombed)
 		return;
 
-	result_index = -1;
 	prev_pointed_index = pointed_index;
 	need_update_history_buttons = false;
 
@@ -1679,6 +1680,14 @@ process_button_click(
 		process_load(index);
 		result_index = index;
 		break;
+	case TYPE_AUTO:
+		process_auto_mode();
+		result_index = index;
+		break;
+	case TYPE_SKIP:
+		process_skip_mode();
+		result_index = index;
+		break;
 	case TYPE_HISTORY:
 		process_history_voice(index);
 		break;
@@ -2330,6 +2339,30 @@ process_button_render_save(
 	    get_latest_save_index() == save_page * save_slots + b->index)
 		render_savenew(b->new_x, b->new_y, cur_alpha);
 #endif
+}
+
+static void
+process_auto_mode(void)
+{
+	if (s3_is_skip_mode()) {
+		s3_stop_skip_mode();
+		s3_show_skipmode_banner(false);
+	}
+
+	s3_start_auto_mode();
+	s3_show_automode_banner(true);
+}
+
+static void
+process_skip_mode(void)
+{
+	if (s3_is_auto_mode()) {
+		s3_stop_auto_mode();
+		s3_show_automode_banner(false);
+	}
+
+	s3_start_skip_mode();
+	s3_show_skipmode_banner(true);
 }
 
 /*
