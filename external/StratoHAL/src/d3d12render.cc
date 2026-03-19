@@ -506,6 +506,8 @@ const uint8_t g_PS_Melt_Bytecode[] = {
 //
 
 static HWND                                 g_hWnd;
+static IUnknown*                            g_pNativeWindow;  // UWP only
+static bool                                 g_isUWP;
 static D3D12_VIEWPORT                       g_viewport;
 static D3D12_RECT                           g_scissorRect;
 static ComPtr<IDXGISwapChain3>              g_swapChain;
@@ -661,6 +663,52 @@ D3D12Initialize(
     return TRUE;
 }
 
+BOOL
+D3D12InitializeForUWP(
+	IUnknown* pNativeWindow,
+	int nWidth,
+	int nHeight)
+{
+	g_hWnd = NULL;
+	g_pNativeWindow = pNativeWindow;
+	g_isUWP = true;
+
+	g_nVirtualWidth = nWidth;
+	g_nVirtualHeight = nHeight;
+
+	// Initial physical size.
+	// In UWP, the actual window size will be updated later by D3D12ResizeWindow().
+	g_fDisplayWidth = (float)nWidth;
+	g_fDisplayHeight = (float)nHeight;
+	g_fScale = 1.0f;
+	g_fOffsetX = 0.0f;
+	g_fOffsetY = 0.0f;
+
+	g_viewport.TopLeftX = 0.0f;
+	g_viewport.TopLeftY = 0.0f;
+	g_viewport.Width = g_fDisplayWidth;
+	g_viewport.Height = g_fDisplayHeight;
+	g_viewport.MinDepth = 0.0f;
+	g_viewport.MaxDepth = 1.0f;
+
+	g_scissorRect.left = 0;
+	g_scissorRect.top = 0;
+	g_scissorRect.right = (LONG)g_fDisplayWidth;
+	g_scissorRect.bottom = (LONG)g_fDisplayHeight;
+
+	// Initialize the available texture index list.
+	g_availableTextureIndexList.clear();
+	for (int i = 0; i < TEXTURE_COUNT; i++)
+		g_availableTextureIndexList.push_back(i);
+
+	if (!GetAPIPointers())
+		return FALSE;
+	if (!RecreateD3DObjects())
+		return FALSE;
+
+	return TRUE;
+}
+
 static BOOL
 RecreateD3DObjects()
 {
@@ -693,9 +741,9 @@ RecreateD3DObjects()
 static BOOL
 GetAPIPointers()
 {
-#if defined(HAL_TARGET_GDK_XBOX_XS)
+#if defined(HAL_TARGET_GDK_DESKTOP) || defined(HAL_TARGET_GDK_XBOX_XS) || defined(HAL_TARGET_UWP)
 	//
-	// Xbox
+	// GDK / UWP
 	//
 
     pfnCreateDXGIFactory2 = &CreateDXGIFactory2;
@@ -744,25 +792,37 @@ GetAPIPointers()
 static BOOL
 GetScreenSize()
 {
-    RECT rc;
-    GetClientRect(g_hWnd, &rc);
+	if (g_isUWP)
+	{
+		// In UWP, current window size is supplied from the app side.
+		// D3D12ResizeWindow() will update these values later.
+		if (g_fDisplayWidth <= 0.0f)
+			g_fDisplayWidth = (float)g_nVirtualWidth;
+		if (g_fDisplayHeight <= 0.0f)
+			g_fDisplayHeight = (float)g_nVirtualHeight;
+	}
+	else
+	{
+		RECT rc;
+		GetClientRect(g_hWnd, &rc);
 
-    g_fDisplayWidth = (float)(rc.right - rc.left);
-    g_fDisplayHeight = (float)(rc.bottom - rc.top);
+		g_fDisplayWidth = (float)(rc.right - rc.left);
+		g_fDisplayHeight = (float)(rc.bottom - rc.top);
+	}
 
-    g_viewport.Width = g_fDisplayWidth;
-    g_viewport.Height = g_fDisplayHeight;
-    g_viewport.MinDepth = 0.0f;
-    g_viewport.MaxDepth = 1.0f;
-    g_viewport.TopLeftX = 0;
-    g_viewport.TopLeftY = 0;
+	g_viewport.Width = g_fDisplayWidth;
+	g_viewport.Height = g_fDisplayHeight;
+	g_viewport.MinDepth = 0.0f;
+	g_viewport.MaxDepth = 1.0f;
+	g_viewport.TopLeftX = 0;
+	g_viewport.TopLeftY = 0;
 
-    g_scissorRect.left = 0;
-    g_scissorRect.top = 0;
-    g_scissorRect.right = (LONG)g_fDisplayWidth;
-    g_scissorRect.bottom = (LONG)g_fDisplayHeight;
+	g_scissorRect.left = 0;
+	g_scissorRect.top = 0;
+	g_scissorRect.right = (LONG)g_fDisplayWidth;
+	g_scissorRect.bottom = (LONG)g_fDisplayHeight;
 
-    return TRUE;
+	return TRUE;
 }
 
 static BOOL
@@ -811,18 +871,37 @@ CreateSwapchain()
     swapChainDesc.SampleDesc.Count = 1;
     //swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
-    ComPtr<IDXGISwapChain1> swapChain;
-    hr = factory->CreateSwapChainForHwnd(g_commandQueue.Get(),  g_hWnd, &swapChainDesc, nullptr, nullptr,&swapChain);
-    if (FAILED(hr))
-        return FALSE;
+	if (g_isUWP)
+	{
+		ComPtr<IDXGISwapChain1> swapChain;
+		hr = factory->CreateSwapChainForCoreWindow(
+			g_commandQueue.Get(),
+			g_pNativeWindow,
+			&swapChainDesc,
+			nullptr,
+			&swapChain);
+		if (FAILED(hr))
+			return FALSE;
+		hr = swapChain.As(&g_swapChain);
+		if (FAILED(hr))
+			return FALSE;
+	}
+	else
+	{
+		ComPtr<IDXGISwapChain1> swapChain;
+		hr = factory->CreateSwapChainForHwnd(g_commandQueue.Get(),  g_hWnd, &swapChainDesc, nullptr, nullptr,&swapChain);
+		if (FAILED(hr))
+			return FALSE;
 
-    hr = factory->MakeWindowAssociation(g_hWnd, DXGI_MWA_NO_ALT_ENTER);
-    if (FAILED(hr))
-        return FALSE;
+		hr = factory->MakeWindowAssociation(g_hWnd, DXGI_MWA_NO_ALT_ENTER);
+		if (FAILED(hr))
+			return FALSE;
 
-    hr = swapChain.As(&g_swapChain);
-    if (FAILED(hr))
-        return FALSE;
+		hr = swapChain.As(&g_swapChain);
+		if (FAILED(hr))
+			return FALSE;
+
+	}
 
     g_frameIndex = g_swapChain->GetCurrentBackBufferIndex();
 

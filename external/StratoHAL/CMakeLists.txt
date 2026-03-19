@@ -30,6 +30,7 @@ option(STRATO_TARGET_OPENBSD_X11SOFT  "Build for OpenBSD (X11, Soft3D)"         
 option(STRATO_TARGET_SOLARIS11        "Build for Solaris 11 (X11, Soft3D)"      OFF)
 option(STRATO_TARGET_GENERICUNIX      "Build for Unknown UNIX (X11, Soft3D)"    OFF)
 option(STRATO_TARGET_HAIKU            "Build for Haiku OS (Soft3D)"             OFF)
+option(STRATO_TARGET_UWP              "Build for UWP"                           OFF)
 option(STRATO_TARGET_GDK_WINDOWS      "Build for GDK for Desktop"               OFF)
 option(STRATO_TARGET_GDK_XBOX_XS      "Build for GDK for Xbox Series X|S"       OFF)
 
@@ -74,6 +75,7 @@ if(   STRATO_TARGET_WINDOWS
    OR STRATO_TARGET_SOLARIS11
    OR STRATO_TARGET_GENERICUNIX
    OR STRATO_TARGET_HAIKU
+   OR STRATO_TARGET_UWP
    OR STRATO_TARGET_GDK_WINDOWS
    OR STRATO_TARGET_GDK_XBOX_XS
 )
@@ -534,13 +536,12 @@ endif()
 
 # UWP
 if(STRATO_TARGET_UWP)
-  set(CMAKE_CXX_STANDARD 11)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
   set(STRATO_SOURCES
     src/image.c
     src/glyph.c
     src/wave.c
     src/uwpmain.cpp
+    src/uwpfile.cpp
     src/d3d12render.cc
   )
 endif()

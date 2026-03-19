@@ -28,6 +28,8 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
+#undef NO_SOUND
+
 /* HAL */
 extern "C" {
 #include "stratohal/platform.h"		/* Public Interface */
@@ -59,15 +61,15 @@ extern "C" {
 
 const uint32 kMsgUpdate = 'updt';
 
-BBitmap* bitmap;
-struct hal_image* image;
-char *window_title;
-int window_width;
-int window_height;
-
-BSoundPlayer *sound_player[HAL_SOUND_TRACKS];
-struct hal_wave *wave[HAL_SOUND_TRACKS];
-bool is_finished[HAL_SOUND_TRACKS];
+static BBitmap* bitmap;
+static struct hal_image* image;
+static char *window_title;
+static int window_width;
+static int window_height;
+static bool is_started;
+staticBSoundPlayer *sound_player[HAL_SOUND_TRACKS];
+static struct hal_wave *wave[HAL_SOUND_TRACKS];
+static bool is_finished[HAL_SOUND_TRACKS];
 
 extern "C" void fill_buffer(void *cookie, void *buffer, size_t size, const media_raw_audio_format& format);
 
@@ -86,20 +88,27 @@ public:
 
 	void Draw(BRect updateRect) override
 	{
+		if (!is_started)
+			return;
+
 		hal_clear_image(image, 0);
-
 		hal_callback_on_event_frame();
-
 		DrawBitmap(bitmap, BPoint(0, 0));
 	}
 
 	void MouseMoved(BPoint where, uint32 transit, const BMessage* dragMessage) override
 	{
+		if (!is_started)
+			return;
+
 		hal_callback_on_event_mouse_move((int)where.x, (int)where.y);
 	}
 
 	void MouseDown(BPoint where) override
 	{
+		if (!is_started)
+			return;
+
 		hal_callback_on_event_mouse_move((int)where.x, (int)where.y);
 
 		uint32 buttons = 0;
@@ -115,6 +124,9 @@ public:
 
 	void MouseUp(BPoint where) override
 	{
+		if (!is_started)
+			return;
+
 		hal_callback_on_event_mouse_move((int)where.x, (int)where.y);
 
 		hal_callback_on_event_mouse_release(HAL_MOUSE_LEFT, (int)where.x, (int)where.y);
@@ -123,21 +135,26 @@ public:
 
 	void KeyDown(const char* bytes, int32 numBytes) override
 	{
+		if (!is_started)
+			return;
+
 		// TODO
 	}
 
 	void KeyUp(const char* bytes, int32 numBytes) override
 	{
+		if (!is_started)
+			return;
+
 		// TODO
 	}
 
 	void MessageReceived(BMessage* message) override
 	{
-		if (message->what == kMsgUpdate) {
+		if (message->what == kMsgUpdate)
 			Invalidate();
-		} else {
+		else
 			BView::MessageReceived(message);
-		}
 	}
 };
 		
@@ -168,8 +185,8 @@ public:
 
 	bool QuitRequested() override
 	{
-			be_app->PostMessage(B_QUIT_REQUESTED);
-			return true;
+		be_app->PostMessage(B_QUIT_REQUESTED);
+		return true;
 	}
 };
 
@@ -190,7 +207,7 @@ public:
 		NoctWindow *window = new NoctWindow(window_title, window_width, window_height);
 		window->Show();
 
-//#if 0
+#ifndef NO_SOUND
 		media_raw_audio_format format = {
 			44100.0, 2, media_raw_audio_format::B_AUDIO_SHORT, B_MEDIA_LITTLE_ENDIAN, 4
 		};
@@ -198,10 +215,12 @@ public:
 			sound_player[i] = new BSoundPlayer(&format, "SoundPlayer", fill_buffer, NULL, (void*)(intptr_t)i);
 			sound_player[i]->Start();
 		}
-//#endif
+#endif
 
 		if (!hal_callback_on_event_start())
 			exit(1);
+
+		is_started = true;
 	}
 };
 

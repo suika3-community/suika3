@@ -47,6 +47,8 @@ static char req_data[1024];
 static int is_index_sent;
 static int is_data_sent;
 
+static int send_all(SOCKET sock, const void *buf, size_t len);
+
 int main(int argc, char *argv[])
 {
 	printf("LightHttpd\n\n");
@@ -70,7 +72,7 @@ int main(int argc, char *argv[])
 	srand((unsigned)time(NULL));
 	int random_dir_number = rand();
 	snprintf(req_root, sizeof(req_root), "GET /%d/ HTTP/1.1", random_dir_number);
-	snprintf(req_data, sizeof(req_root), "GET /%d/assets.arc HTTP/1.1", random_dir_number);
+	snprintf(req_data, sizeof(req_data), "GET /%d/assets.arc HTTP/1.1", random_dir_number);
 
 	/* Initialize the WinSock2 DLL. */
 	WSADATA wsa;
@@ -86,7 +88,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	/* Bind the address "127.0.0.1" to the socket. */
+	/* Bind an IP address to the socket. */
 	struct sockaddr_in name;
 	memset(&name, 0, sizeof(name));
 	name.sin_family = AF_INET;
@@ -108,105 +110,137 @@ int main(int argc, char *argv[])
 	swprintf(szURL, sizeof(szURL), L"http://localhost:8080/%d/", random_dir_number);
 	ShellExecuteW(NULL, L"open", szURL, NULL, NULL, SW_SHOWNORMAL);
 
-	/* Get a socket for a connection. */
-	struct sockaddr_in from;
-	int len = sizeof(from);
-	int accept_sock = (int)accept(listen_sock, (struct sockaddr *)&from, &len);
-	if (accept_sock == -1) {
-		printf("Error: Cannot accept.\n");
-		return 1;
-	}
-	printf("Accepted.\n");
-
-	/* Loop until all the files are sent. */
 	while (1) {
-		char send_buf[4096];
-
 		/* Exit if all the files are transmitted. */
-		if (is_index_sent && is_data_sent) {
-			/* Send "Connection: Close". */
-			snprintf(send_buf, sizeof(send_buf), "Connection: Close\n");
-			send(accept_sock, send_buf, (int)strlen(send_buf), 0);
-			_close((int)accept_sock);
+		if (is_index_sent && is_data_sent)
 			break;
-		}
 
-		/* Process lines in the request header. */
-		char *fname = NULL;
+		/* Get a socket for a connection. */
+		struct sockaddr_in from;
+		int len = sizeof(from);
+		int accept_sock = (int)accept(listen_sock, (struct sockaddr *)&from, &len);
+		if (accept_sock == -1) {
+			printf("Error: Cannot accept.\n");
+			return 1;
+		}
+		printf("Accepted.\n");
+
+		/* Loop until all the files are sent. */
 		while (1) {
-			char recv_buf[4096];
-			int recv_len = 0;
+			char send_buf[4096];
+
+			/* Exit if all the files are transmitted. */
+			if (is_index_sent && is_data_sent) {
+				closesocket((int)accept_sock);
+				break;
+			}
+
+			/* Process lines in the request header. */
+			char *fname = NULL;
 			while (1) {
-				if (recv(accept_sock, &recv_buf[recv_len], 1, 0) == -1) {
-					printf("Finish.\n");
-					return 0;
+				char recv_buf[4096];
+				int recv_len = 0;
+				while (1) {
+					if (recv(accept_sock, &recv_buf[recv_len], 1, 0) <= 0) {
+						printf("Finish.\n");
+						return 0;
+					}
+					if (recv_buf[recv_len] == '\r')
+						continue;
+					if (recv_buf[recv_len++] == '\n') {
+						recv_buf[recv_len] = '\0';
+						break;
+					}
 				}
-				if (recv_buf[recv_len] == '\r')
-					continue;
-				if (recv_buf[recv_len++] == '\n') {
-					recv_buf[recv_len] = '\0';
+				printf("Line: %s", recv_buf);
+
+				if (strncmp(recv_buf, req_root, strlen(req_root)) == 0) {
+					fname = "index.html";
+				} else if (strncmp(recv_buf, req_data, strlen(req_data)) == 0) {
+					fname = "assets.arc";
+				} else if (strcmp(recv_buf, "\n") == 0 || strcmp(recv_buf, "\r\n") == 0) {
 					break;
 				}
 			}
-			printf("Line: %s", recv_buf);
-
-			if (strncmp(recv_buf, req_root, strlen(req_root)) == 0) {
-				fname = "index.html";
-			} else if (strncmp(recv_buf, req_data, strlen(req_data)) == 0) {
-				fname = "assets.arc";
-			} else if (strcmp(recv_buf, "\n") == 0 || strcmp(recv_buf, "\r\n") == 0) {
-				break;
+			if (fname == NULL) {
+				char send_buf[4096];
+				printf("404 Not Found\n");
+				snprintf(send_buf, sizeof(send_buf),
+						 "HTTP/1.1 404 Not Found\r\n"
+						 "Content-Length: 0\r\n"
+						 "Connection: Close\r\n\r\n");
+				send_all(accept_sock, send_buf, (int)strlen(send_buf));
+				continue;
 			}
-		}
-		if (fname == NULL) {
-			char send_buf[4096];
-			printf("404 Not Found\n");
-			snprintf(send_buf, sizeof(send_buf), "HTTP/1.1 404 Not Found\nContent-Size: 0\nConnection: Close\n\n");
-			send(accept_sock, send_buf, (int)strlen(send_buf), 0);
-			continue;
-		}
-		printf("File: %s\n", fname);
+			printf("File: %s\n", fname);
 
-		/* Open a file, get the size, and get the content. */
-		FILE *fp = fopen(fname, "rb");
-		if (fp == NULL) {
-			printf("Error: Cannot open file %s\n", fname);
-			return 1;
-		}
-		fseek(fp, 0, SEEK_END);
-		size_t fsize = ftell(fp);
-		fseek(fp, 0, SEEK_SET);
-		char *fdata = malloc(fsize);
-		if (fdata == NULL) {
-			printf("Error: Cannot allocate memory.\n");
-			return 1;
-		}
-		printf("File-size: %zu\n", fsize);
-		if (fread(fdata, fsize, 1, fp) != 1) {
-			printf("Error: Cannot read file %s\n", fname);
-			return 1;
-		}
-		fclose(fp);
+			/* Open a file, get the size, and get the content. */
+			FILE *fp = fopen(fname, "rb");
+			if (fp == NULL) {
+				printf("Error: Cannot open file %s\n", fname);
+				return 1;
+			}
+			fseek(fp, 0, SEEK_END);
+			size_t fsize = ftell(fp);
+			fseek(fp, 0, SEEK_SET);
+			char *fdata = malloc(fsize);
+			if (fdata == NULL) {
+				printf("Error: Cannot allocate memory.\n");
+				return 1;
+			}
+			printf("File-size: %zu\n", fsize);
+			if (fread(fdata, fsize, 1, fp) != 1) {
+				printf("Error: Cannot read file %s\n", fname);
+				return 1;
+			}
+			fclose(fp);
 
-		/* Send a response header.. */
-		printf("Sending response header...\n");
-		if (strcmp(fname, "index.html") == 0) {
-			snprintf(send_buf, sizeof(send_buf), "HTTP/1.1 200 OK\nContent-Type: text/html\nCache-Control: no-cache\nContent-Length: %zu\n\n", fsize);
-			is_index_sent = 1;
-		} else if (strcmp(fname, "assets.arc") == 0) {
-			snprintf(send_buf, sizeof(send_buf), "HTTP/1.1 200 OK\nContent-Type: application/octet-stream\nCache-Control: no-cache\nContent-Length: %zu\n\n", fsize);
-			is_data_sent = 1;
+			/* Send a response header.. */
+			printf("Sending response header...\n");
+			if (strcmp(fname, "index.html") == 0) {
+				snprintf(send_buf, sizeof(send_buf),
+						 "HTTP/1.1 200 OK\r\n"
+						 "Content-Type: text/html\r\n"
+						 "Cache-Control: no-cache\r\n"
+						 "Content-Length: %zu\r\n"
+						 "\r\n",
+						 fsize);
+				is_index_sent = 1;
+			} else if (strcmp(fname, "assets.arc") == 0) {
+				snprintf(send_buf, sizeof(send_buf),
+						 "HTTP/1.1 200 OK\r\n"
+						 "Content-Type: application/octet-stream\r\n"
+						 "Cache-Control: no-cache\r\n"
+						 "Content-Length: %zu\r\n"
+						 "Connection: Close\r\n"
+						 "\r\n",
+						 fsize);
+				is_data_sent = 1;
+			}
+			send_all(accept_sock, send_buf, (int)strlen(send_buf));
+
+			/* Send a response body. */
+			printf("Sending response body...\n");
+			send_all(accept_sock, fdata, (int)fsize);
+			free(fdata);
+
+			printf("File %s Ok.\n", fname);
 		}
-		send(accept_sock, send_buf, (int)strlen(send_buf), 0);
-
-		/* Send a response body. */
-		printf("Sending response body...\n");
-		send(accept_sock, fdata, (int)fsize, 0);
-		free(fdata);
-
-		printf("File %s Ok.\n", fname);
 	}
 
 	printf("Server finished.\n");
 	return 0;
+}
+
+static int send_all(SOCKET sock, const void *buf, size_t len)
+{
+    const char *p = (const char *)buf;
+    while (len > 0) {
+        int n = send(sock, p, (int)len, 0);
+        if (n <= 0)
+            return 0;
+        p += n;
+        len -= n;
+    }
+    return 1;
 }

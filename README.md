@@ -112,17 +112,17 @@ Playfield Engine running on Linux:
 
 <img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-linux.png" width="320" alt="Playfield Engine running on Linux">
 
-Playfield Engine running on iOS simulator:
+Playfield Engine running on iOS:
 
-<img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-ios.png" width="320" alt="Playfield Engine running on iOS simulator">
+<img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-ios.png" width="320" alt="Playfield Engine running on iOS">
 
-Playfield Engine running on Android emulator:
+Playfield Engine running on Android:
 
-<img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-android.png" width="320" alt="Playfield Engine running on Android emulator">
+<img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-android.png" width="320" alt="Playfield Engine running on Android">
 
-Playfield Engine running on HarmonyOS NEXT emulator:
+Playfield Engine running on HarmonyOS NEXT:
 
-<img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-harmonyosnext.png" width="320" alt="Playfield Engine running on HarmonyOS NEXT emulator">
+<img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-harmonyosnext.png" width="320" alt="Playfield Engine running on HarmonyOS NEXT">
 
 Playfield Engine running on Windows XP — because why not:
 
@@ -139,6 +139,10 @@ Playfield Engine running on NetBSD — Of course it runs!:
 Playfield Engine running on Solaris 11:
 
 <img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-solaris11.png" width="320" alt="Playfield Engine running on Solaris 11">
+
+Playfield Engine running on Haiku OS: — "Be" Portable!
+
+<img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-haiku.png" width="320" alt="Playfield Engine running on Haiku OS">
 
 ---
 
