@@ -37,7 +37,10 @@
 
 <!-- SCREENSHOT -->
 <div align="center">
-  <img src="https://github.com/suika3-community/suika3/blob/main/docs/img/screenshot-20260317.webp" alt="Suika3 Screenshot"><br>
+  Click to play!<br>
+  <a href="https://noctvm.io/test/">
+    <img src="https://github.com/suika3-community/suika3/blob/main/docs/img/screenshot-20260317.webp" alt="Suika3 Screenshot"><br>
+  </a>
 </div>
 
 ---
