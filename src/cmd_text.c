@@ -836,8 +836,6 @@ init_voice_file(void)
 {
 	const char *voice;
 
-	voice_file = NULL;
-
 	/* If returned from load/title, voice_file remains, so free it */
 	if (voice_file != NULL) {
 		free(voice_file);
@@ -847,6 +845,13 @@ init_voice_file(void)
 
 	/* Get the voice file name */
 	voice = s3_get_tag_arg_string("voice", true, NULL);
+	if (voice == NULL)
+		return true;
+	voice_file = strdup(voice);
+	if (voice_file == NULL) {
+		s3_log_out_of_memory();
+		return false;
+	}
 
 	return true;
 }

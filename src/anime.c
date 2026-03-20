@@ -1134,7 +1134,7 @@ synthesis_eye_anime(
 	s3_clear_layer_anime_sequence(eye_layer);
 	s3_new_anime_sequence(eye_layer);
 	s3_add_anime_sequence_property_f("start",	0);
-	s3_add_anime_sequence_property_f("end",	ofs_time);
+	s3_add_anime_sequence_property_f("end",         ofs_time);
 	s3_add_anime_sequence_property_i("from-x",	x);
 	s3_add_anime_sequence_property_i("from-y",	y);
 	s3_add_anime_sequence_property_i("to-x",	x);
@@ -1148,7 +1148,7 @@ synthesis_eye_anime(
 				s3_new_anime_sequence(eye_layer);
 				s3_add_anime_sequence_property_f("start",	ofs_time);
 				ofs_time += conf_character_eyeblink_frame * (float)(i + 1);
-				s3_add_anime_sequence_property_f("end",	ofs_time);
+				s3_add_anime_sequence_property_f("end",	        ofs_time);
 				s3_add_anime_sequence_property_i("from-x",	x);
 				s3_add_anime_sequence_property_i("from-y",	y);
 				s3_add_anime_sequence_property_i("from-a",	255);
@@ -1314,15 +1314,21 @@ s3_run_lip_anime(
 			break;
 		msg += n;
 
-		if (wc == U32C('、', 0x3001) || wc == U32C('。', 0x3002)) {
+		if (wc == ',' ||
+		    wc == U32C('、', 0x3001)) {
 			ofs_time += base_time * 10;
 			word_count = WORD_COUNT;
 			continue;
 		}
 
-		if (wc == U32C('、', 0x3001) || wc == U32C('。', 0x3002) ||
-		    wc == U32C('！', 0xff01) || wc == U32C('？', 0xff1f) ||
-		    wc == U32C('・', 0x30fb) || wc == U32C('…', 0x2026) ||
+		if (wc == '.' ||
+		    wc == '!' ||
+		    wc == '?' ||
+		    wc == U32C('。', 0x3002) ||
+		    wc == U32C('！', 0xff01) ||
+		    wc == U32C('？', 0xff1f) ||
+		    wc == U32C('・', 0x30fb) ||
+		    wc == U32C('…', 0x2026) ||
 		    wc == U32C('―', 0x2015)) {
 			ofs_time += base_time * 20;
 			word_count = WORD_COUNT;
@@ -1336,11 +1342,11 @@ s3_run_lip_anime(
 			continue;
 
 		/* Display lip sync in the right order. */
-		for (i = 0; i < frame_count; i++) {
+		for (i = 0; i <= frame_count; i++) {
 			s3_new_anime_sequence(lip_layer);
 			s3_add_anime_sequence_property_f("start",	ofs_time);
 			ofs_time += base_time;
-			s3_add_anime_sequence_property_f("end",	ofs_time);
+			s3_add_anime_sequence_property_f("end",         ofs_time);
 			s3_add_anime_sequence_property_i("from-x",	x);
 			s3_add_anime_sequence_property_i("from-y",	y);
 			s3_add_anime_sequence_property_i("from-a",	255);
@@ -1351,13 +1357,13 @@ s3_run_lip_anime(
 			ofs_time += base_time;
 		}
 
-		/* Display lip sync in the reversed order if there are 3+ frames. */
-		if (frame_count > 2) {
+		/* Display the multiple lip frames in the reversed order. */
+		if (frame_count >= 2) {
 			for (i = frame_count - 1; i >= 0; i--) {
 				s3_new_anime_sequence(lip_layer);
 				s3_add_anime_sequence_property_f("start",	ofs_time);
 				ofs_time += base_time;
-				s3_add_anime_sequence_property_f("end",	ofs_time);
+				s3_add_anime_sequence_property_f("end",         ofs_time);
 				s3_add_anime_sequence_property_i("from-x",	x);
 				s3_add_anime_sequence_property_i("from-y",	y);
 				s3_add_anime_sequence_property_i("from-a",	255);
@@ -1374,7 +1380,7 @@ s3_run_lip_anime(
 	s3_new_anime_sequence(lip_layer);
 	s3_add_anime_sequence_property_f("start",	ofs_time);
 	ofs_time += base_time;
-	s3_add_anime_sequence_property_f("end",	ofs_time);
+	s3_add_anime_sequence_property_f("end",	        ofs_time);
 	s3_add_anime_sequence_property_i("from-x",	x);
 	s3_add_anime_sequence_property_i("from-y",	y);
 	s3_add_anime_sequence_property_i("from-a",	0);

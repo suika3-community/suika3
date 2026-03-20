@@ -169,6 +169,7 @@ static struct params params[] = {
 static uint64_t sw;
 static float span;
 static int fade_method;
+static bool change_chpos[S3_CH_BASIC_LAYERS];
 
 static bool init(void);
 static void update_ch_mapping(const char *fname, int layer);
@@ -216,6 +217,7 @@ init(void)
 	int i;
 
 	memset(desc, 0, sizeof(desc));
+	memset(change_chpos, 0, sizeof(change_chpos));
 
 	/* Load the parameters for each layer. */
 	for (i = 0; i < S3_FADE_DESC_COUNT; i++) {
@@ -277,14 +279,12 @@ init(void)
 				    LAYER_INDEX == S3_LAYER_CHR ||
 				    LAYER_INDEX == S3_LAYER_CHF) {
 					int chpos = s3_layer_to_chpos(LAYER_INDEX);
-					/* Load the eye-blink and lip-sync images. */
-					if (!s3_load_eye_image_if_exists(chpos, s))
-						return false;
-					if (!s3_load_lip_image_if_exists(chpos, s))
-						return false;
 
 					/* Update the character mapping. */
 					update_ch_mapping(s, chpos);
+
+					/* Load eye/lip anime later. */
+					change_chpos[chpos] = true;
 				}
 
 				is_file_specified = true;
@@ -697,9 +697,25 @@ static bool cleanup(void)
 {
 	int i;
 
-	/* Restart the eye blink. */
-	for (i = 0; i < S3_CH_BASIC_LAYERS; i++)
-		s3_reload_eye_anime(i);
+	/* Load eye/lip animations. */
+	for (i = 0; i < S3_CH_BASIC_LAYERS; i++) {
+		if (change_chpos[i]) {
+			const char *file;
+
+			file = s3_get_layer_file_name(s3_chpos_to_layer(i));
+
+			/* Load an eye-blink image. */
+			if (s3_load_eye_image_if_exists(i, file)) {
+				/* Run the anime. */
+				s3_reload_eye_anime(i);
+			}
+
+			/* Load a lip-sync image. */
+			if (s3_load_lip_image_if_exists(i, file)) {
+				/* Lip animations will be started by `text` command. */
+			}
+		}
+	}
 
 	/* Move to the next tag. */
 	if (!s3_move_to_next_tag())
