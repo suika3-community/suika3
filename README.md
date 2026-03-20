@@ -37,17 +37,10 @@
 
 <!-- SCREENSHOT -->
 <div align="center">
-  Click to play!<br>
   <a href="https://noctvm.io/test/">
+    Click to play on the browser!<br>
     <img src="https://github.com/suika3-community/suika3/blob/main/docs/img/screenshot-20260317.webp" alt="Suika3 Screenshot"><br>
   </a>
-</div>
-
----
-
-<!-- PLATFORMS -->
-<div align="center">
-  <img src="https://github.com/suika3-community/suika3/blob/main/docs/img/platforms.png" alt="Suika3 runs everywhere."><br>
 </div>
 
 ---
