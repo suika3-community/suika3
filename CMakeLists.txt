@@ -284,6 +284,8 @@ elseif(PLAYFIELD_TARGET_GDK_XBOX_XS)
   set(STRATO_TARGET_GDK_XBOX_XS ON)
 elseif(PLAYFIELD_TARGET_UWP)
   set(STRATO_TARGET_UWP ON)
+else()
+  error("No target specified or detected.")
 endif()
 
 if(PLAYFIELD_TARGET_UNITY_SWITCH)

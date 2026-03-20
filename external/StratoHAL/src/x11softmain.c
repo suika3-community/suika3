@@ -377,6 +377,8 @@ bool init_x11_graphics(void)
 		/* 16-bpp, 16-bit depth, no 1-bit padding. */
 		bpp = 16;
 
+		printf("Info: Runs on 16-bpp mode.\n");
+
 		/* Create a back image. */
 		if (!hal_create_image(screen_width, screen_height, &back_image)) {
 			free(pixels);
@@ -407,6 +409,8 @@ bool init_x11_graphics(void)
 	} else if (XMatchVisualInfo(display, screen, 8, PseudoColor, &vi)) {
 		/* 8-bpp, 256-color palette. */
 		bpp = 8;
+
+		printf("Info: Runs on 8-bpp mode.\n");
 
 		/* Create a back image. */
 		if (!hal_create_image(screen_width, screen_height, &back_image)) {
@@ -453,6 +457,59 @@ bool init_x11_graphics(void)
 
 		/* Apply the color palette. */
 		XStoreColors(display, colormap, palette, 256);
+	} else if (XMatchVisualInfo(display, screen, 1, StaticGray, &vi) ||
+		   XMatchVisualInfo(display, screen, 1, GrayScale,  &vi)) {
+		int bitmap_pad;
+		int stride;
+		size_t size;
+
+		/* 1-bpp monochrome. */
+		bpp = 1;
+
+		printf("Info: Runs on 1-bpp mode.\n");
+
+		/* Create a back image. */
+		if (!hal_create_image(screen_width, screen_height, &back_image))
+			return false;
+
+		/* Calculate the scanline padding. Use BitmapPad() for XYBitmap. */
+		bitmap_pad = BitmapPad(display);
+		stride = ((screen_width + bitmap_pad - 1) / bitmap_pad) * (bitmap_pad / 8);
+		size = (size_t)stride * screen_height;
+
+		/* Allocate an image buffer which may be freed by XDestroyImage(). */
+		if (posix_memalign((void **)&low_bpp_pixels, 64, size) != 0)
+			return false;
+
+		/* Create an image. */
+		ximage = XCreateImage(display,
+				      vi.visual,
+				      1,
+				      XYBitmap,
+				      0,
+				      (char *)low_bpp_pixels,
+				      (unsigned int)screen_width,
+				      (unsigned int)screen_height,
+				      bitmap_pad,
+				      stride);
+		if (ximage == NULL) {
+			hal_destroy_image(back_image);
+			back_image = NULL;
+			free(low_bpp_pixels);
+			low_bpp_pixels = NULL;
+			return false;
+		}
+
+		/* Using AllocNone is usually okay for 1bpp StaticGray/GrayScale. */
+		colormap = XCreateColormap(display, root, vi.visual, AllocNone);
+		if (colormap == None) {
+			hal_log_error("XCreateColormap() failed.");
+			XDestroyImage(ximage);
+			ximage = NULL;
+			hal_destroy_image(back_image);
+			back_image = NULL;
+			return false;
+		}	
 	} else {
 		hal_log_error("No X11 visual matched.");
 		return false;
@@ -531,9 +588,11 @@ static bool create_window(void)
 		return false;
 	}
 
+	if (bpp == 8)
+		XInstallColormap(display, colormap);
+
 	return true;
 }
-
 
 void cleanup_x11_graphics(void)
 {
@@ -663,44 +722,36 @@ create_icon_image(void)
 	XWMHints *win_hints;
 	XpmAttributes attr;
 	bool is_colormap_created;
+	Colormap cm;
 	int ret;
 
 	/* Create a color map. */
-	is_colormap_created = false;
-	if (colormap != BadValue) {
-		colormap = XCreateColormap(display, window,
-					   DefaultVisual(display, DefaultScreen(display)),
-					   AllocNone);
-		if (colormap == BadAlloc ||
-		    colormap == BadMatch ||
-		    colormap == BadValue ||
-		    colormap == BadWindow) {
-			hal_log_error("XCreateColorMap() failed.");
-			return false;
-		}
-		is_colormap_created = true;
+	cm = XCreateColormap(display,
+			     window,
+			     DefaultVisual(display, DefaultScreen(display)),
+			     AllocNone);
+	if (cm == BadAlloc ||
+	    cm == BadMatch ||
+	    cm == BadValue ||
+	    cm == BadWindow) {
+		hal_log_error("XCreateColorMap() failed.");
+		return false;
 	}
 
 	/* Create a pixmap. */
 	attr.valuemask = XpmColormap;
-	attr.colormap = colormap;
+	attr.colormap = cm;
 	ret = XpmCreatePixmapFromData(display, window, icon_xpm, &icon, &icon_mask, &attr);
 	if (ret != XpmSuccess) {
 		hal_log_error("XpmCreatePixmapFromData() failed.");
-		if (is_colormap_created) {
-			XFreeColormap(display, colormap);
-			colormap = BadValue;
-		}
+		XFreeColormap(display, cm);
 		return false;
 	}
 
 	/* Allocate for a WMHints. */
 	win_hints = XAllocWMHints();
 	if (!win_hints) {
-		if (is_colormap_created) {
-			XFreeColormap(display, colormap);
-			colormap = BadValue;
-		}
+		XFreeColormap(display, cm);
 		return false;
 	}
 
@@ -712,10 +763,8 @@ create_icon_image(void)
 
 	/* Free the temporary objects. */
 	XFree(win_hints);
-	if (is_colormap_created) {
-		XFreeColormap(display, colormap);
-		colormap = BadValue;
-	}
+	XFreeColormap(display, cm);
+
 	return true;
 }
 
@@ -825,20 +874,7 @@ run_frame(void)
 	cont = hal_callback_on_event_frame();
 
 	/* Quantize the back image if bpp != 32. */
-	if (bpp == 8) {
-		int x, y;
-		hal_pixel_t *src = (hal_pixel_t *)back_image->pixels;
-		for (y = 0; y < screen_height; y++) {
-			uint8_t *dst_row = low_bpp_pixels + y * ximage->bytes_per_line;
-			hal_pixel_t *src_row = src + y * screen_width;
-			for (x = 0; x < screen_width; x++) {
-				uint8_t r = hal_get_pixel_r(src_row[x]);
-				uint8_t g = hal_get_pixel_g(src_row[x]);
-				uint8_t b = hal_get_pixel_b(src_row[x]);
-				dst_row[x] = (uint8_t)((r & 0xe0) | ((g & 0xe0) >> 3) | ((b & 0xc0) >> 6));
-			}
-		}
-	} else if (bpp == 16) {
+	if (bpp == 16) {
 		int x, y;
 		hal_pixel_t *src = (hal_pixel_t *)back_image->pixels;
 		for (y = 0; y < screen_height; y++) {
@@ -853,22 +889,42 @@ run_frame(void)
 							((uint16_t)(b & 0xf8) >> 3));
 			}
 		}
-	}
-#if 0
-	else if (bpp == 24) {
+	} else if (bpp == 8) {
 		int x, y;
 		hal_pixel_t *src = (hal_pixel_t *)back_image->pixels;
 		for (y = 0; y < screen_height; y++) {
-			uint8_t *dst_row = (uint8_t *)ximage->data + y * ximage->bytes_per_line;
+			uint8_t *dst_row = low_bpp_pixels + y * ximage->bytes_per_line;
 			hal_pixel_t *src_row = src + y * screen_width;
 			for (x = 0; x < screen_width; x++) {
-				dst_row[x * 3 + 0] = hal_get_pixel_b(src_row[x]);
-				dst_row[x * 3 + 1] = hal_get_pixel_g(src_row[x]);
-				dst_row[x * 3 + 2] = hal_get_pixel_r(src_row[x]);
+				uint8_t r = hal_get_pixel_r(src_row[x]);
+				uint8_t g = hal_get_pixel_g(src_row[x]);
+				uint8_t b = hal_get_pixel_b(src_row[x]);
+				dst_row[x] = (uint8_t)((r & 0xe0) | ((g & 0xe0) >> 3) | ((b & 0xc0) >> 6));
+			}
+		}
+	} else if (bpp == 1) {
+		int x, y;
+		int stride = ximage->bytes_per_line;
+		hal_pixel_t *src = (hal_pixel_t *)back_image->pixels;
+		memset(low_bpp_pixels, 0, (size_t)stride * screen_height);
+		for (y = 0; y < screen_height; y++) {
+			uint8_t *dst_row = low_bpp_pixels + y * stride;
+			hal_pixel_t *src_row = src + y * screen_width;
+
+			for (x = 0; x < screen_width; x++) {
+				uint8_t r = hal_get_pixel_r(src_row[x]);
+				uint8_t g = hal_get_pixel_g(src_row[x]);
+				uint8_t b = hal_get_pixel_b(src_row[x]);
+				int lum = (r * 77 + g * 150 + b * 29) >> 8;
+				if (lum >= 128) {
+					if (ximage->bitmap_bit_order == MSBFirst)
+						dst_row[x >> 3] |= (uint8_t)(0x80 >> (x & 7));
+					else
+						dst_row[x >> 3] |= (uint8_t)(1u << (x & 7));
+				}
 			}
 		}
 	}
-#endif
 
 	/* Transfer the bit block. */
 	gc = XCreateGC(display, window, 0, 0);
