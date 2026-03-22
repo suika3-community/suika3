@@ -547,6 +547,203 @@ pf_draw_texture_dim(
 		alpha);
 }
 
+/*
+ * Draw a texture image on a texture image. (3D) (alpha-blending, dst_alpha=255)
+*/
+void
+pf_draw_texture_3d_alpha(
+	int dst_tex_id,
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	int src_tex_id,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	assert(dst_tex_id >= 0);
+	assert(dst_tex_id < TEXTURE_COUNT);
+	assert(tex_tbl[dst_tex_id].is_used);
+	assert(tex_tbl[dst_tex_id].img != NULL);
+
+	assert(src_tex_id >= 0);
+	assert(src_tex_id < TEXTURE_COUNT);
+	assert(tex_tbl[src_tex_id].is_used);
+	assert(tex_tbl[src_tex_id].img != NULL);
+
+	hal_draw_image_3d_alpha(
+		tex_tbl[dst_tex_id].img,
+		x1,
+		y1,
+		x2,
+		y2,
+		x3,
+		y3,
+		x4,
+		y4,
+		tex_tbl[src_tex_id].img,
+		src_left,
+		src_top,
+		src_width,
+		src_height,
+		alpha);
+}
+
+/*
+ * Draw a texture image on a texture image. (3D) (add-blending)
+ */
+void
+pf_draw_texture_3d_add(
+	int dst_tex_id,
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	int src_tex_id,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	assert(dst_tex_id >= 0);
+	assert(dst_tex_id < TEXTURE_COUNT);
+	assert(tex_tbl[dst_tex_id].is_used);
+	assert(tex_tbl[dst_tex_id].img != NULL);
+
+	assert(src_tex_id >= 0);
+	assert(src_tex_id < TEXTURE_COUNT);
+	assert(tex_tbl[src_tex_id].is_used);
+	assert(tex_tbl[src_tex_id].img != NULL);
+
+	hal_draw_image_3d_add(
+		tex_tbl[dst_tex_id].img,
+		x1,
+		y1,
+		x2,
+		y2,
+		x3,
+		y3,
+		x4,
+		y4,
+		tex_tbl[src_tex_id].img,
+		src_left,
+		src_top,
+		src_width,
+		src_height,
+		alpha);
+}
+
+/*
+ * Draw an image on an image. (3D) (sub-blending)
+ */
+void
+pf_draw_texture_3d_sub(
+	int dst_tex_id,
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	int src_tex_id,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	assert(dst_tex_id >= 0);
+	assert(dst_tex_id < TEXTURE_COUNT);
+	assert(tex_tbl[dst_tex_id].is_used);
+	assert(tex_tbl[dst_tex_id].img != NULL);
+
+	assert(src_tex_id >= 0);
+	assert(src_tex_id < TEXTURE_COUNT);
+	assert(tex_tbl[src_tex_id].is_used);
+	assert(tex_tbl[src_tex_id].img != NULL);
+
+	hal_draw_image_3d_sub(
+		tex_tbl[dst_tex_id].img,
+		x1,
+		y1,
+		x2,
+		y2,
+		x3,
+		y3,
+		x4,
+		y4,
+		tex_tbl[src_tex_id].img,
+		src_left,
+		src_top,
+		src_width,
+		src_height,
+		alpha);
+}
+
+/*
+ * Draw a texture image on a texture image. (3D) (50% dimming)
+ */
+void
+pf_draw_texture_3d_dim(
+	int dst_tex_id,
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	int src_tex_id,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	assert(dst_tex_id >= 0);
+	assert(dst_tex_id < TEXTURE_COUNT);
+	assert(tex_tbl[dst_tex_id].is_used);
+	assert(tex_tbl[dst_tex_id].img != NULL);
+
+	assert(src_tex_id >= 0);
+	assert(src_tex_id < TEXTURE_COUNT);
+	assert(tex_tbl[src_tex_id].is_used);
+	assert(tex_tbl[src_tex_id].img != NULL);
+
+	hal_draw_image_3d_dim(
+		tex_tbl[dst_tex_id].img,
+		x1,
+		y1,
+		x2,
+		y2,
+		x3,
+		y3,
+		x4,
+		y4,
+		tex_tbl[src_tex_id].img,
+		src_left,
+		src_top,
+		src_width,
+		src_height,
+		alpha);
+}
+
+#if 0
 /* Draw a texture image on a texture image with scaling. */
 void
 pf_draw_texture_scale(
@@ -575,6 +772,7 @@ pf_draw_texture_scale(
 		virtual_dst_top,
 		tex_tbl[src_tex_id].img);
 }
+#endif
 
 /*
  * Fill a rectangle on a texture image.

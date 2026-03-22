@@ -217,7 +217,7 @@ pf_draw_texture_add(
 	int alpha);
 
 /*
- * Draw a texture image on a texture image. (add-blending)
+ * Draw a texture image on a texture image. (sub-blending)
  */
 void
 pf_draw_texture_sub(
@@ -233,7 +233,7 @@ pf_draw_texture_sub(
 
 /*
  * Draw a glyph texture image on a texture image.
- * (alphablending, special alpha value)
+ * (alpha-blending, special alpha value)
  */
 void
 pf_draw_texture_glyph(
@@ -249,7 +249,7 @@ pf_draw_texture_glyph(
 
 /*
  * Draw an emoji texture image on a texture image.
- * (alphablending, special alpha value)
+ * (alpha-blending, special alpha value)
  */
 void
 pf_draw_texture_emoji(
@@ -279,6 +279,90 @@ pf_draw_texture_dim(
 	int alpha);
 
 /*
+ * Draw a texture image on a texture image. (3D) (alpha-blending, dst_alpha=255) */
+void
+pf_draw_texture_3d_alpha(
+	int dst_tex_id,
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	int src_tex_id,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha);
+
+/*
+ * Draw a texture image on a texture image. (3D) (add-blending)
+ */
+void
+pf_draw_texture_3d_add(
+	int dst_tex_id,
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	int src_tex_id,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha);
+
+/*
+ * Draw an image on an image. (3D) (sub-blending)
+ */
+void
+pf_draw_texture_3d_sub(
+	int dst_tex_id,
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	int src_tex_id,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha);
+
+/*
+ * Draw a texture image on a texture image. (3D) (50% dimming)
+ */
+void
+pf_draw_texture_3d_dim(
+	int dst_tex_id,
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	int src_tex_id,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha);
+
+#if 0
+/*
  * Draw a texture image  on a texture image with scaling.
  */
 void
@@ -289,6 +373,7 @@ pf_draw_texture_scale(
 	int virtual_dst_left,
 	int virtual_dst_top,
 	int src_tex_id);
+#endif
 
 /*
  * Fill a rectangle on a texture image.
