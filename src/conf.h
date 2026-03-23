@@ -285,18 +285,63 @@ extern char *conf_skipmode_leave_se;
  * GUI Settings
  */
 
-/* Save font */
-extern int conf_gui_save_font_select;
-extern int conf_gui_save_font_size;
-extern int conf_gui_save_font_r;
-extern int conf_gui_save_font_g;
-extern int conf_gui_save_font_b;
-extern int conf_gui_save_font_outline_width;
-extern int conf_gui_save_font_outline_r;
-extern int conf_gui_save_font_outline_g;
-extern int conf_gui_save_font_outline_b;
-extern int conf_gui_save_font_ruby;
-extern bool conf_gui_save_font_tategaki;
+/* Save index font */
+extern int conf_gui_save_index_font_select;
+extern int conf_gui_save_index_font_size;
+extern int conf_gui_save_index_font_r;
+extern int conf_gui_save_index_font_g;
+extern int conf_gui_save_index_font_b;
+extern int conf_gui_save_index_font_outline_width;
+extern int conf_gui_save_index_font_outline_r;
+extern int conf_gui_save_index_font_outline_g;
+extern int conf_gui_save_index_font_outline_b;
+extern int conf_gui_save_index_font_ruby;
+extern bool conf_gui_save_index_font_tategaki;
+extern int conf_gui_save_index_margin_char;
+
+/* Save date font */
+extern int conf_gui_save_date_font_select;
+extern int conf_gui_save_date_font_size;
+extern int conf_gui_save_date_font_r;
+extern int conf_gui_save_date_font_g;
+extern int conf_gui_save_date_font_b;
+extern int conf_gui_save_date_font_outline_width;
+extern int conf_gui_save_date_font_outline_r;
+extern int conf_gui_save_date_font_outline_g;
+extern int conf_gui_save_date_font_outline_b;
+extern int conf_gui_save_date_font_ruby;
+extern bool conf_gui_save_date_font_tategaki;
+extern int conf_gui_save_date_margin_char;
+
+/* Save chapter font */
+extern int conf_gui_save_chapter_font_select;
+extern int conf_gui_save_chapter_font_size;
+extern int conf_gui_save_chapter_font_r;
+extern int conf_gui_save_chapter_font_g;
+extern int conf_gui_save_chapter_font_b;
+extern int conf_gui_save_chapter_font_outline_width;
+extern int conf_gui_save_chapter_font_outline_r;
+extern int conf_gui_save_chapter_font_outline_g;
+extern int conf_gui_save_chapter_font_outline_b;
+extern int conf_gui_save_chapter_font_ruby;
+extern bool conf_gui_save_chapter_font_tategaki;
+extern int conf_gui_save_chapter_margin_char;
+
+/* Save message font */
+extern int conf_gui_save_msg_font_select;
+extern int conf_gui_save_msg_font_size;
+extern int conf_gui_save_msg_font_r;
+extern int conf_gui_save_msg_font_g;
+extern int conf_gui_save_msg_font_b;
+extern int conf_gui_save_msg_font_outline_width;
+extern int conf_gui_save_msg_font_outline_r;
+extern int conf_gui_save_msg_font_outline_g;
+extern int conf_gui_save_msg_font_outline_b;
+extern int conf_gui_save_msg_font_ruby;
+extern bool conf_gui_save_msg_font_tategaki;
+extern int conf_gui_save_msg_margin_line;
+extern int conf_gui_save_msg_margin_char;
+extern bool conf_gui_save_msg_multiline;
 
 /* History margin */
 extern int conf_gui_history_margin_line;

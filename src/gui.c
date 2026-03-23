@@ -128,6 +128,13 @@ enum {
 	TYPE_CHAR,
 };
 
+enum save_text_type {
+	SAVE_TEXT_INDEX,
+	SAVE_TEXT_DATE,
+	SAVE_TEXT_CHAPTER,
+	SAVE_TEXT_MSG,
+};
+
 /* Button. */
 struct gui_button {
 	bool is_initialized;
@@ -181,10 +188,12 @@ struct gui_button {
 	char *anime_hover;
 
 	/* TYPE_SAVE, TYPE_LOAD */
-	int thumb_x;
-	int thumb_y;
+	int index_x;
+	int index_y;
 	int date_x;
 	int date_y;
+	int thumb_x;
+	int thumb_y;
 	int chapter_x;
 	int chapter_y;
 	int msg_x;
@@ -401,7 +410,7 @@ static void process_button_render_save(int button_index);
 static bool init_save_buttons(void);
 static void update_save_buttons(void);
 static void draw_save_button(int button_index);
-static int draw_save_text_item(struct s3_image *target, int button_index, int x, int y, const char *text, bool multiline);
+static int draw_save_text_item(struct s3_image *target, int button_index, int x, int y, const char *text, int save_text_type);
 static void process_save(int button_index);
 static void process_load(int button_index);
 static void process_auto_mode(void);
@@ -2147,14 +2156,31 @@ draw_save_button(
 		}
 	}
 
-	/* Draw the date and time. */
+	/* Draw the index. */
+	snprintf(text, sizeof(text), "%02d", save_index);
+	if (b->rt.img_canvas_idle != NULL) {
+		width = draw_save_text_item(b->rt.img_canvas_idle,
+					    button_index,
+					    b->index_x,
+					    b->index_y,
+					    text,
+					    SAVE_TEXT_INDEX);
+	}
+	if (b->rt.img_canvas_hover != NULL) {
+		width = draw_save_text_item(b->rt.img_canvas_hover,
+					    button_index,
+					    b->index_x,
+					    b->index_y,
+					    text,
+					    SAVE_TEXT_INDEX);
+	}
+
+	/* Draw the date. */
 	if (s3_get_save_timestamp(save_index) == 0) {
-		snprintf(text, sizeof(text), "[%02d] NO DATA", save_index);
+		snprintf(text, sizeof(text), "---");
 	} else {
 		timeptr = localtime(&save_time);
-		snprintf(text, sizeof(text), "[%02d] ", save_index);
-		strftime(&text[5], sizeof(text) - 5, "%y/%m/%d %H:%M ",
-			 timeptr);
+		strftime(text, sizeof(text), "%y/%m/%d %H:%M", timeptr);
 	}
 	if (b->rt.img_canvas_idle != NULL) {
 		width = draw_save_text_item(b->rt.img_canvas_idle,
@@ -2162,7 +2188,7 @@ draw_save_button(
 					    b->date_x,
 					    b->date_y,
 					    text,
-					    false);
+					    SAVE_TEXT_DATE);
 	}
 	if (b->rt.img_canvas_hover != NULL) {
 		width = draw_save_text_item(b->rt.img_canvas_hover,
@@ -2170,7 +2196,7 @@ draw_save_button(
 					    b->date_x,
 					    b->date_y,
 					    text,
-					    false);
+					    SAVE_TEXT_DATE);
 	}
 	
 	/* Draw the chapter title. */
@@ -2182,7 +2208,7 @@ draw_save_button(
 					    b->chapter_x,
 					    b->chapter_y,
 					    chapter,
-					    false);
+					    SAVE_TEXT_CHAPTER);
 		}
 		if (b->rt.img_canvas_hover != NULL) {
 			draw_save_text_item(b->rt.img_canvas_hover,
@@ -2190,7 +2216,7 @@ draw_save_button(
 					    b->chapter_x,
 					    b->chapter_y,
 					    chapter,
-					    false);
+					    SAVE_TEXT_CHAPTER);
 		}
 	}
 
@@ -2203,7 +2229,7 @@ draw_save_button(
 					    b->msg_x,
 					    b->msg_y,
 					    msg,
-					    true);
+					    SAVE_TEXT_MSG);
 		}
 		if (b->rt.img_canvas_hover != NULL) {
 			draw_save_text_item(b->rt.img_canvas_hover,
@@ -2211,7 +2237,7 @@ draw_save_button(
 					    b->msg_x,
 					    b->msg_y,
 					    msg,
-					    true);
+					    SAVE_TEXT_MSG);
 		}
 	}
 
@@ -2229,50 +2255,134 @@ draw_save_text_item(
 	int x,
 	int y,
 	const char *text,
-	bool multiline)
+	int save_text_type)
 {
 	struct s3_drawmsg *context;
 	struct gui_button *b;
 	s3_pixel_t color, outline_color;
 	int width, total_chars;
+	int cfg_sel, cfg_size, cfg_r, cfg_g, cfg_b, cfg_o_w, cfg_o_r, cfg_o_g, cfg_o_b, cfg_ruby;
+	int cfg_margin_line, cfg_margin_char;
+	bool cfg_tategaki;
+	bool multiline;
 
 	b = &button[button_index];
 
+	switch (save_text_type) {
+	case SAVE_TEXT_INDEX:
+		cfg_sel = conf_gui_save_index_font_select;
+		cfg_size = conf_gui_save_index_font_size;
+		cfg_r = conf_gui_save_index_font_r;
+		cfg_g = conf_gui_save_index_font_g;
+		cfg_b = conf_gui_save_index_font_b;
+		cfg_o_w = conf_gui_save_index_font_outline_width;
+		cfg_o_r = conf_gui_save_index_font_outline_r;
+		cfg_o_g = conf_gui_save_index_font_outline_g;
+		cfg_o_b = conf_gui_save_index_font_outline_b;
+		cfg_ruby = conf_gui_save_index_font_ruby;
+		cfg_tategaki = conf_gui_save_index_font_tategaki;
+		cfg_margin_char = conf_gui_save_index_margin_char;
+		multiline = false;
+		break;
+	case SAVE_TEXT_DATE:
+		cfg_sel = conf_gui_save_date_font_select;
+		cfg_size = conf_gui_save_date_font_size;
+		cfg_r = conf_gui_save_date_font_r;
+		cfg_g = conf_gui_save_date_font_g;
+		cfg_b = conf_gui_save_date_font_b;
+		cfg_o_w = conf_gui_save_date_font_outline_width;
+		cfg_o_r = conf_gui_save_date_font_outline_r;
+		cfg_o_g = conf_gui_save_date_font_outline_g;
+		cfg_o_b = conf_gui_save_date_font_outline_b;
+		cfg_ruby = conf_gui_save_date_font_ruby;
+		cfg_tategaki = conf_gui_save_date_font_tategaki;
+		cfg_margin_char = conf_gui_save_date_margin_char;
+		multiline = false;
+		break;
+	case SAVE_TEXT_CHAPTER:
+		cfg_sel = conf_gui_save_chapter_font_select;
+		cfg_size = conf_gui_save_chapter_font_size;
+		cfg_r = conf_gui_save_chapter_font_r;
+		cfg_g = conf_gui_save_chapter_font_g;
+		cfg_b = conf_gui_save_chapter_font_b;
+		cfg_o_w = conf_gui_save_chapter_font_outline_width;
+		cfg_o_r = conf_gui_save_chapter_font_outline_r;
+		cfg_o_g = conf_gui_save_chapter_font_outline_g;
+		cfg_o_b = conf_gui_save_chapter_font_outline_b;
+		cfg_ruby = conf_gui_save_chapter_font_ruby;
+		cfg_tategaki = conf_gui_save_chapter_font_tategaki;
+		cfg_margin_char = conf_gui_save_chapter_margin_char;
+		multiline = false;
+		break;
+	case SAVE_TEXT_MSG:
+		cfg_sel = conf_gui_save_msg_font_select;
+		cfg_size = conf_gui_save_msg_font_size;
+		cfg_r = conf_gui_save_msg_font_r;
+		cfg_g = conf_gui_save_msg_font_g;
+		cfg_b = conf_gui_save_msg_font_b;
+		cfg_o_w = conf_gui_save_msg_font_outline_width;
+		cfg_o_r = conf_gui_save_msg_font_outline_r;
+		cfg_o_g = conf_gui_save_msg_font_outline_g;
+		cfg_o_b = conf_gui_save_msg_font_outline_b;
+		cfg_ruby = conf_gui_save_msg_font_ruby;
+		cfg_tategaki = conf_gui_save_msg_font_tategaki;
+		cfg_margin_line = conf_gui_save_msg_margin_line;
+		cfg_margin_char = conf_gui_save_msg_margin_char;
+		multiline = conf_gui_save_msg_multiline;
+		break;
+	default:
+		cfg_sel = conf_gui_save_msg_font_select;
+		cfg_size = conf_gui_save_msg_font_size;
+		cfg_r = conf_gui_save_msg_font_r;
+		cfg_g = conf_gui_save_msg_font_g;
+		cfg_b = conf_gui_save_msg_font_b;
+		cfg_o_w = conf_gui_save_msg_font_outline_width;
+		cfg_o_r = conf_gui_save_msg_font_outline_r;
+		cfg_o_g = conf_gui_save_msg_font_outline_g;
+		cfg_o_b = conf_gui_save_msg_font_outline_b;
+		cfg_ruby = conf_gui_save_msg_font_ruby;
+		cfg_tategaki = conf_gui_save_msg_font_tategaki;
+		cfg_margin_line = conf_gui_save_msg_margin_line;
+		cfg_margin_char = conf_gui_save_msg_margin_char;
+		multiline = conf_gui_save_msg_multiline;
+		break;
+	}
+
 	/* Determine the color. */
 	color = s3_make_pixel(0xff,
-			      (uint32_t)conf_gui_save_font_r,
-			      (uint32_t)conf_gui_save_font_g,
-			      (uint32_t)conf_gui_save_font_b);
+			      (uint32_t)cfg_r,
+			      (uint32_t)cfg_g,
+			      (uint32_t)cfg_b);
 	outline_color = s3_make_pixel(0xff,
-				      (uint32_t)conf_gui_save_font_outline_r,
-				      (uint32_t)conf_gui_save_font_outline_g,
-				      (uint32_t)conf_gui_save_font_outline_b);
+				      (uint32_t)cfg_o_r,
+				      (uint32_t)cfg_o_g,
+				      (uint32_t)cfg_o_b);
 
 	/* Draw the text. */
 	context = s3_create_drawmsg(
 		target,
 		text,
-		conf_gui_save_font_select,
-		conf_gui_save_font_size,
-		conf_gui_save_font_size,
-		conf_gui_save_font_ruby,
-		conf_gui_save_font_outline_width,
+		cfg_sel,
+		cfg_size,
+		cfg_size,
+		cfg_ruby,
+		cfg_o_w,
 		x,
 		y,
 		b->width,
 		b->height,
-		0,		/* left_margin */
+		x,		/* left_margin */
 		0,		/* right_margin */
 		0,		/* top_margin */
 		0,		/* bottom_margin */
-		multiline ? conf_msgbox_margin_line : 0,
+		multiline ? conf_gui_save_msg_margin_line : 0,
 		conf_msgbox_margin_char,
 		color,
 		outline_color,
 		0,		/* bg_color */
 		false,		/* fill_bg */
 		false,		/* is_dimming */
-		true,		/* ignore_linefeed */
+		!multiline,	/* ignore_linefeed */
 		true,		/* ignore_font */
 		true,		/* ignore_outline */
 		true,		/* ignore_color */
@@ -2281,7 +2391,7 @@ draw_save_text_item(
 		false,		/* ignore_ruby */
 		true,		/* ignore_wait */
 		NULL,		/* inline_wait_hook */
-		conf_gui_save_font_tategaki);
+		cfg_tategaki);
 	if (context == NULL)
 		return 0;
 	total_chars = s3_count_drawmsg_chars(context, NULL);
@@ -4139,21 +4249,17 @@ set_button_key_value(
 		return true;
 	}
 
-	/* clear-r */
-	if (strcmp("clear-r", key) == 0) {
-		b->clear_r = atoi(val);
+	/* index-x */
+	if (strcmp("index-x", key) == 0) {
+		b->index_x = atoi(val);
+		b->rt.is_new_enabled = true;
 		return true;
 	}
 
-	/* clear-g */
-	if (strcmp("clear-g", key) == 0) {
-		b->clear_g = atoi(val);
-		return true;
-	}
-
-	/* clear-b */
-	if (strcmp("clear-b", key) == 0) {
-		b->clear_b = atoi(val);
+	/* index-y */
+	if (strcmp("index-y", key) == 0) {
+		b->index_y = atoi(val);
+		b->rt.is_new_enabled = true;
 		return true;
 	}
 

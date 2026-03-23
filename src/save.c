@@ -102,7 +102,7 @@ static uint64_t quick_save_time;
  */
 
 /* Buffer for the buffered stream. */
-static char *stream_buf;
+static unsigned char *stream_buf;
 static size_t stream_buf_alloc_size;
 static size_t stream_buf_pos;
 static char sbuf[1024];
@@ -1120,7 +1120,7 @@ static bool
 write_u64(
 	  uint64_t val)
 {
-	if (!resize_buffer(4))
+	if (!resize_buffer(8))
 		return false;
 
 	stream_buf[stream_buf_pos + 0] = (uint8_t)(val & 0xff);

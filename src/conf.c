@@ -297,18 +297,63 @@ char *conf_skipmode_leave_se;
  * GUI Settings
  */
 
-/* Save font */
-int conf_gui_save_font_select;
-int conf_gui_save_font_size;
-int conf_gui_save_font_r;
-int conf_gui_save_font_g;
-int conf_gui_save_font_b;
-int conf_gui_save_font_outline_width;
-int conf_gui_save_font_outline_r;
-int conf_gui_save_font_outline_g;
-int conf_gui_save_font_outline_b;
-int conf_gui_save_font_ruby;
-bool conf_gui_save_font_tategaki;
+/* Save index font */
+int conf_gui_save_index_font_select;
+int conf_gui_save_index_font_size;
+int conf_gui_save_index_font_r;
+int conf_gui_save_index_font_g;
+int conf_gui_save_index_font_b;
+int conf_gui_save_index_font_outline_width;
+int conf_gui_save_index_font_outline_r;
+int conf_gui_save_index_font_outline_g;
+int conf_gui_save_index_font_outline_b;
+int conf_gui_save_index_font_ruby;
+bool conf_gui_save_index_font_tategaki;
+int conf_gui_save_index_margin_char;
+
+/* Save date font */
+int conf_gui_save_date_font_select;
+int conf_gui_save_date_font_size;
+int conf_gui_save_date_font_r;
+int conf_gui_save_date_font_g;
+int conf_gui_save_date_font_b;
+int conf_gui_save_date_font_outline_width;
+int conf_gui_save_date_font_outline_r;
+int conf_gui_save_date_font_outline_g;
+int conf_gui_save_date_font_outline_b;
+int conf_gui_save_date_font_ruby;
+bool conf_gui_save_date_font_tategaki;
+int conf_gui_save_date_margin_char;
+
+/* Save chapter font */
+int conf_gui_save_chapter_font_select;
+int conf_gui_save_chapter_font_size;
+int conf_gui_save_chapter_font_r;
+int conf_gui_save_chapter_font_g;
+int conf_gui_save_chapter_font_b;
+int conf_gui_save_chapter_font_outline_width;
+int conf_gui_save_chapter_font_outline_r;
+int conf_gui_save_chapter_font_outline_g;
+int conf_gui_save_chapter_font_outline_b;
+int conf_gui_save_chapter_font_ruby;
+bool conf_gui_save_chapter_font_tategaki;
+int conf_gui_save_chapter_margin_char;
+
+/* Save message font */
+int conf_gui_save_msg_font_select;
+int conf_gui_save_msg_font_size;
+int conf_gui_save_msg_font_r;
+int conf_gui_save_msg_font_g;
+int conf_gui_save_msg_font_b;
+int conf_gui_save_msg_font_outline_width;
+int conf_gui_save_msg_font_outline_r;
+int conf_gui_save_msg_font_outline_g;
+int conf_gui_save_msg_font_outline_b;
+int conf_gui_save_msg_font_ruby;
+bool conf_gui_save_msg_font_tategaki;
+int conf_gui_save_msg_margin_line;
+int conf_gui_save_msg_margin_char;
+bool conf_gui_save_msg_multiline;
 
 /* History margin */
 int conf_gui_history_margin_line;
@@ -672,17 +717,56 @@ static struct rule {
 	{'s',	"skipmode.leave_se",		&conf_skipmode_leave_se,		OPTIONAL, SAVE,	LOCAL},
 
 	/* GUI */
-	{'i',	"gui.save.font.select",		&conf_gui_save_font_select,		MUST,	SAVE,	LOCAL},
-	{'i',	"gui.save.font.size",		&conf_gui_save_font_size,		MUST,	SAVE,	LOCAL},
-	{'i',	"gui.save.font.r",		&conf_gui_save_font_r,			MUST,	SAVE,	LOCAL},
-	{'i',	"gui.save.font.g",		&conf_gui_save_font_g,			MUST,	SAVE,	LOCAL},
-	{'i',	"gui.save.font.b",		&conf_gui_save_font_b,			MUST,	SAVE,	LOCAL},
-	{'i',	"gui.save.font.outline.width",	&conf_gui_save_font_outline_width,	MUST,	SAVE,	LOCAL},
-	{'i',	"gui.save.font.outline.r",	&conf_gui_save_font_outline_r,		MUST,	SAVE,	LOCAL},
-	{'i',	"gui.save.font.outline.g",	&conf_gui_save_font_outline_g,		MUST,	SAVE,	LOCAL},
-	{'i',	"gui.save.font.outline.b",	&conf_gui_save_font_outline_b,		MUST,	SAVE,	LOCAL},
-	{'i',	"gui.save.font.ruby",		&conf_gui_save_font_ruby,		MUST,	SAVE,	LOCAL},
-	{'b',	"gui.save.font.tategaki",	&conf_gui_save_font_tategaki,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.index.font.select",		&conf_gui_save_index_font_select,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.index.font.size",		&conf_gui_save_index_font_size,			MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.index.font.r",		&conf_gui_save_index_font_r,			MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.index.font.g",		&conf_gui_save_index_font_g,			MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.index.font.b",		&conf_gui_save_index_font_b,			MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.index.font.outline.width",	&conf_gui_save_index_font_outline_width,	MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.index.font.outline.r",	&conf_gui_save_index_font_outline_r,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.index.font.outline.g",	&conf_gui_save_index_font_outline_g,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.index.font.outline.b",	&conf_gui_save_index_font_outline_b,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.index.font.ruby",		&conf_gui_save_index_font_ruby,			MUST,	SAVE,	LOCAL},
+	{'b',	"gui.save.index.font.tategaki",		&conf_gui_save_index_font_tategaki,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.index.margin.char",		&conf_gui_save_index_margin_char,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.date.font.select",		&conf_gui_save_date_font_select,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.date.font.size",		&conf_gui_save_date_font_size,			MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.date.font.r",			&conf_gui_save_date_font_r,			MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.date.font.g",			&conf_gui_save_date_font_g,			MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.date.font.b",			&conf_gui_save_date_font_b,			MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.date.font.outline.width",	&conf_gui_save_date_font_outline_width,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.date.font.outline.r",		&conf_gui_save_date_font_outline_r,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.date.font.outline.g",		&conf_gui_save_date_font_outline_g,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.date.font.outline.b",		&conf_gui_save_date_font_outline_b,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.date.font.ruby",		&conf_gui_save_date_font_ruby,			MUST,	SAVE,	LOCAL},
+	{'b',	"gui.save.date.font.tategaki",		&conf_gui_save_date_font_tategaki,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.date.margin.char",		&conf_gui_save_date_margin_char,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.chapter.font.select",		&conf_gui_save_chapter_font_select,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.chapter.font.size",		&conf_gui_save_chapter_font_size,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.chapter.font.r",		&conf_gui_save_chapter_font_r,			MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.chapter.font.g",		&conf_gui_save_chapter_font_g,			MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.chapter.font.b",		&conf_gui_save_chapter_font_b,			MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.chapter.font.outline.width",	&conf_gui_save_chapter_font_outline_width,	MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.chapter.font.outline.r",	&conf_gui_save_chapter_font_outline_r,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.chapter.font.outline.g",	&conf_gui_save_chapter_font_outline_g,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.chapter.font.outline.b",	&conf_gui_save_chapter_font_outline_b,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.chapter.font.ruby",		&conf_gui_save_chapter_font_ruby,		MUST,	SAVE,	LOCAL},
+	{'b',	"gui.save.chapter.font.tategaki",	&conf_gui_save_chapter_font_tategaki,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.chapter.margin.char",		&conf_gui_save_chapter_margin_char,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.msg.font.select",		&conf_gui_save_msg_font_select,			MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.msg.font.size",		&conf_gui_save_msg_font_size,			MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.msg.font.r",			&conf_gui_save_msg_font_r,			MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.msg.font.g",			&conf_gui_save_msg_font_g,			MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.msg.font.b",			&conf_gui_save_msg_font_b,			MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.msg.font.outline.width",	&conf_gui_save_msg_font_outline_width,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.msg.font.outline.r",		&conf_gui_save_msg_font_outline_r,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.msg.font.outline.g",		&conf_gui_save_msg_font_outline_g,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.msg.font.outline.b",		&conf_gui_save_msg_font_outline_b,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.msg.font.ruby",		&conf_gui_save_msg_font_ruby,			MUST,	SAVE,	LOCAL},
+	{'b',	"gui.save.msg.font.tategaki",		&conf_gui_save_msg_font_tategaki,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.msg.margin.line",		&conf_gui_save_msg_margin_line,			MUST,	SAVE,	LOCAL},
+	{'i',	"gui.save.msg.margin.char",		&conf_gui_save_msg_margin_char,			MUST,	SAVE,	LOCAL},
+	{'b',	"gui.save.msg.multiline",		&conf_gui_save_msg_multiline,			MUST,	SAVE,	LOCAL},
 	{'i',	"gui.history.margin.line",	&conf_gui_history_margin_line,		MUST,	SAVE,	LOCAL},
 	{'i',	"gui.history.font.select",	&conf_gui_history_font_select,		MUST,	SAVE,	LOCAL},
 	{'i',	"gui.history.font.size",	&conf_gui_history_font_size,		MUST,	SAVE,	LOCAL},
