@@ -326,7 +326,6 @@ static void blit_dimming(void);
 /* Others */
 static void play_se(const char *file);
 static bool is_skippable(void);
-void check_and_play_bgvoice(void);
 
 /* Termination processing */
 static void stop(void);
@@ -475,40 +474,6 @@ postprocess(void)
 	/* If transitioning to system GUI */
 	if (need_sysmenu_mode)
 		stop();
-
-	/* Play BGVoice if ready */
-	check_and_play_bgvoice();
-}
-
-/* Play BGVoice if ready */
-void
-check_and_play_bgvoice(void)
-{
-	struct wave *w;
-	const char *file;
-
-	/* If playback is not needed */
-	if (s3_is_bgvoice_playing())
-		return;
-	if (!have_voice)
-		return;
-	if (!is_voice_stopped)
-		if (!s3_is_mixer_sound_finished(S3_TRACK_VOICE))
-			return;
-
-	/* Get the file */
-	file = s3_get_bgvoice();
-	if (file == NULL)
-		return;
-
-	/* Clear the file */
-	s3_register_bgvoice(NULL);
-
-	/* Play */
-	s3_set_mixer_input_file(S3_TRACK_VOICE, file, false);
-
-	/* Set as playing */
-	s3_set_bgvoice_playing(true);
 }
 
 /*
@@ -1287,18 +1252,9 @@ check_play_voice(void)
 	if (!is_skippable())
 		return true;
 
-	/* If the control key is pressed, do not play */
-	if (s3_is_control_key_pressed()) {
-		/* Stop BGVoice */
-		s3_set_mixer_input_file(S3_TRACK_VOICE, NULL, false);
-		s3_set_bgvoice_playing(false);
-
-		/* If BGVoice is specified, play it */
-		is_voice_stopped = true;
-		have_voice = true;
-		check_and_play_bgvoice();
+	/* If the control key is pressed, do not play. */
+	if (s3_is_control_key_pressed())
 		return false;
-	}
 
 	/* Otherwise, play */
 	return true;
@@ -1318,9 +1274,6 @@ play_voice(void)
 
 	/* Play the PCM stream */
 	s3_set_mixer_input_file(S3_TRACK_VOICE, voice_file, false);
-
-	/* Record that BGVoice is stopped */
-	s3_set_bgvoice_playing(false);
 
 	/* Indicate that there is a voice */
 	have_voice = true;
@@ -1754,16 +1707,12 @@ blit_frame(void)
 
 	/* Below, perform the main display processing */
 
-	/* If there was input, stop the voice */
+	/* If there was input. */
 	if (is_canceled_by_skip()) {
-		/* Exclude when BGVoice is playing */
-		if (!s3_is_bgvoice_playing()) {
-			/* Stop the voice */
+		/* And it is not a sysmenu transition. */
+		if (!need_sysmenu_mode) {
+			/* Stop the voice. */
 			s3_set_mixer_input_file(S3_TRACK_VOICE, NULL, false);
-			is_voice_stopped = true;
-
-			/* If BGVoice is registered, play it */
-			check_and_play_bgvoice();
 		}
 	}
 
@@ -2457,18 +2406,8 @@ cleanup(void)
 		msgbox_context = NULL;
 	}
 
-	/* Save the pen position for @ichoose */
+	/* Save the pen position for inline choose. */
 	s3_set_pen_position(pen_x, pen_y);
-
-	/* If BGVoice is not playing */
-	if (!s3_is_bgvoice_playing()) {
-		/* Stop the voice */
-		s3_set_mixer_input_file(S3_TRACK_VOICE, NULL, false);
-		is_voice_stopped = true;
-
-		/* If BGVoice is specified, play it */
-		check_and_play_bgvoice();
-	}
 
 	/* Hide the click animation */
 	s3_show_click(false);
