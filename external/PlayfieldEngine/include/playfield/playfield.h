@@ -131,6 +131,17 @@ extern bool pf_is_f12_key_pressed;
  */
 
 /*
+ * Blend Types
+ */
+#define PF_BLEND_COPY		(0)
+#define PF_BLEND_ALPHA		(1)
+#define PF_BLEND_ADD		(2)
+#define PF_BLEND_SUB		(3)
+#define PF_BLEND_DIM		(4)
+#define PF_BLEND_GLYPH		(5)
+#define PF_BLEND_EMOJI		(6)
+
+/*
  * Pixel
  */
 typedef uint32_t pf_pixel_t;
@@ -176,112 +187,23 @@ pf_notify_texture_update(
  * Draw a texture image on a texture image. (copy)
  */
 void
-pf_draw_texture_copy(
+pf_draw_texture(
 	int dst_tex_id,
 	int dst_left,
 	int dst_top,
 	int src_tex_id,
-	int width,
-	int height,
-	int src_left,
-	int src_top);
-
-/*
- * Draw a texture image on a texture image. (alpha-blending, dst_alpha=255)
- */
-void
-pf_draw_texture_alpha(
-	int dst_tex_id,
-	int dst_left,
-	int dst_top,
-	int src_tex_id,
-	int width,
-	int height,
 	int src_left,
 	int src_top,
-	int alpha);
+	int src_width,
+	int src_height,
+	int alpha,
+	int blend);
 
 /*
- * Draw a texture image on a texture image. (add-blending)
+ * Draw a texture image on a texture image. (3D)
  */
 void
-pf_draw_texture_add(
-	int dst_tex_id,
-	int dst_left,
-	int dst_top,
-	int src_tex_id,
-	int width,
-	int height,
-	int src_left,
-	int src_top,
-	int alpha);
-
-/*
- * Draw a texture image on a texture image. (sub-blending)
- */
-void
-pf_draw_texture_sub(
-	int dst_tex_id,
-	int dst_left,
-	int dst_top,
-	int src_tex_id,
-	int width,
-	int height,
-	int src_left,
-	int src_top,
-	int alpha);
-
-/*
- * Draw a glyph texture image on a texture image.
- * (alpha-blending, special alpha value)
- */
-void
-pf_draw_texture_glyph(
-	int dst_tex_id,
-	int dst_left,
-	int dst_top,
-	int src_tex_id,
-	int width,
-	int height,
-	int src_left,
-	int src_top,
-	int alpha);
-
-/*
- * Draw an emoji texture image on a texture image.
- * (alpha-blending, special alpha value)
- */
-void
-pf_draw_texture_emoji(
-	int dst_tex_id,
-	int dst_left,
-	int dst_top,
-	int src_tex_id,
-	int width,
-	int height,
-	int src_left,
-	int src_top,
-	int alpha);
-
-/*
- * Draw a texture image on a texture image. (50% dimming)
- */
-void
-pf_draw_texture_dim(
-	int dst_tex_id,
-	int dst_left,
-	int dst_top,
-	int src_tex_id,
-	int width,
-	int height,
-	int src_left,
-	int src_top,
-	int alpha);
-
-/*
- * Draw a texture image on a texture image. (3D) (alpha-blending, dst_alpha=255) */
-void
-pf_draw_texture_3d_alpha(
+pf_draw_texture_3d(
 	int dst_tex_id,
 	float x1,
 	float y1,
@@ -296,84 +218,8 @@ pf_draw_texture_3d_alpha(
 	int src_top,
 	int src_width,
 	int src_height,
-	int alpha);
-
-/*
- * Draw a texture image on a texture image. (3D) (add-blending)
- */
-void
-pf_draw_texture_3d_add(
-	int dst_tex_id,
-	float x1,
-	float y1,
-	float x2,
-	float y2,
-	float x3,
-	float y3,
-	float x4,
-	float y4,
-	int src_tex_id,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
-	int alpha);
-
-/*
- * Draw an image on an image. (3D) (sub-blending)
- */
-void
-pf_draw_texture_3d_sub(
-	int dst_tex_id,
-	float x1,
-	float y1,
-	float x2,
-	float y2,
-	float x3,
-	float y3,
-	float x4,
-	float y4,
-	int src_tex_id,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
-	int alpha);
-
-/*
- * Draw a texture image on a texture image. (3D) (50% dimming)
- */
-void
-pf_draw_texture_3d_dim(
-	int dst_tex_id,
-	float x1,
-	float y1,
-	float x2,
-	float y2,
-	float x3,
-	float y3,
-	float x4,
-	float y4,
-	int src_tex_id,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
-	int alpha);
-
-#if 0
-/*
- * Draw a texture image  on a texture image with scaling.
- */
-void
-pf_draw_texture_scale(
-	int dst_tex_id,
-	int virtual_dst_width,
-	int virtual_dst_height,
-	int virtual_dst_left,
-	int virtual_dst_top,
-	int src_tex_id);
-#endif
+	int alpha,
+	int blend);
 
 /*
  * Fill a rectangle on a texture image.

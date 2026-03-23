@@ -815,10 +815,9 @@ draw_glyph_func(
 	hal_pixel_t color)
 {
 	unsigned char *src_ptr, src_pix;
-	hal_pixel_t *dst_ptr, dst_pix, dst_a2;
+	hal_pixel_t *dst_ptr, src_r, src_g, src_b, src_a;
+
 	float color_r, color_g, color_b;
-	float src_a, src_r, src_g, src_b;
-	float dst_a, dst_r, dst_g, dst_b;
 	int image_real_x, image_real_y;
 	int font_real_x, font_real_y;
 	int font_real_width, font_real_height;
@@ -868,31 +867,24 @@ draw_glyph_func(
 	src_ptr = font + font_real_y * font_width + font_real_x;
 	for (py = font_real_y; py < font_real_y + font_real_height; py++) {
 		for (px = font_real_x; px < font_real_x + font_real_width; px++) {
-			/* Get a source pixel. */
 			src_pix = *src_ptr++;
 
-			/* Multiply the source alpha to the color. */
-			src_a = (float)src_pix / 255.0f;
-			dst_a = 1.0f - src_a;
-			src_r = src_a * color_r;
-			src_g = src_a * color_g;
-			src_b = src_a * color_b;
+			src_a = src_pix;
+			if (src_pix == 0) {
+				src_r = 0;
+				src_g = 0;
+				src_b = 0;
+			} else {
+				src_r = color_r;
+				src_g = color_g;
+				src_b = color_b;
+			}
 
-			/* Get a destination pixel. */
-			dst_pix	= *dst_ptr;
-			dst_r  = dst_a * (float)((dst_pix >> 16) & 0xff);
-			dst_g  = dst_a * (float)((dst_pix >> 8) & 0xff);
-			dst_b  = dst_a * (float)(dst_pix & 0xff);
-			dst_a2 = src_pix + hal_get_pixel_a(dst_pix);
-			if (dst_a2 > 255)
-				dst_a2 = 255;
-
-			/* Compose and store. */
 			*dst_ptr++ =
-				(dst_a2 << 24) |
-				((uint32_t)(src_r + dst_r) << 16) |
-				((uint32_t)(src_g + dst_g) << 8) |
-				(uint32_t)(src_b + dst_b);
+				(src_a << 24) |
+				(src_r << 16) |
+				(src_g << 8) |
+				src_b;
 		}
 		dst_ptr += image_width - font_real_width;
 		src_ptr += font_width - font_real_width;
