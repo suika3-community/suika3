@@ -215,7 +215,8 @@ struct gui_button {
 		struct s3_image *img_idle;
 		struct s3_image *img_hover;
 		struct s3_image *img_disable;
-		struct s3_image *img_canvas;
+		struct s3_image *img_canvas_idle;
+		struct s3_image *img_canvas_hover;
 
 		/* Offset for hitstory. */
 		int history_offset;
@@ -400,15 +401,15 @@ static void process_button_render_save(int button_index);
 static bool init_save_buttons(void);
 static void update_save_buttons(void);
 static void draw_save_button(int button_index);
-static int draw_save_text_item(int button_index, int x, int y, const char *text, bool multiline);
+static int draw_save_text_item(struct s3_image *target, int button_index, int x, int y, const char *text, bool multiline);
 static void process_save(int button_index);
 static void process_load(int button_index);
 static void process_auto_mode(void);
 static void process_skip_mode(void);
 static bool init_history_buttons(void);
 static void draw_history_buttons(void);
-static void draw_history_button(int button_index);
-static void draw_history_text_item(int button_index);
+static void draw_history_button(struct s3_image *target, struct s3_image *source, int index);
+static void draw_history_text_item(struct s3_image *target, int button_index);
 static void process_button_render_history(int button_index);
 static void process_history_scroll_up(void);
 static void process_history_scroll_down(void);
@@ -1966,7 +1967,7 @@ process_button_render_preview(
 
 	b = &button[index];
 
-	render_image_helper(b->rt.img_canvas, b->bid);
+	render_image_helper(b->rt.img_canvas_idle, b->bid);
 }
 
 /* Render a generic button. */
@@ -2002,7 +2003,7 @@ process_button_render_var(
 	b = &button[index];
 	assert(b->type == TYPE_NAMEVAR);
 
-	render_image_helper(b->rt.img_canvas, b->bid);
+	render_image_helper(b->rt.img_canvas_idle, b->bid);
 }
 
 /*
@@ -2013,16 +2014,28 @@ process_button_render_var(
 static bool
 init_save_buttons(void)
 {
+	struct s3_image *img_hover;
 	int i;
 
 	for (i = 0; i < S3_BUTTON_LAYERS; i++) {
 		if (button[i].type != TYPE_SAVE && button[i].type != TYPE_LOAD)
 			continue;
 
-		button[i].rt.img_canvas = s3_create_image(button[i].width,
-							  button[i].height);
-		if (button[i].rt.img_canvas == NULL)
-			return false;
+		if (button[i].rt.img_idle != NULL) {
+			button[i].rt.img_canvas_idle = s3_create_image(
+				s3_get_image_width(button[i].rt.img_idle),
+				s3_get_image_height(button[i].rt.img_idle));
+			if (button[i].rt.img_canvas_idle == NULL)
+				return false;
+		}
+
+		if (button[i].rt.img_hover != NULL) {
+			button[i].rt.img_canvas_hover = s3_create_image(
+				s3_get_image_width(button[i].rt.img_hover),
+				s3_get_image_height(button[i].rt.img_hover));
+			if (button[i].rt.img_canvas_hover == NULL)
+				return false;
+		}
 	}
 
 	return true;
@@ -2066,9 +2079,10 @@ draw_save_button(
 	int save_index;
 	int width;
 
+	assert(button[button_index].rt.img_canvas_idle != NULL);
+	assert(button[button_index].rt.img_canvas_hover != NULL);
+
 	b = &button[button_index];
-	if (b->rt.img_canvas == NULL)
-		return;
 
 	/* Calculate the save data number. */
 	save_index = save_slots * save_page + b->index;
@@ -2076,31 +2090,61 @@ draw_save_button(
 	/* Get the save time. */
 	save_time = s3_get_save_timestamp(save_index);
 
-	/* Clear the image. */
-	s3_fill_image_rect(b->rt.img_canvas,
-			   0,
-			   0,
-			   s3_get_image_width(b->rt.img_canvas),
-			   s3_get_image_height(b->rt.img_canvas),
-			   s3_make_pixel(0,
-					 (uint32_t)b->clear_r,
-					 (uint32_t)b->clear_g,
-					 (uint32_t)b->clear_b));
+	/* Clear the canvas images. */
+	if (b->rt.img_canvas_idle != NULL) {
+		s3_draw_image(b->rt.img_canvas_idle,
+			      0,
+			      0,
+			      b->rt.img_idle,
+			      0,
+			      0,
+			      s3_get_image_width(b->rt.img_idle),
+			      s3_get_image_height(b->rt.img_idle),
+			      255,
+			      S3_BLEND_COPY);
+	}
+	if (b->rt.img_canvas_hover != NULL) {
+		s3_draw_image(b->rt.img_canvas_hover,
+			      0,
+			      0,
+			      b->rt.img_hover,
+			      0,
+			      0,
+			      s3_get_image_width(b->rt.img_hover),
+			      s3_get_image_height(b->rt.img_hover),
+			      255,
+			      S3_BLEND_COPY);
+	}
 
 	/* Draw the thumbnail. */
 	thumb = s3_get_save_thumbnail(save_index);
 	if (thumb != NULL) {
-		s3_draw_image(
-			b->rt.img_canvas,
-			b->thumb_x,
-			b->thumb_y,
-			thumb,
-			0,
-			0,
-			s3_get_image_width(thumb),
-			s3_get_image_height(thumb),
-			255,
-			S3_BLEND_ALPHA);
+		if (b->rt.img_canvas_idle != NULL) {
+			s3_draw_image(
+				b->rt.img_canvas_idle,
+				b->thumb_x,
+				b->thumb_y,
+				thumb,
+				0,
+				0,
+				s3_get_image_width(thumb),
+				s3_get_image_height(thumb),
+				255,
+				S3_BLEND_ALPHA);
+		}
+		if (b->rt.img_canvas_hover != NULL) {
+			s3_draw_image(
+				b->rt.img_canvas_hover,
+				b->thumb_x,
+				b->thumb_y,
+				thumb,
+				0,
+				0,
+				s3_get_image_width(thumb),
+				s3_get_image_height(thumb),
+				255,
+				S3_BLEND_ALPHA);
+		}
 	}
 
 	/* Draw the date and time. */
@@ -2112,38 +2156,75 @@ draw_save_button(
 		strftime(&text[5], sizeof(text) - 5, "%y/%m/%d %H:%M ",
 			 timeptr);
 	}
-	width = draw_save_text_item(button_index,
-				    b->date_x,
-				    b->date_y,
-				    text,
-				    false);
-
+	if (b->rt.img_canvas_idle != NULL) {
+		width = draw_save_text_item(b->rt.img_canvas_idle,
+					    button_index,
+					    b->date_x,
+					    b->date_y,
+					    text,
+					    false);
+	}
+	if (b->rt.img_canvas_hover != NULL) {
+		width = draw_save_text_item(b->rt.img_canvas_hover,
+					    button_index,
+					    b->date_x,
+					    b->date_y,
+					    text,
+					    false);
+	}
+	
 	/* Draw the chapter title. */
 	chapter = s3_get_save_chapter_name(save_index);
 	if (chapter != NULL) {
-		draw_save_text_item(button_index,
-				    b->chapter_x,
-				    b->chapter_y,
-				    chapter,
-				    false);
+		if (b->rt.img_canvas_idle != NULL) {
+			draw_save_text_item(b->rt.img_canvas_idle,
+					    button_index,
+					    b->chapter_x,
+					    b->chapter_y,
+					    chapter,
+					    false);
+		}
+		if (b->rt.img_canvas_hover != NULL) {
+			draw_save_text_item(b->rt.img_canvas_hover,
+					    button_index,
+					    b->chapter_x,
+					    b->chapter_y,
+					    chapter,
+					    false);
+		}
 	}
 
 	/* Draw the last message. */
 	msg = s3_get_save_last_message(save_index);
 	if (msg != NULL) {
-		draw_save_text_item(button_index,
-				    b->msg_x,
-				    b->msg_y,
-				    msg,
-				    true);
+		if (b->rt.img_canvas_idle != NULL) {
+			draw_save_text_item(b->rt.img_canvas_idle,
+					    button_index,
+					    b->msg_x,
+					    b->msg_y,
+					    msg,
+					    true);
+		}
+		if (b->rt.img_canvas_hover != NULL) {
+			draw_save_text_item(b->rt.img_canvas_hover,
+					    button_index,
+					    b->msg_x,
+					    b->msg_y,
+					    msg,
+					    true);
+		}
 	}
 
-	s3_notify_image_update(b->rt.img_canvas);
+	if (b->rt.img_canvas_idle != NULL)
+		s3_notify_image_update(b->rt.img_canvas_idle);
+	if (b->rt.img_canvas_hover != NULL)
+		s3_notify_image_update(b->rt.img_canvas_hover);
 }
 
 /* Render save data text. */
 static int
 draw_save_text_item(
+	struct s3_image *target,
 	int button_index,
 	int x,
 	int y,
@@ -2169,7 +2250,7 @@ draw_save_text_item(
 
 	/* Draw the text. */
 	context = s3_create_drawmsg(
-		b->rt.img_canvas,
+		target,
 		text,
 		conf_gui_save_font_select,
 		conf_gui_save_font_size,
@@ -2285,17 +2366,12 @@ process_button_render_save(
 	b = &button[index];
 
 	if (index != pointed_index) {
-		if (b->rt.img_idle != NULL)
-			render_image_helper(b->rt.img_idle, b->bid);
+		if (b->rt.img_canvas_idle != NULL)
+			render_image_helper(b->rt.img_canvas_idle, b->bid);
 	} else {
-		struct s3_image *img;
-		img = b->rt.img_hover != NULL ? b->rt.img_hover : b->rt.img_idle;
-		if (img != NULL)
-			render_image_helper(img, b->bid);
+		if (b->rt.img_canvas_hover != NULL)
+			render_image_helper(b->rt.img_canvas_hover, b->bid);
 	}
-
-	/* Render the thumbnail and text. */
-	render_image_helper(b->rt.img_canvas, b->bid);
 
 	/* Render the NEW image. */
 	save_index = save_page * save_slots + b->index;
@@ -2359,11 +2435,20 @@ init_history_buttons(void)
 	for (i = 0; i < S3_BUTTON_LAYERS; i++) {
 		if (button[i].type != TYPE_HISTORY)
 			continue;
-
-		button[i].rt.img_canvas = s3_create_image(button[i].width,
-							  button[i].height);
-		if (button[i].rt.img_canvas == NULL)
-			return false;
+		if (button[i].rt.img_idle != NULL) {
+			button[i].rt.img_canvas_idle = s3_create_image(
+				s3_get_image_width(button[i].rt.img_idle),
+				s3_get_image_height(button[i].rt.img_idle));
+			if (button[i].rt.img_canvas_idle == NULL)
+				return false;
+		}
+		if (button[i].rt.img_hover != NULL) {
+			button[i].rt.img_canvas_hover = s3_create_image(
+				s3_get_image_width(button[i].rt.img_hover),
+				s3_get_image_height(button[i].rt.img_hover));
+			if (button[i].rt.img_canvas_hover == NULL)
+				return false;
+		}
 	}
 
 	return true;
@@ -2378,22 +2463,17 @@ process_button_render_history(
 
 	b = &button[index];
 
-	/* If there are no history items (history is still small). */
-	if (b->rt.img_canvas == NULL)
+	/* If there are no history items. (For when history is empty or few). */
+	if (b->rt.img_canvas_idle == NULL)
 		return;
 
 	if (!b->rt.is_disabled && index == pointed_index) {
-		struct s3_image *img;
-		img = b->rt.img_hover != NULL ? b->rt.img_hover : b->rt.img_idle;
-		if (img != NULL)
-			render_image_helper(img, b->bid);
+		if (b->rt.img_canvas_hover != NULL)
+			render_image_helper(b->rt.img_canvas_hover, b->bid);
 	} else {
-		if (b->rt.img_idle != NULL)
-			render_image_helper(b->rt.img_idle, b->bid);
+		if (b->rt.img_canvas_idle != NULL)
+			render_image_helper(b->rt.img_canvas_idle, b->bid);
 	}
-
-	/* Render the text. */
-	render_image_helper(b->rt.img_canvas, b->bid);
 }
 
 /* Render all history slots. */
@@ -2405,16 +2485,24 @@ draw_history_buttons(void)
 	for (i = 0; i < S3_BUTTON_LAYERS; i++) {
 		if (button[i].type != TYPE_HISTORY)
 			continue;
-		if (button[i].rt.img_canvas == NULL)
-			continue;
-
-		draw_history_button(i);
+		if (button[i].rt.img_canvas_idle = NULL) {
+			draw_history_button(button[i].rt.img_canvas_idle,
+					    button[i].rt.img_idle,
+					    i);
+		}
+		if (button[i].rt.img_canvas_hover = NULL) {
+			draw_history_button(button[i].rt.img_canvas_hover,
+					    button[i].rt.img_hover,
+					    i);
+		}
 	}
 }
 
 /* Render a history slot. */
 static void
 draw_history_button(
+	struct s3_image *target,
+	struct s3_image *source,
 	int index)
 {
 	struct gui_button *b;
@@ -2451,26 +2539,28 @@ draw_history_button(
 	}
 
 	/* Clear the image. */
-	s3_fill_image_rect(b->rt.img_canvas,
-			   0,
-			   0,
-			   s3_get_image_width(b->rt.img_canvas),
-			   s3_get_image_height(b->rt.img_canvas),
-			   s3_make_pixel(0,
-					 (uint32_t)b->clear_r,
-					 (uint32_t)b->clear_g,
-					 (uint32_t)b->clear_b));
+	s3_draw_image(target,
+		      0,
+		      0,
+		      source,
+		      0,
+		      0,
+		      s3_get_image_width(source),
+		      s3_get_image_height(source),
+		      255,
+		      S3_BLEND_COPY);
 
 	/* Render the message. */
 	if (b->rt.history_offset != -1)
-		draw_history_text_item(index);
+		draw_history_text_item(target, index);
 
-	s3_notify_image_update(b->rt.img_canvas);
+	s3_notify_image_update(target);
 }
 
 /* Render the history text. */
 static void
 draw_history_text_item(
+	struct s3_image *target,
 	int button_index)
 {
 	struct s3_drawmsg *context;
@@ -2505,7 +2595,7 @@ draw_history_text_item(
 
 	/* Render. */
 	context = s3_create_drawmsg(
-		b->rt.img_canvas,
+		target,
 		text,
 		conf_gui_history_font_select,
 		conf_gui_history_font_size,
@@ -2679,9 +2769,8 @@ static bool init_preview_buttons(void)
 		if (button[i].height <= 0)
 			button[i].height = 1;
 
-		button[i].rt.img_canvas = s3_create_image(button[i].width,
-							  button[i].height);
-		if (button[i].rt.img_canvas == NULL)
+		button[i].rt.img_canvas_idle = s3_create_image(button[i].width, button[i].height);
+		if (button[i].rt.img_canvas_idle == NULL)
 			return false;
 	}
 
@@ -2717,16 +2806,17 @@ static void reset_preview_button(int index)
 	b = &button[index];
 
 	/* Clear the image. */
-	s3_fill_image_rect(b->rt.img_canvas,
-			   0,
-			   0,
-			   s3_get_image_width(b->rt.img_canvas),
-			   s3_get_image_height(b->rt.img_canvas),
-			   s3_make_pixel(0,
-					 b->clear_r,
-					 b->clear_g,
-					 b->clear_b));
-	s3_notify_image_update(b->rt.img_canvas);
+	s3_draw_image(b->rt.img_canvas_idle,
+		      0,
+		      0,
+		      b->rt.img_idle,
+		      0,
+		      0,
+		      s3_get_image_width(b->rt.img_idle),
+		      s3_get_image_height(b->rt.img_idle),
+		      255,
+		      S3_BLEND_COPY);
+	s3_notify_image_update(b->rt.img_canvas_idle);
 
 	color = s3_make_pixel(0xff,
 			      conf_msgbox_font_r,
@@ -2747,7 +2837,7 @@ static void reset_preview_button(int index)
 	}
 
 	b->rt.msg_context = s3_create_drawmsg(
-		b->rt.img_canvas,
+		b->rt.img_canvas_idle,
 		b->msg,
 		conf_msgbox_font_select,
 		conf_msgbox_font_size,
@@ -2848,7 +2938,7 @@ static void draw_preview_message(int index)
 
 	/* Draw the message. */
 	ret_chars = s3_draw_message(b->rt.msg_context, char_count);
-	s3_notify_image_update(b->rt.img_canvas);
+	s3_notify_image_update(b->rt.img_canvas_idle);
 
 	/* Add the number of characters drawn. */
 	b->rt.drawn_chars += ret_chars;
@@ -2904,18 +2994,21 @@ init_var_buttons(void)
 		if (button[i].height <= 0)
 			button[i].height = 1;
 
-		button[i].rt.img_canvas = s3_create_image(button[i].width,
-							  button[i].height);
-		if (button[i].rt.img_canvas == NULL)
+		button[i].rt.img_canvas_idle = s3_create_image(button[i].width, button[i].height);
+		if (button[i].rt.img_canvas_idle == NULL)
 			return false;
 
-		s3_fill_image_rect(button[i].rt.img_canvas,
-				   0,
-				   0,
-				   s3_get_image_width(button[i].rt.img_canvas),
-				   s3_get_image_height(button[i].rt.img_canvas),
-				   s3_make_pixel(0, 0, 0, 0));
-		s3_notify_image_update(button[i].rt.img_canvas);
+		s3_draw_image(button[i].rt.img_canvas_idle,
+			      0,
+			      0,
+			      button[i].rt.img_idle,
+			      0,
+			      0,
+			      s3_get_image_width(button[i].rt.img_idle),
+			      s3_get_image_height(button[i].rt.img_idle),
+			      255,
+			      S3_BLEND_COPY);
+		s3_notify_image_update(button[i].rt.img_canvas_idle);
 	}
 
 	return true;
@@ -2936,12 +3029,16 @@ draw_var_buttons(void)
 static void
 draw_var_button(int index)
 {
-	s3_fill_image_rect(button[index].rt.img_canvas,
-			   0,
-			   0,
-			   s3_get_image_width(button[index].rt.img_canvas),
-			   s3_get_image_height(button[index].rt.img_canvas),
-			   s3_make_pixel(0, 0, 0, 0));
+	s3_draw_image(button[index].rt.img_canvas_idle,
+		      0,
+		      0,
+		      button[index].rt.img_idle,
+		      0,
+		      0,
+		      s3_get_image_width(button[index].rt.img_idle),
+		      s3_get_image_height(button[index].rt.img_idle),
+		      255,
+		      S3_BLEND_COPY);
 	draw_var_value(index);
 }
 
@@ -2974,7 +3071,7 @@ draw_var_value(
 
 	/* Draw the variable value. */
 	context = s3_create_drawmsg(
-		b->rt.img_canvas,
+		b->rt.img_canvas_idle,
 		name,
 		conf_msgbox_font_select,
 		conf_msgbox_font_size,
