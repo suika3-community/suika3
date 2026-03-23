@@ -68,10 +68,10 @@ extern bool is_sse_available;
  */
 static int sc_min_x[SC_LINES];
 static int sc_max_x[SC_LINES];
-static int sc_min_tx[SC_LINES];
-static int sc_max_tx[SC_LINES];
-static int sc_min_ty[SC_LINES];
-static int sc_max_ty[SC_LINES];
+static float sc_min_tx[SC_LINES];
+static float sc_max_tx[SC_LINES];
+static float sc_min_ty[SC_LINES];
+static float sc_max_ty[SC_LINES];
 
 /*
  * Forward Declaraion
@@ -832,17 +832,16 @@ scanline_conversion(
 	for (y = 0; y < SC_LINES; y++) {
 		sc_min_x[y]  = INT_MAX;
 		sc_max_x[y]  = INT_MIN;
-		sc_min_tx[y] = 0;
-		sc_max_tx[y] = 0;
-		sc_min_ty[y] = 0;
-		sc_max_ty[y] = 0;
+		sc_min_tx[y] = 0.0f;
+		sc_max_tx[y] = 0.0f;
+		sc_min_ty[y] = 0.0f;
+		sc_max_ty[y] = 0.0f;
 	}
 
 	/* Scan-convert the four edges of the quad */
 	scanline_edge(x1, y1, tx1, ty1, x2, y2, tx2, ty2);
 	scanline_edge(x2, y2, tx2, ty2, x3, y3, tx3, ty3);
 	scanline_edge(x3, y3, tx3, ty3, x1, y1, tx1, ty1);
-//	scanline_edge(x2, y2, tx2, ty2, x3, y3, tx3, ty3);
 	scanline_edge(x3, y3, tx3, ty3, x4, y4, tx4, ty4);
 	scanline_edge(x4, y4, tx4, ty4, x2, y2, tx2, ty2);
 }
@@ -888,7 +887,7 @@ scanline_edge(
 	for (y = y_start; y < y_end; y++) {
 		float t;
 		float x, tx, ty;
-		int ix, itx, ity;
+		float ix, itx, ity;
 
 		/* Sample at the scanline center */
 		t = ((float)y + 0.5f - y1) / (y2 - y1);
@@ -897,9 +896,9 @@ scanline_edge(
 		tx = tx1 + (tx2 - tx1) * t;
 		ty = ty1 + (ty2 - ty1) * t;
 
-		ix  = (int)lroundf(x);
-		itx = (int)lroundf(tx);
-		ity = (int)lroundf(ty);
+		ix  = lroundf(x);
+		itx = lroundf(tx);
+		ity = lroundf(ty);
 
 		if (ix < sc_min_x[y]) {
 			sc_min_x[y]  = ix;

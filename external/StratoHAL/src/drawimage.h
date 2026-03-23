@@ -786,11 +786,11 @@ DRAW_IMAGE_3D_ALPHA(
 		tx = sc_min_tx[y];
 		ty = sc_min_ty[y];
 		if (sc_max_x[y] - sc_min_x[y] != 0)
-			tx_inc = (float)(sc_max_tx[y] - sc_min_tx[y]) / (float)(sc_max_x[y] - sc_min_x[y]);
+			tx_inc = (sc_max_tx[y] - sc_min_tx[y]) / (sc_max_x[y] - sc_min_x[y]);
 		else
 			tx_inc = 0;
 		if (sc_max_x[y] - sc_min_x[y] != 0)
-			ty_inc = (float)(sc_max_ty[y] - sc_min_ty[y]) / (float)(sc_max_x[y] - sc_min_x[y]);
+			ty_inc = (sc_max_ty[y] - sc_min_ty[y]) / (sc_max_x[y] - sc_min_x[y]);
 		else
 			ty_inc = 0;
 
@@ -900,11 +900,11 @@ DRAW_IMAGE_3D_ADD(
 		tx = sc_min_tx[y];
 		ty = sc_min_ty[y];
 		if (sc_max_x[y] - sc_min_x[y] != 0)
-			tx_inc = (float)(sc_max_tx[y] - sc_min_tx[y]) / (float)(sc_max_x[y] - sc_min_x[y]);
+			tx_inc = (sc_max_tx[y] - sc_min_tx[y]) / (sc_max_x[y] - sc_min_x[y]);
 		else
 			tx_inc = 0;
 		if (sc_max_x[y] - sc_min_x[y] != 0)
-			ty_inc = (float)(sc_max_ty[y] - sc_min_ty[y]) / (float)(sc_max_x[y] - sc_min_x[y]);
+			ty_inc = (sc_max_ty[y] - sc_min_ty[y]) / (sc_max_x[y] - sc_min_x[y]);
 		else
 			ty_inc = 0;
 
@@ -1024,11 +1024,11 @@ DRAW_IMAGE_3D_SUB(
 		tx = sc_min_tx[y];
 		ty = sc_min_ty[y];
 		if (sc_max_x[y] - sc_min_x[y] != 0)
-			tx_inc = (float)(sc_max_tx[y] - sc_min_tx[y]) / (float)(sc_max_x[y] - sc_min_x[y]);
+			tx_inc = (sc_max_tx[y] - sc_min_tx[y]) / (sc_max_x[y] - sc_min_x[y]);
 		else
 			tx_inc = 0;
 		if (sc_max_x[y] - sc_min_x[y] != 0)
-			ty_inc = (float)(sc_max_ty[y] - sc_min_ty[y]) / (float)(sc_max_x[y] - sc_min_x[y]);
+			ty_inc = (sc_max_ty[y] - sc_min_ty[y]) / (sc_max_x[y] - sc_min_x[y]);
 		else
 			ty_inc = 0;
 
@@ -1147,11 +1147,11 @@ DRAW_IMAGE_3D_DIM(
 		tx = sc_min_tx[y];
 		ty = sc_min_ty[y];
 		if (sc_max_x[y] - sc_min_x[y] != 0)
-			tx_inc = (float)(sc_max_tx[y] - sc_min_tx[y]) / (float)(sc_max_x[y] - sc_min_x[y]);
+			tx_inc = (sc_max_tx[y] - sc_min_tx[y]) / (sc_max_x[y] - sc_min_x[y]);
 		else
 			tx_inc = 0;
 		if (sc_max_x[y] - sc_min_x[y] != 0)
-			ty_inc = (float)(sc_max_ty[y] - sc_min_ty[y]) / (float)(sc_max_x[y] - sc_min_x[y]);
+			ty_inc = (sc_max_ty[y] - sc_min_ty[y]) / (sc_max_x[y] - sc_min_x[y]);
 		else
 			ty_inc = 0;
 

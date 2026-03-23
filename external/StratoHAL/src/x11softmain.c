@@ -522,33 +522,6 @@ bool init_x11_graphics(void)
 	return true;
 }
 
-#if 0
-static bool create_window(void)
-{
-	Window root;
-	unsigned long black, white;
-	int screen;
-
-	/* Get display information. */
-	screen = DefaultScreen(display);
-	root  = RootWindow(display, screen);
-	black = BlackPixel(display, screen);
-	white = WhitePixel(display, screen);
-
-	/* Create a window. */
-	window = XCreateSimpleWindow(display, root, 0, 0,
-				     (unsigned int)screen_width,
-				     (unsigned int)screen_height,
-				     1, black, white);
-	if (window == BadAlloc || window == BadMatch || window == BadValue || window == BadWindow) {
-		hal_log_error("XCreateSimpleWindow");
-		return false;
-	}
-
-	return true;
-}
-#endif
-
 static bool create_window(void)
 {
 	Window root;
@@ -866,7 +839,7 @@ run_frame(void)
 	update_evgamepad();
 
 	/* Clear the back image. */
-	hal_clear_image(back_image, 0);
+	hal_clear_image(back_image, hal_make_pixel(0xff, 0, 0, 0));
 
 	/* Call a frame event. */
 	cont = hal_callback_on_event_frame();
