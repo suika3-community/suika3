@@ -38,7 +38,18 @@ ITEM1 {
     x: 39;
     y: 99;
     image-idle: system/save/save-item-idle.png;
-    image-hover: system/save/save-item-idle.png;
+    image-hover: system/save/save-item-hover.png;
+
+    index-x: 10;
+    index-y: 0;
+    date-x: 60;
+    date-y: 0;
+    thumb-x: 27;
+    thumb-y: 77;
+    chapter-x: 260;
+    chapter-y: 48;
+    msg-x: 260;
+    msg-y: 96;
 }
 
 ITEM2 {
@@ -48,7 +59,18 @@ ITEM2 {
     x: 658;
     y: 99;
     image-idle: system/save/save-item-idle.png;
-    image-hover: system/save/save-item-idle.png;
+    image-hover: system/save/save-item-hover.png;
+
+    index-x: 10;
+    index-y: 0;
+    date-x: 60;
+    date-y: 0;
+    thumb-x: 27;
+    thumb-y: 77;
+    chapter-x: 260;
+    chapter-y: 48;
+    msg-x: 260;
+    msg-y: 96;
 }
 
 ITEM3 {
@@ -58,7 +80,18 @@ ITEM3 {
     x: 39;
     y: 374;
     image-idle: system/save/save-item-idle.png;
-    image-hover: system/save/save-item-idle.png;
+    image-hover: system/save/save-item-hover.png;
+
+    index-x: 10;
+    index-y: 0;
+    date-x: 60;
+    date-y: 0;
+    thumb-x: 27;
+    thumb-y: 77;
+    chapter-x: 260;
+    chapter-y: 48;
+    msg-x: 260;
+    msg-y: 96;
 }
 
 ITEM4 {
@@ -68,11 +101,22 @@ ITEM4 {
     x: 658;
     y: 374;
     image-idle: system/save/save-item-idle.png;
-    image-hover: system/save/save-item-idle.png;
+    image-hover: system/save/save-item-hover.png;
+
+    index-x: 10;
+    index-y: 0;
+    date-x: 60;
+    date-y: 0;
+    thumb-x: 27;
+    thumb-y: 77;
+    chapter-x: 260;
+    chapter-y: 48;
+    msg-x: 260;
+    msg-y: 96;
 }
 
 PAGE1 {
-    id: 4;
+    id: 5;
     type: savepage;
     index: 0;
     x: 365;
@@ -82,7 +126,7 @@ PAGE1 {
 }
 
 PAGE2 {
-    id: 5;
+    id: 6;
     type: savepage;
     index: 1;
     x: 480;
@@ -92,7 +136,7 @@ PAGE2 {
 }
 
 PAGE3 {
-    id: 6;
+    id: 7;
     type: savepage;
     index: 2;
     x: 599;
@@ -102,21 +146,21 @@ PAGE3 {
 }
 
 PAGE4 {
-    id: 7;
+    id: 8;
     type: savepage;
     index: 3;
     x: 718;
-    y: 641;
+    y: 640;
     image-idle: system/save/save-page-4.png;
     image-hover: system/save/save-page-4.png;
 }
 
 PAGE5 {
-    id: 7;
+    id: 9;
     type: savepage;
     index: 4;
     x: 838;
-    y: 640;
+    y: 639;
     image-idle: system/save/save-page-5.png;
     image-hover: system/save/save-page-5.png;
 }
