@@ -270,13 +270,15 @@ static int wide_printf(const char *format, ...)
 {
 	static char buf[4096];
 	va_list ap;
+	int n;
 
 	va_start(ap, format);
-	vsnprintf(buf, sizeof(buf), format, ap);
+	n = vsnprintf(buf, sizeof(buf), format, ap);
 	va_end(ap);
 
 #if !defined(_WIN32)
-	return printf("%s", buf);
+	n = printf("%s", buf);
+	return n;
 #else
 	/* MSVC or MinGW: Use wprintf() and wide-string. (Otherwise, we'll see garbages.) */
 	static wchar_t wbuf[4096];
@@ -284,7 +286,7 @@ static int wide_printf(const char *format, ...)
 	memset(wbuf, 0, sizeof(wbuf));
 	MultiByteToWideChar(CP_UTF8, 0, buf, -1, wbuf, sizeof(wbuf) / sizeof(wchar_t));
 	WriteConsoleW(GetStdHandle(STD_OUTPUT_HANDLE), wbuf, lstrlenW(wbuf), &dwWritten, NULL);
-	return size;
+	return n;
 #endif
 }
 

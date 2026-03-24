@@ -755,7 +755,7 @@
             "binaryDir":      "${sourceDir}/build-openharmony-x86_64",
             "toolchainFile":  "$env{OH_NATIVE_SDK_ROOT}/build/cmake/ohos.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":             "Debug",
+                "CMAKE_BUILD_TYPE":             "Release",
                 "OHOS_PLATFORM_LEVEL":          "12",
                 "OHOS_ARCH":                    "x86_64",
                 "PLAYFIELD_TARGET_OPENHARMONY": "ON",
@@ -769,7 +769,7 @@
             "binaryDir":      "${sourceDir}/build-openharmony-arm64",
             "toolchainFile":  "$env{OH_NATIVE_SDK_ROOT}/build/cmake/ohos.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":             "Debug",
+                "CMAKE_BUILD_TYPE":             "Release",
                 "OHOS_PLATFORM_LEVEL":          "12",
                 "OHOS_ARCH":                    "arm64-v8a",
                 "PLAYFIELD_TARGET_OPENHARMONY": "ON",
@@ -831,7 +831,7 @@
             "binaryDir":      "${sourceDir}/build-unity-winarm64",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/unity-winarm64.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Debug",
+                "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_UNITY":      "ON",
                 "PLAYFIELD_ENABLE_SHARED":     "ON"
             }
@@ -1022,7 +1022,7 @@
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-unix",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":             "Debug",
+                "CMAKE_BUILD_TYPE":             "Release",
                 "CMAKE_C_COMPILER":             "cc",
                 "CMAKE_CXX_COMPILER":           "c++",
                 "PLAYFIELD_TARGET_GENERICUNIX": "ON",
