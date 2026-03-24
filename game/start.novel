@@ -1,20 +1,39 @@
 [chapter name="Chapter 1"]
 
-[bgm file="bgm/afternoon1.ogg"]
+[click]
+
+[volume track="bgm" vol="0.5"]
+[bgm file="bgm/afternoon2.ogg"]
 
 [bg file="bg/school.png" time="0.5"]
 
-[ch center="ch/midori/midori-normal.png" time="0.5" fade="normal"]
+[ch left="ch/xiaoling/xiaoling-smile.png" time="1.0" fade="normal"]
+[wait time="1.0"]
+[ch left="ch/xiaoling/xiaoling-normal.png" time="1.0" fade="normal"]
 
-[text name="Midori" text="Choose your favorite spring blossom."]
+[text name="Xiaoling" text="......"]
+
+[ch right="ch/midori/midori-normal.png" time="0.5" fade="normal"]
+
+[text name="Xiaoling" voice="voice/001.ogg" text="Would you like to go to a cafe, Mido?"]
+[text name="Midori" voice="voice/002.ogg" text="Sure! I'd love some fruitcake."]
+[text name="Xiaoling" voice="voice/003.ogg" text="Where should we go?"]
 
 [choose name="result"
-  text1="Sakura"
-  text2="Ume"
-  text3="Kobushi"
+  text1="Hoshino Coffee"
+  text2="Starbucks"
+  text3="Segafredo"
 ]
 
-[ch center="ch/midori/midori-happy.png" time="0.5" fade="normal"]
-[move time="1.0" center-x="r-250" accel="deaccel"]
+[ch right="ch/midori/midori-happy.png" time="0.5" fade="normal"]
+[move time="1.0" right-x="r-250" accel="deaccel"]
 
-[text name="Midori" text="You choose ${result}!"]
+[text name="Midori" voice="voice/004.ogg" text="Let's go to the station, Xiao!"]
+
+[ch left="ch/xiaoling/xiaoling-smile.png" time="1.0" fade="normal"]
+[wait time="0.5"]
+
+[text name="Xiaoling" voice="voice/005.ogg" text="Okay, I'll grab my bag. Just a moment, Mido."]
+
+[ch left="none" right="none" time="1.0"]
+[click]
