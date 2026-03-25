@@ -857,35 +857,35 @@ scanline_edge(
 	float tx2,
 	float ty2)
 {
-	int y;
+	int iy;
 
 	/* Horizontal edge. */
 	if (y1 == y2) {
-		y = (int)lroundf(y1);
-		if (y < 0 || y >= SC_LINES)
+		iy = (int)lroundf(y1);
+		if (iy < 0 || iy >= SC_LINES)
 			return;
 
 		if (x1 < x2) {
-			if (x1 < sc_min_x[y]) {
-				sc_min_x[y]  = (int)ceilf(x1);
-				sc_min_tx[y] = tx1;
-				sc_min_ty[y] = ty1;
+			if (x1 < sc_min_x[iy]) {
+				sc_min_x[iy]  = (int)ceilf(x1);
+				sc_min_tx[iy] = tx1;
+				sc_min_ty[iy] = ty1;
 			}
-			if (x2 > sc_max_x[y]) {
-				sc_max_x[y]  = (int)ceilf(x2);
-				sc_max_tx[y] = tx2;
-				sc_max_ty[y] = ty2;
+			if (x2 > sc_max_x[iy]) {
+				sc_max_x[iy]  = (int)ceilf(x2);
+				sc_max_tx[iy] = tx2;
+				sc_max_ty[iy] = ty2;
 			}
 		} else {
-			if (x2 < sc_min_x[y]) {
-				sc_min_x[y]  = (int)ceilf(x2);
-				sc_min_tx[y] = tx2;
-				sc_min_ty[y] = ty2;
+			if (x2 < sc_min_x[iy]) {
+				sc_min_x[iy]  = (int)ceilf(x2);
+				sc_min_tx[iy] = tx2;
+				sc_min_ty[iy] = ty2;
 			}
-			if (x1 > sc_max_x[y]) {
-				sc_max_x[y]  = (int)ceilf(x1);
-				sc_max_tx[y] = tx1;
-				sc_max_ty[y] = ty2;
+			if (x1 > sc_max_x[iy]) {
+				sc_max_x[iy]  = (int)ceilf(x1);
+				sc_max_tx[iy] = tx1;
+				sc_max_ty[iy] = ty1;
 			}
 		}
 		return;
@@ -902,56 +902,68 @@ scanline_edge(
 
 	/* Vertical edge. */
 	if (x1 == x2) {
-		for (y = (int)ceilf(y1); y <= (int)ceilf(y2); y++) {
-			float t, ty;
+		int ix = (int)ceilf(x1);
+		for (iy = (int)ceilf(y1); iy <= (int)ceilf(y2); iy++) {
+			float t, tx, ty;
 
-			if (y < 0)
+			if (iy < 0)
 				continue;
-			if (y >= SC_LINES)
+			if (iy >= SC_LINES)
 				break;
 
-			t = ((float)y - (float)y1) / ((float)y2 - (float)y1);
+			t = ((float)iy - y1) / (y2 - y1);
+			if (t < 0)
+				t = 0.0f;
+			if (t > 1.0f)
+				t = 1.0f;
+
+			tx = tx1 + (tx2 - tx1) * t;
 			ty = ty1 + (ty2 - ty1) * t;
 
-			if (x1 < sc_min_x[y]) {
-				sc_min_x[y]  = (int)ceilf(x1);
-				sc_min_tx[y] = tx1;
-				sc_min_ty[y] = ty;
+			if (x1 < sc_min_x[iy]) {
+				sc_min_x[iy]  = ix;
+				sc_min_tx[iy] = tx;
+				sc_min_ty[iy] = ty;
 			}
-			if (x1 > sc_max_x[y]) {
-				sc_max_x[y]  = (int)ceilf(x1);
-				sc_max_tx[y] = tx1;
-				sc_max_ty[y] = ty;
+			if (x1 > sc_max_x[iy]) {
+				sc_max_x[iy]  = ix;
+				sc_max_tx[iy] = tx;
+				sc_max_ty[iy] = ty;
 			}
 		}
 		return;
 	}
 
 	/* Non horizontal, non vertical. */
-	for (y = (int)ceilf(y1); y <= (int)ceilf(y2); y++) {
+	for (iy = (int)ceilf(y1); iy <= (int)ceilf(y2); iy++) {
 		float t, x, tx, ty;
 		int ix;
 
-		if (y < 0)
+		if (iy < 0)
 			continue;
-		if (y >= SC_LINES)
+		if (iy >= SC_LINES)
 			break;
 
-		t = ((float)y - (float)y1) / ((float)y2 - (float)y1);
+		t = ((float)iy - y1) / (y2 - y1);
+		if (t < 0)
+			t = 0.0f;
+		if (t > 1.0f)
+			t = 1.0f;
 		x  = x1  + (x2  - x1)  * t;
+
 		tx = tx1 + (tx2 - tx1) * t;
 		ty = ty1 + (ty2 - ty1) * t;
 
 		ix  = (int)floorf(x);
-		if (ix < sc_min_x[y]) {
-			sc_min_x[y]  = ix;
-			sc_min_tx[y] = tx;
-			sc_min_ty[y] = ty;
+		if (ix < sc_min_x[iy]) {
+			sc_min_x[iy]  = ix;
+			sc_min_tx[iy] = tx;
+			sc_min_ty[iy] = ty;
 		}
-		if (ix > sc_max_x[y]) {
-			sc_max_x[y]  = ix;
-			sc_max_tx[y] = tx;
-			sc_max_ty[y] = ty;
+		if (ix > sc_max_x[iy]) {
+			sc_max_x[iy]  = ix;
+			sc_max_tx[iy] = tx;
+			sc_max_ty[iy] = ty;
 		}
 	}
 }

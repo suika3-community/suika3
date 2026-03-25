@@ -587,6 +587,9 @@ init(void)
 	}
 	s3_show_click(false);
 
+	/* Hide the sysbtn. */
+	s3_enable_sysbtn(false);
+
 	return true;
 }
 

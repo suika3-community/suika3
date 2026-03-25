@@ -1699,17 +1699,17 @@ s3_render_image_3d(
  */
 
 /*
- * Show or hide the system button.
+ * Control the system button.
  */
-bool
-s3_show_sysbtn(
-	bool is_visible);
+void
+s3_enable_sysbtn(
+	bool is_enabled);
 
 /*
- * Check if the system button is visible.
+ * Check if the system button is enabled.
  */
 bool
-s3_is_sysbtn_visible(void);
+s3_is_sysbtn_enabled(void);
 
 /*
  * Update the system button's pointed state by the mouse position.

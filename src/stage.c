@@ -1496,7 +1496,7 @@ s3_layer_to_chpos(
 void
 s3_render_stage(void)
 {
-	int i;
+	int i, alpha;
 
 	/* Update an anime frame. */
 	s3_update_anime_frame();
@@ -1564,31 +1564,29 @@ s3_render_stage(void)
 
 	/* Render the sysbtn. */
 	s3_update_sysbtn_state();
-	if (s3_is_sysbtn_visible()) {
-		int alpha = s3i_get_sysbtn_alpha();
-		if (!s3_is_sysbtn_pointed()) {
-			pf_render_texture(conf_sysbtn_x,
-					  conf_sysbtn_y,
-					  sysbtn_idle_image->width,
-					  sysbtn_idle_image->height,
-					  sysbtn_idle_image->tex_id,
-					  0,
-					  0,
-					  sysbtn_idle_image->width,
-					  sysbtn_idle_image->height,
-					  alpha);
-		} else {
-			pf_render_texture(conf_sysbtn_x,
-					  conf_sysbtn_y,
-					  sysbtn_hover_image->width,
-					  sysbtn_hover_image->height,
-					  sysbtn_hover_image->tex_id,
-					  0,
-					  0,
-					  sysbtn_hover_image->width,
-					  sysbtn_hover_image->height,
-					  alpha);
-		}
+	alpha = s3i_get_sysbtn_alpha();
+	if (!s3_is_sysbtn_pointed()) {
+		pf_render_texture(conf_sysbtn_x,
+				  conf_sysbtn_y,
+				  sysbtn_idle_image->width,
+				  sysbtn_idle_image->height,
+				  sysbtn_idle_image->tex_id,
+				  0,
+				  0,
+				  sysbtn_idle_image->width,
+				  sysbtn_idle_image->height,
+				  alpha);
+	} else {
+		pf_render_texture(conf_sysbtn_x,
+				  conf_sysbtn_y,
+				  sysbtn_hover_image->width,
+				  sysbtn_hover_image->height,
+				  sysbtn_hover_image->tex_id,
+				  0,
+				  0,
+				  sysbtn_hover_image->width,
+				  sysbtn_hover_image->height,
+				  alpha);
 	}
 }
 

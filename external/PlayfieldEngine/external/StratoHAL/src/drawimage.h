@@ -671,14 +671,10 @@ DRAW_IMAGE_3D_ALPHA(
 			continue;
 		if (max_x == INT_MIN)
 			continue;
-		if (min_x < 0)
-			min_x = 0;
-		if (max_x >= dw)
-			max_x = dw - 1;
 
 		tx = sc_min_tx[y];
 		ty = sc_min_ty[y];
-		div = (float)sc_max_x[y] - (float)sc_min_x[y];
+		div = (float)max_x - (float)min_x;
 		if (div != 0) {
 			tx_inc = (sc_max_tx[y] - sc_min_tx[y]) / div;
 			ty_inc = (sc_max_ty[y] - sc_min_ty[y]) / div;

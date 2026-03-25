@@ -497,6 +497,9 @@ init(void)
 
 		/* Start the time measurement. */
 		s3_reset_lap_timer(&sw);
+
+		/* Hide the sysbtn. */
+		s3_enable_sysbtn(false);
 	}
 
 	return true;

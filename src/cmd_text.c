@@ -584,7 +584,7 @@ init(
 
 	/* Show the sysbtn if enabled. */
 	if (conf_sysbtn_enable)
-		s3_show_sysbtn(true);
+		s3_enable_sysbtn(true);
 
 	/* Set repetition behavior */
 	init_repetition();

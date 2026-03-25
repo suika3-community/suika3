@@ -70,7 +70,7 @@ s3i_tag_wait(
 		s3_reset_lap_timer(&sw);
 
 		/* Hide the sysbtn. */
-		s3i_idle_sysbtn();
+		s3_enable_sysbtn(false);
 
 		/* Enter command repetition state */
 		s3_start_command_repetition();

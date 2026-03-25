@@ -651,7 +651,7 @@ s3_start_gui(void)
 	}
 
 	/* Hide the sysbtn. */
-	s3_show_sysbtn(false);
+	s3_enable_sysbtn(false);
 
 	/* Disable skip action by continuous swipe. */
 	s3_set_continuous_swipe_enabled(false);
@@ -667,10 +667,6 @@ s3_stop_gui(void)
 
 	/* Disable GUI mode. */
 	is_gui_running = false;
-
-	/* Show the sysbtn if enabled. */
-	if (conf_sysbtn_enable)
-		s3_show_sysbtn(true);
 }
 
 /*

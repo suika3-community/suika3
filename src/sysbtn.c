@@ -41,6 +41,9 @@
 #include "image.h"
 #include "sysbtn.h"
 
+#include <stdio.h>
+#include <assert.h>
+
 /* Fade in time in milliseconds. */
 #define FADE_IN_TIME	200
 
@@ -56,8 +59,8 @@
 /* Time to wait after system menu GUI in milliseconds. */
 #define GUI_GRACE_TIME	500
 
-/* Flag to show whether the system button is visible or not. */
-static bool is_sysbtn_visible;
+/* Flag to show whether the system button is enabled or not. */
+static bool is_sysbtn_enabled;
 
 /* Flag to show whether the system button is pointed or not. */
 static bool is_sysbtn_pointed;
@@ -90,7 +93,7 @@ s3i_init_sysbtn(void)
 	state = ST_OUT;
 	s3_reset_lap_timer(&sw);
 
-	is_sysbtn_visible = false;
+	is_sysbtn_enabled = false;
 	is_sysbtn_pointed = false;
 	is_sysbtn_clicked = false;
 
@@ -106,22 +109,19 @@ s3i_init_sysbtn(void)
 void
 s3i_cleanup_sysbtn(void)
 {
-	is_sysbtn_visible = false;
+	is_sysbtn_enabled = false;
 	is_sysbtn_pointed = false;
 	is_sysbtn_clicked = false;
 }
 
 /*
- * Reset the sysbtn state.
+ * Control the system button.
  */
 void
-s3i_idle_sysbtn(void)
+s3_enable_sysbtn(
+	bool is_enabled)
 {
-	if (!s3_is_sysbtn_visible()) {
-		state = ST_OUT;
-		s3_reset_lap_timer(&sw);
-		alpha = 0;
-	} else {
+	if (!is_enabled) {
 		switch (state) {
 		case ST_OUT:
 			/* Leave as is. (hidden) */
@@ -132,34 +132,37 @@ s3i_idle_sysbtn(void)
 		case ST_FADE_IN:
 		case ST_APPEAR:
 		case ST_HOVER:
-		case ST_GUI_WAIT:
 			/* Start fading out. */
 			state = ST_FADE_OUT;
 			s3_reset_lap_timer(&sw);
-			alpha = 0;
+			alpha = 255;
 			break;
+		case ST_GUI_WAIT:
+			/* Leave as is. (GUI timeout) */
+			break;
+		}
+
+		is_sysbtn_enabled = false;
+	} else {
+		if (!is_sysbtn_enabled) {
+			/* Set the initial state. */
+			state = ST_OUT;
+			s3_reset_lap_timer(&sw);
+			alpha = 0;
+			is_sysbtn_enabled = true;
+		} else {
+			/* Leave as is. */
 		}
 	}
 }
 
 /*
- * Show or hide the system button.
+ * Check if the system button is enabled.
  */
 bool
-s3_show_sysbtn(
-	bool is_visible)
+s3_is_sysbtn_enabled(void)
 {
-	is_sysbtn_visible = is_visible;
-	return true;
-}
-
-/*
- * Check if the system button is visible.
- */
-bool
-s3_is_sysbtn_visible(void)
-{
-	return is_sysbtn_visible;
+	return is_sysbtn_enabled;
 }
 
 /*
@@ -179,30 +182,37 @@ s3_update_sysbtn_state(void)
 	idle_img = s3_get_sysbtn_idle_image();
 	hover_img = s3_get_sysbtn_hover_image();
 
-	if (s3_is_gui_running())
+	if (s3_is_gui_running()) {
+		/* Special state. */
 		state = ST_GUI;
+	}
 
 	if (state == ST_OUT) {
-		if (mouse_pos_x - last_mouse_pos_x > MOUSE_DELTA ||
-		    mouse_pos_y - last_mouse_pos_y > MOUSE_DELTA) {
-			/* Fade in. */
-			state = ST_FADE_IN;
-			s3_reset_lap_timer(&sw);
-			alpha = 0;
+		if (is_sysbtn_enabled) {
+			if (mouse_pos_x - last_mouse_pos_x > MOUSE_DELTA ||
+			    mouse_pos_y - last_mouse_pos_y > MOUSE_DELTA) {
+				/* Fade in. */
+				state = ST_FADE_IN;
+				s3_reset_lap_timer(&sw);
+				alpha = 0;
 
-			if (mouse_pos_x >= conf_sysbtn_x &&
-			    mouse_pos_x < conf_sysbtn_x + idle_img->width &&
-			    mouse_pos_y >= conf_sysbtn_y &&
-			    mouse_pos_y < conf_sysbtn_y + idle_img->height)
-				is_sysbtn_pointed = true;
-			else
+				if (mouse_pos_x >= conf_sysbtn_x &&
+				    mouse_pos_x < conf_sysbtn_x + idle_img->width &&
+				    mouse_pos_y >= conf_sysbtn_y &&
+				    mouse_pos_y < conf_sysbtn_y + idle_img->height)
+					is_sysbtn_pointed = true;
+				else
+					is_sysbtn_pointed = false;
+			} else {
 				is_sysbtn_pointed = false;
-		} else {
-			is_sysbtn_pointed = false;
-			alpha = 0;
+				alpha = 0;
+			}
 		}
 	} else if (state == ST_FADE_IN) {
 		uint64_t lap;
+
+		assert(is_sysbtn_enabled);
+
 		lap = s3_get_lap_timer_millisec(&sw);
 		if (lap >= FADE_IN_TIME) {
 			/* Show. */
@@ -221,6 +231,8 @@ s3_update_sysbtn_state(void)
 		else
 			is_sysbtn_pointed = false;
 	} else if (state == ST_APPEAR) {
+		assert(is_sysbtn_enabled);
+
 		if (mouse_pos_x >= conf_sysbtn_x &&
 		    mouse_pos_x < conf_sysbtn_x + idle_img->width &&
 		    mouse_pos_y >= conf_sysbtn_y &&
@@ -247,6 +259,8 @@ s3_update_sysbtn_state(void)
 			}
 		}
 	} else if (state == ST_HOVER) {
+		assert(is_sysbtn_enabled);
+
 		if (mouse_pos_x >= conf_sysbtn_x &&
 		    mouse_pos_x < conf_sysbtn_x + hover_img->width &&
 		    mouse_pos_y >= conf_sysbtn_y &&
@@ -263,8 +277,9 @@ s3_update_sysbtn_state(void)
 		}
 	} else if (state == ST_FADE_OUT) {
 		uint64_t lap = s3_get_lap_timer_millisec(&sw);
-		if (mouse_pos_x - last_mouse_pos_x > MOUSE_DELTA ||
-		    mouse_pos_y - last_mouse_pos_y > MOUSE_DELTA) {
+		if (is_sysbtn_enabled &&
+		    ((mouse_pos_x - last_mouse_pos_x > MOUSE_DELTA) ||
+		     (mouse_pos_y - last_mouse_pos_y > MOUSE_DELTA))) {
 			/* Fade in. */
 			state = ST_APPEAR;
 			s3_reset_lap_timer(&sw);
@@ -305,7 +320,7 @@ s3_update_sysbtn_state(void)
 		}
 	}
 
-	if (is_sysbtn_pointed) {
+	if (is_sysbtn_enabled && is_sysbtn_pointed && state == ST_HOVER) {
 		if (mouse_left_clicked)
 			is_sysbtn_clicked = true;
 		else
@@ -340,8 +355,5 @@ s3_is_sysbtn_clicked(void)
 int
 s3i_get_sysbtn_alpha(void)
 {
-	if (!is_sysbtn_visible)
-		return 0;
-
 	return alpha;
 }

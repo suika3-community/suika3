@@ -184,6 +184,12 @@ Suika3 API Reference
     * [Suika.isMixerSoundFinished()](#suikaismixersoundfinished)
     * [Suika.getTrackFileName()](#suikagettrackfilename)
     * [Suika.applyCharacterVolume()](#suikaapplycharactervolume)
+* SysBtn
+    * [Suika.enableSysBtn()](#suikaenablesysbtn)
+    * [Suika.isSysBtnVisible()](#suikaisysbtnvisible)
+    * [Suika.updateSysBtnState()](#suikaupdatesysbtnstate)
+    * [Suika.isSysBtnPointed()](#suikaisysbtnpointed)
+    * [Suika.isSysBtnClicked()](#suikaisysbtnclicked)
 * Text
     * [Suika.getStringWidth()](#suikagetstringwidth)
     * [Suika.getStringHeight()](#suikagetstringheight)
@@ -3102,6 +3108,78 @@ Apply a character's specific volume setting to the VOICE track.
 ### Return
 
 No return.
+
+---
+
+## Suika.enableSysBtn()
+
+Control the system button.
+
+### Parameters (Dictionary)
+
+| Parameter | Type    | Description                                |
+|-----------|---------|--------------------------------------------|
+| isEnabled | Boolean | Enable the system button or not.           |
+
+### Return
+
+No return.
+
+---
+
+## Suika.isSysBtnEnabled()
+
+Check if the system button is enabled.
+
+### Parameters
+
+No parameters.
+
+### Return
+
+Returns a boolean value. 
+
+---
+
+## Suika.updateSysBtnState()
+
+Update the mouse tracking for the system button.
+
+### Parameters
+
+No parameters.
+
+### Return
+
+No return.
+
+---
+
+## Suika.isSysBtnPointed()
+
+Check if the system button is pointed.
+
+### Parameters
+
+No parameters.
+
+### Return
+
+Returns a boolean value.
+
+---
+
+## Suika.isSysBtnClicked()
+
+Check if the system button is clicked.
+
+### Parameters
+
+No parameters.
+
+### Return
+
+Returns a boolean value.
 
 ---
 

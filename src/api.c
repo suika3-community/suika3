@@ -251,8 +251,8 @@ static bool Suika_getTrackFile(void *p);
 static bool Suika_applyCharacterVolume(void *p);
 
 /* System */
-static bool Suika_showSysBtn(void *p);
-static bool Suika_isSysBtnVisible(void *p);
+static bool Suika_enableSysBtn(void *p);
+static bool Suika_isSysBtnEnabled(void *p);
 static bool Suika_updateSysBtnState(void *p);
 static bool Suika_isSysBtnPointed(void *p);
 static bool Suika_isSysBtnClicked(void *p);
@@ -618,8 +618,8 @@ static struct api_func api_func[] = {
 	{"applyCharacterVolume",	Suika_applyCharacterVolume,	1, dict_param},
 
 	/* System */
-	{"showSysBtn",			Suika_showSysBtn,		1, dict_param},
-	{"isSysBtnVisible",		Suika_isSysBtnVisible,		0, NULL},
+	{"enableSysBtn",		Suika_enableSysBtn,		1, dict_param},
+	{"isSysBtnEnabled",		Suika_isSysBtnEnabled,		0, NULL},
 	{"updateSysBtnState",		Suika_updateSysBtnState,	0, NULL},
 	{"isSysBtnPointed",		Suika_isSysBtnPointed,		0, NULL},
 	{"isSysBtnClicked",		Suika_isSysBtnClicked,		0, NULL},
@@ -5957,10 +5957,10 @@ Suika_applyCharacterVolume(
  */
 
 static bool
-Suika_showSysBtn(
+Suika_enableSysBtn(
 	void *p)
 {
-	int show;
+	int is_enabled;
 	bool ret;
 
 	UNUSED_PARAMETER(p);
@@ -5968,10 +5968,10 @@ Suika_showSysBtn(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("show", &show))
+		if (!pf_get_call_arg_int("isEnabled", &is_enabled))
 			break;
 
-		s3_show_sysbtn(show ? true : false);
+		s3_enable_sysbtn(is_enabled ? true : false);
 
 		/* Set the return value. */
 		if (!pf_set_return_int(1))
@@ -5984,14 +5984,14 @@ Suika_showSysBtn(
 }
 
 static bool
-Suika_isSysBtnVisible(
+Suika_isSysBtnEnabled(
 	void *p)
 {
 	int val;
 
 	UNUSED_PARAMETER(p);
 
-	val = s3_is_sysbtn_visible();
+	val = s3_is_sysbtn_enabled();
 
 	/* Set the return value. */
 	if (!pf_set_return_int(val ? 1 : 0))

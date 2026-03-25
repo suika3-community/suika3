@@ -68,7 +68,7 @@ s3i_tag_click(
 		}
 
 		/* Hide the sysbtn. */
-		s3i_idle_sysbtn();
+		s3_enable_sysbtn(false);
 
 		/* Start measuring elapsed time */
 		s3_reset_lap_timer(&sw);
