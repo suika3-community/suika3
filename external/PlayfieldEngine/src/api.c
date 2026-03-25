@@ -1328,7 +1328,8 @@ make_save_file_name(
 }
 
 /* Get a hex character. */
-static char get_hex_char(int val)
+static char
+get_hex_char(int val)
 {
 	switch (val) {
 	case 0:
@@ -1367,7 +1368,7 @@ static char get_hex_char(int val)
 		break;
 	}
 	assert(0);
-	return -1;
+	return '-';
 }
 
 /*
