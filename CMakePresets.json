@@ -699,7 +699,7 @@
             "binaryDir":      "${sourceDir}/build-openharmony-x86_64",
             "toolchainFile":  "$env{OH_NATIVE_SDK_ROOT}/build/cmake/ohos.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":             "Debug",
+                "CMAKE_BUILD_TYPE":             "Release",
                 "OHOS_PLATFORM_LEVEL":          "12",
                 "OHOS_ARCH":                    "x86_64",
                 "SUIKA_TARGET_OPENHARMONY":     "ON",
@@ -713,7 +713,7 @@
             "binaryDir":      "${sourceDir}/build-openharmony-arm64",
             "toolchainFile":  "$env{OH_NATIVE_SDK_ROOT}/build/cmake/ohos.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":             "Debug",
+                "CMAKE_BUILD_TYPE":             "Release",
                 "OHOS_PLATFORM_LEVEL":          "12",
                 "OHOS_ARCH":                    "arm64-v8a",
                 "SUIKA_TARGET_OPENHARMONY":     "ON",
