@@ -776,6 +776,7 @@ endif()
 
 # Windows
 if(   STRATO_TARGET_WINDOWS
+   OR STRATO_TARGET_WINDOWS95
    OR STRATO_TARGET_GDK_WINDOWS
    OR STRATO_TARGET_GDK_XBOX_XS)
   # /utf-8
@@ -794,6 +795,9 @@ if(STRATO_TARGET_WINDOWS95)
   # /utf-8
   if(MSVC)
     target_compile_options(strato PUBLIC /utf-8)
+  endif()
+  if(MINGW)
+    add_definitions(-UUNICODE -U_UNICODE)
   endif()
 endif()
 
