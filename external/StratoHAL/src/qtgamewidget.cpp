@@ -1024,32 +1024,58 @@ extern "C"
 const char *get_system_language(void)
 {
     const char *locale = QLocale().name().toUtf8().data();
-    if (locale == NULL)
+    if (locale == NULL ||
+        locale[0] == '\0' ||
+        locale[1] == '\0')
         return "en";
-    else if (locale[0] == '\0' || locale[1] == '\0')
-        return "en";
-    else if (strncmp(locale, "en", 2) == 0)
-        return "en";
-    else if (strncmp(locale, "fr", 2) == 0)
-        return "fr";
-    else if (strncmp(locale, "de", 2) == 0)
-        return "de";
-    else if (strncmp(locale, "it", 2) == 0)
-        return "it";
-    else if (strncmp(locale, "es", 2) == 0)
-        return "es";
-    else if (strncmp(locale, "el", 2) == 0)
-        return "el";
-    else if (strncmp(locale, "ru", 2) == 0)
-        return "ru";
-    else if (strncmp(locale, "zh_CN", 5) == 0)
-        return "zh";
-    else if (strncmp(locale, "zh_TW", 5) == 0)
-        return "tw";
-    else if (strncmp(locale, "ja", 2) == 0)
-        return "ja";
 
-    return "other";
+	/* English */
+	if (strncmp(locale, "en_AU", 5) == 0)
+		return "en-au";
+	if (strncmp(locale, "en_GB", 5) == 0)
+		return "en-gb";
+	if (strncmp(locale, "en_NZ", 5) == 0)
+		return "en-nz";
+	if (strncmp(locale, "en_US", 5) == 0)
+		return "en-us";
+	if (strncmp(locale, "en", 2) == 0)
+		return "en";
+
+	/* French */
+	if (strncmp(locale, "fr_CA", 5) == 0)
+		return "fr-ca";
+	if (strncmp(locale, "fr", 2) == 0)
+		return "fr";
+
+	/* Spanish */
+	if (strncmp(locale, "es_ES", 5) == 0)
+		return "es";
+	if (strncmp(locale, "es", 2) == 0)
+		return "es-la";
+
+	/* Chinese */
+	if (strncmp(locale, "zh_TW", 5) == 0 ||
+	    strncmp(locale, "zh_HK", 5) == 0)
+		return "zh-tw";
+	if (strncmp(locale, "zh", 2) == 0)
+		return "zh-cn";
+
+	/* Others */
+	if (strncmp(locale, "ja", 2) == 0)
+		return "ja";
+	if (strncmp(locale, "de", 2) == 0)
+		return "de";
+	if (strncmp(locale, "it", 2) == 0)
+		return "it";
+	if (strncmp(locale, "el", 2) == 0)
+		return "el";
+	if (strncmp(locale, "ru", 2) == 0)
+		return "ru";
+	if (strncmp(locale, "ko", 2) == 0)
+		return "ko";
+
+	/* Fallback */
+	return "en";
 }
 
 //

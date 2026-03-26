@@ -2147,32 +2147,52 @@ hal_leave_full_screen_mode(void)
 const char *
 hal_get_system_language(void)
 {
-	DWORD dwLang = GetUserDefaultLCID() & 0x3ff;
-	switch (dwLang) {
-	case LANG_ENGLISH:
-		return "en";
-	case LANG_FRENCH:
-		return "fr";
-	case LANG_GERMAN:
+    LCID lcid = GetUserDefaultLCID();
+    WORD langId = PRIMARYLANGID(lcid);
+    WORD sublangId = SUBLANGID(lcid);
+
+    switch (langId) {
+    case LANG_ENGLISH:
+        switch (sublangId) {
+        case SUBLANG_ENGLISH_US:  return "en-us";
+        case SUBLANG_ENGLISH_UK:  return "en-gb";
+        case SUBLANG_ENGLISH_AUS: return "en-au";
+        case SUBLANG_ENGLISH_NZ:  return "en-nz";
+        default:                  return "en";
+        }
+    case LANG_FRENCH:
+        switch (sublangId) {
+        case SUBLANG_FRENCH:          return "fr-fr";
+        case SUBLANG_FRENCH_CANADIAN: return "fr-ca";
+        default:                      return "fr";
+        }
+    case LANG_SPANISH:
+		switch (sublangId) {
+		case SUBLANG_SPANISH:         return "es-es";
+		case SUBLANG_SPANISH_MODERN:  return "es-es";
+		default:                      return "es-la";
+		}
+    case LANG_GERMAN:
 		return "de";
-	case LANG_SPANISH:
-		return "es";
-	case LANG_ITALIAN:
+    case LANG_ITALIAN:
 		return "it";
-	case LANG_GREEK:
+    case LANG_GREEK:
 		return "el";
-	case LANG_RUSSIAN:
+    case LANG_RUSSIAN:
 		return "ru";
-	case LANG_CHINESE_SIMPLIFIED:
-		return "zh";
-	case LANG_CHINESE_TRADITIONAL:
-		return "tw";
-	case LANG_JAPANESE:
+    case LANG_JAPANESE:
 		return "ja";
-	default:
-		break;
-	}
-	return "en";
+    case LANG_CHINESE:
+		switch (sublangId) {
+		case SUBLANG_CHINESE_SIMPLIFIED:  return "zh-cn";
+		case SUBLANG_CHINESE_HONGKONG:    return "zh-tw";
+        case SUBLANG_CHINESE_TRADITIONAL: return "zh-tw";
+        default:                          return "zh-cn";
+		}
+    default:
+        break;
+    }
+    return "en";
 }
 
 /* Not used in Windows. */

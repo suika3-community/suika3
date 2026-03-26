@@ -1116,21 +1116,130 @@ hal_leave_full_screen_mode(void)
 	});
 }
 
-const char *
-hal_get_system_locale(void)
+/*
+ * Get a system language.
+ */
+EM_JS(int, get_system_lang_id, (void), {
+    const lang = window.navigator.language;
+
+    /* English */
+    if (lang.startsWith("en-AU"))
+	    return 101;
+    if (lang.startsWith("en-GB"))
+	    return 102;
+    if (lang.startsWith("en-NZ"))
+	    return 103;
+    if (lang.startsWith("en-US"))
+	    return 104;
+    if (lang.startsWith("en"))
+	    return 100;
+
+    /* French */
+    if (lang.startsWith("fr-CA"))
+	    return 201;
+    if (lang.startsWith("fr"))
+	    return 200;
+
+    /* Spanish */
+    if (lang.startsWith("es-ES"))
+	    return 300;
+    if (lang.startsWith("es"))
+	    return 301;
+
+    /* Chinese */
+    if (lang.startsWith("zh-TW") ||
+	lang.startsWith("zh-HK") ||
+	lang.startsWith("zh-Hant"))
+	    return 701;
+    if (lang.startsWith("zh"))
+	    return 700;
+
+    /* Others */
+    if (lang.startsWith("ja"))
+	    return 10;
+    if (lang.startsWith("de"))
+	    return 20;
+    if (lang.startsWith("it"))
+	    return 30;
+    if (lang.startsWith("el"))
+	    return 40;
+    if (lang.startsWith("ru"))
+	    return 50;
+    if (lang.startsWith("ko"))
+	    return 60;
+
+    /* Fallback */
+    return -1;
+});
+void init_lang_code(void)
 {
-	int lang_code;
+    switch (get_system_lang_id()) {
+    /* English */
+    case 100:
+	    lang_code = "en";
+	    break;
+    case 101:
+	    lang_code = "en-au";
+	    break;
+    case 102:
+	    lang_code = "en-gb";
+	    break;
+    case 103:
+	    lang_code = "en-nz";
+	    break;
+    case 104:
+	    lang_code = "en-us";
+	    break;
+    /* French */
+    case 200:
+	    lang_code = "fr-fr";
+	    break;
+    case 201: lang_code = "fr-ca";
+	    break;
+    /* Spanish */
+    case 300:
+	    lang_code = "es-es";
+	    break;
+    case 301:
+	    lang_code = "es-la";
+	    break;
+    /* Chinese */
+    case 700:
+	    lang_code = "zh-cn";
+	    break;
+    case 701:
+	    lang_code = "zh-tw";
+	    break;
+    /* Others */
+    case 10:
+	    lang_code = "ja";
+	    break;
+    case 20:
+	    lang_code = "de";
+	    break;
+    case 30:
+	    lang_code = "it";
+	    break;
+    case 40:
+	    lang_code = "el";
+	    break;
+    case 50:
+	    lang_code = "ru";
+	    break;
+    case 60:
+	    lang_code = "ko";
+	    break;
+    /* Fallback */
+    default:
+	    lang_code = "en";
+	    break;
+    }
+}
 
-	lang_code = EM_ASM_INT({
-		if (window.navigator.language.startsWith("ja"))
-			return 0;
-		return 1;
-	});
-
-	if (lang_code == 0)
-		return "ja";
-
-	return "en";
+const char *
+hal_get_system_language(void)
+{
+	return lang_code;
 }
 
 void

@@ -108,7 +108,7 @@ static int screen_height;
 /*
  * Forward declarations.
  */
-static void init_locale(void);
+static void init_locale(JNIEnv *env);
 static void do_delayed_remove_rfile_ref(void);
 
 /*
@@ -128,7 +128,7 @@ Java_io_noctvm_playfield_engineandroid_MainActivity_nativeInitGame(
 	state_video = false;
 
 	/* Init the locale. */
-	init_locale();
+	init_locale(env);
 
 	/* Init the file HAL. */
 	if (!init_file()) {
@@ -160,38 +160,90 @@ Java_io_noctvm_playfield_engineandroid_MainActivity_nativeInitGame(
 	jni_env = NULL;
 }
 
-static void init_locale(void)
+static void
+init_locale(
+	JNIEnv *env)
 {
-	const char *locale;
+    const char *langCode;
+    jclass clazz;
+    jfieldID fid;
+    jstring jLang;
 
-	locale = setlocale(LC_ALL, "C");
+    do {
+	    langCode = NULL;
+	    jLang = NULL;
 
-	if (locale == NULL)
-		lang_code = "en";
-	else if (locale[0] == '\0' || locale[1] == '\0')
-		lang_code = "en";
-	else if (strncmp(locale, "en", 2) == 0)
-		lang_code = "en";
-	else if (strncmp(locale, "fr", 2) == 0)
-		lang_code = "fr";
-	else if (strncmp(locale, "de", 2) == 0)
-		lang_code = "de";
-	else if (strncmp(locale, "it", 2) == 0)
-		lang_code = "it";
-	else if (strncmp(locale, "es", 2) == 0)
-		lang_code = "es";
-	else if (strncmp(locale, "el", 2) == 0)
-		lang_code = "el";
-	else if (strncmp(locale, "ru", 2) == 0)
-		lang_code = "ru";
-	else if (strncmp(locale, "zh_CN", 5) == 0)
-		lang_code = "zh";
-	else if (strncmp(locale, "zh_TW", 5) == 0)
-		lang_code = "tw";
-	else if (strncmp(locale, "ja", 2) == 0)
-		lang_code = "ja";
-	else
-		lang_code = "en";
+	    /* Get the MainActivity class. */
+	    clazz = (*env)->FindClass(env, "com/example/myapp/MainActivity");
+	    if (clazz == NULL)
+		    break;
+
+	    /* Get the MainActivity.language field. */
+	    fid = (*env)->GetStaticFieldID(env, clazz, "language", "Ljava/lang/String;");
+	    if (fid == NULL)
+		    break;
+
+	    /* Get the String obeject. */
+	    jLang = (jstring)(*env)->GetStaticObjectField(env, clazz, fid);
+	    if (jLang == NULL)
+		    break;
+
+	    // Get the char pointer.
+	    langCode = (*env)->GetStringUTFChars(env, jLang, NULL);
+    } while (0);
+
+    /* Fallback */
+    if (langCode == NULL || langCode[0] == '\0') {
+        lang_code = "en";
+        return;
+    }
+
+    /* English */
+    if (strncmp(langCode, "en_AU", 5) == 0)
+	    lang_code = "en-au";
+    else if (strncmp(langCode, "en_GB", 5) == 0)
+	    lang_code = "en-gb";
+    else if (strncmp(langCode, "en_NZ", 5) == 0)
+	    lang_code = "en-nz";
+    else if (strncmp(langCode, "en_US", 5) == 0)
+	    lang_code = "en-us";
+    else if (strncmp(langCode, "en", 2) == 0)
+	    lang_code = "en";
+    /* French */
+    else if (strncmp(langCode, "fr_CA", 5) == 0)
+	    lang_code = "fr-ca";
+    else if (strncmp(langCode, "fr", 2) == 0)
+	    lang_code = "fr-fr";
+    /* Spanish */
+    else if (strncmp(langCode, "es_ES", 5) == 0)
+	    lang_code = "es-es";
+    else if (strncmp(langCode, "es", 2) == 0)
+	    lang_code = "es-la";
+    /* Chinese */
+    else if (strncmp(langCode, "zh_TW", 5) == 0 ||
+	     strncmp(langCode, "zh_HK", 5) == 0)
+	    lang_code = "zh-tw";
+    else if (strncmp(langCode, "zh", 2) == 0)
+	    lang_code = "zh-cn";
+    /* Others */
+    else if (strncmp(langCode, "ja", 2) == 0)
+	    lang_code = "ja";
+    else if (strncmp(langCode, "de", 2) == 0)
+	    lang_code = "de";
+    else if (strncmp(langCode, "it", 2) == 0)
+	    lang_code = "it";
+    else if (strncmp(langCode, "el", 2) == 0)
+	    lang_code = "el";
+    else if (strncmp(langCode, "ru", 2) == 0)
+	    lang_code = "ru";
+    else if (strncmp(langCode, "ko", 2) == 0)
+	    lang_code = "ko";
+    /* Fallback */
+    else
+        lang_code = "en";
+
+    if (jLang != NULL)
+	    (*env)->ReleaseStringUTFChars(env, jLang, langCode);
 }
 
 JNIEXPORT jint JNICALL

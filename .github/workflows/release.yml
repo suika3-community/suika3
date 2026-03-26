@@ -796,7 +796,8 @@ jobs:
             Playfield-${{ env.DATE }}-${{ env.SHORT_SHA }}.zip
             Playfield-${{ env.DATE }}-${{ env.SHORT_SHA }}.7z
           body: |
-            This automated release includes standalone engines for Windows, macOS, and Linux.
-            In addition, export kits for WebAssembly, iOS, Android, and Unity are included.
+            This is an artifact of the automatic build, not an official release.
+            The zip includes standalone engines for Windows, macOS, and Linux (x86_64).
+            In addition, export kits for WebAssembly, iOS, Android, HarmonyOS NEXT, and Unity are included.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -198,6 +198,8 @@ static void initGamepad(void)
         GCController *controller = note.object;
 
         controller.extendedGamepad.dpad.up.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed) {
+            UNUSED_PARAMETER(button);
+            UNUSED_PARAMETER(value);
             if (pressed) {
                 hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_UP);
                 hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_DOWN);
@@ -206,6 +208,8 @@ static void initGamepad(void)
             }
         };
         controller.extendedGamepad.dpad.down.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed) {
+            UNUSED_PARAMETER(button);
+            UNUSED_PARAMETER(value);
             if (pressed) {
                 hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_DOWN);
                 hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_UP);
@@ -214,6 +218,8 @@ static void initGamepad(void)
             }
         };
         controller.extendedGamepad.dpad.left.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed) {
+            UNUSED_PARAMETER(button);
+            UNUSED_PARAMETER(value);
             if (pressed) {
                 hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_LEFT);
                 hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_RIGHT);
@@ -222,6 +228,8 @@ static void initGamepad(void)
             }
         };
         controller.extendedGamepad.dpad.right.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed) {
+            UNUSED_PARAMETER(button);
+            UNUSED_PARAMETER(value);
             if (pressed) {
                 hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_RIGHT);
                 hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_LEFT);
@@ -230,57 +238,77 @@ static void initGamepad(void)
             }
         };
         controller.extendedGamepad.buttonA.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed) {
+            UNUSED_PARAMETER(button);
+            UNUSED_PARAMETER(value);
             if (pressed) 
                 hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_A);
             else
                 hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_A); 
         };
         controller.extendedGamepad.buttonB.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed) {
+            UNUSED_PARAMETER(button);
+            UNUSED_PARAMETER(value);
             if (pressed)
                 hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_B);
             else
                 hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_B);
         };
         controller.extendedGamepad.buttonX.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed) {
+            UNUSED_PARAMETER(button);
+            UNUSED_PARAMETER(value);
             if (pressed)
                 hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_X);
             else
                 hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_X);
         };
         controller.extendedGamepad.buttonY.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed) {
+            UNUSED_PARAMETER(button);
+            UNUSED_PARAMETER(value);
             if (pressed)
                 hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_Y);
             else
                 hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_Y);
         };
         controller.extendedGamepad.leftShoulder.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed) {
+            UNUSED_PARAMETER(button);
+            UNUSED_PARAMETER(value);
             if (pressed)
                 hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_L);
             else
                 hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_L);
         };
         controller.extendedGamepad.rightShoulder.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed) {
+            UNUSED_PARAMETER(button);
+            UNUSED_PARAMETER(value);
             if (pressed)
                 hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_R);
             else
                 hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_R);
         };
         controller.extendedGamepad.leftThumbstick.xAxis.valueChangedHandler = ^(GCControllerAxisInput *axis, float value) {
+            UNUSED_PARAMETER(axis);
             hal_callback_on_event_analog_input(HAL_ANALOG_X1, (int)(value * 32767));
         };
         controller.extendedGamepad.leftThumbstick.yAxis.valueChangedHandler = ^(GCControllerAxisInput *axis, float value) {
+            UNUSED_PARAMETER(axis);
             hal_callback_on_event_analog_input(HAL_ANALOG_Y1, (int)(value * 32767));
         };
         controller.extendedGamepad.rightThumbstick.xAxis.valueChangedHandler = ^(GCControllerAxisInput *axis, float value) {
+            UNUSED_PARAMETER(axis);
             hal_callback_on_event_analog_input(HAL_ANALOG_X2, (int)(value * 32767));
         };
         controller.extendedGamepad.rightThumbstick.yAxis.valueChangedHandler = ^(GCControllerAxisInput *axis, float value) {
+            UNUSED_PARAMETER(axis);
             hal_callback_on_event_analog_input(HAL_ANALOG_Y2, (int)(value * 32767));
         };
         controller.extendedGamepad.leftTrigger.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed) {
+            UNUSED_PARAMETER(button);
+            UNUSED_PARAMETER(pressed);
             hal_callback_on_event_analog_input(HAL_ANALOG_L, (int)(value * 32767));
         };
         controller.extendedGamepad.rightTrigger.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed) {
+            UNUSED_PARAMETER(button);
+            UNUSED_PARAMETER(pressed);
             hal_callback_on_event_analog_input(HAL_ANALOG_R, (int)(value * 32767));
         };
     }];
@@ -757,28 +785,58 @@ hal_leave_full_screen_mode(void)
 const char *
 hal_get_system_language(void)
 {
-    NSString *language = [[NSLocale preferredLanguages] objectAtIndex:0];
-    if ([language hasPrefix:@"ja"])
-        return "ja";
+    NSArray *languages = [NSLocale preferredLanguages];
+    if (languages.count == 0)
+            return "en";
+    
+    NSString *language = [languages objectAtIndex:0];
+
+    // English
+    if ([language hasPrefix:@"en-AU"])
+            return "en-au";
+    if ([language hasPrefix:@"en-GB"])
+            return "en-gb";
+    if ([language hasPrefix:@"en-NZ"])
+            return "en-nz";
+    if ([language hasPrefix:@"en-US"])
+            return "en-us";
     if ([language hasPrefix:@"en"])
-        return "en";
+            return "en";
+
+    // French
+    if ([language hasPrefix:@"fr-CA"])
+            return "fr-ca";
     if ([language hasPrefix:@"fr"])
-        return "fr";
-    if ([language hasPrefix:@"de"])
-        return "de";
+            return "fr-fr";
+
+    // Spanish
+    if ([language hasPrefix:@"es-ES"])
+            return "es-es";
     if ([language hasPrefix:@"es"])
-        return "es";
-    if ([language hasPrefix:@"it"])
-        return "it";
-    if ([language hasPrefix:@"el"])
-        return "el";
-    if ([language hasPrefix:@"ru"])
-        return "ru";
+            return "es-la";
+
+    // Chinese
     if ([language hasPrefix:@"zh-Hans"])
-        return "zh";
-    if ([language hasPrefix:@"zh-Hant"])
-        return "tw";
-    return "other";
+            return "zh-cn";
+    if ([language hasPrefix:@"zh-Hant"] || [language hasPrefix:@"zh-HK"])
+            return "zh-tw";
+
+    // Others (Single)
+    if ([language hasPrefix:@"de"])
+            return "de";
+    if ([language hasPrefix:@"it"])
+            return "it";
+    if ([language hasPrefix:@"el"])
+            return "el";
+    if ([language hasPrefix:@"ru"])
+            return "ru";
+    if ([language hasPrefix:@"ko"])
+            return "ko";
+    if ([language hasPrefix:@"ja"])
+            return "ja";
+
+    // Other.
+    return "en";
 }
 
 // Not used in macOS.

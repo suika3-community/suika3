@@ -20,7 +20,7 @@ with open("message.txt") as f:
             print("        return \"" + last + "\";")
             print("    }")
         else:
-            print("        if (strcmp(lang_code, \"" + line[0:2] + "\") == 0) return \"" + line[3:] + "\";")
+            print("        if (strncmp(lang_code, \"" + line[0:2] + "\", " + str(len(line[0:2])) + ") == 0) return \"" + line[3:] + "\";")
 
     print("    return msg;")
     print("}")

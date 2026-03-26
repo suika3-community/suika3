@@ -237,8 +237,8 @@ SetLanguage(
     napi_env env,
     napi_callback_info info)
 {
-    size_t argc = 2;
-    napi_value argv[2] = {nullptr, nullptr};
+    size_t argc = 1;
+    napi_value argv[1] = {nullptr};
     napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr);
 
     size_t length = 0;
@@ -247,37 +247,51 @@ SetLanguage(
     napi_get_value_string_utf8(env, argv[0], language.data(), language.size(), &length);
 
     const char *lang = language.data();
-    if (strncmp(lang, "en", 2) == 0) {
+
+    /* English */
+    if (strncmp(lang, "en-AU", 5) == 0)
+        langName = "en-au";
+    else if (strncmp(lang, "en-GB", 5) == 0)
+        langName = "en-gb";
+    else if (strncmp(lang, "en-NZ", 5) == 0)
+        langName = "en-nz";
+    else if (strncmp(lang, "en-US", 5) == 0)
+        langName = "en-us";
+    else if (strncmp(lang, "en", 2) == 0)
         langName = "en";
-    } else if (strncmp(lang, "fr", 2) == 0) {
-        langName = "fr";
-    } else if (strncmp(lang, "it", 2) == 0) {
-        langName = "it";
-    } else if (strncmp(lang, "es", 2) == 0) {
-        langName = "es";
-    } else if (strncmp(lang, "de", 2) == 0) {
-        langName = "de";
-    } else if (strncmp(lang, "el", 2) == 0) {
-        langName = "el";
-    } else if (strncmp(lang, "ru", 2) == 0) {
-        langName = "ru";
-    } else if (strncmp(lang, "zh-Hans", 7) == 0) {
-            langName = "zh";
-    } else if (strncmp(lang, "zh-CN", 5) == 0) {
-            langName = "zh";
-    } else if (strncmp(lang, "zh-Hant", 7) == 0) {
-            langName = "tw";
-    } else if (strncmp(lang, "zh-TW", 5) == 0) {
-            langName = "tw";
-    } else if (strncmp(lang, "zh-HK", 5) == 0) {
-            langName = "tw";
-    } else if (strncmp(lang, "zh", 2) == 0) {
-            langName = "zh";
-    } else if (strcmp(lang, "ja") == 0) {
+    /* French */
+    else if (strncmp(lang, "fr-CA", 5) == 0)
+        langName = "fr-ca";
+    else if (strncmp(lang, "fr", 2) == 0)
+        langName = "fr-fr";
+    /* Spanish */
+    else if (strncmp(lang, "es-ES", 5) == 0)
+        langName = "es-es";
+    else if (strncmp(lang, "es", 2) == 0)
+        langName = "es-la";
+    /* Chinese */
+    else if (strstr(lang, "Hant") != nullptr ||
+             strncmp(lang, "zh-TW", 5) == 0 ||
+             strncmp(lang, "zh-HK", 5) == 0)
+        langName = "zh-tw";
+    else if (strncmp(lang, "zh", 2) == 0)
+        langName = "zh-cn";
+    /* Others */
+    else if (strncmp(lang, "ja", 2) == 0)
         langName = "ja";
-    } else {
-        langName = "other";
-    }
+    else if (strncmp(lang, "de", 2) == 0)
+        langName = "de";
+    else if (strncmp(lang, "it", 2) == 0)
+        langName = "it";
+    else if (strncmp(lang, "el", 2) == 0)
+        langName = "el";
+    else if (strncmp(lang, "ru", 2) == 0)
+        langName = "ru";
+    else if (strncmp(lang, "ko", 2) == 0)
+        langName = "ko";
+    /* Fallback */
+    else
+        langName = "en";
 
     return nullptr;
 }
