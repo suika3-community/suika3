@@ -486,6 +486,13 @@ s3i_cleanup_conf(void);
 /*
  * Initialize various settings by config values.
  */
-bool s3i_apply_initial_values(void);
+bool
+s3i_apply_initial_values(void);
+
+/*
+ * Get the major locale. (e.g. returns "en" for "en-us")
+ */
+const char *
+s3i_get_major_locale(void);
 
 #endif

@@ -124,7 +124,6 @@ static const char *result_var_name;
 static bool init(void);
 static bool main_process(void);
 static bool get_text_arg(int index, const char **text, const char **value);
-static const char *get_locale_larger(const char *locale);
 static void draw_text(int index, bool is_idle);
 static void process_main_input(void);
 static int get_pointed_index(void);
@@ -298,18 +297,18 @@ get_text_arg(
 	 * Try a localized text.
 	 */
 
-	/* Try a full locale such as "en-US". */
+	/* Try a full locale such as "en-us". */
 	snprintf(name, sizeof(name), "text%d-%s", index + 1, locale);
 	*text = s3_get_tag_arg_string(name, true, NULL);
 	if (*text == NULL) {
-		/* Fallback to a larger locale such as "en". */
-		locale = get_locale_larger(locale);
+		/* Fallback to a major locale such as "en" for "en-us". */
+		locale = s3i_get_major_locale();
 		if (locale != NULL) {
 			snprintf(name, sizeof(name), "text%d-%s", index + 1, locale);
 			*text = s3_get_tag_arg_string(name, true, NULL);
 		}
 
-		/* Fallback. */
+		/* Fallback to a non-localized text. */
 		if (*text == NULL) {
 			snprintf(name, sizeof(name), "text%d", index + 1);
 			*text = s3_get_tag_arg_string(name, true, NULL);
@@ -330,19 +329,6 @@ get_text_arg(
 			
 	/* Option found for the index. */
 	return true;
-}
-
-static const char *
-get_locale_larger(
-	const char *locale)
-{
-	if (strncmp(locale, "en-", 3) == 0)
-		return "en";
-	if (strncmp(locale, "fr-", 3) == 0)
-		return "fr";
-	if (strncmp(locale, "es-", 3) == 0)
-		return "es";
-	return NULL;
 }
 
 /* Draw an option text to a choose box layer. */

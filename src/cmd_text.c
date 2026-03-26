@@ -276,6 +276,7 @@ static void postprocess(void);
 
 /* Initialization */
 static bool init(bool *cont);
+static bool init_page_mode(bool *exit);
 static void init_flags_and_vars(void);
 static void init_auto_mode(void);
 static void init_skip_mode(void);
@@ -283,10 +284,8 @@ static void init_colors(void);
 static bool init_name_top(void);
 static bool init_voice_file(void);
 static bool init_msg_top(void);
-static const char *skip_lf(const char *m, int *lf);
-static void put_space(void);
+static const char *get_localized_text(void);
 static bool register_message_for_history(const char *msg);
-static char *concat_serif(const char *name, const char *serif);
 static bool init_msgbox(void);
 static bool init_serif(void);
 static bool check_play_voice(void);
@@ -494,36 +493,11 @@ init(
 
 	/* If page mode */
 	if (s3_is_page_mode()) {
-		const char *s = s3_get_tag_arg_string("text", false, NULL);
-		if (strcasecmp(s, "\\page") == 0 || strcmp(s, "\\P") == 0 || strcmp(s, "\\===") == 0 ||
-		    strcasecmp(s, "\\erase") == 0 || strcmp(s, "\\E") == 0) {
-			int msgbox_x, msgbox_y, msgbox_w, msgbox_h;
-			s3_clear_buffered_message();
-			s3_reset_page_line();
-			s3_fill_msgbox();
-			s3_get_msgbox_rect(&msgbox_x, &msgbox_y, &msgbox_w, &msgbox_h);
-			if (!conf_msgbox_font_tategaki) {
-				pen_x = conf_msgbox_margin_left;
-				pen_y = conf_msgbox_margin_top;
-			} else {
-				pen_x = msgbox_w - conf_msgbox_margin_right - conf_msgbox_font_size;
-				pen_y = conf_msgbox_margin_top;
-			}
-			*cont = true;
+		bool exit;
+		if (!init_page_mode(&exit))
+			return false;
+		if (exit)
 			return true;
-		} else if (strcasecmp(s, "\\click") == 0 || strcmp(s, "\\C") == 0 || strcmp(s, "\\---") == 0) {
-			// Do normal initialization.
-		} else {
-			if (!s3_is_page_top()) {
-				if (!s3_append_buffered_message("\\n"))
-					return false;
-			}
-			if (!s3_append_buffered_message(s))
-				return false;
-			s3_inc_page_line();
-			*cont = true;
-			return true;
-		}
 	}
 
 	/* Initialize flags */
@@ -550,14 +524,11 @@ init(
 	if (!init_msg_top())
 		return false;
 
-	/* If registered in history but not displayed */
-	/*
-	 * if (conf_msgbox_history_control != NULL &&
-	 *     strcmp(conf_msgbox_history_control, "only-history") == 0) {
-	 * 	no_show = true;
-	 * 	return true;
-	 * }
-	 */
+	/* If register to the history but not displayed. */
+	if (strcmp(s3_get_tag_arg_string("only-history", true, ""), "true") == 0) {
+		no_show = true;
+		return true;
+	}
 
 	/* Initialize the message box */
 	if (!init_msgbox())
@@ -599,6 +570,85 @@ init(
 	s3_set_continuous_swipe_enabled(true);
 
 	return true;
+}
+
+/* Initialize for the page mode. */
+static bool
+init_page_mode(bool *exit)
+{
+	const char *action;
+	const char *msg;
+
+	action = s3_get_tag_arg_string("action", true, NULL);
+
+	/* If no action specified, or "flush" action is specified. */
+	if (action == NULL || strcmp(action, "flush") == 0) {
+		/* Get the text. */
+		msg = get_localized_text();
+		if (msg == NULL)
+			return false;
+
+		/* Append the message. */
+		if (!s3_append_buffered_message(msg))
+			return false;
+
+		/* Increment the line number. */
+		s3_inc_page_line();
+
+		/* Continue a normal execution. */
+		*exit = false;
+		return true;
+	}
+
+	/* If "append" action is specified.*/
+	if (strcmp(action, "append") == 0) {
+		/* Get the text. */
+		msg = get_localized_text();
+		if (msg == NULL)
+			return false;
+
+		/* Append the message. */
+		if (!s3_append_buffered_message(msg))
+			return false;
+
+		/* Increment the line number. */
+		s3_inc_page_line();
+
+		/* Exit. */
+		*exit = false;
+		return true;
+	}
+
+	/* If "new-page" action specified. */
+	if (strcmp(action, "new-page") == 0) {
+		int msgbox_x, msgbox_y, msgbox_w, msgbox_h;
+
+		/* Clear the message buffer. */
+		s3_clear_buffered_message();
+
+		/* Reset the line number. */
+		s3_reset_page_line();
+
+		/* Clear the message box image. */
+		s3_fill_msgbox();
+
+		/* Clear the pen position. */
+		s3_get_msgbox_rect(&msgbox_x, &msgbox_y, &msgbox_w, &msgbox_h);
+		if (!conf_msgbox_font_tategaki) {
+			pen_x = conf_msgbox_margin_left;
+			pen_y = conf_msgbox_margin_top;
+		} else {
+			pen_x = msgbox_w - conf_msgbox_margin_right - conf_msgbox_font_size;
+			pen_y = conf_msgbox_margin_top;
+		}
+
+		/* Exit. */
+		*exit = true;
+		return true;
+	}
+
+	s3_log_tag_error(S3_TR("Unknown action \"%s\" is specified."), action);
+	return false;
 }
 
 /* Initialize flags */
@@ -827,155 +877,88 @@ init_voice_file(void)
 static bool
 init_msg_top(void)
 {
-	const char *raw_msg;
-	char *exp_msg;
-	int lf;
-	bool is_serif;
+	const char *msg;
 
 	/* Do not process if returned from system GUI */
 	if (gui_sys_flag)
 		return true;
 
-	/* If returned from load/title, msg_top remains, so free it */
+	/* If a load or a back-to-title executed, msg_top still remains, so free it. */
 	if (msg_top != NULL) {
 		free(msg_top);
 		msg_top = NULL;
 	}
 
-	/* If in page mode */
+	/* If we are in the page mode. */
 	if (s3_is_page_mode()) {
-		raw_msg = s3_get_buffered_message();
-		is_serif = false;
-		is_continue_mode = true;
+		/* Page mode: Use the buffered message. */
+		msg = s3_get_buffered_message();
 	} else {
-		/* Get the argument */
-		raw_msg = s3_get_tag_arg_string("text", false, NULL);
-
-		/* Check if it is a continuation line */
-		if (*raw_msg == '\\' && !s3_is_escape_sequence_char(*(raw_msg + 1))) {
-			is_continue_mode = true;
-
-			/* Skip the leading newline */
-			raw_msg = skip_lf(raw_msg + 1, &lf);
-
-			/* If locale is not Japanese and there is no newline */
-			if (conf_game_locale != NULL && strcmp(conf_game_locale, "ja") != 0 && lf == 0)
-				put_space();
-		} else {
-			is_continue_mode = false;
-		}
+		/* Normal mode: Get the argument of this tag. */
+		msg = get_localized_text();
 	}
-
-	/* Expand variables */
-	// FIXME
-	exp_msg = strdup(raw_msg);
-	/*
-	 * exp_msg = strdup(s3_expand_string_with_variable(raw_msg));
-	 * if (exp_msg == NULL) {
-	 * 	s3_log_out_of_memory();
-	 * 	return false;
-	 * }
-	 */
 
 	/* Register message history for history screen */
-	if (!register_message_for_history(exp_msg)) {
-		free(exp_msg);
+	if (!register_message_for_history(msg))
+		return false;
+
+	/* Save the message. (for save. do not save if this is a first tag for a load.) */
+	if (!load_flag) {
+		if (!s3_set_last_message(msg))
+			return false;
+	}
+
+	/*
+	 * Duplicate the text because a tag parameter may be freed by
+	 * s3_evaluate_tag(). If we don't duplicate the text, it will
+	 * be a use-after-free in case we returned from the system GUI.
+	 */
+	msg_top = strdup(msg);
+	if (msg_top == NULL) {
+		s3_log_out_of_memory();
 		return false;
 	}
-
-	/* Save the message for saving */
-	if (!load_flag) {
-		if (!s3_set_last_message(exp_msg, is_continue_mode)) {
-			free(exp_msg);
-			return false;
-		}
-	}
-
-	/* If it is a serif, decorate the message to be actually displayed */
-	if (is_serif) {
-		if (!conf_namebox_enable) {
-			/* Add name and quotation marks */
-			msg_top = concat_serif(name_top, exp_msg);
-			if (msg_top == NULL) {
-				s3_log_out_of_memory();
-				free(exp_msg);
-				return false;
-			}
-			free(exp_msg);
-		} else {
-			/* If nothing is added */
-			msg_top = exp_msg;
-		}
-	} else {
-		/* If it is a message, display it as is */
-		msg_top = exp_msg;
-	}
-
-	/* If started with load, disable continuation mode */
-#if 0
-	if (load_flag && is_continue_mode)
-		is_continue_mode = false;
-#endif
 
 	return true;
 }
 
-/* Skip the leading newline of a continuation line */
+/* Get the text for the current locale. */
 static const char *
-skip_lf(
-	const char *m,
-	int *lf)
+get_localized_text(void)
 {
-	assert(is_continue_mode);
+	char name[128];
+	const char *locale;
+	const char *text;
 
-	*lf = 0;
-	while (*m == '\\') {
-		if (*(m + 1) == 'n') {
-			(*lf)++;
-			m += 2;
+	locale = s3_get_locale();
+	assert(locale != NULL);
 
-			/* If started with load, do not perform the leading newline */
-			if (load_flag)
-				continue;
+	/*
+	 * Try a localized text.
+	 */
 
-			/* Move the pen to a new line */
-			if (!conf_msgbox_font_tategaki) {
-				pen_x = conf_msgbox_margin_left;
-				pen_y += conf_msgbox_margin_line;
-			} else {
-				pen_x -= conf_msgbox_margin_line;
-				pen_y = conf_msgbox_margin_top;
-			}
-		} else {
-			break;
+	/* Try a full locale such as "en-us" or "ja". */
+	snprintf(name, sizeof(name), "text-%s", locale);
+	text = s3_get_tag_arg_string(name, true, NULL);
+	if (text == NULL) {
+		/* Fallback to a major locale such as "en" for "es-us". */
+		locale = s3i_get_major_locale();
+		if (locale != NULL) {
+			snprintf(name, sizeof(name), "text-%s", locale);
+			text = s3_get_tag_arg_string(name, true, NULL);
 		}
+
+		/* Fallback to a non-localized text. */
+		if (text == NULL)
+			text = s3_get_tag_arg_string("text", true, NULL);
 	}
-	return m;
-}
 
-/* Move the cursor by the amount of whitespace */
-static void
-put_space(void)
-{
-	int cw, ch;
-
-	if (!conf_msgbox_font_tategaki) {
-		cw = s3_get_glyph_width(conf_msgbox_font_select, conf_msgbox_font_size, ' ');
-		if (pen_x + cw >= msgbox_w - conf_msgbox_margin_right) {
-			pen_y += conf_msgbox_margin_line;
-			pen_x = conf_msgbox_margin_left;
-		} else {
-			pen_x += cw;
-		}
-	} else {
-		ch = s3_get_glyph_height(conf_msgbox_font_select, conf_msgbox_font_size, ' ');
-		if (pen_y + ch >= msgbox_h - conf_msgbox_margin_bottom) {
-			pen_y = conf_msgbox_margin_top;
-			pen_x -= conf_msgbox_margin_line;
-		} else {
-			pen_y += ch;
-		}
+	if (text == NULL) {
+		/* Option found for the index. */
+		return NULL;
 	}
+
+	return text;
 }
 
 /* Register message history for history screen */
@@ -1039,68 +1022,6 @@ register_message_for_history(
 
 	/* Success */
 	return true;
-}
-
-/* Concatenate name and message */
-static char *
-concat_serif(
-	const char *name,
-	const char *serif)
-{
-	char *ret;
-	size_t len, lf, i;
-	const char *prefix;
-	const char *suffix;
-
-	assert(name != NULL);
-	assert(serif != NULL);
-
-	/* Differentiate the quotation marks of the serif depending on whether it is a Japanese locale */
-	if (strcmp(conf_game_locale, "ja") == 0) {
-		prefix = U8("「");
-		suffix = U8("」");
-	} else {
-		prefix = ": ";
-		suffix = "";
-	}
-
-	/* Count the leading '\\' 'n' */
-	lf = 0;
-	while (*serif == '\\' && *(serif + 1) == 'n') {
-		lf++;
-		serif += 2;
-	}
-
-	/* Create a string after the leading newline */
-	if (s3_is_quoted_serif(serif)) {
-		/* If it is a quoted string */
-		len = lf * 2 + strlen(name) + strlen(serif) + 1;
-		ret = malloc(len);
-		if (ret == NULL) {
-			s3_log_out_of_memory();
-			return NULL;
-		}
-		snprintf(ret + lf * 2, len, "%s%s", name, serif);
-	} else {
-		/* If it is an unquoted string */
-		len = lf * 2 + strlen(name) + strlen(prefix) +
-			strlen(serif) + strlen(suffix) + 1;
-		ret = malloc(len);
-		if (ret == NULL) {
-			s3_log_out_of_memory();
-			return NULL;
-		}
-		snprintf(ret + lf * 2, len, "%s%s%s%s", name, prefix, serif,
-			 suffix);
-	}
-
-	/* Fill the leading newline */
-	for (i = 0; i < lf; i++) {
-		ret[i * 2] = '\\';
-		ret[i * 2 + 1] = 'n';
-	}
-
-	return ret;
 }
 
 /* Initialize the message box */

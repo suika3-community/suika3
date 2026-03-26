@@ -934,14 +934,6 @@ s3_get_chapter_name(void);
  */
 bool
 s3_set_last_message(
-	const char *msg,
-	bool is_append);
-
-/*
- * Set the previous last message.
- */
-bool
-s3_set_prev_last_message(
 	const char *msg);
 
 /*

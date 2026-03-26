@@ -83,9 +83,7 @@ Suika3 API Reference
     * [Suika.setChapterName()](#suikasetchaptername)
     * [Suika.getChapterName()](#suikagetchaptername)
     * [Suika.setLastMessage()](#suikasetlastmessage)
-    * [Suika.setPrevLastMessage()](#suikasetprevlastmessage)
     * [Suika.getLastMessage()](#suikagetlastmessage)
-    * [Suika.getPrevLastMessage()](#suikagetprevlastmessage)
     * [Suika.setTextSpeed()](#suikasettextspeed)
     * [Suika.getTextSpeed()](#suikagettextspeed)
     * [Suika.setAutoSpeed()](#suikasetautospeed)
@@ -1451,39 +1449,9 @@ No return.
 
 ---
 
-## Suika.setPrevLastMessage()
-
-Set the previous last message.
-
-### Parameters (Dictionary)
-
-| Parameter | Type    | Description           |
-|-----------|---------|-----------------------|
-| message   | String  | Message.              |
-
-### Return
-
-No return.
-
----
-
 ## Suika.getLastMessage()
 
 Get the last message.
-
-### Parameters (Dictionary)
-
-No parameters.
-
-### Return
-
-Returns a string.
-
----
-
-## Suika.getPrevLastMessage()
-
-Get the previous last message.
 
 ### Parameters (Dictionary)
 

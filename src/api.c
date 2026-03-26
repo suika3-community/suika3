@@ -137,9 +137,7 @@ static bool Suika_isBGVoicePlaying(void *p);
 static bool Suika_setChapterName(void *p);
 static bool Suika_getChapterName(void *p);
 static bool Suika_setLastMessage(void *p);
-static bool Suika_setPrevLastMessage(void *p);
 static bool Suika_getLastMessage(void *p);
-static bool Suika_getPrevLastMessage(void *p);
 static bool Suika_setTextSpeed(void *p);
 static bool Suika_getTextSpeed(void *p);
 static bool Suika_setAutoSpeed(void *p);
@@ -504,9 +502,7 @@ static struct api_func api_func[] = {
 	{"setChapterName",		Suika_setChapterName,		1, dict_param},
 	{"getChapterName",		Suika_getChapterName,		0, NULL},
 	{"setLastMessage",		Suika_setLastMessage,		1, dict_param},
-	{"setPrevLastMessage",		Suika_setPrevLastMessage,	1, dict_param},
 	{"getLastMessage",		Suika_getLastMessage,		0, NULL},
-	{"getPrevLastMessage",		Suika_getPrevLastMessage,	0, NULL},
 	{"setTextSpeed",		Suika_setTextSpeed,		1, dict_param},
 	{"getTextSpeed",		Suika_getTextSpeed,		0, NULL},
 	{"setAutoSpeed",		Suika_setAutoSpeed,		1, dict_param},
@@ -2813,40 +2809,6 @@ static bool
 Suika_setLastMessage(void *p)
 {
 	char *message;
-	int is_append;
-	bool ret;
-
-	UNUSED_PARAMETER(p);
-
-	message = NULL;
-	ret = false;
-	do {
-		/* Get the argument. */
-		if (!pf_get_call_arg_string("message", &message))
-			break;
-		if (!pf_get_call_arg_int("isAppend", &is_append))
-			break;
-
-		if (!s3_set_last_message(message, is_append ? true : false))
-			break;
-
-		/* Set the return value. */
-		if (!pf_set_return_int(1))
-			break;
-
-		ret = true;
-	} while (0);
-
-	if (message != NULL)
-		free(message);
-
-	return ret;
-}
-
-static bool
-Suika_setPrevLastMessage(void *p)
-{
-	char *message;
 	bool ret;
 
 	UNUSED_PARAMETER(p);
@@ -2858,7 +2820,7 @@ Suika_setPrevLastMessage(void *p)
 		if (!pf_get_call_arg_string("message", &message))
 			break;
 
-		if (!s3_set_prev_last_message(message))
+		if (!s3_set_last_message(message))
 			break;
 
 		/* Set the return value. */
@@ -2882,22 +2844,6 @@ Suika_getLastMessage(void *p)
 	UNUSED_PARAMETER(p);
 
 	val = s3_get_last_message();
-
-	/* Set the return value. */
-	if (!pf_set_return_string(val))
-		return false;
-
-	return true;
-}
-
-static bool
-Suika_getPrevLastMessage(void *p)
-{
-	const char *val;
-
-	UNUSED_PARAMETER(p);
-
-	val = s3_get_prev_last_message();
 
 	/* Set the return value. */
 	if (!pf_set_return_string(val))

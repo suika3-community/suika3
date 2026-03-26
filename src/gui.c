@@ -156,7 +156,6 @@ struct gui_button {
 	int height;
 
 	/* Common. */
-	bool is_disabled;
 	char *alt;
 	int order;
 	char *clickse;
@@ -186,6 +185,7 @@ struct gui_button {
 	/* Anime */
 	char *anime_idle;
 	char *anime_hover;
+	char *anime_active;
 
 	/* TYPE_SAVE, TYPE_LOAD */
 	int index_x;
@@ -223,6 +223,7 @@ struct gui_button {
 		/* Images. */
 		struct s3_image *img_idle;
 		struct s3_image *img_hover;
+		struct s3_image *img_active;
 		struct s3_image *img_disable;
 		struct s3_image *img_canvas_idle;
 		struct s3_image *img_canvas_hover;
@@ -382,7 +383,7 @@ static void process_input(void);
 static void process_timeout(void);
 static void process_blit(void);
 static void process_render(void);
-static bool process_move(void);
+static bool process_action(void);
 static void process_se(void);
 static bool process_left_right_arrow_keys(void);
 static bool add_button(int index, const char *file);
@@ -404,7 +405,8 @@ static void process_button_render_slider_vertical(int index);
 static void process_button_render_generic(int index);
 static void process_button_render_var(int index);
 static void process_button_render_preview(int index);
-static void process_button_render_save(int button_index);
+static void process_button_render_save(int index);
+static void process_button_render_page(int index);
 static bool init_save_buttons(void);
 static void update_save_buttons(void);
 static void draw_save_button(int button_index);
@@ -443,6 +445,9 @@ static void play_sys_se(const char *file);
 static void speak(const char *text);
 static bool load_gui_file(const char *file);
 static void set_gui_call_arg(int bid);
+static void stop_button_anime(int index);
+static bool start_button_anime(int index, const char *anime_file);
+static void change_save_page(int index);
 
 /*
  * Initialize the GUI subsystem.
@@ -462,7 +467,7 @@ s3i_init_gui(void)
 void
 s3i_cleanup_gui(void)
 {
-	int i;
+	int i, j;
 
 	/* Initialize the flags. */
 	is_gui_running = false;
@@ -479,6 +484,8 @@ s3i_cleanup_gui(void)
 			free(button[i].anime_idle);
 		if (button[i].anime_hover != NULL)
 			free(button[i].anime_hover);
+		if (button[i].anime_active != NULL)
+			free(button[i].anime_active);
 		if (button[i].clickse != NULL)
 			free(button[i].clickse);
 		if (button[i].pointse != NULL)
@@ -487,10 +494,24 @@ s3i_cleanup_gui(void)
 			s3_destroy_image(button[i].rt.img_idle);
 		if (button[i].rt.img_hover != NULL)
 			s3_destroy_image(button[i].rt.img_hover);
+		if (button[i].rt.img_active != NULL)
+			s3_destroy_image(button[i].rt.img_active);
 		if (button[i].rt.img_disable != NULL)
 			s3_destroy_image(button[i].rt.img_disable);
 		if (button[i].rt.msg_context != NULL)
 			s3_destroy_drawmsg(button[i].rt.msg_context);
+	}
+
+	/* Stop all animations. */
+	for (i = 0; i < S3_BUTTON_LAYERS; i++) {
+		if (button[i].type == TYPE_INVALID)
+			continue;
+		for (j = 0; j < S3_STAGE_LAYERS; j++) {
+			if (button[i].rt.used_layers[j]) {
+				s3_clear_layer_anime_sequence(j);
+				button[i].rt.used_layers[j] = false;
+			}
+		}
 	}
 
 	/* Zero out buttons. */
@@ -628,33 +649,25 @@ s3_start_gui(void)
 	suppress_se = false;
 	suppress_se_forever = false;
 
-	/* Copy positions to stage layers */
-	for (i = 0; i < S3_BUTTON_LAYERS; i++) {
-		if (button[i].bid != -1) {
-			int layer = S3_LAYER_GUI_BTN1 + button[i].bid - 1;
-			s3_set_layer_position(layer, button[i].x, button[i].y);
-			s3_set_layer_scale(layer, 1.0f, 1.0f);
-			s3_set_layer_center(layer, 0, 0);
-			s3_set_layer_rotate(layer, 0);
-		}
-	}
+	/* Copy positions to stage layers using anime reset. */
+	for (i = 0; i < S3_BUTTON_LAYERS; i++)
+		stop_button_anime(i);
 
 	/* Start the idle animations. */
-	for (i = 0; i < S3_BUTTON_LAYERS; i++) {
-		if (button[i].anime_idle != NULL) {
-			/* Set "gui%d" to "$0".  */
-			set_gui_call_arg(button[i].bid);
-
-			/* Load an anime. */
-			s3_load_anime_from_file(button[i].anime_idle, NULL, button[i].rt.used_layers);
-		}
-	}
+	for (i = 0; i < S3_BUTTON_LAYERS; i++)
+		start_button_anime(i, button[i].anime_idle);
 
 	/* Hide the sysbtn. */
 	s3_enable_sysbtn(false);
 
 	/* Disable skip action by continuous swipe. */
 	s3_set_continuous_swipe_enabled(false);
+
+	/* Restart save page animations. */
+	save_page = -1; /* Force change. */
+	change_save_page(conf_gui_save_last_page);
+
+	update_runtime_props(false);
 }
 
 /*
@@ -663,7 +676,20 @@ s3_start_gui(void)
 void
 s3_stop_gui(void)
 {
+	int i, j;
+
 	assert(is_gui_running);
+
+	/* Stop all animations. */
+	for (i = 0; i < S3_BUTTON_LAYERS; i++) {
+		if (button[i].type == TYPE_INVALID)
+			continue;
+		for (j = 0; j < S3_STAGE_LAYERS; j++)
+			if (button[i].rt.used_layers[j]) {
+				s3_clear_layer_anime_sequence(j);
+				button[i].rt.used_layers[j] = false;
+			}
+	}
 
 	/* Disable GUI mode. */
 	is_gui_running = false;
@@ -759,12 +785,12 @@ s3i_run_gui_update(void)
 	/* Process image updates. */
 	process_blit();
 
-	/* Process chaining. */
-	did_chain = false;
-	if (result_index != -1 && button[result_index].type == TYPE_GUI) {
-		did_chain = true;
-		process_se();
-	}
+	/* Process SE feedback. */
+	process_se();
+
+	/* Process actions. */
+	if (!process_action())
+		return false;
 
 	is_first_frame = false;
 
@@ -783,24 +809,6 @@ s3i_run_gui_render(void)
 		return true;
 
 	process_render();
-
-	return true;
-}
-
-/*
- * Run a GUI postprocess.
- */
-bool
-s3i_run_gui_postprocess(void)
-{
-	assert(is_gui_running);
-
-	if (did_load)
-		return true;
-
-	/* Process transition. */
-	if (!process_move())
-		return false;
 
 	return true;
 }
@@ -991,27 +999,25 @@ static void process_input(void)
 
 	/* If the pointed button is changed. */
 	if (prev_pointed_index != pointed_index && prev_pointed_index != -1) {
-		if (button[prev_pointed_index].anime_idle != NULL &&
-		    button[prev_pointed_index].anime_hover != NULL) {
-			for (i = 0; i < S3_STAGE_LAYERS; i++) {
-				if (button[pointed_index].rt.used_layers[i])
-					s3_clear_layer_anime_sequence(i);
-			}
-
-			/* Set "gui%d" to "$0".  */
-			set_gui_call_arg(button[prev_pointed_index].bid);
-
-			/* Load the anime. */
-			s3_load_anime_from_file(button[prev_pointed_index].anime_idle, NULL, button[prev_pointed_index].rt.used_layers);
+		/* Reload the anime. */
+		if (button[prev_pointed_index].type == TYPE_SAVEPAGE &&
+		    !button[prev_pointed_index].rt.is_disabled) {
+			/* Active --> Active (Stay as is.) */
+		} else {
+			/* Hover --> Inactive */
+			stop_button_anime(prev_pointed_index);
+			start_button_anime(prev_pointed_index, button[prev_pointed_index].anime_idle);
 		}
 	}
 	if (prev_pointed_index != pointed_index && pointed_index != -1) {
-		if (button[pointed_index].anime_hover != NULL) {
-			/* Set "gui%d" to "$0".  */
-			set_gui_call_arg(button[pointed_index].bid);
-
-			/* Load the anime. */
-			s3_load_anime_from_file(button[pointed_index].anime_hover, NULL, button[pointed_index].rt.used_layers);
+		/* Reload the anime. */
+		if (button[pointed_index].type == TYPE_SAVEPAGE &&
+		    !button[pointed_index].rt.is_disabled) {
+			/* Active --> Active (Stay as is.) */
+		} else {
+			/* Inactive --> Hover */
+			stop_button_anime(pointed_index);
+			start_button_anime(pointed_index, button[pointed_index].anime_hover);
 		}
 	}
 
@@ -1139,9 +1145,9 @@ update_runtime_props(bool is_first_time)
 	}
 }
 
-/* Process transition to other commands or GUIs. */
+/* Process actions. */
 static bool
-process_move(void)
+process_action(void)
 {
 	if (!is_finished)
 		return true;
@@ -1150,29 +1156,32 @@ process_move(void)
 
 	/* If moving to another GUI */
 	if (result_index != -1 &&
-	    button[result_index].type == TYPE_GUI)
+	    button[result_index].type == TYPE_GUI) {
+		did_chain = false;
 		return move_to_other_gui();
+	}
 
 	/* If cancel. */
 	if (result_index != -1 &&
 	    button[result_index].type == TYPE_CANCEL) {
-		/* Do nothing here, but post-processing is done in cmd_gui.c for @gui commands. */
+		/* Do nothing here. Processed by cmd_gui.c */
 	}
 
 	/* If starting auto mode. */
 	if (result_index != -1 && button[result_index].type == TYPE_AUTO) {
+		if (s3_is_skip_mode())
+			s3_stop_skip_mode();
 		s3_show_automode_banner(true);
 		s3_start_auto_mode();
 	}
 
 	/* If starting skip mode. */
 	if (result_index != -1 && button[result_index].type == TYPE_SKIP) {
+		if (s3_is_auto_mode())
+			s3_stop_auto_mode();
 		s3_show_skipmode_banner(true);
 		s3_start_skip_mode();
 	}
-
-	/* End GUI mode. */
-	s3_stop_gui();
 
 	return true;
 }
@@ -1400,8 +1409,8 @@ process_button_point(int index, bool key)
 	if (b->type == TYPE_LOAD && b->rt.is_disabled)
 		return false;
 
-	/* If the button is TYPE_GALLERY and the button is disabled, it cannot be pointed at. */
-	if (b->rt.is_disabled)
+	/* If the button is TYPE_LABEL and the button is disabled, it cannot be pointed at. */
+	if (b->type == TYPE_LABEL && b->rt.is_disabled)
 		return false;
 
 	/* If the button is TYPE_FULLSCREEN and the button is active, it cannot be pointed at. */
@@ -1699,7 +1708,7 @@ process_button_click(
 		break;
 	case TYPE_SAVEPAGE:
 		play_sys_se(b->clickse);
-		save_page = b->index;
+		change_save_page(b->index);
 		update_runtime_props(false);
 		update_save_buttons();
 		break;
@@ -1807,6 +1816,10 @@ process_button_render(
 	case TYPE_NAMEVAR:
 		/* Render a variable button. */
 		process_button_render_var(index);
+		break;
+	case TYPE_SAVEPAGE:
+		/* Render a page button. */
+		process_button_render_page(index);
 		break;
 	default:
 		/* Draw a generic button. */
@@ -1988,6 +2001,30 @@ process_button_render_generic(
 	}
 }
 
+/* Render a page button. */
+static void
+process_button_render_page(
+	int index)
+{
+	struct gui_button *b;
+
+	b = &button[index];
+
+	if (b->bid == -1)
+		return;
+
+	if (index == pointed_index) {
+		if (b->rt.img_hover != NULL)
+			render_image_helper(b->rt.img_hover, b->bid);
+	} else if (!b->rt.is_disabled) {
+		if (b->rt.img_active != NULL)
+			render_image_helper(b->rt.img_active, b->bid);
+	} else {
+		if (b->rt.img_idle != NULL)
+			render_image_helper(b->rt.img_idle, b->bid);
+	}
+}
+
 /* Render a variable button. */
 static void
 process_button_render_var(
@@ -2141,7 +2178,7 @@ draw_save_button(
 	}
 
 	/* Draw the index. */
-	snprintf(text, sizeof(text), "%02d", save_index);
+	snprintf(text, sizeof(text), "%02d", save_index + 1);
 	if (b->rt.img_canvas_idle != NULL) {
 		draw_save_text_item(b->rt.img_canvas_idle,
 				    button_index,
@@ -3985,6 +4022,20 @@ set_button_key_value(
 	}
 
 	/* image-disable */
+	if (strcmp("image-active", key) == 0) {
+		if (b->rt.img_active != NULL)
+			s3_destroy_image(b->rt.img_active);
+		b->rt.img_active = s3_create_image_from_file(val);
+		if (b->rt.img_active == NULL)
+			return false;
+		if (b->width == 0 || b->height == 0) {
+			b->width = s3_get_image_width(b->rt.img_active);
+			b->height = s3_get_image_height(b->rt.img_active);
+		}
+		return true;
+	}
+
+	/* image-disable */
 	if (strcmp("image-disable", key) == 0 ||
 	    strcmp("image-knob", key) == 0) {
 		if (b->rt.img_disable != NULL)
@@ -4344,6 +4395,16 @@ set_button_key_value(
 		return true;
 	}
 
+	/* anime-active */
+	if (strcmp("anime-active", key) == 0) {
+		b->anime_active = strdup(val);
+		if (b->anime_active == NULL) {
+			s3_log_out_of_memory();
+			return false;
+		}
+		return true;
+	}
+
 	s3_log_error(S3_TR("Unknown button property \"%s\" found in GUI file \"%s\" line %d."), key, file, line);
 	return false;
 }
@@ -4411,4 +4472,84 @@ set_gui_call_arg(
 
 	for (i = 1; i < S3_CALL_ARGS; i++)
 		s3_set_call_argument(i, NULL);
+}
+
+static void
+stop_button_anime(
+	int index)
+{
+	int i, layer;
+
+	/* Stop existing animations. */
+	for (i = 0; i < S3_STAGE_LAYERS; i++) {
+		if (button[index].rt.used_layers[i]) {
+			s3_clear_layer_anime_sequence(i);
+			button[index].rt.used_layers[i] = false;
+		}
+	}
+
+	/* Reset layer parameters. */
+	if (button[index].bid != -1) {
+		layer = S3_LAYER_GUI_BTN1 + button[index].bid - 1;
+		s3_set_layer_position(layer, button[index].x, button[index].y);
+		s3_set_layer_scale(layer, 1.0f, 1.0f);
+		s3_set_layer_center(layer, 0, 0);
+		s3_set_layer_rotate(layer, 0);
+	}
+}
+
+static bool
+start_button_anime(
+	int index,
+	const char *anime_file)
+{
+	if (anime_file == NULL)
+		return true;
+
+	/* Set "gui%d" to "$0".  */
+	set_gui_call_arg(button[index].bid);
+
+	/* Load an anime. */
+	if (!s3_load_anime_from_file(anime_file, NULL, button[index].rt.used_layers))
+		return false;
+
+	return true;
+}
+
+static void
+change_save_page(
+	int index)
+{
+	int old_save_page, i;
+
+	old_save_page = save_page;
+	save_page = index;
+
+	/* Guard. */
+	if (!is_gui_running)
+		return;
+	if (old_save_page == save_page)
+		return;
+
+	/* Restart animations. */
+	for (i = 0; i < S3_BUTTON_LAYERS; i++) {
+		if (button[i].type != TYPE_SAVEPAGE)
+			continue;
+		if (button[i].bid == -1)
+			continue;
+
+		/* Active --> Inactive */
+		if (button[i].index == old_save_page) {
+			stop_button_anime(i);
+			start_button_anime(i, button[i].anime_idle);
+			button[i].rt.is_disabled = true;
+		}
+
+		/* Inactive --> Active */
+		if (button[i].index == save_page) {
+			stop_button_anime(i);
+			start_button_anime(i, button[i].anime_active);
+			button[i].rt.is_disabled = false;
+		}
+	}
 }

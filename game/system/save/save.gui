@@ -121,8 +121,13 @@ PAGE1 {
     index: 0;
     x: 365;
     y: 643;
-    image-idle: system/save/save-page-1.png;
-    image-hover: system/save/save-page-1.png;
+    image-idle: system/save/save-page-1-idle.png;
+    image-hover: system/save/save-page-1-hover.png;
+    image-active: system/save/save-page-1-active.png;
+
+    anime-idle: system/save/save-page-idle.anime;
+    anime-hover: system/save/save-page-idle.anime;
+    anime-active: system/save/save-page-active.anime;
 }
 
 PAGE2 {
@@ -131,8 +136,13 @@ PAGE2 {
     index: 1;
     x: 480;
     y: 643;
-    image-idle: system/save/save-page-2.png;
-    image-hover: system/save/save-page-2.png;
+    image-idle: system/save/save-page-2-idle.png;
+    image-hover: system/save/save-page-2-hover.png;
+    image-active: system/save/save-page-2-active.png;
+
+    anime-idle: system/save/save-page-idle.anime;
+    anime-hover: system/save/save-page-hover.anime;
+    anime-active: system/save/save-page-active.anime;
 }
 
 PAGE3 {
@@ -141,8 +151,13 @@ PAGE3 {
     index: 2;
     x: 599;
     y: 643;
-    image-idle: system/save/save-page-3.png;
-    image-hover: system/save/save-page-3.png;
+    image-idle: system/save/save-page-3-idle.png;
+    image-hover: system/save/save-page-3-hover.png;
+    image-active: system/save/save-page-3-active.png;
+
+    anime-idle: system/save/save-page-idle.anime;
+    anime-hover: system/save/save-page-hover.anime;
+    anime-active: system/save/save-page-active.anime;
 }
 
 PAGE4 {
@@ -151,8 +166,13 @@ PAGE4 {
     index: 3;
     x: 718;
     y: 640;
-    image-idle: system/save/save-page-4.png;
-    image-hover: system/save/save-page-4.png;
+    image-idle: system/save/save-page-4-idle.png;
+    image-hover: system/save/save-page-4-hover.png;
+    image-active: system/save/save-page-4-active.png;
+
+    anime-idle: system/save/save-page-idle.anime;
+    anime-hover: system/save/save-page-hover.anime;
+    anime-active: system/save/save-page-active.anime;
 }
 
 PAGE5 {
@@ -161,6 +181,11 @@ PAGE5 {
     index: 4;
     x: 838;
     y: 639;
-    image-idle: system/save/save-page-5.png;
-    image-hover: system/save/save-page-5.png;
+    image-idle: system/save/save-page-5-idle.png;
+    image-hover: system/save/save-page-5-hover.png;
+    image-active: system/save/save-page-5-active.png;
+
+    anime-idle: system/save/save-page-idle.anime;
+    anime-hover: system/save/save-page-hover.anime;
+    anime-active: system/save/save-page-active.anime;
 }

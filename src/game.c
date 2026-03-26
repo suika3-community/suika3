@@ -352,6 +352,7 @@ s3i_on_game_update(void)
 		if (!s3i_run_gui_update()) {
 			/* Error: will stop the game after the next rendering. */
 			pf_set_vm_int("exitFlag", 1);
+			return true;
 		}
 
 		if (s3_is_gui_finished()) {
@@ -1110,46 +1111,11 @@ s3_get_chapter_name(void)
  */
 bool
 s3_set_last_message(
-	const char *msg,
-	bool is_append)
+	const char *msg)
 {
-	FREE(prev_last_message);
-
-	/* If a continued line. */
-	if (is_append && last_message != NULL) {
-		char *new_text;
-		size_t new_len = 0;
-
-		new_len = strlen(last_message) + strlen(msg);
-		new_text = malloc(new_len + 1);
-		if (new_text == NULL) {
-			s3_log_out_of_memory();
-			return false;
-		}
-		strcpy(new_text, last_message);
-		strcpy(new_text, msg);
-
-		prev_last_message = last_message;
-		last_message = new_text;
-		return true;
-	}
-
-	/* Otherwise. */
 	FREE(last_message);
 	STRDUP(last_message, msg);
 
-	return true;
-}
-
-/*
- * Set the previous last message.
- */
-bool
-s3_set_prev_last_message(
-	const char *msg)
-{
-	FREE(prev_last_message);
-	STRDUP(prev_last_message, msg);
 	return true;
 }
 

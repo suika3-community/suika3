@@ -421,10 +421,6 @@ s3_execute_save_local(
 		if (!write_string(s3_get_last_message()))
 			break;
 
-		/* Write the previous last message. */
-		if (!write_string(s3_get_prev_last_message()))
-			break;
-
 		/* Write the thumbnail. */
 		if (!copy_thumb(index))
 			break;
@@ -637,13 +633,7 @@ s3_execute_load_local(
 		/* Read the last message. */
 		if (!read_string(sbuf, sizeof(sbuf)))
 			break;
-		if (!s3_set_last_message(sbuf, false))
-			break;
-
-		/* Read the previous last message. */
-		if (!read_string(sbuf, sizeof(sbuf)))
-			break;
-		if (!s3_set_last_message(sbuf, false))
+		if (!s3_set_last_message(sbuf))
 			break;
 
 		/* Skip the thumbnail. */
@@ -1015,10 +1005,6 @@ load_basic_save_info(
 			s3_log_out_of_memory();
 			break;
 		}
-
-		/* Skip the previous last message. */
-		if (!read_string(sbuf, sizeof(sbuf)))
-			break;
 
 		/* Read the thumbnail. */
 		if (!read_data(s3_get_image_pixels(save_thumb[index]),

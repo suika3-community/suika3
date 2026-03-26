@@ -1372,6 +1372,27 @@ s3_get_locale(void)
 	return loc;
 }
 
+/*
+ * Get the major locale. (e.g. returns "en" for "en-us")
+ */
+const char *
+s3i_get_major_locale(void)
+{
+	const char *locale;
+
+	locale = s3_get_locale();
+	assert(locale != NULL);
+	
+	if (strncmp(locale, "en-", 3) == 0)
+		return "en";
+	if (strncmp(locale, "fr-", 3) == 0)
+		return "fr";
+	if (strncmp(locale, "es-", 3) == 0)
+		return "es";
+
+	return NULL;
+}
+
 /* Read the config file. */
 static bool read_conf(void)
 {

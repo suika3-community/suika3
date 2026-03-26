@@ -862,7 +862,7 @@ calc_pos_x_from(
 
 	assert(value != NULL);
 
-	if (value[0] == '+') {
+	if (value[0] == 'r') {
 		if (index == 0)
 			ret = (float)s3_get_layer_x(layer);
 		else
@@ -886,7 +886,7 @@ calc_pos_x_to(
 
 	assert(value != NULL);
 
-	if (value[0] == '+')
+	if (value[0] == 'r')
 		ret = sequence[layer][index].from_x + (float)atoi(value + 1);
 	else
 		ret = (float)atoi(value);
@@ -905,7 +905,7 @@ calc_pos_y_from(
 
 	assert(value != NULL);
 
-	if (value[0] == '+') {
+	if (value[0] == 'r') {
 		if (index == 0)
 			ret = (float)s3_get_layer_y(anime_layer);
 		else
@@ -929,7 +929,7 @@ calc_pos_y_to(
 
 	assert(value != NULL);
 
-	if (value[0] == '+')
+	if (value[0] == 'r')
 		ret = sequence[anime_layer][index].from_y + (float)atoi(value + 1);
 	else
 		ret = (float)atoi(value);
