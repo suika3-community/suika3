@@ -7072,6 +7072,7 @@ Suika_getTagArgString(
 	UNUSED_PARAMETER(p);
 
 	name = NULL;
+	def_value = NULL;
 	ret = false;
 	do {
 		/* Get the argument. */
