@@ -216,14 +216,8 @@ static uint64_t inline_sw;
 /* Whether it was started by loading */
 static bool load_flag;
 
-/* Whether it is the first command after the GUI command ends */
-static bool gui_cmd_flag;
-
 /* Whether it has returned from the system GUI */
 static bool gui_sys_flag;
-
-/* Whether it has returned from the system GUI's gosub */
-static bool gui_gosub_flag;
 
 /*
  * Hidden
@@ -265,6 +259,9 @@ static bool need_dimming;
 /* Whether to keep in history but not display */
 static bool no_show;
 
+/* Last language. (for config language selection) */
+static char *last_lang;
+
 /*
  * Forward declarations
  */
@@ -276,7 +273,8 @@ static void postprocess(void);
 
 /* Initialization */
 static bool init(bool *cont);
-static bool init_page_mode(bool *exit);
+static bool init_special_action(bool *exit);
+static void clear_msgbox(void);
 static void init_flags_and_vars(void);
 static void init_auto_mode(void);
 static void init_skip_mode(void);
@@ -284,10 +282,9 @@ static void init_colors(void);
 static bool init_name_top(void);
 static bool init_voice_file(void);
 static bool init_msg_top(void);
-static const char *get_localized_text(void);
 static bool register_message_for_history(const char *msg);
 static bool init_msgbox(void);
-static bool init_serif(void);
+static bool init_voice(void);
 static bool check_play_voice(void);
 static bool play_voice(void);
 static void set_character_volume_by_name(const char *name);
@@ -295,6 +292,9 @@ static bool blit_namebox(void);
 static void focus_character(void);
 static void init_click(void);
 static void init_repetition(void);
+static const char *get_localized_text(void);
+static const char *get_localized_name(void);
+static const char *get_localized_voice(void);;
 static void speak(void);
 static void init_lip_sync(void);
 static void cleanup_lip_sync(void);
@@ -486,17 +486,18 @@ static bool
 init(
      bool *cont)
 {
+	bool exit_special;
+
 	*cont = false;
 
 	/* Apply inline variable references. */
 	s3_evaluate_tag();
 
 	/* If page mode */
-	if (s3_is_page_mode()) {
-		bool exit;
-		if (!init_page_mode(&exit))
-			return false;
-		if (exit)
+	if (!init_special_action(&exit_special)) {
+		return false;
+	} else {
+		if (exit_special)
 			return true;
 	}
 
@@ -534,8 +535,8 @@ init(
 	if (!init_msgbox())
 		return false;
 
-	/* Perform initialization specific to the dialogue */
-	if (!init_serif())
+	/* Initialize the voice. */
+	if (!init_voice())
 		return false;
 
 	/*
@@ -572,83 +573,126 @@ init(
 	return true;
 }
 
-/* Initialize for the page mode. */
+/* Initialize for the page mode and special actions. */
 static bool
-init_page_mode(bool *exit)
+init_special_action(bool *exit)
 {
 	const char *action;
 	const char *msg;
 
 	action = s3_get_tag_arg_string("action", true, NULL);
 
-	/* If no action specified, or "flush" action is specified. */
-	if (action == NULL || strcmp(action, "flush") == 0) {
-		/* Get the text. */
-		msg = get_localized_text();
-		if (msg == NULL)
-			return false;
+	/* Default: continue a normal execution. */
+	*exit = false;
 
-		/* Append the message. */
-		if (!s3_append_buffered_message(msg))
-			return false;
+	if (s3_is_page_mode()) {
+		/* If no action specified, or "flush" action is specified. */
+		if (action == NULL || strcmp(action, "flush") == 0) {
+			/* Get the text. */
+			msg = get_localized_text();
+			if (msg == NULL)
+				return false;
 
-		/* Increment the line number. */
-		s3_inc_page_line();
+			/* Append the message. */
+			if (!s3_append_buffered_message(msg))
+				return false;
 
-		/* Continue a normal execution. */
-		*exit = false;
-		return true;
-	}
+			/* Increment the line number. */
+			s3_inc_page_line();
 
-	/* If "append" action is specified.*/
-	if (strcmp(action, "append") == 0) {
-		/* Get the text. */
-		msg = get_localized_text();
-		if (msg == NULL)
-			return false;
-
-		/* Append the message. */
-		if (!s3_append_buffered_message(msg))
-			return false;
-
-		/* Increment the line number. */
-		s3_inc_page_line();
-
-		/* Exit. */
-		*exit = false;
-		return true;
-	}
-
-	/* If "new-page" action specified. */
-	if (strcmp(action, "new-page") == 0) {
-		int msgbox_x, msgbox_y, msgbox_w, msgbox_h;
-
-		/* Clear the message buffer. */
-		s3_clear_buffered_message();
-
-		/* Reset the line number. */
-		s3_reset_page_line();
-
-		/* Clear the message box image. */
-		s3_fill_msgbox();
-
-		/* Clear the pen position. */
-		s3_get_msgbox_rect(&msgbox_x, &msgbox_y, &msgbox_w, &msgbox_h);
-		if (!conf_msgbox_font_tategaki) {
-			pen_x = conf_msgbox_margin_left;
-			pen_y = conf_msgbox_margin_top;
-		} else {
-			pen_x = msgbox_w - conf_msgbox_margin_right - conf_msgbox_font_size;
-			pen_y = conf_msgbox_margin_top;
+			return true;
 		}
 
-		/* Exit. */
-		*exit = true;
+		/* If "append" action is specified.*/
+		if (strcmp(action, "append") == 0) {
+			/* Get the text. */
+			msg = get_localized_text();
+			if (msg == NULL)
+				return false;
+
+			/* Append the message. */
+			if (!s3_append_buffered_message(msg))
+				return false;
+
+			/* Increment the line number. */
+			s3_inc_page_line();
+
+			/* Exit. */
+			*exit = false;
+			return true;
+		}
+
+		/* If "new-page" action specified. */
+		if (strcmp(action, "new-page") == 0) {
+			/* Clear the message buffer. */
+			s3_clear_buffered_message();
+
+			/* Reset the line number. */
+			s3_reset_page_line();
+
+			/* Clear the message box and the name box. */
+			clear_msgbox();
+			s3_fill_namebox();
+
+			/* Exit. */
+			*exit = true;
+			return true;
+		}
+
+		*exit = false;
+
+		s3_log_tag_error(S3_TR("Unknown action \"%s\" is specified on the page mode."), action);
+
 		return true;
+	} else {
+		if (action != NULL && strcmp(action, "clear") == 0) {
+			/* Clear the message box and the name box. */
+			clear_msgbox();
+			s3_fill_namebox();
+
+			/* Exit. */
+			*exit = true;
+			return true;
+		}
+
+		if (action != NULL && strcmp(action, "hide") == 0) {
+			s3_show_msgbox(false);
+
+			/* Exit. */
+			*exit = true;
+			return true;
+		}
+	
+		if (action != NULL && strcmp(action, "show") == 0) {
+			s3_show_msgbox(false);
+
+			/* Exit. */
+			*exit = true;
+			return true;
+		}
 	}
 
-	s3_log_tag_error(S3_TR("Unknown action \"%s\" is specified."), action);
-	return false;
+	/* No action. */
+	return true;
+}
+
+static void
+clear_msgbox(void)
+{
+	int msgbox_x, msgbox_y, msgbox_w, msgbox_h;
+
+	/* Clear the message box image. */
+	s3_fill_msgbox();
+
+	/* Clear the pen position. */
+	s3_get_msgbox_rect(&msgbox_x, &msgbox_y, &msgbox_w, &msgbox_h);
+	if (!conf_msgbox_font_tategaki) {
+		pen_x = conf_msgbox_margin_left;
+		pen_y = conf_msgbox_margin_top;
+	} else {
+		pen_x = msgbox_w - conf_msgbox_margin_right - conf_msgbox_font_size;
+		pen_y = conf_msgbox_margin_top;
+	}
 }
 
 /* Initialize flags */
@@ -657,37 +701,23 @@ init_flags_and_vars(void)
 {
 	/* Check if just returned from GUI */
 	if (s3_check_right_after_sys_gui()) {
-		if (s3_is_message_active()) {
+		if (last_lang != NULL && strcmp(last_lang, s3_get_system_language()) != 0) {
+			/* The language has been changed. */
+			gui_sys_flag = false;
+		} else if (s3_is_message_active()) {
 			/*
 			 * In case of returning from system GUI while message is active
 			 *  - Set the flag to perform instant display
 			 */
 			gui_sys_flag = true;
-			gui_cmd_flag = false;
-			gui_gosub_flag = false;
 		} else {
 			/*
 			 * In case of returning from GUI command
-			 *  - Set the flag to perform full screen update
 			 */
 			gui_sys_flag = false;
-			gui_cmd_flag = true;
-			gui_gosub_flag = false;
 		}
-	/*
-	 * } else if (s3_is_return_from_sysmenu_gosub()) {
-	 * 	/\*
-	 * 	 * In case of returning from GUI command
-	 * 	 *  - Set the flag to perform full screen update
-	 * 	 *\/
-	 * 	gui_sys_flag = false;
-	 * 	gui_cmd_flag = false;
-	 * 	gui_gosub_flag = true;
-	 */
 	} else {
 		gui_sys_flag = false;
-		gui_cmd_flag = false;
-		gui_gosub_flag = false;
 	}
 
 	/* Check if just loaded */
@@ -833,7 +863,7 @@ init_name_top(void)
 	}
 
 	/* Get the name */
-	name = s3_get_tag_arg_string("name", true, NULL);
+	name = get_localized_name();
 	if (name != NULL) {
 		name_top = strdup(name);
 		if (name_top == NULL) {
@@ -842,6 +872,23 @@ init_name_top(void)
 		}
 	} else {
 		name_top = NULL;
+	}
+
+	if (name_top == NULL) {
+		/* No name. */
+		s3_show_namebox(false);
+	} else {
+		if (conf_namebox_enable) {
+			/* Draw the name */
+			if (!blit_namebox())
+				return false;
+
+			/* Show the name box */
+			s3_show_namebox(true);
+		}
+
+		/* Set the focus */
+		focus_character();
 	}
 
 	return true;
@@ -861,9 +908,11 @@ init_voice_file(void)
 	}
 
 	/* Get the voice file name */
-	voice = s3_get_tag_arg_string("voice", true, NULL);
+	voice = get_localized_voice();
 	if (voice == NULL)
 		return true;
+
+	/* Copy the voice file name. */
 	voice_file = strdup(voice);
 	if (voice_file == NULL) {
 		s3_log_out_of_memory();
@@ -919,46 +968,13 @@ init_msg_top(void)
 		return false;
 	}
 
+	if (last_lang != NULL) {
+		free(last_lang);
+		last_lang = NULL;
+	}
+	last_lang = strdup(s3_get_system_language());
+
 	return true;
-}
-
-/* Get the text for the current locale. */
-static const char *
-get_localized_text(void)
-{
-	char name[128];
-	const char *locale;
-	const char *text;
-
-	locale = s3_get_locale();
-	assert(locale != NULL);
-
-	/*
-	 * Try a localized text.
-	 */
-
-	/* Try a full locale such as "en-us" or "ja". */
-	snprintf(name, sizeof(name), "text-%s", locale);
-	text = s3_get_tag_arg_string(name, true, NULL);
-	if (text == NULL) {
-		/* Fallback to a major locale such as "en" for "es-us". */
-		locale = s3i_get_major_locale();
-		if (locale != NULL) {
-			snprintf(name, sizeof(name), "text-%s", locale);
-			text = s3_get_tag_arg_string(name, true, NULL);
-		}
-
-		/* Fallback to a non-localized text. */
-		if (text == NULL)
-			text = s3_get_tag_arg_string("text", true, NULL);
-	}
-
-	if (text == NULL) {
-		/* Option found for the index. */
-		return NULL;
-	}
-
-	return text;
 }
 
 /* Register message history for history screen */
@@ -970,15 +986,6 @@ register_message_for_history(
 
 	assert(msg != NULL);
 	assert(!gui_sys_flag);
-
-	/* Do not register in history */
-	if (gui_gosub_flag)
-		return true;
-	/*
-	 * if (conf_msgbox_history_control != NULL &&
-	 *     strcmp(conf_msgbox_history_control, "no-history") == 0)
-	 * 	return true;
-	 */
 
 	/* Register message history */
 	if (name_top != NULL) {
@@ -1105,46 +1112,18 @@ init_msgbox(void)
 	return true;
 }
 
-/* Process the serif command */
+/* Process the voice. */
 static bool
-init_serif(void)
+init_voice(void)
 {
-	/* If returning from system GUI */
-	if (gui_sys_flag)
-		return true;
-
-	/* FIXME */
-	/* TODO */
-	/* If not a serif command */
-	if (name_top == NULL) {
-		/* No voice */
-		have_voice = false;
-
-		s3_show_namebox(false);
-
-		return true;
-	}
+	have_voice = voice_file != NULL;
 
 	/* Play the voice */
 	if (check_play_voice()) {
-		/* Temporarily set no voice (will change later) */
-		have_voice = false;
-
 		/* Play the voice */
 		if (!play_voice())
 			return false;
 	}
-
-	/* Draw the name */
-	if (conf_namebox_enable)
-		if (!blit_namebox())
-			return false;
-
-	/* Show the name box */
-	s3_show_namebox(true);
-
-	/* Set the focus */
-	focus_character();
 
 	return true;
 }
@@ -1640,20 +1619,12 @@ blit_pending_message(void)
 	s3_pixel_t save_body_color, save_body_outline_color;
 	int len;
 
-	// FIXME: get_pending_message()
 	text = s3_get_buffered_message();
 	if (text == NULL)
 		return true;
 
-	s3_fill_msgbox();
+	clear_msgbox();
 
-	if (!conf_msgbox_font_tategaki) {
-		pen_x = conf_msgbox_margin_left;
-		pen_y = conf_msgbox_margin_top;
-	} else {
-		pen_x = msgbox_w - conf_msgbox_margin_right - conf_msgbox_font_size;
-		pen_y = conf_msgbox_margin_top;
-	}
 	orig_pen_x = pen_x;
 	orig_pen_y = pen_y;
 
@@ -2189,6 +2160,191 @@ blit_dimming(void)
  * Others
  */
 
+/* Get the text for the current locale. */
+static const char *
+get_localized_text(void)
+{
+	char name[128];
+	const char *locale;
+	const char *text;
+
+	locale = s3_get_locale();
+	assert(locale != NULL);
+
+	/*
+	 * Try a localized text.
+	 */
+
+	/* Try a full locale such as "en-us" or "ja". */
+	snprintf(name, sizeof(name), "text-%s", locale);
+	text = s3_get_tag_arg_string(name, true, NULL);
+	if (text == NULL) {
+		/* Fallback to a major locale such as "en" for "es-us". */
+		locale = s3i_get_major_locale();
+		if (locale != NULL) {
+			snprintf(name, sizeof(name), "text-%s", locale);
+			text = s3_get_tag_arg_string(name, true, NULL);
+		}
+
+		/* Fallback to a non-localized text. */
+		if (text == NULL)
+			text = s3_get_tag_arg_string("text", true, NULL);
+	}
+
+	if (text == NULL) {
+		s3_log_tag_error(S3_TR("No matching localized text."));
+		return NULL;
+	}
+
+	return text;
+}
+
+/* Get the name for the current locale. */
+static const char *
+get_localized_name(void)
+{
+	const char *locale, *major_locale, *name;
+	int i;
+
+	name = s3_get_tag_arg_string("name", true, NULL);
+	if (name == NULL)
+		return NULL;
+
+	/* Look up the name map index. */
+	for (i = 0; i < S3_CHARACTER_MAP_COUNT; i++) {
+		if (conf_character_name[i] == NULL)
+			continue;
+		if (strcmp(conf_character_name[i], name) == 0)
+			break;
+	}
+	if (i == S3_CHARACTER_MAP_COUNT) {
+		/* Not found, no translation. */
+		return name;
+	}
+
+	/* Get the locale. */
+	locale = s3_get_locale();
+	major_locale = s3i_get_major_locale();
+	if (major_locale != NULL)
+		locale = major_locale;
+
+	/* Translate. */
+	if (strcmp(locale, "en") == 0) {
+		if (conf_character_name_en[i] != NULL)
+			return conf_character_name_en[i];
+		return name;
+	}
+	if (strcmp(locale, "fr") == 0) {
+		if (conf_character_name_fr[i] != NULL)
+			return conf_character_name_fr[i];
+		return name;
+	}
+	if (strcmp(locale, "es") == 0) {
+		if (conf_character_name_es[i] != NULL)
+			return conf_character_name_es[i];
+		return name;
+	}
+	if (strcmp(locale, "de") == 0) {
+		if (conf_character_name_de[i] != NULL)
+			return conf_character_name_de[i];
+		return name;
+	}
+	if (strcmp(locale, "it") == 0) {
+		if (conf_character_name_it[i] != NULL)
+			return conf_character_name_it[i];
+		return name;
+	}
+	if (strcmp(locale, "ru") == 0) {
+		if (conf_character_name_ru[i] != NULL)
+			return conf_character_name_ru[i];
+		return name;
+	}
+	if (strcmp(locale, "el") == 0) {
+		if (conf_character_name_el[i] != NULL)
+			return conf_character_name_el[i];
+		return name;
+	}
+	if (strcmp(locale, "zh-cn") == 0) {
+		if (conf_character_name_zh_cn[i] != NULL)
+			return conf_character_name_zh_cn[i];
+		return name;
+	}
+	if (strcmp(locale, "zh-tw") == 0) {
+		if (conf_character_name_zh_tw[i] != NULL)
+			return conf_character_name_zh_tw[i];
+		return name;
+	}
+	if (strcmp(locale, "ja") == 0) {
+		if (conf_character_name_ja[i] != NULL)
+			return conf_character_name_ja[i];
+		return name;
+	}
+
+	/* No translation. */
+	return name;
+}
+
+/* Get the voice file for the current locale. */
+static const char *
+get_localized_voice(void)
+{
+	char name[128];
+	const char *locale, *major_locale;
+	const char *voice_base;
+	const char *voice;
+	static char file[256];
+
+	locale = s3_get_locale();
+	major_locale = s3i_get_major_locale();
+	voice_base = s3_get_tag_arg_string("voice", true, NULL);
+
+	/*
+	 * Try a full locale such as "en-us" or "ja".
+	 */
+
+	/* Try the argument. */
+	snprintf(name, sizeof(name), "voice-%s", locale);
+	voice = s3_get_tag_arg_string(name, true, NULL);
+	if (voice != NULL)
+		return voice;
+
+	/* Try the file. */
+	if (voice_base != NULL) {
+		/* Try the detailed locale such as "en-us". */
+		snprintf(file, sizeof(file), "voice/%s/%s", locale, voice_base);
+		if (s3_check_file_exists(file))
+			return file;
+	}
+
+	/*
+	 * Fallback to a major locale such as "en".
+	 */
+
+	if (major_locale != NULL) {
+		/* Try the argument. */
+		snprintf(file, sizeof(file), "voice-%s", major_locale);
+		voice = s3_get_tag_arg_string(name, true, NULL);
+		if (s3_check_file_exists(file))
+			return voice;
+
+		/* Try the file. */
+		if (voice_base != NULL) {
+			snprintf(file, sizeof(file), "voice/%s/%s", major_locale, voice_base);
+			if (s3_check_file_exists(file))
+				return file;
+		}
+	}
+
+	/*
+	 * Fallback to the "voice" argument.
+	 */
+	if (voice_base != NULL)
+		return voice_base;
+
+	/* No voice. */
+	return NULL;
+}
+
 /* Play SE */
 static void
 play_se(
@@ -2237,7 +2393,7 @@ init_lip_sync(void)
 
 	if (name_top == NULL)
 		return;
-	if (gui_sys_flag || gui_gosub_flag)
+	if (gui_sys_flag)
 		return;
 
 	chpos = s3_get_talking_chpos();

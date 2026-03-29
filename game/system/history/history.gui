@@ -81,3 +81,13 @@ ITEM3 {
     msg-x:  20;
     msg-y:  10;
 }
+
+SCROLLBAR {
+    id:          16;
+    type:        historyscroll;
+    x:           1200;
+    y:           40;
+    image-idle:  system/history/history-bar-idle.png;
+    image-hover: system/history/history-bar-hover.png;
+    image-knob:  system/history/history-bar-knob.png;
+}

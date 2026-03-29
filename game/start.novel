@@ -1,14 +1,9 @@
 [chapter name="Chapter 1"]
 
-#[load file="test.novel"]
-
 [volume track="bgm" vol="0.5"]
 [bgm file="bgm/afternoon2.ogg"]
 
 [bg file="bg/school.png" time="0.5"]
-
-[text text="After classes..."]
-
 [ch left="ch/xiaoling/xiaoling-smile.png" time="1.0" fade="normal"]
 
 [text name="Xiaoling" text="......"]
@@ -19,25 +14,53 @@
 
 [ch right="ch/midori/midori-normal.png" time="0.5" fade="normal"]
 
-[text name="Xiaoling" voice="voice/001.ogg" text="Would you like to go to a cafe, Mido?"]
-[text name="Midori" voice="voice/002.ogg" text="Sure! I'd love some fruitcake."]
-[text name="Xiaoling" voice="voice/003.ogg" text="Where should we go?"]
+[text name="Xiaoling" voice="voice/001.ogg"
+  text="Would you like to go to a cafe, Mido?"
+  text-en="Would you like to go to a cafe, Mido?"
+  text-ja="カフェに行かない？みど"
+]
+
+[text name="Midori" voice="voice/002.ogg"
+  text="Sure! I'd love some fruitcake."
+  text-en="Sure! I'd love some fruitcake."
+  text-ja="いいね！フルーツケーキが食べたいな"
+]
+
+[text name="Xiaoling" voice="voice/003.ogg"
+  text="Where should we go?"
+  text-en="Where should we go?"
+  text-ja="どこのお店にする？"
+]
 
 [choose name="result"
   text1="Hoshino Coffee"
+  text1-en="Hoshino Coffee"
+  text1-ja="星野珈琲"
   text2="Starbucks"
+  text2-en="Starbucks"
+  text2-ja="スターバックス"
   text3="Segafredo"
+  text3-en="Segafredo"
+  text3-ja="セガフレード"
 ]
 
 [ch right="ch/midori/midori-happy.png" time="0.5" fade="normal"]
 [move time="1.0" right-x="r-250" accel="deaccel"]
 
-[text name="Midori" voice="voice/004.ogg" text="Let's go to the station, Xiao!"]
+[text name="Midori" voice="voice/004.ogg"
+  text="Let's go to the station, Xiao!"
+  text-en="Let's go to the station, Xiao!"
+  text-ja="駅のお店に行こうよ、シャオ！"
+]
 
 [ch left="ch/xiaoling/xiaoling-smile.png" time="1.0" fade="normal"]
 [wait time="0.5" showmsgbox="true"]
 
-[text name="Xiaoling" voice="voice/005.ogg" text="Okay, I'll grab my bag. Just a moment, Mido."]
+[text name="Xiaoling" voice="voice/005.ogg"
+  text="Okay, I'll grab my bag. Just a moment, Mido."
+  text-en="Okay, I'll grab my bag. Just a moment, Mido."
+  text-ja="いいよ、じゃあバッグを取ってくるね。ちょっと待ってて、みど"
+]
 
 [ch left="none" right="none" time="1.0"]
 [click]

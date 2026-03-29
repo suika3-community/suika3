@@ -37,6 +37,7 @@
 
 #include <suika3/suika3.h>
 #include "tag.h"
+#include "conf.h"
 
 #include <playfield/playfield.h>
 #include <noct/noct.h>
@@ -556,6 +557,9 @@ s3_is_video_playing(void)
 const char *
 s3_get_system_language(void)
 {
+	if (conf_game_locale != NULL)
+		return conf_game_locale;
+
 	return pf_get_system_language();
 }
 

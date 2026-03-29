@@ -422,6 +422,16 @@ extern bool conf_character_auto_focus;
 
 /* Character name and folder mapping */
 extern char *conf_character_name[S3_CHARACTER_MAP_COUNT];
+extern char *conf_character_name_en[S3_CHARACTER_MAP_COUNT];
+extern char *conf_character_name_fr[S3_CHARACTER_MAP_COUNT];
+extern char *conf_character_name_es[S3_CHARACTER_MAP_COUNT];
+extern char *conf_character_name_de[S3_CHARACTER_MAP_COUNT];
+extern char *conf_character_name_it[S3_CHARACTER_MAP_COUNT];
+extern char *conf_character_name_ru[S3_CHARACTER_MAP_COUNT];
+extern char *conf_character_name_el[S3_CHARACTER_MAP_COUNT];
+extern char *conf_character_name_zh_cn[S3_CHARACTER_MAP_COUNT];
+extern char *conf_character_name_zh_tw[S3_CHARACTER_MAP_COUNT];
+extern char *conf_character_name_ja[S3_CHARACTER_MAP_COUNT];
 extern char *conf_character_folder[S3_CHARACTER_MAP_COUNT];
 
 /* Eye-blink */

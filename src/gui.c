@@ -126,6 +126,9 @@ enum {
 
 	/* Variable input button. */
 	TYPE_CHAR,
+
+	/* Language button. */
+	TYPE_LANGUAGE,
 };
 
 enum save_text_type {
@@ -173,8 +176,23 @@ struct gui_button {
 	/* TYPE_PREVIEW, TYPE_CHAR */
 	char *msg;
 
+	/* TYPE_PREVIEW */
+	char *msg_en;
+	char *msg_fr;
+	char *msg_es;
+	char *msg_it;
+	char *msg_de;
+	char *msg_ru;
+	char *msg_el;
+	char *msg_zh_cn;
+	char *msg_zh_tw;
+	char *msg_ja;
+
 	/* TYPE_VAR, TYPE_CHAR */
-	char* var;
+	char *var;
+
+	/* TYPE_LANGUAGE */
+	char *lang;
 
 	/* TYPE_CHAR */
 	int max;
@@ -206,6 +224,12 @@ struct gui_button {
 	int name_y;
 	int text_x;
 	int text_y;
+
+	/* TYPE_PREVIEW */
+	int margin_left;
+	int margin_top;
+	int margin_right;
+	int margin_bottom;
 
 	/*
 	 * Runtime information.
@@ -405,6 +429,7 @@ static void process_button_render(int index);
 static void process_button_render_slider(int index);
 static void process_button_render_slider_vertical(int index);
 static void process_button_render_generic(int index);
+static void process_button_render_language(int index);
 static void process_button_render_var(int index);
 static void process_button_render_preview(int index);
 static void process_button_render_save(int index);
@@ -426,11 +451,12 @@ static void process_button_render_history(int button_index);
 static void process_history_scroll_up(void);
 static void process_history_scroll_down(void);
 static void process_history_scroll_at(float pos);
-static void process_history_scroll_click(int index);
+static float adjust_history_slider_value(float pos);
 static void process_history_voice(int button_index);
 static bool init_preview_buttons(void);
 static void reset_preview_buttons(void);
 static void reset_preview_button(int index);
+static const char *get_localized_preview_message(int index);
 static void draw_preview_buttons(void);
 static void draw_preview_button(int index);
 static void draw_preview_message(int index);
@@ -442,6 +468,7 @@ static void draw_var_button(int index);
 static void draw_var_value(int index);
 static void process_char(int index);
 static void truncate_variable(const char *var);
+static void process_language(int index);
 static void render_image_helper(struct s3_image *img, int bid);
 static void play_se(const char *file);
 static void play_sys_se(const char *file);
@@ -451,6 +478,7 @@ static void set_gui_call_arg(int bid);
 static void stop_button_anime(int index);
 static bool start_button_anime(int index, const char *anime_file);
 static void change_save_page(int index);
+static bool is_current_language(const char *lang);
 
 /*
  * Initialize the GUI subsystem.
@@ -477,22 +505,48 @@ s3i_cleanup_gui(void)
 
 	/* Free button resources. */
 	for (i = 0; i < S3_BUTTON_LAYERS; i++) {
+		if (button[i].alt != NULL)
+			free(button[i].alt);
+		if (button[i].clickse != NULL)
+			free(button[i].clickse);
+		if (button[i].pointse != NULL)
+			free(button[i].pointse);
 		if (button[i].label != NULL)
 			free(button[i].label);
 		if (button[i].file != NULL)
 			free(button[i].file);
 		if (button[i].msg != NULL)
 			free(button[i].msg);
+		if (button[i].msg_en != NULL)
+			free(button[i].msg_en);
+		if (button[i].msg_fr != NULL)
+			free(button[i].msg_fr);
+		if (button[i].msg_es != NULL)
+			free(button[i].msg_es);
+		if (button[i].msg_de != NULL)
+			free(button[i].msg_de);
+		if (button[i].msg_it != NULL)
+			free(button[i].msg_it);
+		if (button[i].msg_ru != NULL)
+			free(button[i].msg_ru);
+		if (button[i].msg_el != NULL)
+			free(button[i].msg_el);
+		if (button[i].msg_zh_cn != NULL)
+			free(button[i].msg_zh_cn);
+		if (button[i].msg_zh_tw != NULL)
+			free(button[i].msg_zh_tw);
+		if (button[i].msg_ja != NULL)
+			free(button[i].msg_ja);
+		if (button[i].var != NULL)
+			free(button[i].var);
+		if (button[i].lang != NULL)
+			free(button[i].lang);
 		if (button[i].anime_idle != NULL)
 			free(button[i].anime_idle);
 		if (button[i].anime_hover != NULL)
 			free(button[i].anime_hover);
 		if (button[i].anime_active != NULL)
 			free(button[i].anime_active);
-		if (button[i].clickse != NULL)
-			free(button[i].clickse);
-		if (button[i].pointse != NULL)
-			free(button[i].pointse);
 		if (button[i].rt.img_idle != NULL)
 			s3_destroy_image(button[i].rt.img_idle);
 		if (button[i].rt.img_hover != NULL)
@@ -501,6 +555,10 @@ s3i_cleanup_gui(void)
 			s3_destroy_image(button[i].rt.img_active);
 		if (button[i].rt.img_disable != NULL)
 			s3_destroy_image(button[i].rt.img_disable);
+		if (button[i].rt.img_canvas_idle != NULL)
+			s3_destroy_image(button[i].rt.img_canvas_idle);
+		if (button[i].rt.img_canvas_hover != NULL)
+			s3_destroy_image(button[i].rt.img_canvas_hover);
 		if (button[i].rt.msg_context != NULL)
 			s3_destroy_drawmsg(button[i].rt.msg_context);
 	}
@@ -1140,8 +1198,11 @@ update_runtime_props(bool is_first_time)
 			break;
 		case TYPE_HISTORYSCROLL:
 		case TYPE_HISTORYSCROLL_HORIZONTAL:
-			button[i].rt.slider = transient_history_slider;
+			button[i].rt.slider = adjust_history_slider_value(transient_history_slider);
 			process_history_scroll_at(button[i].rt.slider);
+			break;
+		case TYPE_LANGUAGE:
+			button[i].rt.is_disabled = is_current_language(button[i].lang);
 			break;
 		default:
 			break;
@@ -1527,10 +1588,19 @@ process_button_drag(int index)
 		dragging_index = index;
 		b->rt.is_dragging = true;
 		b->rt.slider = calc_slider_value(index);
-		if (b->type == TYPE_MASTERVOL)
+
+		switch (b->type) {
+		case TYPE_MASTERVOL:
 			s3_set_master_volume(b->rt.slider);
-		if (b->type == TYPE_BGMVOL)
+			break;
+		case TYPE_BGMVOL:
 			s3_set_mixer_global_volume(S3_TRACK_BGM, b->rt.slider);
+			break;
+		case TYPE_HISTORYSCROLL:
+		case TYPE_HISTORYSCROLL_HORIZONTAL:
+			b->rt.slider = adjust_history_slider_value(b->rt.slider);
+			break;
+		}
 		return true;
 	}
 
@@ -1564,7 +1634,7 @@ process_button_drag(int index)
 		break;
 	case TYPE_HISTORYSCROLL:
 	case TYPE_HISTORYSCROLL_HORIZONTAL:
-		transient_history_slider = b->rt.slider;
+		transient_history_slider = adjust_history_slider_value(b->rt.slider);
 		break;
 	default:
 		break;
@@ -1602,11 +1672,12 @@ process_button_drag(int index)
 			break;
 		case TYPE_AUTOSPEED:
 			/* Redisplay the text. */
-			s3_set_auto_speed(1.0f - b->rt.slider);
+			s3_set_auto_speed(1.0f - transient_auto_speed);
 			reset_preview_buttons();
 			break;
 		case TYPE_HISTORYSCROLL:
 		case TYPE_HISTORYSCROLL_HORIZONTAL:
+			process_history_scroll_at(transient_history_slider);
 			break;
 		default:
 			break;
@@ -1738,10 +1809,6 @@ process_button_click(
 	case TYPE_HISTORY:
 		process_history_voice(index);
 		break;
-	case TYPE_HISTORYSCROLL:
-	case TYPE_HISTORYSCROLL_HORIZONTAL:
-		process_history_scroll_click(index);
-		break;
 	case TYPE_TITLE:
 		play_sys_se(b->clickse);
 		result_index = index;
@@ -1750,6 +1817,11 @@ process_button_click(
 		play_sys_se(b->clickse);
 		process_char(index);
 		need_update_var_buttons = true;
+		break;
+	case TYPE_LANGUAGE:
+		process_language(index);
+		reset_preview_buttons();
+		update_runtime_props(false);
 		break;
 	default:
 		result_index = index;
@@ -1829,8 +1901,12 @@ process_button_render(
 		/* Render a page button. */
 		process_button_render_page(index);
 		break;
+	case TYPE_LANGUAGE:
+		/* Render a language button. */
+		process_button_render_language(index);
+		break;
 	default:
-		/* Draw a generic button. */
+		/* Render a generic button. */
 		process_button_render_generic(index);
 		break;
 	}
@@ -1842,7 +1918,6 @@ process_button_render_slider(
 	int index)
 {
 	struct gui_button *b;
-	int x;
 
 	b = &button[index];
 
@@ -1885,22 +1960,24 @@ process_button_render_slider(
 	/* Draw the knob with the "disable" image. */
 	if (b->rt.img_disable != NULL) {
 		if (b->rt.img_disable != NULL) {
-			int knob_w;
+			int x, y, knob_w, knob_h;
 
 			knob_w = s3_get_image_width(b->rt.img_disable);
+			knob_h = s3_get_image_height(b->rt.img_disable);
 
 			/* Calculate the drawing position. */
-			x = b->x + (int)((float)b->width * b->rt.slider) - (knob_w / 2);
+			x = b->x + (int)((float)(b->width - knob_w) * b->rt.slider);
+			y = b->y + b->height / 2 - knob_h / 2;
 
 			s3_render_image(x,
-					b->y,
-					b->height,
-					b->height,
+					y,
+					knob_w,
+					knob_h,
 					b->rt.img_disable,
 					0,
 					0,
-					b->height,
-					b->height,
+					knob_w,
+					knob_h,
 					cur_alpha,
 					S3_BLEND_ALPHA);
 		}
@@ -1913,7 +1990,6 @@ process_button_render_slider_vertical(
 	int index)
 {
 	struct gui_button *b;
-	int y;
 
 	b = &button[index];
 
@@ -1955,22 +2031,24 @@ process_button_render_slider_vertical(
 
 	/* Draw the knob with the "disable" image. */
 	if (b->rt.img_disable != NULL) {
-		int knob_h;
+		int x, y, knob_w, knob_h;
 
+		knob_w = s3_get_image_width(b->rt.img_disable);
 		knob_h = s3_get_image_height(b->rt.img_disable);
 
 		/* Calculate the drawing position. */
-		y = b->y + (int)((float)b->height * b->rt.slider) - (knob_h / 2);
+		y = b->y + (int)((float)(b->height - knob_h) * b->rt.slider);
+		x = b->x + b->width / 2 - knob_w / 2;
 
-		s3_render_image(b->x,
+		s3_render_image(x,
 				y,
-				b->width,
-				b->width,
+				knob_w,
+				knob_h,
 				b->rt.img_disable,
 				0,
 				0,
-				b->width,
-				b->width,
+				knob_w,
+				knob_h,
 				cur_alpha,
 				S3_BLEND_ALPHA);
 	}
@@ -2006,6 +2084,32 @@ process_button_render_generic(
 	} else {
 		if (b->rt.img_hover != NULL)
 			render_image_helper(b->rt.img_hover, b->bid);
+	}
+}
+
+/* Render a generic button. */
+static void
+process_button_render_language(
+	int index)
+{
+	struct gui_button *b;
+
+	b = &button[index];
+
+	if (b->bid == -1)
+		return;
+
+	if (!b->rt.is_disabled) {
+		if (index != pointed_index) {
+			if (b->rt.img_idle != NULL)
+				render_image_helper(b->rt.img_idle, b->bid);
+		} else {
+			if (b->rt.img_hover != NULL)
+				render_image_helper(b->rt.img_hover, b->bid);
+		}
+	} else {
+		if (b->rt.img_active != NULL)
+			render_image_helper(b->rt.img_active, b->bid);
 	}
 }
 
@@ -2918,7 +3022,7 @@ static void process_history_scroll_down(void)
 		pos = 1.0f;
 
 	/* Adjust the slider position. */
-	transient_history_slider = pos;
+	transient_history_slider = adjust_history_slider_value(pos);
 
 	/* If a redraw is necessary. */
 	if (history_top != old_history_top)
@@ -2928,37 +3032,40 @@ static void process_history_scroll_down(void)
 /* Process scroll at a specific position on the history bar. */
 static void process_history_scroll_at(float pos)
 {
-	int history_count, old_history_top;
+	/* Adjust the slider position. */
+	transient_history_slider = adjust_history_slider_value(pos);
 
-	old_history_top = history_top;
+	/* Redraw. */
+	need_update_history_buttons = true;
+}
+
+/* Adjust the history scroll bar position. */
+static float
+adjust_history_slider_value(
+	float pos)
+{
+	int history_count;
 
 	/* If the number of history items is less than the number of slots. */
 	history_count = s3_get_history_count();
-	if (history_count <= history_slots)
-		return;
+	if (history_count <= history_slots) {
+		pos = 0.0f;
+	} else {
+		/* Calculate the scroll position. */
+		if (history_count <= history_slots)
+			history_top = history_count - 1;
+		else
+			history_top = (int)(((float)((history_count - 1) - (history_slots - 1)) * (1.0f - pos)) + (float)(history_slots - 1) + 0.5f);
 
-	/* Calculate the scroll position. */
-	if (history_count <= history_slots)
-		history_top = history_count - 1;
-	else
-		history_top = (int)(((float)((history_count - 1) - (history_slots - 1)) * (1.0f - pos)) + (float)(history_slots - 1) + 0.5f);
+		/* Fit the scroll position. */
+		pos = 1.0f - (float)(history_top - (history_slots - 1)) / (float)((history_count - 1) - (history_slots - 1));
+		if (pos < 0)
+			pos = 0;
+		if (pos > 1.0f)
+			pos = 1.0f;
+	}
 
-	/* Adjust the slider position. */
-	transient_history_slider = pos;
-
-	/* If a redraw is necessary. */
-	if (history_top != old_history_top)
-		need_update_history_buttons = true;
-}
-
-/* Process click on the history scroll bar. */
-static void process_history_scroll_click(int index)
-{
-	struct gui_button *b;
-
-	b = &button[index];
-	b->rt.slider = calc_slider_value(index);
-	process_history_scroll_at(b->rt.slider);
+	return pos;
 }
 
 /* Play the voice from the history. */
@@ -2968,6 +3075,8 @@ static void process_history_voice(int button_index)
 
 	if (button[button_index].rt.history_offset == -1)
 		return;
+	if (s3_get_history_count() == 0)
+		return ;
 
 	/* Play the voice. */
 	voice = s3_get_history_voice(button[button_index].rt.history_offset);
@@ -3061,16 +3170,21 @@ static void reset_preview_button(int index)
 
 	/* Calculate the pen position. */
 	if (!conf_gui_preview_font_tategaki) {
-		pen_x = 0;
-		pen_y = 0;
+		pen_x = b->margin_left;
+		pen_y = b->margin_top;
 	} else {
-		pen_x = b->width - conf_msgbox_font_size;
-		pen_y = 0;
+		pen_x = b->width - b->margin_right - conf_msgbox_font_size;
+		pen_y = b->margin_top;
+	}
+
+	if (b->rt.msg_context != NULL) {
+		s3_destroy_drawmsg(b->rt.msg_context);
+		b->rt.msg_context = NULL;
 	}
 
 	b->rt.msg_context = s3_create_drawmsg(
 		b->rt.img_canvas_idle,
-		b->msg,
+		get_localized_preview_message(index),
 		conf_msgbox_font_select,
 		conf_msgbox_font_size,
 		conf_msgbox_font_size,
@@ -3080,10 +3194,10 @@ static void reset_preview_button(int index)
 		pen_y,
 		b->width,
 		b->height,
-		0,		/* left_margin */
-		0,		/* right_margin */
-		0,		/* top_margin */
-		0,		/* bottom_margin */
+		b->margin_left,
+		b->margin_right,
+		b->margin_top,
+		b->margin_bottom,
 		conf_msgbox_margin_line,
 		conf_msgbox_margin_char,
 		color,
@@ -3106,6 +3220,52 @@ static void reset_preview_button(int index)
 	b->rt.total_chars = s3_count_drawmsg_chars(b->rt.msg_context, NULL);
 	b->rt.drawn_chars = 0;
 	s3_reset_lap_timer(&b->rt.sw);
+}
+
+/* Get a preview text by the current language. */
+static const char *
+get_localized_preview_message(
+	int index)
+{
+	const char *lang;
+
+	lang = s3_get_system_language();
+
+	if (button[index].msg_en != NULL && strncmp(lang, "en", 2) == 0)
+		return button[index].msg_en;
+
+	if (button[index].msg_fr != NULL && strncmp(lang, "fr", 2) == 0)
+		return button[index].msg_fr;
+
+	if (button[index].msg_es != NULL && strncmp(lang, "es", 2) == 0)
+		return button[index].msg_es;
+
+	if (button[index].msg_de != NULL && strncmp(lang, "de", 2) == 0)
+		return button[index].msg_de;
+
+	if (button[index].msg_it != NULL && strcmp(lang, "it") == 0)
+		return button[index].msg_it;
+
+	if (button[index].msg_ru != NULL && strcmp(lang, "ru") == 0)
+		return button[index].msg_ru;
+
+	if (button[index].msg_el != NULL && strcmp(lang, "el") == 0)
+		return button[index].msg_el;
+
+	if (button[index].msg_zh_cn != NULL && strcmp(lang, "zh-cn") == 0)
+		return button[index].msg_zh_cn;
+
+	if (button[index].msg_zh_tw != NULL && strcmp(lang, "zh-tw") == 0)
+		return button[index].msg_zh_tw;
+
+	if (button[index].msg_ja != NULL && strcmp(lang, "ja") == 0)
+		return button[index].msg_ja;
+
+	if (button[index].msg != NULL)
+		return button[index].msg;
+
+	/* Not specified. */
+	return "";
 }
 
 /* Draw (update) text previews. */
@@ -3425,9 +3585,21 @@ truncate_variable(
 	s3_set_variable_string(var, buf);
 }
 
-/*
- * Render a button image.
- */
+static void
+process_language(
+	int index)
+{
+	struct gui_button *b;
+
+	b = &button[index];
+	if (b->lang == NULL)
+		return;
+
+	/* Set the locale. */
+	s3_set_config("game.locale", b->lang);
+}
+
+/* Render a button image. */
 static void
 render_image_helper(
 	struct s3_image *img,
@@ -4226,128 +4398,100 @@ set_button_key_value(
 
 	/* msg-en */
 	if (strcmp("msg-en", key) == 0) {
-		if (strcmp(s3_get_system_language(), "en") == 0) {
-			free(b->msg);
-			b->msg = strdup(val);
-			if (b->msg == NULL) {
-				s3_log_out_of_memory();
-				return false;
-			}
+		b->msg_en = strdup(val);
+		if (b->msg_en == NULL) {
+			s3_log_out_of_memory();
+			return false;
 		}
 		return true;
 	}
 
 	/* msg-fr */
 	if (strcmp("msg-fr", key) == 0) {
-		if (strcmp(s3_get_system_language(), "fr") == 0) {
-			free(b->msg);
-			b->msg = strdup(val);
-			if (b->msg == NULL) {
-				s3_log_out_of_memory();
-				return false;
-			}
-		}
-	}
-
-	/* msg-de */
-	if (strcmp("msg-de", key) == 0) {
-		if (strcmp(s3_get_system_language(), "de") == 0) {
-			free(b->msg);
-			b->msg = strdup(val);
-			if (b->msg == NULL) {
-				s3_log_out_of_memory();
-				return false;
-			}
+		b->msg_fr = strdup(val);
+		if (b->msg_fr == NULL) {
+			s3_log_out_of_memory();
+			return false;
 		}
 		return true;
 	}
 
 	/* msg-es */
 	if (strcmp("msg-es", key) == 0) {
-		if (strcmp(s3_get_system_language(), "es") == 0) {
-			free(b->msg);
-			b->msg = strdup(val);
-			if (b->msg == NULL) {
-				s3_log_out_of_memory();
-				return false;
-			}
+		b->msg_es = strdup(val);
+		if (b->msg_es == NULL) {
+			s3_log_out_of_memory();
+			return false;
 		}
+		return true;
+	}
+
+	/* msg-de */
+	if (strcmp("msg-de", key) == 0) {
+		b->msg_de = strdup(val);
+		if (b->msg_de == NULL) {
+			s3_log_out_of_memory();
+			return false;
+		}
+		return true;
 	}
 
 	/* msg-it */
 	if (strcmp("msg-it", key) == 0) {
-		if (strcmp(s3_get_system_language(), "it") == 0) {
-			free(b->msg);
-			b->msg = strdup(val);
-			if (b->msg == NULL) {
-				s3_log_out_of_memory();
-				return false;
-			}
+		b->msg_it = strdup(val);
+		if (b->msg_it == NULL) {
+			s3_log_out_of_memory();
+			return false;
 		}
 		return true;
 	}
 
 	/* msg-el */
 	if (strcmp("msg-el", key) == 0) {
-		if (strcmp(s3_get_system_language(), "el") == 0) {
-			free(b->msg);
-			b->msg = strdup(val);
-			if (b->msg == NULL) {
-				s3_log_out_of_memory();
-				return false;
-			}
+		b->msg_el = strdup(val);
+		if (b->msg_el == NULL) {
+			s3_log_out_of_memory();
+			return false;
 		}
 		return true;
 	}
 
 	/* msg-ru */
 	if (strcmp("msg-ru", key) == 0) {
-		if (strcmp(s3_get_system_language(), "ru") == 0) {
-			free(b->msg);
-			b->msg = strdup(val);
-			if (b->msg == NULL) {
-				s3_log_out_of_memory();
-				return false;
-			}
+		b->msg_ru = strdup(val);
+		if (b->msg_ru == NULL) {
+			s3_log_out_of_memory();
+			return false;
 		}
 		return true;
 	}
 
-	/* msg-zh */
-	if (strcmp("msg-zh", key) == 0) {
-		if (strcmp(s3_get_system_language(), "zh") == 0) {
-			free(b->msg);
-			b->msg = strdup(val);
-			if (b->msg == NULL) {
-				s3_log_out_of_memory();
-				return false;
-			}
+	/* msg-zh-cn */
+	if (strcmp("msg-zh-cn", key) == 0) {
+		b->msg_zh_cn = strdup(val);
+		if (b->msg_zh_cn == NULL) {
+			s3_log_out_of_memory();
+			return false;
 		}
 		return true;
 	}
 
-	/* msg-tw */
-	if (strcmp("msg-tw", key) == 0) {
-		if (strcmp(s3_get_system_language(), "tw") == 0) {
-			free(b->msg);
-			b->msg = strdup(val);
-			if (b->msg == NULL) {
-				s3_log_out_of_memory();
-				return false;
-			}
+	/* msg-zh-tw */
+	if (strcmp("msg-zh-tw", key) == 0) {
+		b->msg_zh_tw = strdup(val);
+		if (b->msg_zh_tw == NULL) {
+			s3_log_out_of_memory();
+			return false;
 		}
 		return true;
 	}
 
 	/* msg-ja */
 	if (strcmp("msg-ja", key) == 0) {
-		if (strcmp(s3_get_system_language(), "ja") == 0) {
-			free(b->msg);
-			b->msg = strdup(val);
-			if (b->msg == NULL) {
-				s3_log_out_of_memory();
-				return false;
-			}
+		b->msg_ja = strdup(val);
+		if (b->msg_ja == NULL) {
+			s3_log_out_of_memory();
+			return false;
 		}
 		return true;
 	}
@@ -4486,6 +4630,30 @@ set_button_key_value(
 		return true;
 	}
 
+	/* margin-left */
+	if (strcmp("margin-left", key) == 0) {
+		b->margin_left = atoi(val);
+		return true;
+	}
+
+	/* margin-top */
+	if (strcmp("margin-top", key) == 0) {
+		b->margin_top = atoi(val);
+		return true;
+	}
+
+	/* margin-right */
+	if (strcmp("margin-right", key) == 0) {
+		b->margin_right = atoi(val);
+		return true;
+	}
+
+	/* margin-bottom */
+	if (strcmp("margin-bottom", key) == 0) {
+		b->margin_bottom = atoi(val);
+		return true;
+	}
+
 	/* anime-idle */
 	if (strcmp("anime-idle", key) == 0) {
 		b->anime_idle = strdup(val);
@@ -4510,6 +4678,16 @@ set_button_key_value(
 	if (strcmp("anime-active", key) == 0) {
 		b->anime_active = strdup(val);
 		if (b->anime_active == NULL) {
+			s3_log_out_of_memory();
+			return false;
+		}
+		return true;
+	}
+
+	/* anime-idle */
+	if (strcmp("lang", key) == 0) {
+		b->lang = strdup(val);
+		if (b->lang == NULL) {
 			s3_log_out_of_memory();
 			return false;
 		}
@@ -4557,6 +4735,7 @@ get_type_for_name(
 		{"cancel",			TYPE_CANCEL},
 		{"namevar",			TYPE_NAMEVAR},
 		{"char",			TYPE_CHAR},
+		{"language",			TYPE_LANGUAGE},
 	};
 	size_t i;
 
@@ -4674,4 +4853,14 @@ change_save_page(
 			button[i].rt.is_disabled = false;
 		}
 	}
+}
+
+static bool
+is_current_language(
+	const char *lang)
+{
+	if (strcmp(lang, s3_get_system_language()) == 0)
+		return true;
+
+	return false;
 }

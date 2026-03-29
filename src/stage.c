@@ -260,6 +260,9 @@ s3i_init_stage(void)
 		layer_alpha[i] = 255;
 	}
 
+	layer_alpha[S3_LAYER_MSGBOX] = 0;
+	layer_alpha[S3_LAYER_NAMEBOX] = 0;
+
 	return true;
 }
 
@@ -1536,16 +1539,13 @@ s3_render_stage(void)
 	render_layer(S3_LAYER_CHC_FO);
 	for (i = S3_LAYER_EFF1; i <= S3_LAYER_EFF4; i++)
 		render_layer(i);
-	if (is_msgbox_visible)
-		render_layer(S3_LAYER_MSGBOX);
-	if (is_namebox_visible && conf_namebox_enable)
+	render_layer(S3_LAYER_MSGBOX);
+	if (conf_namebox_enable)
 		render_layer(S3_LAYER_NAMEBOX);
-	if (is_msgbox_visible) {
-		render_layer(S3_LAYER_CHF);
-		render_layer(S3_LAYER_CHF_EYE);
-		render_layer(S3_LAYER_CHF_LIP);
-		render_layer(S3_LAYER_CHF_FO);
-	}
+	render_layer(S3_LAYER_CHF);
+	render_layer(S3_LAYER_CHF_EYE);
+	render_layer(S3_LAYER_CHF_LIP);
+	render_layer(S3_LAYER_CHF_FO);
 	if (is_click_visible)
 		render_layer(S3_LAYER_CLICK);
 	if (is_auto_visible)
@@ -2558,6 +2558,7 @@ s3_show_namebox(
 	bool show)
 {
 	is_namebox_visible = show;
+	layer_alpha[S3_LAYER_NAMEBOX] = show? 255 : 0;
 }
 
 /*
