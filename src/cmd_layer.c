@@ -132,7 +132,11 @@ s3i_tag_layer(
 
 	/* Get the arguments. */
 	name = s3_get_tag_arg_string("name", false, NULL);
+	if (name == NULL)
+		return false;
 	file = s3_get_tag_arg_string("file", false, NULL);
+	if (file == NULL)
+		return false;
 	x = s3_get_tag_arg_int("x", true, 0);
 	y = s3_get_tag_arg_int("y", true, 0);
 	alpha = s3_get_tag_arg_int("alpha", true, 255);

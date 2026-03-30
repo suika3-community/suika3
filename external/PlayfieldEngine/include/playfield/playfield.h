@@ -309,6 +309,19 @@ pf_render_texture_dim(
 	int alpha);
 
 /*
+ * Render textures for cross fading.
+ */
+void
+pf_render_texture_cross(
+	int tex1_id,
+	int tex2_id,
+	int src1_left,
+	int src1_top,
+	int src2_left,
+	int src2_top,
+	int alpha);
+
+/*
  * Render a texture. (3D, alpha blending)
  */
 void
@@ -389,6 +402,31 @@ pf_render_texture_3d_dim(
 	int alpha);
 
 /*
+ * Render textures for cross fading.
+ */
+void
+pf_render_texture_3d_cross(
+	int tex1_id,
+	int tex2_id,
+	float src1_x1,
+	float src1_y1,
+	float src1_x2,
+	float src1_y2,
+	float src1_x3,
+	float src1_y3,
+	float src1_x4,
+	float src1_y4,
+	float src2_x1,
+	float src2_y1,
+	float src2_x2,
+	float src2_y2,
+	float src2_x3,
+	float src2_y3,
+	float src2_x4,
+	float src2_y4,
+	int alpha);
+
+/*
  * Render a texture.
  */
 void
@@ -447,7 +485,8 @@ pf_create_text_texture_outline(
 bool
 pf_play_sound(
 	int stream,
-	const char *file);
+	const char *file,
+	bool is_loop);
 
 /*
  * Stop a sound on a stream.

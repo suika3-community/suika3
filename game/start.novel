@@ -1,18 +1,49 @@
 [chapter name="Chapter 1"]
 
+[config name="game.locale" value="en"]
+
+#
+# Play a BGM.
+#
+
 [volume track="bgm" vol="0.5"]
 [bgm file="bgm/afternoon2.ogg"]
 
+#
+# Fade-in a background image.
+#
+
 [bg file="bg/school.png" time="0.5"]
-[ch left="ch/xiaoling/xiaoling-smile.png" time="1.0" fade="normal"]
+
+#
+# Let Xiaoling enter and say.
+#
+
+[ch time="1.0" fade="normal"
+  left="ch/xiaoling/xiaoling-smile.png"
+  left-scale-x="1.2"
+  left-scale-y="1.2"
+]
 
 [text name="Xiaoling" text="......"]
 
-[ch left="ch/xiaoling/xiaoling-normal.png" time="1.0" fade="normal"]
+[ch time="1.0" fade="normal"
+  left="ch/xiaoling/xiaoling-normal.png"
+]
 
-[text name="Xiaoling" text="......"]
+[text name="Xiaoling"
+  text="......"
+]
+
+#
+# Let Midori enter.
+#
 
 [ch right="ch/midori/midori-normal.png" time="0.5" fade="normal"]
+
+#
+# Dialogue.
+#
 
 [text name="Xiaoling" voice="voice/001.ogg"
   text="Would you like to go to a cafe, Mido?"
@@ -32,6 +63,10 @@
   text-ja="どこのお店にする？"
 ]
 
+#
+# Option.
+#
+
 [choose name="result"
   text1="Hoshino Coffee"
   text1-en="Hoshino Coffee"
@@ -44,7 +79,12 @@
   text3-ja="セガフレード"
 ]
 
+#
+# Let Midori smile, move, and say.
+#
+
 [ch right="ch/midori/midori-happy.png" time="0.5" fade="normal"]
+
 [move time="1.0" right-x="r-250" accel="deaccel"]
 
 [text name="Midori" voice="voice/004.ogg"
@@ -53,8 +93,11 @@
   text-ja="駅のお店に行こうよ、シャオ！"
 ]
 
+#
+# Let Xiaoling smile and say.
+#
+
 [ch left="ch/xiaoling/xiaoling-smile.png" time="1.0" fade="normal"]
-[wait time="0.5" showmsgbox="true"]
 
 [text name="Xiaoling" voice="voice/005.ogg"
   text="Okay, I'll grab my bag. Just a moment, Mido."
@@ -62,5 +105,17 @@
   text-ja="いいよ、じゃあバッグを取ってくるね。ちょっと待ってて、みど"
 ]
 
+#
+# Let Xiaoling and Midori leave.
+#
+
 [ch left="none" right="none" time="1.0"]
-[click]
+
+#
+# Wait for a click
+#
+
+[click
+  hidemsgbox="true"
+  hidenamebox="true"
+]

@@ -113,6 +113,7 @@ enum {
 	PIPELINE_DIM,
 	PIPELINE_RULE,
 	PIPELINE_MELT,
+	PIPELINE_CROSS,
 };
 
 /*
@@ -122,17 +123,22 @@ struct pseudo_vertex_info {
 	/* 0 (V_POS) */		float x;
 	/* 1 */			float y;
 	/* 2 */			float z; /* 0 */
-	/* 3 (V_TEX) */		float u;
-	/* 4 */			float v;
-	/* 5 (V_ALPHA) */	float alpha;
+	/* 3 (V_TEX1) */	float u1;
+	/* 4 */			float v1;
+	/* 5 (V_TEX2) */	float u2;
+	/* 6 */			float v2;
+	/* 7 (V_ALPHA) */	float alpha;
 };
 enum {
 	V_POS_X = 0,
 	V_POS_Y = 1,
-	V_TEX_U = 3,
-	V_TEX_V = 4,
-	V_ALPHA = 5,
-	V_SIZE = 6,
+	V_POS_Z = 2,
+	V_TEX1_U = 3,
+	V_TEX1_V = 4,
+	V_TEX2_U = 5,
+	V_TEX2_V = 6,
+	V_ALPHA = 7,
+	V_SIZE = 8,
 };
 
 /*
@@ -156,6 +162,9 @@ static GLuint fragment_shader_rule = (GLuint)-1;
 /* The melt shader. (8-bit universal transition) */
 static GLuint fragment_shader_melt = (GLuint)-1;
 
+/* The cross shader.  */
+static GLuint fragment_shader_cross = (GLuint)-1;
+
 /*
  * Program per fragment shader.
  */
@@ -171,6 +180,9 @@ static GLuint program_rule;
 
 /* For the melt shader. (8-bit universal transition) */
 static GLuint program_melt;
+
+/* For the cross shader. */
+static GLuint program_cross;
 
 /*
  * VAO per fragment shader.
@@ -188,6 +200,9 @@ static GLuint vao_rule;
 /* For the melt shader. (8-bit universal transition) */
 static GLuint vao_melt;
 
+/* For the cross shader. */
+static GLuint vao_cross;
+
 /*
  * VBO per fragment shader.
  */
@@ -203,6 +218,9 @@ static GLuint vbo_rule;
 
 /* For the melt shader. (8-bit universal transition) */
 static GLuint vbo_melt;
+
+/* For the cross shader. */
+static GLuint vbo_cross;
 
 /*
  * IBO per fragment shader.
@@ -220,6 +238,9 @@ static GLuint ibo_rule;
 /* For the melt shader. (8-bit universal transition) */
 static GLuint ibo_melt;
 
+/* For the cross shader. */
+static GLuint ibo_cross;
+
 /*
  * The vertex shader source.
  */
@@ -233,9 +254,11 @@ static const char *vertex_shader_src =
 	"precision mediump float;     \n"
 #endif
 	"attribute vec4 a_position;   \n"
-	"attribute vec2 a_texCoord;   \n"
+	"attribute vec2 a_texCoord1;  \n"
+	"attribute vec2 a_texCoord2;  \n"
 	"attribute float a_alpha;     \n"
-	"varying vec2 v_texCoord;     \n"
+	"varying vec2 v_texCoord1;    \n"
+	"varying vec2 v_texCoord2;    \n"
 	"varying float v_alpha;       \n"
 	"void main()                  \n"
 	"{                            \n"
@@ -245,7 +268,8 @@ static const char *vertex_shader_src =
 	"  vec2 rotated = vec2(-a_position.y, a_position.x); \n"
 	"  gl_Position = vec4(rotated, a_position.z, 1.0);   \n"
 #endif
-	"  v_texCoord = a_texCoord;   \n"
+	"  v_texCoord1 = a_texCoord1;  \n"
+	"  v_texCoord2 = a_texCoord2;  \n"
 	"  v_alpha = a_alpha;         \n"
 	"}                            \n";
 
@@ -264,12 +288,13 @@ static const char *fragment_shader_src_normal =
 #if !defined(HAL_TARGET_MACOS)
 	"precision mediump float;                            \n"
 #endif
-	"varying vec2 v_texCoord;                            \n"
+	"varying vec2 v_texCoord1;                           \n"
+	"varying vec2 v_texCoord2;                           \n"
 	"varying float v_alpha;                              \n"
-	"uniform sampler2D s_texture;                        \n"
+	"uniform sampler2D s_texture1;                       \n"
 	"void main()                                         \n"
 	"{                                                   \n"
-	"  vec4 tex = texture2D(s_texture, v_texCoord);      \n"
+	"  vec4 tex = texture2D(s_texture1, v_texCoord1);    \n"
 	"  tex.a = tex.a * v_alpha;                          \n"
 	"  gl_FragColor = tex;                               \n"
 	"}                                                   \n";
@@ -285,11 +310,12 @@ static const char *fragment_shader_src_dim =
 #if !defined(HAL_TARGET_MACOS)
 	"precision mediump float;                            \n"
 #endif
-	"varying vec2 v_texCoord;                            \n"
-	"uniform sampler2D s_texture;                        \n"
+	"varying vec2 v_texCoord1;                           \n"
+	"varying vec2 v_texCoord2;                           \n"
+	"uniform sampler2D s_texture1;                       \n"
 	"void main()                                         \n"
 	"{                                                   \n"
-	"  vec4 tex = texture2D(s_texture, v_texCoord);      \n"
+	"  vec4 tex = texture2D(s_texture1, v_texCoord1);    \n"
 	"  tex.r = tex.r * 0.5;                              \n"
 	"  tex.g = tex.g * 0.5;                              \n"
 	"  tex.b = tex.b * 0.5;                              \n"
@@ -307,14 +333,16 @@ static const char *fragment_shader_src_rule =
 #if !defined(HAL_TARGET_MACOS)
 	"precision mediump float;                            \n"
 #endif
-	"varying vec2 v_texCoord;                            \n"
+	"varying vec2 v_texCoord1;                           \n"
+	"varying vec2 v_texCoord2;                           \n"
 	"varying float v_alpha;                              \n"
-	"uniform sampler2D s_texture;                        \n"
+	"uniform sampler2D s_texture1;                       \n"
+	"uniform sampler2D s_texture2;                       \n"
 	"uniform sampler2D s_rule;                           \n"
 	"void main()                                         \n"
 	"{                                                   \n"
-        "  vec4 tex = texture2D(s_texture, v_texCoord);      \n"
-	"  vec4 rule = texture2D(s_rule, v_texCoord);        \n"
+        "  vec4 tex = texture2D(s_texture1, v_texCoord1);    \n"
+	"  vec4 rule = texture2D(s_texture2, v_texCoord2);   \n"
 	"  tex.a = 1.0 - step(v_alpha, rule.b);              \n"
 	"  gl_FragColor = tex;                               \n"
 	"}                                                   \n";
@@ -322,25 +350,49 @@ static const char *fragment_shader_src_rule =
 /* The melt shader. (8-bit universal transition) */
 static const char *fragment_shader_src_melt =
 #if !defined(HAL_TARGET_WASM) && !defined(HAL_TARGET_MACOS)
-	"#version 100                                        \n"
+	"#version 100                                                       \n"
 #endif
 #if defined(USE_QT)
-	"#undef mediump                                      \n"
+	"#undef mediump                                                     \n"
 #endif
 #if !defined(HAL_TARGET_MACOS)
-	"precision mediump float;                            \n"
+	"precision mediump float;                                           \n"
 #endif
-	"varying vec2 v_texCoord;                            \n"
-	"varying float v_alpha;                              \n"
-	"uniform sampler2D s_texture;                        \n"
-	"uniform sampler2D s_rule;                           \n"
-	"void main()                                         \n"
-	"{                                                   \n"
-        "  vec4 tex = texture2D(s_texture, v_texCoord);      \n"
-	"  vec4 rule = texture2D(s_rule, v_texCoord);        \n"
+	"varying vec2 v_texCoord1;                                          \n"
+	"varying vec2 v_texCoord2;                                          \n"
+	"varying float v_alpha;                                             \n"
+	"uniform sampler2D s_texture;                                       \n"
+	"uniform sampler2D s_rule;                                          \n"
+	"void main()                                                        \n"
+	"{                                                                  \n"
+        "  vec4 tex = texture2D(s_texture, v_texCoord1);                    \n"
+	"  vec4 rule = texture2D(s_rule, v_texCoord1);                      \n"
 	"  tex.a = clamp((1.0 - rule.b) + (v_alpha * 2.0 - 1.0), 0.0, 1.0); \n"
-	"  gl_FragColor = tex;                               \n"
-	"}                                                   \n";
+	"  gl_FragColor = tex;                                              \n"
+	"}                                                                  \n";
+
+/* The cross shader. */
+static const char *fragment_shader_src_cross =
+#if !defined(HAL_TARGET_WASM) && !defined(HAL_TARGET_MACOS)
+	"#version 100                                                     \n"
+#endif
+#if defined(USE_QT)
+	"#undef mediump                                                   \n"
+#endif
+#if !defined(HAL_TARGET_MACOS)
+	"precision mediump float;                                         \n"
+#endif
+	"varying vec2 v_texCoord1;                                        \n"
+	"varying vec2 v_texCoord2;                                        \n"
+	"varying float v_alpha;                                           \n"
+	"uniform sampler2D s_texture1;                                    \n"
+	"uniform sampler2D s_texture2;                                    \n"
+	"void main()                                                      \n"
+	"{                                                                \n"
+	"    vec4 src1 = texture2D(s_texture1, v_texCoord1);              \n"
+	"    vec4 src2 = texture2D(s_texture2, v_texCoord2);              \n"
+        "    gl_FragColor = mix(src2, src1, v_alpha);                     \n"
+        "}                                                                \n";
 
 /* Window size. */
 static int window_width;
@@ -369,17 +421,50 @@ GLuint vbo, GLuint ibo);
 /*
  * Forward declaration.
  */
-static void draw_elements(int dst_left, int dst_top, int dst_width,
-			  int dst_height, struct hal_image *src_image,
-			  struct hal_image *rule_image, int src_left,
-			  int src_top, int src_width, int src_height,
-			  int alpha, int pipeline);
-static void draw_elements_3d(float x1, float y1, float x2, float y2,
-			     float x3, float y3, float x4, float y4,
-			     struct hal_image *src_image, struct
-			     hal_image *rule_image, int src_left, int
-			     src_top, int src_width, int src_height,
-			     int alpha, int pipeline);
+static void draw_elements(int dst_left,
+			  int dst_top,
+			  int dst_width,
+			  int dst_height,
+			  struct hal_image *src1_image,
+			  struct hal_image *src2_image,
+			  int src1_left,
+			  int src1_top,
+			  int src1_width,
+			  int src1_height,
+			  int src2_left,
+			  int src2_top,
+			  int src2_width,
+			  int src2_height,
+			  int alpha,
+			  int pipeline);
+static void draw_elements_3d(float x1,
+			     float y1,
+			     float x2,
+			     float y2,
+			     float x3,
+			     float y3,
+			     float x4,
+			     float y4,
+			     struct hal_image *src1_image,
+			     struct hal_image *src2_image,
+			     float src1_x1,
+			     float src1_y1,
+			     float src1_x2,
+			     float src1_y2,
+			     float src1_x3,
+			     float src1_y3,
+			     float src1_x4,
+			     float src1_y5,
+			     float src2_x1,
+			     float src2_y1,
+			     float src2_x2,
+			     float src2_y2,
+			     float src2_x3,
+			     float src2_y3,
+			     float src2_x4,
+			     float src2_y5,
+			     int alpha,
+			     int pipeline);
 static void update_texture_if_needed(struct hal_image *img);
 
 /*
@@ -451,6 +536,17 @@ init_opengl(
 				   &ibo_melt))
 		return false;
 
+	/* Setup the fragment shader for cross. */
+	if (!setup_fragment_shader(&fragment_shader_src_cross,
+				   vertex_shader,
+				   true, /* use second texture */
+				   &fragment_shader_cross,
+				   &program_cross,
+				   &vao_cross,
+				   &vbo_cross,
+				   &ibo_cross))
+		return false;
+
 	is_after_reinit = true;
 	reinit_count++;
 
@@ -512,7 +608,7 @@ setup_fragment_shader(
 	GLuint *ibo)			/* OUT: An IBO ID. */
 {
 	char err_msg[1024];
-	GLint pos_loc, tex_loc, alpha_loc, sampler_loc, rule_loc;
+	GLint pos_loc, tex1_loc, tex2_loc, alpha_loc, sampler1_loc, sampler2_loc;
 	GLint is_succeeded;
 	int err_len;
 
@@ -564,15 +660,25 @@ setup_fragment_shader(
 			      (const GLvoid *)V_POS_X);
 	glEnableVertexAttribArray((GLuint)pos_loc);
 
-	/* Set the vertex attibute for "a_texCoord" (V_TEX) in the vertex shader. */
-	tex_loc = glGetAttribLocation(*prog, "a_texCoord");
-	glVertexAttribPointer((GLuint)tex_loc,
-			      2,	/* (u, v) */
+	/* Set the vertex attibute for "a_texCoord1" (V_TEX1) in the vertex shader. */
+	tex1_loc = glGetAttribLocation(*prog, "a_texCoord1");
+	glVertexAttribPointer((GLuint)tex1_loc,
+			      2,	/* (u1, v1) */
 			      GL_FLOAT,
 			      GL_FALSE,
 			      V_SIZE * sizeof(GLfloat),
-			      (const GLvoid *)(V_TEX_U * sizeof(GLfloat)));
-	glEnableVertexAttribArray((GLuint)tex_loc);
+			      (const GLvoid *)(V_TEX1_U * sizeof(GLfloat)));
+	glEnableVertexAttribArray((GLuint)tex1_loc);
+
+	/* Set the vertex attibute for "a_texCoord2" (V_TEX2) in the vertex shader. */
+	tex2_loc = glGetAttribLocation(*prog, "a_texCoord2");
+	glVertexAttribPointer((GLuint)tex2_loc,
+			      2,	/* (u2, v2) */
+			      GL_FLOAT,
+			      GL_FALSE,
+			      V_SIZE * sizeof(GLfloat),
+			      (const GLvoid *)(V_TEX2_U * sizeof(GLfloat)));
+	glEnableVertexAttribArray((GLuint)tex2_loc);
 
 	/* Set the vertex attibute for "a_alpha" (V_ALPHA) in the vertex shader. */
 	alpha_loc = glGetAttribLocation(*prog, "a_alpha");
@@ -585,13 +691,13 @@ setup_fragment_shader(
 	glEnableVertexAttribArray((GLuint)alpha_loc);
 
 	/* Setup "s_texture" in a fragment shader. */
-	sampler_loc = glGetUniformLocation(*prog, "s_texture");
-	glUniform1i(sampler_loc, 0);
+	sampler1_loc = glGetUniformLocation(*prog, "s_texture1");
+	glUniform1i(sampler2_loc, 0);
 
 	/* Setup "s_rule" in a fragment shader if we use a second texture. */
 	if (use_second_texture) {
-		rule_loc = glGetUniformLocation(*prog, "s_rule");
-		glUniform1i(rule_loc, 1);
+		sampler2_loc = glGetUniformLocation(*prog, "s_texture2");
+		glUniform1i(sampler2_loc, 1);
 	}
 
 	/* Create an IBO. */
@@ -782,6 +888,7 @@ opengl_render_image_normal(
 		      src_top,
 		      src_width,
 		      src_height,
+		      0, 0, 0, 0,
 		      alpha,
 		      PIPELINE_NORMAL);
 }
@@ -825,6 +932,7 @@ opengl_render_image_add(
 		      src_top,
 		      src_width,
 		      src_height,
+		      0, 0, 0, 0,
 		      alpha,
 		      PIPELINE_ADD);
 }
@@ -868,6 +976,7 @@ opengl_render_image_sub(
 		      src_top,
 		      src_width,
 		      src_height,
+		      0, 0, 0, 0,
 		      alpha,
 		      PIPELINE_SUB);
 }
@@ -911,6 +1020,7 @@ opengl_render_image_dim(
 		      src_top,
 		      src_width,
 		      src_height,
+		      0, 0, 0, 0,
 		      255,
 		      PIPELINE_DIM);
 }
@@ -935,6 +1045,7 @@ opengl_render_image_rule(
 		      window_width,
 		      window_height,
 		      threshold,
+		      0, 0, 0, 0,
 		      PIPELINE_RULE);
 }
 
@@ -957,8 +1068,44 @@ opengl_render_image_melt(
 		      0,
 		      window_width,
 		      window_height,
+		      0, 0, 0, 0,
 		      progress,
 		      PIPELINE_MELT);
+}
+
+/*
+ * Render an image with the cross pipeline.
+ */
+void
+opengl_render_image_cross(
+	struct hal_image *src1_image,
+	struct hal_image *src2_image,
+	int src1_left,
+	int src1_top,
+	int src2_left,
+	int src2_top,
+	int alpha)
+{
+	draw_elements_3d(0,
+			 0,
+			 window_width,
+			 0,
+			 0,
+			 window_height,
+			 window_width,
+			 window_height,
+			 src1_image,
+			 src2_image,
+			 -src1_left,			-src1_top,
+			 window_width - src1_left, 	-src1_top,
+			 -src1_left,			window_height - src1_top,
+			 window_width - src1_left,	window_height - src1_top,
+			 -src2_left,                	-src2_top,
+			 window_width - src2_left,	-src2_top,
+			 -src2_left,			window_height - src2_top,
+			 window_width - src2_left,	window_height - src2_top,
+			 alpha,
+			 PIPELINE_CROSS);
 }
 
 /* Render two triangle primitives. */
@@ -970,10 +1117,14 @@ draw_elements(
 	int dst_height,
 	struct hal_image *src_image,
 	struct hal_image *rule_image,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
+	int src1_left,
+	int src1_top,
+	int src1_width,
+	int src1_height,
+	int src2_left,
+	int src2_top,
+	int src2_width,
+	int src2_height,
 	int alpha,
 	int pipeline)
 {
@@ -987,10 +1138,22 @@ draw_elements(
 			 (float)(dst_top + dst_height),
 			 src_image,
 			 rule_image,
-			 src_left,
-			 src_top,
-			 src_width,
-			 src_height,
+			 src1_left,
+			 src1_top,
+			 src1_left + src1_width,
+			 src1_top,
+			 src1_left,
+			 src1_top + src1_height,
+			 src1_left + src1_width,
+			 src1_top + src1_height,
+			 src2_left,
+			 src2_top,
+			 src2_left + src2_width,
+			 src2_top,
+			 src2_left,
+			 src2_top + src2_height,
+			 src2_left + src2_width,
+			 src2_top + src2_height,
 			 alpha,
 			 pipeline);
 }
@@ -1027,8 +1190,13 @@ opengl_render_image_3d_normal(
 			 NULL,
 			 src_left,
 			 src_top,
-			 src_width,
-			 src_height,
+			 src_left + src_width,
+			 src_top,
+			 src_left,
+			 src_top + src_height,
+			 src_left + src_width,
+			 src_top + src_height,
+			 0, 0, 0, 0, 0, 0, 0, 0,
 			 alpha,
 			 PIPELINE_NORMAL);
 }
@@ -1065,8 +1233,13 @@ opengl_render_image_3d_add(
 			 NULL,
 			 src_left,
 			 src_top,
-			 src_width,
-			 src_height,
+			 src_left + src_width,
+			 src_top,
+			 src_left,
+			 src_top + src_height,
+			 src_left + src_width,
+			 src_top + src_height,
+			 0, 0, 0, 0, 0, 0, 0, 0,
 			 alpha,
 			 PIPELINE_ADD);
 }
@@ -1103,8 +1276,13 @@ opengl_render_image_3d_sub(
 			 NULL,
 			 src_left,
 			 src_top,
-			 src_width,
-			 src_height,
+			 src_left + src_width,
+			 src_top,
+			 src_left,
+			 src_top + src_height,
+			 src_left + src_width,
+			 src_top + src_height,
+			 0, 0, 0, 0, 0, 0, 0, 0,
 			 alpha,
 			 PIPELINE_SUB);
 }
@@ -1141,10 +1319,91 @@ opengl_render_image_3d_dim(
 			 NULL,
 			 src_left,
 			 src_top,
-			 src_width,
-			 src_height,
+			 src_left + src_width,
+			 src_top,
+			 src_left,
+			 src_top + src_height,
+			 src_left + src_width,
+			 src_top + src_height,
+			 0, 0, 0, 0, 0, 0, 0, 0,
 			 alpha,
 			 PIPELINE_DIM);
+}
+
+void
+opengl_render_image_cross_3d(
+        struct hal_image *src1_image,
+        struct hal_image *src2_image,
+        float src1_x1, float src1_y1, // Image1 左上
+        float src1_x2, float src1_y2, // Image1 右上
+        float src1_x3, float src1_y3, // Image1 左下
+        float src1_x4, float src1_y4, // Image1 右下
+        float src2_x1, float src2_y1, // Image2 左上
+        float src2_x2, float src2_y2, // Image2 右上
+        float src2_x3, float src2_y3, // Image2 左下
+        float src2_x4, float src2_y4, // Image2 右下
+        int alpha)
+{
+    float s1_tx[4], s1_ty[4];
+    float s2_tx[4], s2_ty[4];
+    float screen_x[] = { 0.0f, (float)window_width, 0.0f, (float)window_width };
+    float screen_y[] = { 0.0f, 0.0f, (float)window_height, (float)window_height };
+
+    // --- Image 1 の仮想テクスチャ座標計算 ---
+    {
+        float dx1 = src1_x2 - src1_x1;
+        float dy1 = src1_y2 - src1_y1;
+        float dx2 = src1_x3 - src1_x1; // 左下を使って基底を作るよ
+        float dy2 = src1_y3 - src1_y1;
+        float det = dx1 * dy2 - dy1 * dx2;
+
+        if (det != 0.0f) {
+            for (int i = 0; i < 4; i++) {
+                float rx = screen_x[i] - src1_x1;
+                float ry = screen_y[i] - src1_y1;
+                float a = ( dy2 * rx - dx2 * ry) / det;
+                float b = (-dy1 * rx + dx1 * ry) / det;
+                s1_tx[i] = a * (float)src1_image->width;
+                s1_ty[i] = b * (float)src1_image->height;
+            }
+        } else {
+            for (int i = 0; i < 4; i++) s1_tx[i] = s1_ty[i] = 0.0f;
+        }
+    }
+
+    // --- Image 2 の仮想テクスチャ座標計算 ---
+    {
+        float dx1 = src2_x2 - src2_x1;
+        float dy1 = src2_y2 - src2_y1;
+        float dx2 = src2_x3 - src2_x1;
+        float dy2 = src2_y3 - src2_y1;
+        float det = dx1 * dy2 - dy1 * dx2;
+
+        if (det != 0.0f) {
+            for (int i = 0; i < 4; i++) {
+                float rx = screen_x[i] - src2_x1;
+                float ry = screen_y[i] - src2_y1;
+                float a = ( dy2 * rx - dx2 * ry) / det;
+                float b = (-dy1 * rx + dx1 * ry) / det;
+                s2_tx[i] = a * (float)src2_image->width;
+                s2_ty[i] = b * (float)src2_image->height;
+            }
+        } else {
+            for (int i = 0; i < 4; i++) s2_tx[i] = s2_ty[i] = 0.0f;
+        }
+    }
+
+    // 最後に描画関数をコール！
+    draw_elements_3d(0.0f, 0.0f,
+		     (float)window_width, 0.0f,
+                     0.0f, (float)window_height,
+		     (float)window_width, (float)window_height,
+                     src1_image, src2_image,
+                     s1_tx[0], s1_ty[0], s1_tx[1], s1_ty[1],
+                     s1_tx[2], s1_ty[2], s1_tx[3], s1_ty[3],
+                     s2_tx[0], s2_ty[0], s2_tx[1], s2_ty[1],
+                     s2_tx[2], s2_ty[2], s2_tx[3], s2_ty[3],
+                     alpha, PIPELINE_CROSS);
 }
 
 /* Render two triangle primitives. */
@@ -1158,27 +1417,39 @@ draw_elements_3d(
 	float y3,
 	float x4,
 	float y4,
-	struct hal_image *src_image,
-	struct hal_image *rule_image,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
+	struct hal_image *src1_image,
+	struct hal_image *src2_image,
+	float src1_tx1,
+	float src1_ty1,
+	float src1_tx2,
+	float src1_ty2,
+	float src1_tx3,
+	float src1_ty3,
+	float src1_tx4,
+	float src1_ty4,
+	float src2_tx1,
+	float src2_ty1,
+	float src2_tx2,
+	float src2_ty2,
+	float src2_tx3,
+	float src2_ty3,
+	float src2_tx4,
+	float src2_ty4,
 	int alpha,
 	int pipeline)
 {
-	GLfloat pos[24];
-	float hw, hh, tw, th;
+	GLfloat pos[32];
+	float hw, hh, tw1, th1, tw2, th2;
 	GLuint tex1, tex2;
 
-	update_texture_if_needed(src_image);
-	update_texture_if_needed(rule_image);
+	update_texture_if_needed(src1_image);
+	update_texture_if_needed(src2_image);
 
 	/* Get textures. */
-	tex1 = (GLuint)(intptr_t)src_image->texture - 1;
+	tex1 = (GLuint)(intptr_t)src1_image->texture - 1;
 	assert(tex1 != 0);
-	if (rule_image != NULL) {
-		tex2 = (GLuint)(intptr_t)rule_image->texture - 1;
+	if (src2_image != NULL) {
+		tex2 = (GLuint)(intptr_t)src2_image->texture - 1;
 		assert(tex1 != 0);
 	} else {
 		tex2 = 0;
@@ -1189,40 +1460,55 @@ draw_elements_3d(
 	hh = (float)window_height / 2.0f;
 
 	/* Get the texture size. */
-	tw = (float)src_image->width;
-	th = (float)src_image->height;
+	tw1 = (float)src1_image->width;
+	th1 = (float)src1_image->height;
+	if (src2_image != NULL) {
+		tw2 = (float)src2_image->width;
+		th2 = (float)src2_image->height;
+	} else {
+		tw2 = 1;
+		th2 = 1;
+	}
 
 	/* Left-Top */
 	pos[0] = (x1 - hw) / hw;
 	pos[1] = -(y1 - hh) / hh;
 	pos[2] = 0.0f;
-	pos[3] = (float)src_left / tw;
-	pos[4] = (float)src_top / th;
-	pos[5] = (float)alpha / 255.0f;
+	pos[3] = src1_tx1 / tw1;
+	pos[4] = src1_ty1 / th1;
+	pos[5] = src2_tx1 / tw2;
+	pos[6] = src2_ty1 / th2;
+	pos[7] = (float)alpha / 255.0f;
 
 	/* Right-Top */
-	pos[6] = (x2 - hw) / hw;
-	pos[7] = -(y2 - hh) / hh;
-	pos[8] = 0.0f;
-	pos[9] = (float)(src_left + src_width) / tw;
-	pos[10] = (float)(src_top) / th;
-	pos[11] = (float)alpha / 255.0f;
+	pos[8] = (x2 - hw) / hw;
+	pos[9] = -(y2 - hh) / hh;
+	pos[10] = 0.0f;
+	pos[11] = src1_tx2 / tw1;
+	pos[12] = src1_ty2 / th1;
+	pos[13] = src2_tx2 / tw2;
+	pos[14] = src2_ty2 / th2;
+	pos[15] = (float)alpha / 255.0f;
 
 	/* Left-Bottom */
-	pos[12] = (x3 - hw) / hw;
-	pos[13] = -(y3 - hh) / hh;
-	pos[14] = 0.0f;
-	pos[15] = (float)src_left / tw;
-	pos[16] = (float)(src_top + src_height) / th;
-	pos[17] = (float)alpha / 255.0f;
+	pos[16] = (x3 - hw) / hw;
+	pos[17] = -(y3 - hh) / hh;
+	pos[18] = 0.0f;
+	pos[19] = src1_tx3 / tw1;
+	pos[20] = src1_ty3 / th1;
+	pos[21] = src2_tx3 / tw2;
+	pos[22] = src2_ty3 / th2;
+	pos[23] = (float)alpha / 255.0f;
 
 	/* Right-Bottom */
-	pos[18] = (x4 - hw) / hw;
-	pos[19] = -(y4 - hh) / hh;
-	pos[20] = 0.0f;
-	pos[21] = (float)(src_left + src_width) / tw;
-	pos[22] = (float)(src_top + src_height) / th;
-	pos[23] = (float)alpha / 255.0f;
+	pos[24] = (x4 - hw) / hw;
+	pos[25] = -(y4 - hh) / hh;
+	pos[26] = 0.0f;
+	pos[27] = src1_tx4 / tw1;
+	pos[28] = src1_ty4 / th1;
+	pos[29] = src2_tx4 / tw2;
+	pos[30] = src2_ty4 / th2;
+	pos[31] = (float)alpha / 255.0f;
 
 	/* Setup the shader. */
 	switch (pipeline) {
@@ -1280,6 +1566,15 @@ draw_elements_3d(
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		break;
+	case PIPELINE_CROSS:
+		glUseProgram(program_cross);
+		glBindVertexArray(vao_cross);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo_cross);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_cross);
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		break;
 	default:
 		assert(0);
 		break;
@@ -1291,7 +1586,7 @@ draw_elements_3d(
 	/* Select textures. */
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, tex1);
-	if (rule_image != NULL) {
+	if (src2_image != NULL) {
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, tex2);
 	}

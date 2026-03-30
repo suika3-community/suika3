@@ -1280,7 +1280,12 @@ blit_namebox(void)
 static void
 focus_character(void)
 {
+	const char *name;
 	int i;
+
+	name = s3_get_tag_arg_string("name", true, NULL);
+	if (name == NULL)
+		return;
 
 	/* Check if the character is registered with a name */
 	for (i = 0; i < S3_CHARACTER_MAP_COUNT; i++) {
@@ -1288,7 +1293,7 @@ focus_character(void)
 			continue;
 		if (conf_character_folder[i] == NULL)
 			continue;
-		if (strcmp(conf_character_name[i], name_top) == 0)
+		if (strcmp(conf_character_name[i], name) == 0)
 			break;
 	}
 

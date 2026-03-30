@@ -739,7 +739,7 @@ static bool Engine_playSound(NoctEnv *env)
 	if (!get_string_param(env, "file", &file))
 		return false;
 
-	if (!pf_play_sound(stream, file))
+	if (!pf_play_sound(stream, file, false))
 		return false;
 
 	return true;

@@ -177,7 +177,7 @@ s3_set_mixer_input_file(
 	}
 
 	if (file != NULL && strcmp(file, "") != 0) {
-		if (!pf_play_sound(track, file)) {
+		if (!pf_play_sound(track, file, is_looped)) {
 			s3_log_tag_error(S3_TR("Cannot play sound file \"%s\"."), file);
 			return false;
 		}

@@ -1,15 +1,6 @@
 TODO
 ====
 
-## Apparently Missing Features
-
-Implement the following.
-
-- Auto Mode Anime
-- Skip Mode Anime
-
----
-
 ## Text Tag Testing
 
 ### Internationalization

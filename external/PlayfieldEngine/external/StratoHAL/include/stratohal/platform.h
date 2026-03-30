@@ -967,6 +967,19 @@ hal_render_image_melt(
 	int progress);			/* The progress (0 to 255) */
 
 /*
+ * Render two images for a cross fading.
+ */
+void
+hal_render_image_cross(
+	struct hal_image *src1_img,	/* [IN] The source image 1 */
+	struct hal_image *src2_img,	/* [IN] The source image 2 */
+	float src1_left,
+	float src1_top,
+	float src2_left,
+	float src2_top,
+	int alpha);
+
+/*
  * Render an image to the screen as a triangle strip with the "normal" shader pipeline.
  */
 void
@@ -1045,6 +1058,31 @@ hal_render_image_3d_dim(
 	int src_width,			/* The width of the source rectangle */
 	int src_height,			/* The height of the source rectangle */
 	int alpha);			/* The alpha value (0 to 255) */
+
+/*
+ * Render two images for a cross fading.
+ */
+void
+hal_render_image_3d_cross(
+	struct hal_image *src1_img,
+	struct hal_image *src2_img,
+	float src1_x1,
+	float src1_y1,
+	float src1_x2,
+	float src1_y2,
+	float src1_x3,
+	float src1_y3,
+	float src1_x4,
+	float src1_y4,
+	float src2_x1,
+	float src2_y1,
+	float src2_x2,
+	float src2_y2,
+	float src2_x3,
+	float src2_y3,
+	float src2_x4,
+	float src2_y4,
+	int alpha);
 
 /*************
  * Lap Timer *

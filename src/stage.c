@@ -199,9 +199,6 @@ static int ch_talking = -1;
 /* Fading method. */
 static int fade_method;
 
-/* Fading progress. */
-static float fade_progress;
-
 /* Offsets for the shake command. */
 static int shake_offset_x;
 static int shake_offset_y;
@@ -226,6 +223,7 @@ static bool setup_thumb(void);
 static void restore_text_layers(void);
 static void destroy_layer(int layer);
 static void render_layer(int layer);
+static void render_layers_cross(int fi_layer, int fo_layer);
 
 /*
  * Initialization
@@ -1600,63 +1598,150 @@ s3_render_stage(void)
 	/* Update the sysbtn state. */
 	s3_update_sysbtn_state();
 
-	/* Render stage layers. */
-	render_layer(S3_LAYER_BG);
-	render_layer(S3_LAYER_BG_FO);
+	/*
+	 * Render stage layers.
+	 */
+
+	/* BG - Background */
+	if (stage_mode == STAGE_MODE_FADE &&
+	    layer_image[S3_LAYER_BG] != NULL &&
+	    layer_image[S3_LAYER_BG_FO] != NULL) {
+		render_layers_cross(S3_LAYER_BG, S3_LAYER_BG_FO);
+	} else {
+		render_layer(S3_LAYER_BG);
+		render_layer(S3_LAYER_BG_FO);
+	}
+
+	/* BG2 - Background 2 (for seemless scrolling) */
 	render_layer(S3_LAYER_BG2);
+
+	/* EFB - Effect Back */
 	for (i = S3_LAYER_EFB1; i <= S3_LAYER_EFB4; i++)
 		render_layer(i);
-	render_layer(S3_LAYER_CHB);
-	render_layer(S3_LAYER_CHB_EYE);
-	render_layer(S3_LAYER_CHB_LIP);
-	render_layer(S3_LAYER_CHB_FO);
-	render_layer(S3_LAYER_CHL);
-	render_layer(S3_LAYER_CHL_EYE);
-	render_layer(S3_LAYER_CHL_LIP);
-	render_layer(S3_LAYER_CHL_FO);
-	render_layer(S3_LAYER_CHLC);
-	render_layer(S3_LAYER_CHLC_EYE);
-	render_layer(S3_LAYER_CHLC_LIP);
-	render_layer(S3_LAYER_CHLC_FO);
-	render_layer(S3_LAYER_CHR);
-	render_layer(S3_LAYER_CHR_EYE);
-	render_layer(S3_LAYER_CHR_LIP);
-	render_layer(S3_LAYER_CHR_FO);
-	render_layer(S3_LAYER_CHRC);
-	render_layer(S3_LAYER_CHRC_EYE);
-	render_layer(S3_LAYER_CHRC_LIP);
-	render_layer(S3_LAYER_CHRC_FO);
-	render_layer(S3_LAYER_CHC);
-	render_layer(S3_LAYER_CHC_EYE);
-	render_layer(S3_LAYER_CHC_LIP);
-	render_layer(S3_LAYER_CHC_FO);
+
+	/* CHB - Character Center */
+	if (stage_mode == STAGE_MODE_FADE &&
+	    layer_image[S3_LAYER_CHB] != NULL &&
+	    layer_image[S3_LAYER_CHB_FO] != NULL) {
+		render_layers_cross(S3_LAYER_CHB, S3_LAYER_CHB_FO);
+	} else {
+		render_layer(S3_LAYER_CHB);
+		render_layer(S3_LAYER_CHB_EYE);
+		render_layer(S3_LAYER_CHB_LIP);
+		render_layer(S3_LAYER_CHB_FO);
+	}
+
+	/* CHL - Character Left */
+	if (stage_mode == STAGE_MODE_FADE &&
+	    layer_image[S3_LAYER_CHL] != NULL &&
+	    layer_image[S3_LAYER_CHL_FO] != NULL) {
+		render_layers_cross(S3_LAYER_CHL, S3_LAYER_CHL_FO);
+	} else {
+		render_layer(S3_LAYER_CHL);
+		render_layer(S3_LAYER_CHL_EYE);
+		render_layer(S3_LAYER_CHL_LIP);
+		render_layer(S3_LAYER_CHL_FO);
+	}
+
+	/* CHLC - Character Left Center */
+	if (stage_mode == STAGE_MODE_FADE &&
+	    layer_image[S3_LAYER_CHLC] != NULL &&
+	    layer_image[S3_LAYER_CHLC_FO] != NULL) {
+		render_layers_cross(S3_LAYER_CHLC, S3_LAYER_CHLC_FO);
+	} else {
+		render_layer(S3_LAYER_CHLC);
+		render_layer(S3_LAYER_CHLC_EYE);
+		render_layer(S3_LAYER_CHLC_LIP);
+		render_layer(S3_LAYER_CHLC_FO);
+	}
+
+	/* CHR - Character Right */
+	if (stage_mode == STAGE_MODE_FADE &&
+	    layer_image[S3_LAYER_CHR] != NULL &&
+	    layer_image[S3_LAYER_CHR_FO] != NULL) {
+		render_layers_cross(S3_LAYER_CHR, S3_LAYER_CHR_FO);
+	} else {
+		render_layer(S3_LAYER_CHR);
+		render_layer(S3_LAYER_CHR_EYE);
+		render_layer(S3_LAYER_CHR_LIP);
+		render_layer(S3_LAYER_CHR_FO);
+	}
+
+	/* CHRC - Character Right Center */
+	if (stage_mode == STAGE_MODE_FADE &&
+	    layer_image[S3_LAYER_CHRC] != NULL &&
+	    layer_image[S3_LAYER_CHRC_FO] != NULL) {
+		render_layers_cross(S3_LAYER_CHRC, S3_LAYER_CHRC_FO);
+	} else {
+		render_layer(S3_LAYER_CHRC);
+		render_layer(S3_LAYER_CHRC_EYE);
+		render_layer(S3_LAYER_CHRC_LIP);
+		render_layer(S3_LAYER_CHRC_FO);
+	}
+
+	/* CHC - Character Center */
+	if (stage_mode == STAGE_MODE_FADE &&
+	    layer_image[S3_LAYER_CHC] != NULL &&
+	    layer_image[S3_LAYER_CHC_FO] != NULL) {
+		render_layers_cross(S3_LAYER_CHC, S3_LAYER_CHC_FO);
+	} else {
+		render_layer(S3_LAYER_CHC);
+		render_layer(S3_LAYER_CHC_EYE);
+		render_layer(S3_LAYER_CHC_LIP);
+		render_layer(S3_LAYER_CHC_FO);
+	}
+
+	/* EFF - Effect Front */
 	for (i = S3_LAYER_EFF1; i <= S3_LAYER_EFF4; i++)
 		render_layer(i);
+
+	/* MSGBOX - Message Box */
 	render_layer(S3_LAYER_MSGBOX);
+
+	/* NAMEBOX - Name Box */
 	if (conf_namebox_enable)
 		render_layer(S3_LAYER_NAMEBOX);
-	render_layer(S3_LAYER_CHF);
-	render_layer(S3_LAYER_CHF_EYE);
-	render_layer(S3_LAYER_CHF_LIP);
-	render_layer(S3_LAYER_CHF_FO);
+
+	/* CHF - Character Face (for message box face) */
+	if (stage_mode == STAGE_MODE_FADE &&
+	    layer_image[S3_LAYER_CHF] != NULL &&
+	    layer_image[S3_LAYER_CHF_FO] != NULL) {
+		render_layers_cross(S3_LAYER_CHF, S3_LAYER_CHF_FO);
+	} else {
+		render_layer(S3_LAYER_CHF);
+		render_layer(S3_LAYER_CHF_EYE);
+		render_layer(S3_LAYER_CHF_LIP);
+		render_layer(S3_LAYER_CHF_FO);
+	}
+
+	/* CLICK - Click Prompt Animation */
 	if (is_click_visible)
 		render_layer(S3_LAYER_CLICK);
+
+	/* AUTO - Auto Mode Banner */
 	render_layer(S3_LAYER_AUTO);
+
+	/* SKIP - Skip Mode Banner */
 	render_layer(S3_LAYER_SKIP);
+
+	/* CHOOSEBOX - Choose Option Box */
 	for (i = 0; i < S3_CHOOSEBOX_COUNT; i++) {
+		/* TODO: Leave it alpha, not a flag. */
 		if (is_choosebox_idle_visible[i])
 			render_layer(S3_LAYER_CHOOSE1_IDLE + (2 * i));
 		if (is_choosebox_hover_visible[i])
 			render_layer(S3_LAYER_CHOOSE1_IDLE + (2 * i) + 1);
 	}
+
+	/* TEXT - Text Drawing Layers */
 	for (i = S3_LAYER_TEXT1; i <= S3_LAYER_TEXT8; i++)
 		render_layer(i);
 
-	/* Render the GUI buttons. */
+	/* GUI_BUTTON - GUI buttons (offroad to gui.c) */
 	if (s3_is_gui_running())
 		s3i_run_gui_render();
 
-	/* Render the sysbtn. */
+	/* SYSBTN - System Button */
 	render_layer(S3_LAYER_SYSBTN_IDLE);
 	render_layer(S3_LAYER_SYSBTN_HOVER);
 }
@@ -1667,8 +1752,8 @@ render_layer(
 	int layer)
 {
 	struct s3_image *layer_img, *base_img;
-	int src_x, src_width;
-	int alpha;
+	int src_x, src_width, src_height;
+	int base_layer;
 
 	assert(layer >= 0 && layer < S3_STAGE_LAYERS);
 
@@ -1689,21 +1774,6 @@ render_layer(
 		return;
 	}
 
-	/* Calculate the alpha value. */
-	alpha = layer_alpha[layer];
-	if (stage_mode == STAGE_MODE_FADE) {
-		if (layer == S3_LAYER_BG_FO ||
-		    layer == S3_LAYER_CHL_FO ||
-		    layer == S3_LAYER_CHLC_FO ||
-		    layer == S3_LAYER_CHR_FO ||
-		    layer == S3_LAYER_CHRC_FO ||
-		    layer == S3_LAYER_CHC_FO ||
-		    layer == S3_LAYER_CHF_FO)
-			alpha = (int)((1.0f - fade_progress) * (float)alpha);
-		else
-			alpha = (int)(fade_progress * (float)alpha);
-	}
-
 	/* Calculate the eye/lip frame index. */
 	if (layer == S3_LAYER_CHB_EYE ||
 	    layer == S3_LAYER_CHL_EYE ||
@@ -1720,32 +1790,35 @@ render_layer(
 	    layer == S3_LAYER_CHR_LIP ||
 	    layer == S3_LAYER_CHF_LIP) {
 		int layer_chpos = s3_layer_to_chpos(layer);
-		int ch_layer = s3_chpos_to_layer(layer_chpos);
-		base_img = layer_image[ch_layer];
+		base_layer = s3_chpos_to_layer(layer_chpos);
+		base_img = layer_image[base_layer];
 		if (base_img == NULL)
 			return;
 		src_width = base_img->width;
+		src_height = layer_img->height;
 		src_x = src_width * layer_frame[layer];
 	} else {
 		src_width = layer_img->width;
+		src_height = layer_img->height;
 		src_x = 0;
+		base_layer = layer;
 	}
 
 	/* If 3D. */
-	if (layer_rotate[layer] != 0 ||
-	    layer_scale_x[layer] != 1.0f ||
-	    layer_scale_y[layer] != 1.0f) {
+	if (layer_rotate[base_layer] != 0 ||
+	    layer_scale_x[base_layer] != 1.0f ||
+	    layer_scale_y[base_layer] != 1.0f) {
 		float x1 = 0;
 		float y1 = 0;
-		float x2 = (float)layer_img->width - 1.0f;
+		float x2 = (float)src_width;
 		float y2 = 0;
 		float x3 = 0;
-		float y3 = (float)layer_img->height - 1.0f;;
-		float x4 = (float)layer_img->width - 1.0f;
-		float y4 = (float)layer_img->height - 1.0f;
-		float center_x = (float)layer_center_x[layer];
-		float center_y = (float)layer_center_y[layer];
-		float rad = (float)layer_rotate[layer];
+		float y3 = (float)src_height;
+		float x4 = (float)src_width;
+		float y4 = (float)src_height;
+		float center_x = (float)layer_center_x[base_layer] + (float)src_x;
+		float center_y = (float)layer_center_y[base_layer];
+		float rad = (float)layer_rotate[base_layer];
 
 		/* 1. Shift for the centering. */
 		x1 -= center_x;
@@ -1758,14 +1831,14 @@ render_layer(
 		y4 -= center_y;
 
 		/* 2. Scale. */
-		x1 *= layer_scale_x[layer];
-		y1 *= layer_scale_y[layer];
-		x2 *= layer_scale_x[layer];
-		y2 *= layer_scale_y[layer];
-		x3 *= layer_scale_x[layer];
-		y3 *= layer_scale_y[layer];
-		x4 *= layer_scale_x[layer];
-		y4 *= layer_scale_y[layer];
+		x1 *= layer_scale_x[base_layer];
+		y1 *= layer_scale_y[base_layer];
+		x2 *= layer_scale_x[base_layer];
+		y2 *= layer_scale_y[base_layer];
+		x3 *= layer_scale_x[base_layer];
+		y3 *= layer_scale_y[base_layer];
+		x4 *= layer_scale_x[base_layer];
+		y4 *= layer_scale_y[base_layer];
 
 		/* 3. Rotate. */
 		if (rad != 0) {
@@ -1803,17 +1876,17 @@ render_layer(
 		y4 += center_y;
 
 		/* 5. Shift for the layer position. */
-		x1 += (float)layer_x[layer];
-		y1 += (float)layer_y[layer];
-		x2 += (float)layer_x[layer];
-		y2 += (float)layer_y[layer];
-		x3 += (float)layer_x[layer];
-		y3 += (float)layer_y[layer];
-		x4 += (float)layer_x[layer];
-		y4 += (float)layer_y[layer];
+		x1 += (float)layer_x[base_layer];
+		y1 += (float)layer_y[base_layer];
+		x2 += (float)layer_x[base_layer];
+		y2 += (float)layer_y[base_layer];
+		x3 += (float)layer_x[base_layer];
+		y3 += (float)layer_y[base_layer];
+		x4 += (float)layer_x[base_layer];
+		y4 += (float)layer_y[base_layer];
 
 		/* Render. */
-		if (layer >= S3_LAYER_CHB && layer <= S3_LAYER_CHC && layer_dim[layer]) {
+		if (layer >= S3_LAYER_CHB && layer <= S3_LAYER_CHC && layer_dim[base_layer]) {
 			pf_render_texture_3d_dim(x1,
 						 y1,
 						 x2,
@@ -1823,10 +1896,10 @@ render_layer(
 						 x4,
 						 y4,
 						 layer_img->tex_id,
+						 src_x,
 						 0,
-						 0,
-						 layer_img->width,
-						 layer_img->height,
+						 src_width,
+						 src_height,
 						 layer_alpha[layer]);
 		} else if (layer_blend[layer] == S3_BLEND_ALPHA) {
 			pf_render_texture_3d(x1,
@@ -1838,10 +1911,10 @@ render_layer(
 					     x4,
 					     y4,
 					     layer_img->tex_id,
+					     src_x,
 					     0,
-					     0,
-					     layer_img->width,
-					     layer_img->height,
+					     src_width,
+					     src_height,
 					     layer_alpha[layer]);
 		} else if (layer_blend[layer] == S3_BLEND_ADD) {
 			pf_render_texture_3d_add(x1,
@@ -1853,10 +1926,10 @@ render_layer(
 						 x4,
 						 y4,
 						 layer_img->tex_id,
+						 src_x,
 						 0,
-						 0,
-						 layer_img->width,
-						 layer_img->height,
+						 src_width,
+						 src_height,
 						 layer_alpha[layer]);
 		} else if (layer_blend[layer] == S3_BLEND_SUB) {
 			pf_render_texture_3d_sub(x1,
@@ -1868,10 +1941,10 @@ render_layer(
 						 x4,
 						 y4,
 						 layer_img->tex_id,
+						 src_x,
 						 0,
-						 0,
-						 layer_img->width,
-						 layer_img->height,
+						 src_width,
+						 src_height,
 						 layer_alpha[layer]);
 		}
 		return;
@@ -1888,7 +1961,7 @@ render_layer(
 				      src_x,
 				      0,
 				      src_width,
-				      layer_img->height,
+				      src_height,
 				      layer_alpha[layer]);
 	} else if (layer_blend[layer] == S3_BLEND_ALPHA) {
 		/* Normal alpha blending. */
@@ -1900,7 +1973,7 @@ render_layer(
 				  src_x,
 				  0,
 				  src_width,
-				  layer_img->height,
+				  src_height,
 				  layer_alpha[layer]);
 	} else if (layer_blend[layer] == S3_BLEND_ADD) {
 		/* Add blending. */
@@ -1912,7 +1985,7 @@ render_layer(
 				      src_x,
 				      0,
 				      src_width,
-				      layer_img->height,
+				      src_height,
 				      layer_alpha[layer]);
 	} else if (layer_blend[layer] == S3_BLEND_SUB) {
 		/* Sub blending. */
@@ -1924,8 +1997,219 @@ render_layer(
 				      src_x,
 				      0,
 				      src_width,
-				      layer_img->height,
+				      src_height,
 				      layer_alpha[layer]);
+	}
+}
+
+/* Render a fade-in layer and a fade-out layer using the cross-fading shader. */
+static void
+render_layers_cross(
+	int fi_layer,
+	int fo_layer)
+{
+	struct s3_image *fi_img;
+	struct s3_image *fo_img;
+	int alpha;
+
+	assert(fi_layer >= 0 && fi_layer < S3_STAGE_LAYERS);
+	assert(fo_layer >= 0 && fo_layer < S3_STAGE_LAYERS);
+
+	fi_img = layer_image[fi_layer];
+	if (fi_img == NULL)
+		return;
+
+	fo_img = layer_image[fo_layer];
+	if (fo_img == NULL)
+		return;
+
+	alpha = layer_alpha[fi_layer];
+
+	/*
+	 * No 3D transformation needed.
+	 * (For speedup on software rendering)
+	 */
+	if (layer_rotate[fi_layer] == 0.0f &&
+	    layer_scale_x[fi_layer] == 1.0f &&
+	    layer_scale_y[fi_layer] == 1.0f &&
+	    layer_rotate[fo_layer] == 0.0f &&
+	    layer_scale_x[fo_layer] == 1.0f &&
+	    layer_scale_y[fo_layer] == 1.0f) {
+		/* Use the positions. */
+		int src1_left = layer_x[fi_layer];
+		int src1_top  = layer_y[fi_layer];
+		int src2_left = layer_x[fo_layer];
+		int src2_top  = layer_y[fo_layer];
+
+		/* Render a composited polygon. */
+		pf_render_texture_cross(fi_img->tex_id,
+					fo_img->tex_id,
+					src1_left,
+					src1_top,
+					src2_left,
+					src2_top,
+					alpha);
+	} else {
+		float src1_x1  = 0.0f;
+		float src1_y1  = 0.0f;
+		float src1_x2  = (float)fi_img->width;
+		float src1_y2  = 0.0f;
+		float src1_x3  = 0.0f;
+		float src1_y3  = (float)fi_img->height;
+		float src1_x4  = (float)fi_img->width;
+		float src1_y4  = (float)fi_img->height;
+		float src1_cx  = (float)layer_center_x[fi_layer];
+		float src1_cy  = (float)layer_center_y[fi_layer];
+		float src1_rad = (float)layer_rotate[fi_layer];
+
+		float src2_x1  = 0.0f;
+		float src2_y1  = 0.0f;
+		float src2_x2  = (float)fo_img->width;
+		float src2_y2  = 0.0f;
+		float src2_x3  = 0.0f;
+		float src2_y3  = (float)fo_img->height;
+		float src2_x4  = (float)fo_img->width;
+		float src2_y4  = (float)fo_img->height;
+		float src2_cx  = (float)layer_center_x[fo_layer];
+		float src2_cy  = (float)layer_center_y[fo_layer];
+		float src2_rad = (float)layer_rotate[fo_layer];
+
+		/* 1. Shift for the centering. */
+		src1_x1 -= src1_cx;
+		src1_y1 -= src1_cy;
+		src1_x2 -= src1_cx;
+		src1_y2 -= src1_cy;
+		src1_x3 -= src1_cx;
+		src1_y3 -= src1_cy;
+		src1_x4 -= src1_cx;
+		src1_y4 -= src1_cy;
+
+		src2_x1 -= src2_cx;
+		src2_y1 -= src2_cy;
+		src2_x2 -= src2_cx;
+		src2_y2 -= src2_cy;
+		src2_x3 -= src2_cx;
+		src2_y3 -= src2_cy;
+		src2_x4 -= src2_cx;
+		src2_y4 -= src2_cy;
+
+		/* 2. Scale. */
+		src1_x1 *= layer_scale_x[fi_layer];
+		src1_y1 *= layer_scale_y[fi_layer];
+		src1_x2 *= layer_scale_x[fi_layer];
+		src1_y2 *= layer_scale_y[fi_layer];
+		src1_x3 *= layer_scale_x[fi_layer];
+		src1_y3 *= layer_scale_y[fi_layer];
+		src1_x4 *= layer_scale_x[fi_layer];
+		src1_y4 *= layer_scale_y[fi_layer];
+
+		src2_x1 *= layer_scale_x[fo_layer];
+		src2_y1 *= layer_scale_y[fo_layer];
+		src2_x2 *= layer_scale_x[fo_layer];
+		src2_y2 *= layer_scale_y[fo_layer];
+		src2_x3 *= layer_scale_x[fo_layer];
+		src2_y3 *= layer_scale_y[fo_layer];
+		src2_x4 *= layer_scale_x[fo_layer];
+		src2_y4 *= layer_scale_y[fo_layer];
+
+		/* 3. Rotate. */
+		if (src1_rad != 0) {
+			float tmp_x, tmp_y;
+
+			tmp_x = src1_x1; tmp_y = src1_y1;
+			src1_x1 = tmp_x * cosf(src1_rad) - tmp_y * sinf(src1_rad);
+			src1_y1 = tmp_x * sinf(src1_rad) + tmp_y * cosf(src1_rad);
+
+			tmp_x = src1_x2; tmp_y = src1_y2;
+			src1_x2 = tmp_x * cosf(src1_rad) - tmp_y * sinf(src1_rad);
+			src1_y2 = tmp_x * sinf(src1_rad) + tmp_y * cosf(src1_rad);
+
+			tmp_x = src1_x3; tmp_y = src1_y3;
+			src1_x3 = tmp_x * cosf(src1_rad) - tmp_y * sinf(src1_rad);
+			src1_y3 = tmp_x * sinf(src1_rad) + tmp_y * cosf(src1_rad);
+
+			tmp_x = src1_x4; tmp_y = src1_y4;
+			src1_x4 = tmp_x * cosf(src1_rad) - tmp_y * sinf(src1_rad);
+			src1_y4 = tmp_x * sinf(src1_rad) + tmp_y * cosf(src1_rad);
+		}
+		if (src2_rad != 0) {
+			float tmp_x, tmp_y;
+
+			tmp_x = src2_x1; tmp_y = src2_y1;
+			src2_x1 = tmp_x * cosf(src2_rad) - tmp_y * sinf(src2_rad);
+			src2_y1 = tmp_x * sinf(src2_rad) + tmp_y * cosf(src2_rad);
+
+			tmp_x = src2_x2; tmp_y = src2_y2;
+			src2_x2 = tmp_x * cosf(src2_rad) - tmp_y * sinf(src2_rad);
+			src2_y2 = tmp_x * sinf(src2_rad) + tmp_y * cosf(src2_rad);
+
+			tmp_x = src2_x3; tmp_y = src2_y3;
+			src2_x3 = tmp_x * cosf(src2_rad) - tmp_y * sinf(src2_rad);
+			src2_y3 = tmp_x * sinf(src2_rad) + tmp_y * cosf(src2_rad);
+
+			tmp_x = src2_x4; tmp_y = src2_y4;
+			src2_x4 = tmp_x * cosf(src2_rad) - tmp_y * sinf(src2_rad);
+			src2_y4 = tmp_x * sinf(src2_rad) + tmp_y * cosf(src2_rad);
+		}
+
+		/* 4. Shift again for the centering. */
+		src1_x1 += src1_cx;
+		src1_y1 += src1_cy;
+		src1_x2 += src1_cx;
+		src1_y2 += src1_cy;
+		src1_x3 += src1_cx;
+		src1_y3 += src1_cy;
+		src1_x4 += src1_cx;
+		src1_y4 += src1_cy;
+
+		src2_x1 += src2_cx;
+		src2_y1 += src2_cy;
+		src2_x2 += src2_cx;
+		src2_y2 += src2_cy;
+		src2_x3 += src2_cx;
+		src2_y3 += src2_cy;
+		src2_x4 += src2_cx;
+		src2_y4 += src2_cy;
+
+		/* 5. Shift for the layer position. */
+		src1_x1 += (float)layer_x[fi_layer];
+		src1_y1 += (float)layer_y[fi_layer];
+		src1_x2 += (float)layer_x[fi_layer];
+		src1_y2 += (float)layer_y[fi_layer];
+		src1_x3 += (float)layer_x[fi_layer];
+		src1_y3 += (float)layer_y[fi_layer];
+		src1_x4 += (float)layer_x[fi_layer];
+		src1_y4 += (float)layer_y[fi_layer];
+
+		src2_x1 += (float)layer_x[fo_layer];
+		src2_y1 += (float)layer_y[fo_layer];
+		src2_x2 += (float)layer_x[fo_layer];
+		src2_y2 += (float)layer_y[fo_layer];
+		src2_x3 += (float)layer_x[fo_layer];
+		src2_y3 += (float)layer_y[fo_layer];
+		src2_x4 += (float)layer_x[fo_layer];
+		src2_y4 += (float)layer_y[fo_layer];
+
+		/* Render. */
+		pf_render_texture_3d_cross(fi_img->tex_id,
+					   fo_img->tex_id,
+					   src1_x1,
+					   src1_y1,
+					   src1_x2,
+					   src1_y2,
+					   src1_x3,
+					   src1_y3,
+					   src1_x4,
+					   src1_y4,
+					   src2_x1,
+					   src2_y1,
+					   src2_x2,
+					   src2_y2,
+					   src2_x3,
+					   src2_y3,
+					   src2_x4,
+					   src2_y4,
+					   alpha);
 	}
 }
 
@@ -2295,7 +2579,6 @@ s3_start_fade(
 			s3_add_anime_sequence_property_i("center-y", desc[i].center_y);
 			s3_add_anime_sequence_property_f("from-rotate", desc[i].rotate);
 			s3_add_anime_sequence_property_f("to-rotate", desc[i].rotate);
-			s3_add_anime_sequence_property_i("accel", S3_ANIME_ACCEL_SMOOTHSTEP);
 
 			s3_new_anime_sequence(fo_layer);
 			s3_add_anime_sequence_property_f("start", 0);
@@ -2304,8 +2587,8 @@ s3_start_fade(
 			s3_add_anime_sequence_property_i("to-x", layer_x[layer]);
 			s3_add_anime_sequence_property_i("from-y", layer_y[layer]);
 			s3_add_anime_sequence_property_i("to-y", layer_y[layer]);
-			s3_add_anime_sequence_property_i("from-a", 0);
-			s3_add_anime_sequence_property_i("to-a", layer_alpha[layer]);
+			s3_add_anime_sequence_property_i("from-a", layer_alpha[layer]);
+			s3_add_anime_sequence_property_i("to-a", 0);
 			s3_add_anime_sequence_property_f("from-scale-x", layer_scale_x[layer]);
 			s3_add_anime_sequence_property_f("to-scale-x", layer_scale_x[layer]);
 			s3_add_anime_sequence_property_f("from-scale-y", layer_scale_y[layer]);
@@ -2314,7 +2597,6 @@ s3_start_fade(
 			s3_add_anime_sequence_property_i("center-y", layer_center_y[layer]);
 			s3_add_anime_sequence_property_f("from-rotate", layer_rotate[layer]);
 			s3_add_anime_sequence_property_f("to-rotate", layer_rotate[layer]);
-			s3_add_anime_sequence_property_i("accel", S3_ANIME_ACCEL_INVSMOOTHSTEP);
 
 			layer_fading[layer] = true;
 			layer_fading[fo_layer] = true;

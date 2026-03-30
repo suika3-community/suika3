@@ -675,6 +675,41 @@ pf_render_texture_dim(
 }
 
 /*
+ * Render textures for cross fading.
+ */
+void
+pf_render_texture_cross(
+	int tex1_id,
+	int tex2_id,
+	int src1_left,
+	int src1_top,
+	int src2_left,
+	int src2_top,
+	int alpha)
+{
+	struct texture_entry *t1, *t2;
+
+	assert(tex1_id >= 0 &&  tex1_id < TEXTURE_COUNT);
+	assert(tex2_id >= 0 &&  tex2_id < TEXTURE_COUNT);
+
+	t1 = &tex_tbl[tex1_id];
+	assert(t1->is_used);
+	assert(t1->img != NULL);
+
+	t2 = &tex_tbl[tex2_id];
+	assert(t2->is_used);
+	assert(t2->img != NULL);
+
+	hal_render_image_cross(t1->img,
+			       t2->img,
+			       (float)src1_left,
+			       (float)src1_top,
+			       (float)src2_left,
+			       (float)src2_top,
+			       alpha);
+}
+
+/*
  * Render a texture. (3D, alpha blending)
  */
 void
@@ -808,6 +843,65 @@ pf_render_texture_3d_dim(
 				t->img,
 				src_left, src_top, src_width, src_height,
 				alpha);
+}
+
+/*
+ * Render textures for cross fading.
+ */
+void
+pf_render_texture_3d_cross(
+	int tex1_id,
+	int tex2_id,
+	float src1_x1,
+	float src1_y1,
+	float src1_x2,
+	float src1_y2,
+	float src1_x3,
+	float src1_y3,
+	float src1_x4,
+	float src1_y4,
+	float src2_x1,
+	float src2_y1,
+	float src2_x2,
+	float src2_y2,
+	float src2_x3,
+	float src2_y3,
+	float src2_x4,
+	float src2_y4,
+	int alpha)
+{
+	struct texture_entry *t1, *t2;
+
+	assert(tex1_id >= 0 &&  tex1_id < TEXTURE_COUNT);
+	assert(tex2_id >= 0 &&  tex2_id < TEXTURE_COUNT);
+
+	t1 = &tex_tbl[tex1_id];
+	assert(t1->is_used);
+	assert(t1->img != NULL);
+
+	t2 = &tex_tbl[tex2_id];
+	assert(t2->is_used);
+	assert(t2->img != NULL);
+
+	hal_render_image_3d_cross(t1->img,
+				  t2->img,
+				  src1_x1,
+				  src1_y1,
+				  src1_x2,
+				  src1_y2,
+				  src1_x3,
+				  src1_y3,
+				  src1_x4,
+				  src1_y4,
+				  src2_x1,
+				  src2_y1,
+				  src2_x2,
+				  src2_y2,
+				  src2_x3,
+				  src2_y3,
+				  src2_x4,
+				  src2_y4,
+				  alpha);
 }
 
 /*
@@ -1009,14 +1103,15 @@ pf_create_text_texture_outline(
 bool
 pf_play_sound(
 	int stream,
-	const char *file)
+	const char *file,
+	bool is_loop)
 {
 	if (stream < 0 || stream >= HAL_SOUND_TRACKS) {
 		hal_log_error(PF_TR("Invalid sound stream index."));
 		return false;
 	}
 
-	if (!hal_create_wave_from_file(file, false, &wave_tbl[stream]))
+	if (!hal_create_wave_from_file(file, is_loop, &wave_tbl[stream]))
 		return false;
 
 	if (!hal_play_sound(stream, wave_tbl[stream]))

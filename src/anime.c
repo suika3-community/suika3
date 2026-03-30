@@ -245,6 +245,7 @@ static float calc_pos_y_to(int anime_layer, int index, const char *value);
 static bool load_anime_file(const char *file);
 static bool update_layer_params(int layer);
 static void synthesis_eye_anime(int chpos);
+static bool is_japanese_locale(void);
 
 /*
  * Initialize the anime subsystem.
@@ -574,6 +575,11 @@ s3_update_anime_frame(void)
 	}
 }
 
+static inline float smoothstep01(float t)
+{
+    return t * t * (3.0f - 2.0f * t);
+}
+
 /*
  * Update layer params.
  */
@@ -658,13 +664,9 @@ static bool update_layer_params(int layer)
 		scale_y = s->from_scale_y + (s->to_scale_y - s->from_scale_y) * progress;
 		rotate = s->from_rotate + (s->to_rotate - s->from_rotate) * progress;
 		if (s->accel == S3_ANIME_ACCEL_SMOOTHSTEP) {
-			alpha = (int)(s->from_a + (s->to_a - s->from_a) * sinf((float)M_PI / 2.1f * progress));
-			if (alpha > 255)
-				alpha = 255;
+			alpha = (int)((float)s->from_a + ((float)s->to_a - (float)s->from_a) * smoothstep01(progress) + 0.5);
 		} else if (s->accel == S3_ANIME_ACCEL_INVSMOOTHSTEP) {
-			alpha = (int)(s->from_a + (s->to_a - s->from_a) * cosf((float)M_PI / 2.1f * progress));
-			if (alpha > 255)
-				alpha = 255;
+			alpha = 255 - (int)((float)s->from_a + ((float)s->to_a - (float)s->from_a) * smoothstep01(progress) + 0.5);
 		} else {
 			alpha = (int)(s->from_a + (s->to_a - s->from_a) * progress);
 		}
@@ -1300,6 +1302,8 @@ s3_run_lip_anime(
 
 	/* Determine how many characters to lip-sync per characters. */
 	WORD_COUNT = conf_character_lipsync_chars == 0 ? 3 : conf_character_lipsync_chars;
+	if (is_japanese_locale())
+		WORD_COUNT /= 2;	/* Quirk for Japanese. */
 
 	/* Describe the lip anime. */
 	frame_count = s3_get_layer_image(lip_layer)->width / s3_get_layer_image(base_layer)->width;
@@ -1393,6 +1397,18 @@ s3_run_lip_anime(
 
 	/* Start the lip anime. */
 	s3_start_layer_anime(lip_layer);
+}
+
+static bool
+is_japanese_locale(void)
+{
+	const char *locale;
+
+	locale = s3_get_system_language();
+	if (strcmp(locale, "ja"))
+		return true;
+
+	return false;
 }
 
 /*

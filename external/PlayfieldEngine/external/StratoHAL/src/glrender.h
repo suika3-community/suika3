@@ -105,6 +105,16 @@ opengl_render_image_melt(
 	int progress);
 
 void
+opengl_render_image_cross(
+	struct hal_image *src1_image,
+	struct hal_image *src2_image,
+	int src1_left,
+	int src1_top,
+	int src2_left,
+	int src2_top,
+	int alpha);
+
+void
 opengl_render_image_3d_normal(
 	float x1,
 	float y1,
@@ -171,6 +181,28 @@ opengl_render_image_3d_dim(
 	int src_width,
 	int src_height,
 	int alpha);
+
+void
+opengl_render_image_cross_3d(
+	struct hal_image *src1_image,
+	struct hal_image *src2_image,
+        float src1_x1,
+        float src1_y1,
+        float src1_x2,
+        float src1_y2,
+        float src1_x3,
+        float src1_y3,
+        float src1_x4,
+        float src1_y4,
+        float src2_x1,
+        float src2_y1,
+        float src2_x2,
+        float src2_y2,
+        float src2_x3,
+        float src2_y3,
+        float src2_x4,
+        float src2_y4,
+        int alpha);
 
 void opengl_set_screen(int x, int y, int w, int h);
 
