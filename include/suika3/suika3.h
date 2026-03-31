@@ -91,8 +91,8 @@
 /*
  * Stage layers.
  */
-#define S3_LAYER_BG		(0)	/* Background */
-#define S3_LAYER_BG_FO		(1)	/*   Fade-Out */
+#define S3_LAYER_BG_FO		(0)	/* Background Fade-Out */
+#define S3_LAYER_BG		(1)	/* Background */
 #define S3_LAYER_BG2		(2)	/* Background2 */
 #define S3_LAYER_EFB1		(3)	/* Back effect 1 */
 #define S3_LAYER_EFB2		(4)	/* Back effect 2 */
@@ -260,11 +260,17 @@
 /* RGB 50% alpha blending. */
 #define S3_BLEND_DIM		(4)
 
+/* 1-bit universal transition. */
+#define S3_BLEND_RULE		(5)
+
+/* 8-bit universal transition. */
+#define S3_BLEND_MELT		(6)
+
 /* Alpha blending for normal glyphs. (dst_a = src_a > dst_a ? src_a : dst_a) */
-#define S3_BLEND_GLYPH		(5)
+#define S3_BLEND_GLYPH		(7)
 
 /* Alpha blending for emoji glyphs. (dst_a = src_a > dst_a ? src_a : dst_a) */
-#define S3_BLEND_EMOJI		(6)
+#define S3_BLEND_EMOJI		(8)
 
 /*
  * Fading descriptor index.

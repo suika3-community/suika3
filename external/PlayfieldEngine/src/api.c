@@ -675,6 +675,56 @@ pf_render_texture_dim(
 }
 
 /*
+ * Render textures for 1-bit universal transition.
+ */
+void
+pf_render_texture_rule(
+	int tex1_id,
+	int tex2_id,
+	int threshold)
+{
+	struct texture_entry *t1, *t2;
+
+	assert(tex1_id >= 0 &&  tex1_id < TEXTURE_COUNT);
+	assert(tex2_id >= 0 &&  tex2_id < TEXTURE_COUNT);
+
+	t1 = &tex_tbl[tex1_id];
+	assert(t1->is_used);
+	assert(t1->img != NULL);
+
+	t2 = &tex_tbl[tex2_id];
+	assert(t2->is_used);
+	assert(t2->img != NULL);
+
+	hal_render_image_rule(t1->img, t2->img, threshold);
+}
+
+/*
+ * Render textures for 8-bit universal transition.
+ */
+void
+pf_render_texture_melt(
+	int tex1_id,
+	int tex2_id,
+	int progress)
+{
+	struct texture_entry *t1, *t2;
+
+	assert(tex1_id >= 0 &&  tex1_id < TEXTURE_COUNT);
+	assert(tex2_id >= 0 &&  tex2_id < TEXTURE_COUNT);
+
+	t1 = &tex_tbl[tex1_id];
+	assert(t1->is_used);
+	assert(t1->img != NULL);
+
+	t2 = &tex_tbl[tex2_id];
+	assert(t2->is_used);
+	assert(t2->img != NULL);
+
+	hal_render_image_melt(t1->img, t2->img, progress);
+}
+
+/*
  * Render textures for cross fading.
  */
 void

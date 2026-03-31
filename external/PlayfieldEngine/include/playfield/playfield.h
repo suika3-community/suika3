@@ -309,6 +309,24 @@ pf_render_texture_dim(
 	int alpha);
 
 /*
+ * Render textures for 1-bit universal transition.
+ */
+void
+pf_render_texture_rule(
+	int tex1_id,
+	int tex2_id,
+	int alpha);
+
+/*
+ * Render textures for 8-bit universal transition.
+ */
+void
+pf_render_texture_melt(
+	int tex1_id,
+	int tex2_id,
+	int alpha);
+
+/*
  * Render textures for cross fading.
  */
 void

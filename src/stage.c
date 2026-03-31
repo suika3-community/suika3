@@ -1605,11 +1605,12 @@ s3_render_stage(void)
 	/* BG - Background */
 	if (stage_mode == STAGE_MODE_FADE &&
 	    layer_image[S3_LAYER_BG] != NULL &&
-	    layer_image[S3_LAYER_BG_FO] != NULL) {
+	    layer_image[S3_LAYER_BG_FO] != NULL &&
+	    fade_rule_img == NULL) {
 		render_layers_cross(S3_LAYER_BG, S3_LAYER_BG_FO);
 	} else {
-		render_layer(S3_LAYER_BG);
 		render_layer(S3_LAYER_BG_FO);
+		render_layer(S3_LAYER_BG);
 	}
 
 	/* BG2 - Background 2 (for seemless scrolling) */
@@ -1622,73 +1623,79 @@ s3_render_stage(void)
 	/* CHB - Character Center */
 	if (stage_mode == STAGE_MODE_FADE &&
 	    layer_image[S3_LAYER_CHB] != NULL &&
-	    layer_image[S3_LAYER_CHB_FO] != NULL) {
+	    layer_image[S3_LAYER_CHB_FO] != NULL &&
+	    fade_rule_img == NULL) {
 		render_layers_cross(S3_LAYER_CHB, S3_LAYER_CHB_FO);
 	} else {
+		render_layer(S3_LAYER_CHB_FO);
 		render_layer(S3_LAYER_CHB);
 		render_layer(S3_LAYER_CHB_EYE);
 		render_layer(S3_LAYER_CHB_LIP);
-		render_layer(S3_LAYER_CHB_FO);
 	}
 
 	/* CHL - Character Left */
 	if (stage_mode == STAGE_MODE_FADE &&
 	    layer_image[S3_LAYER_CHL] != NULL &&
-	    layer_image[S3_LAYER_CHL_FO] != NULL) {
+	    layer_image[S3_LAYER_CHL_FO] != NULL &&
+	    fade_rule_img == NULL) {
 		render_layers_cross(S3_LAYER_CHL, S3_LAYER_CHL_FO);
 	} else {
+		render_layer(S3_LAYER_CHL_FO);
 		render_layer(S3_LAYER_CHL);
 		render_layer(S3_LAYER_CHL_EYE);
 		render_layer(S3_LAYER_CHL_LIP);
-		render_layer(S3_LAYER_CHL_FO);
 	}
 
 	/* CHLC - Character Left Center */
 	if (stage_mode == STAGE_MODE_FADE &&
 	    layer_image[S3_LAYER_CHLC] != NULL &&
-	    layer_image[S3_LAYER_CHLC_FO] != NULL) {
+	    layer_image[S3_LAYER_CHLC_FO] != NULL &&
+	    fade_rule_img == NULL) {
 		render_layers_cross(S3_LAYER_CHLC, S3_LAYER_CHLC_FO);
 	} else {
+		render_layer(S3_LAYER_CHLC_FO);
 		render_layer(S3_LAYER_CHLC);
 		render_layer(S3_LAYER_CHLC_EYE);
 		render_layer(S3_LAYER_CHLC_LIP);
-		render_layer(S3_LAYER_CHLC_FO);
 	}
 
 	/* CHR - Character Right */
 	if (stage_mode == STAGE_MODE_FADE &&
 	    layer_image[S3_LAYER_CHR] != NULL &&
-	    layer_image[S3_LAYER_CHR_FO] != NULL) {
+	    layer_image[S3_LAYER_CHR_FO] != NULL &&
+	    fade_rule_img == NULL) {
 		render_layers_cross(S3_LAYER_CHR, S3_LAYER_CHR_FO);
 	} else {
+		render_layer(S3_LAYER_CHR_FO);
 		render_layer(S3_LAYER_CHR);
 		render_layer(S3_LAYER_CHR_EYE);
 		render_layer(S3_LAYER_CHR_LIP);
-		render_layer(S3_LAYER_CHR_FO);
 	}
 
 	/* CHRC - Character Right Center */
 	if (stage_mode == STAGE_MODE_FADE &&
 	    layer_image[S3_LAYER_CHRC] != NULL &&
-	    layer_image[S3_LAYER_CHRC_FO] != NULL) {
+	    layer_image[S3_LAYER_CHRC_FO] != NULL &&
+	    fade_rule_img == NULL) {
 		render_layers_cross(S3_LAYER_CHRC, S3_LAYER_CHRC_FO);
 	} else {
+		render_layer(S3_LAYER_CHRC_FO);
 		render_layer(S3_LAYER_CHRC);
 		render_layer(S3_LAYER_CHRC_EYE);
 		render_layer(S3_LAYER_CHRC_LIP);
-		render_layer(S3_LAYER_CHRC_FO);
 	}
 
 	/* CHC - Character Center */
 	if (stage_mode == STAGE_MODE_FADE &&
 	    layer_image[S3_LAYER_CHC] != NULL &&
-	    layer_image[S3_LAYER_CHC_FO] != NULL) {
+	    layer_image[S3_LAYER_CHC_FO] != NULL &&
+	    fade_rule_img == NULL) {
 		render_layers_cross(S3_LAYER_CHC, S3_LAYER_CHC_FO);
 	} else {
+		render_layer(S3_LAYER_CHC_FO);
 		render_layer(S3_LAYER_CHC);
 		render_layer(S3_LAYER_CHC_EYE);
 		render_layer(S3_LAYER_CHC_LIP);
-		render_layer(S3_LAYER_CHC_FO);
 	}
 
 	/* EFF - Effect Front */
@@ -1708,10 +1715,10 @@ s3_render_stage(void)
 	    layer_image[S3_LAYER_CHF_FO] != NULL) {
 		render_layers_cross(S3_LAYER_CHF, S3_LAYER_CHF_FO);
 	} else {
+		render_layer(S3_LAYER_CHF_FO);
 		render_layer(S3_LAYER_CHF);
 		render_layer(S3_LAYER_CHF_EYE);
 		render_layer(S3_LAYER_CHF_LIP);
-		render_layer(S3_LAYER_CHF_FO);
 	}
 
 	/* CLICK - Click Prompt Animation */
@@ -1901,21 +1908,16 @@ render_layer(
 						 src_width,
 						 src_height,
 						 layer_alpha[layer]);
-		} else if (layer_blend[layer] == S3_BLEND_ALPHA) {
-			pf_render_texture_3d(x1,
-					     y1,
-					     x2,
-					     y2,
-					     x3,
-					     y3,
-					     x4,
-					     y4,
-					     layer_img->tex_id,
-					     src_x,
-					     0,
-					     src_width,
-					     src_height,
-					     layer_alpha[layer]);
+		} else if (layer_blend[layer] == S3_BLEND_RULE && fade_rule_img != NULL) {
+			/* TODO: 3D transform. */
+			pf_render_texture_rule(layer_img->tex_id,
+					       fade_rule_img->tex_id,
+					       layer_alpha[layer]);
+		} else if (layer_blend[layer] == S3_BLEND_MELT && fade_rule_img != NULL) {
+			/* TODO: 3D transform. */
+			pf_render_texture_rule(layer_img->tex_id,
+					       fade_rule_img->tex_id,
+					       layer_alpha[layer]);
 		} else if (layer_blend[layer] == S3_BLEND_ADD) {
 			pf_render_texture_3d_add(x1,
 						 y1,
@@ -1946,6 +1948,21 @@ render_layer(
 						 src_width,
 						 src_height,
 						 layer_alpha[layer]);
+		} else {
+			pf_render_texture_3d(x1,
+					     y1,
+					     x2,
+					     y2,
+					     x3,
+					     y3,
+					     x4,
+					     y4,
+					     layer_img->tex_id,
+					     src_x,
+					     0,
+					     src_width,
+					     src_height,
+					     layer_alpha[layer]);
 		}
 		return;
 	}
@@ -1963,18 +1980,16 @@ render_layer(
 				      src_width,
 				      src_height,
 				      layer_alpha[layer]);
-	} else if (layer_blend[layer] == S3_BLEND_ALPHA) {
-		/* Normal alpha blending. */
-		pf_render_texture(layer_x[layer],
-				  layer_y[layer],
-				  (int)((float)src_width * layer_scale_x[layer]),
-				  (int)((float)layer_img->height * layer_scale_y[layer]),
-				  layer_img->tex_id,
-				  src_x,
-				  0,
-				  src_width,
-				  src_height,
-				  layer_alpha[layer]);
+	} else if (layer_blend[layer] == S3_BLEND_RULE && fade_rule_img != NULL) {
+		/* Rule transition. */
+		pf_render_texture_rule(layer_img->tex_id,
+				       fade_rule_img->tex_id,
+				       layer_alpha[layer]);
+	} else if (layer_blend[layer] == S3_BLEND_MELT && fade_rule_img != NULL) {
+		/* Melt transition. */
+		pf_render_texture_melt(layer_img->tex_id,
+				       fade_rule_img->tex_id,
+				       layer_alpha[layer]);
 	} else if (layer_blend[layer] == S3_BLEND_ADD) {
 		/* Add blending. */
 		pf_render_texture_add(layer_x[layer],
@@ -1999,6 +2014,18 @@ render_layer(
 				      src_width,
 				      src_height,
 				      layer_alpha[layer]);
+	} else {
+		/* Normal alpha blending. */
+		pf_render_texture(layer_x[layer],
+				  layer_y[layer],
+				  (int)((float)src_width * layer_scale_x[layer]),
+				  (int)((float)layer_img->height * layer_scale_y[layer]),
+				  layer_img->tex_id,
+				  src_x,
+				  0,
+				  src_width,
+				  src_height,
+				  layer_alpha[layer]);
 	}
 }
 
@@ -2546,7 +2573,7 @@ s3_start_fade(
 		{S3_LAYER_CHC,  S3_LAYER_CHC_FO,  S3_LAYER_CHC_EYE,  S3_LAYER_CHC_LIP},
 		{S3_LAYER_CHF,  S3_LAYER_CHF_FO,  S3_LAYER_CHF_EYE,  S3_LAYER_CHF_LIP},
 	};
-	int i;
+	int i, blend;
 
 	assert(stage_mode == STAGE_MODE_IDLE);
 
@@ -2554,6 +2581,19 @@ s3_start_fade(
 	stage_mode = STAGE_MODE_FADE;
 	fade_method = method;
 	fade_rule_img = rule_img;
+
+	/* Get the blend. */
+	switch (method) {
+	case S3_FADE_RULE:
+		blend = S3_BLEND_RULE;
+		break;
+	case S3_FADE_MELT:
+		blend = S3_BLEND_MELT;
+		break;
+	default:
+		blend = S3_BLEND_ALPHA;
+		break;
+	}
 
 	/* Setup the layers. */
 	for (i = 0; i < S3_FADE_DESC_COUNT; i++) {
@@ -2579,6 +2619,8 @@ s3_start_fade(
 			s3_add_anime_sequence_property_i("center-y", desc[i].center_y);
 			s3_add_anime_sequence_property_f("from-rotate", desc[i].rotate);
 			s3_add_anime_sequence_property_f("to-rotate", desc[i].rotate);
+			s3_add_anime_sequence_property_f("to-rotate", desc[i].rotate);
+			s3_add_anime_sequence_property_i("blend", blend);
 
 			s3_new_anime_sequence(fo_layer);
 			s3_add_anime_sequence_property_f("start", 0);
@@ -2587,8 +2629,13 @@ s3_start_fade(
 			s3_add_anime_sequence_property_i("to-x", layer_x[layer]);
 			s3_add_anime_sequence_property_i("from-y", layer_y[layer]);
 			s3_add_anime_sequence_property_i("to-y", layer_y[layer]);
-			s3_add_anime_sequence_property_i("from-a", layer_alpha[layer]);
-			s3_add_anime_sequence_property_i("to-a", 0);
+			if (blend == S3_BLEND_RULE || blend == S3_BLEND_MELT) {
+				s3_add_anime_sequence_property_i("from-a", 255);
+				s3_add_anime_sequence_property_i("to-a", 255);
+			} else {
+				s3_add_anime_sequence_property_i("from-a", layer_alpha[layer]);
+				s3_add_anime_sequence_property_i("to-a", 0);
+			}
 			s3_add_anime_sequence_property_f("from-scale-x", layer_scale_x[layer]);
 			s3_add_anime_sequence_property_f("to-scale-x", layer_scale_x[layer]);
 			s3_add_anime_sequence_property_f("from-scale-y", layer_scale_y[layer]);
@@ -2597,6 +2644,10 @@ s3_start_fade(
 			s3_add_anime_sequence_property_i("center-y", layer_center_y[layer]);
 			s3_add_anime_sequence_property_f("from-rotate", layer_rotate[layer]);
 			s3_add_anime_sequence_property_f("to-rotate", layer_rotate[layer]);
+			if (blend == S3_BLEND_RULE || blend == S3_BLEND_MELT)
+				s3_add_anime_sequence_property_i("blend", S3_BLEND_ALPHA);
+			else
+				s3_add_anime_sequence_property_i("blend", blend);
 
 			layer_fading[layer] = true;
 			layer_fading[fo_layer] = true;
@@ -2604,6 +2655,10 @@ s3_start_fade(
 			/* Transfer the existing layer to the fade-out layer. */
 			layer_image[fo_layer] = layer_image[layer];
 			layer_image[layer] = desc[i].image;
+
+			/* Blend. */
+			layer_blend[layer] = method;
+			layer_blend[fo_layer] = method;
 
 			/* Dimming. */
 			layer_dim[layer] = desc[i].dim;
@@ -2728,6 +2783,7 @@ s3_finish_fade(void)
 		if (layer_fading[l]) {
 			s3_clear_layer_anime_sequence(l);
 			layer_fading[l] = false;
+			layer_blend[l] = S3_BLEND_ALPHA;
 		}
 	}
 

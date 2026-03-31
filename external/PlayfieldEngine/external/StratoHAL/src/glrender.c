@@ -367,7 +367,7 @@ static const char *fragment_shader_src_melt =
 	"{                                                                  \n"
         "  vec4 tex = texture2D(s_texture, v_texCoord1);                    \n"
 	"  vec4 rule = texture2D(s_rule, v_texCoord1);                      \n"
-	"  tex.a = clamp((1.0 - rule.b) + (v_alpha * 2.0 - 1.0), 0.0, 1.0); \n"
+        "  tex.a = clamp((1.0 - rule.b) + (v_alpha * 2.0 - 1.0), 0.0, 1.0); \n"
 	"  gl_FragColor = tex;                                              \n"
 	"}                                                                  \n";
 
@@ -1044,8 +1044,11 @@ opengl_render_image_rule(
 		      0,
 		      window_width,
 		      window_height,
+		      0,
+		      0,
+		      rule_image->width,
+		      rule_image->height,
 		      threshold,
-		      0, 0, 0, 0,
 		      PIPELINE_RULE);
 }
 
@@ -1068,7 +1071,10 @@ opengl_render_image_melt(
 		      0,
 		      window_width,
 		      window_height,
-		      0, 0, 0, 0,
+		      0,
+		      0,
+		      rule_image->width,
+		      rule_image->height,
 		      progress,
 		      PIPELINE_MELT);
 }

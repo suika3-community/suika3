@@ -1517,10 +1517,11 @@ static BOOL CreateFence();
 static void ReleaseAllD3D12Objects();
 static void WaitForPreviousFrame();
 static VOID DrawPrimitive2D(int dst_left, int dst_top, int dst_width,
-							int dst_height, struct hal_image *src_image,
-							struct hal_image *rule_image, int src_left,
-							int src_top, int src_width, int src_height,
-							int alpha, int pipeline);
+							int dst_height, struct hal_image *src1_image,
+							struct hal_image *src2_image, int src1_left,
+							int src1_top, int src1_width, int src1_height,
+							int src2_left, int src2_top, int src2_width,
+							int src2_height, int alpha, int pipeline);
 static VOID DrawPrimitive3D(float x1, float y1, float x2, float y2, float x3,
 							float y3, float x4, float y4,
 							struct hal_image *src1_image,
@@ -2685,6 +2686,7 @@ D3D12RenderImageNormal(
 					src_top,
 					src_width,
 					src_height,
+					0, 0, 0, 0,
 					alpha,
 					PIPELINE_NORMAL);
 }
@@ -2712,6 +2714,7 @@ D3D12RenderImageAdd(
 					src_top,
 					src_width,
 					src_height,
+					0, 0, 0, 0,
 					alpha,
 					PIPELINE_ADD);
 }
@@ -2739,6 +2742,7 @@ D3D12RenderImageSub(
 					src_top,
 					src_width,
 					src_height,
+					0, 0, 0, 0,
 					alpha,
 					PIPELINE_SUB);
 }
@@ -2766,6 +2770,7 @@ D3D12RenderImageDim(
 					src_top,
 					src_width,
 					src_height,
+					0, 0, 0, 0,
 					alpha,
 					PIPELINE_DIM);
 }
@@ -2786,6 +2791,10 @@ D3D12RenderImageRule(
 					0,
 					g_nVirtualWidth,
 					g_nVirtualHeight,
+					0,
+					0,
+					rule_image->width,
+					rule_image->height,
 					threshold,
 					PIPELINE_RULE);
 }
@@ -2806,6 +2815,10 @@ D3D12RenderImageMelt(
 					0,
 					g_nVirtualWidth,
 					g_nVirtualHeight,
+					0,
+					0,
+					rule_image->width,
+					rule_image->height,
 					progress,
 					PIPELINE_MELT);
 }
@@ -3102,23 +3115,27 @@ DrawPrimitive2D(
 	int dst_top,
 	int dst_width,
 	int dst_height,
-	struct hal_image *src_image,
-	struct hal_image *rule_image,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
+	struct hal_image *src1_image,
+	struct hal_image *src2_image,
+	int src1_left,
+	int src1_top,
+	int src1_width,
+	int src1_height,
+	int src2_left,
+	int src2_top,
+	int src2_width,
+	int src2_height,
 	int alpha,
 	int pipeline)
 {
     if (dst_width == -1)
-        dst_width = src_image->width;
+        dst_width = src1_image->width;
     if (dst_height == -1)
-        dst_height = src_image->height;
-    if (src_width == -1)
-        src_width = src_image->width;
-    if (src_height == -1)
-        src_height = src_image->height;
+        dst_height = src1_image->height;
+    if (src1_width == -1)
+        src1_width = src1_image->width;
+    if (src1_height == -1)
+        src1_height = src1_image->height;
 
     DrawPrimitive3D((float)dst_left,
                     (float)dst_top,
@@ -3128,17 +3145,24 @@ DrawPrimitive2D(
                     (float)(dst_top + dst_height),
                     (float)(dst_left + dst_width),
                     (float)(dst_top + dst_height),
-                    src_image,
-                    rule_image,
-                    src_left,
-                    src_top,
-                    src_left + src_width,
-                    src_top,
-                    src_left,
-                    src_top + src_height,
-                    src_left + src_width,
-                    src_top + src_height,
-					0, 0, 1.0f, 0, 0, 1.0f, 1.0f, 1.0f,
+                    src1_image,
+                    src2_image,
+                    src1_left,
+                    src1_top,
+                    src1_left + src1_width,
+                    src1_top,
+                    src1_left,
+                    src1_top + src1_height,
+                    src1_left + src1_width,
+                    src1_top + src1_height,
+                    src2_left,
+                    src2_top,
+                    src2_left + src2_width,
+                    src2_top,
+                    src2_left,
+                    src2_top + src2_height,
+                    src2_left + src2_width,
+                    src2_top + src2_height,
                     alpha,
                     pipeline);
 }
