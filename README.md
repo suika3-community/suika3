@@ -163,11 +163,18 @@ Suika3 is engineered with modern techniques, and delivers:
 
 ## Kanban (Status)
 
-We are planning our first stable release `Suika3 26.07.0` on July 1 2026.
+We are in the `Quality Stabilization Period` (April 1 - June 30, 2026) for
+the planned release `Suika3 26.07 LTS` (scheduled on July 1 2026).
 
-The program has been already implemented, and currently we are working
-on sample games and documentation along with debugging to complete the
-stable release.
+The current version is 26.07 LTS RC1.
+
+While the quality is improving day by day,
+our System Testing for the first release has only just begun,
+so many bugs still need to be fixed.
+However, we have secured a three-month system testing period,
+and we expect that major bugs will be resolved by the time of release.
+A detailed list of known issues can be found in [BUGS.md](BUGS.md).
+See [Quality Assurance](#quality-assurance) for the details.
 
 **Our current status is:**
 
@@ -181,25 +188,18 @@ stable release.
 - ✅ API Freeze (March 7, 2026)
 - ✅ GUI Animation Implementation (March 10, 2026)
 - ✅ Code Freeze (March 12, 2026)
-- Remaining Tasks
-    - Sample Game Creation (March 30, 2026)
-    - Documentation (March 15 - June 30, Simultaneous with Quality Stabilization)
-        - ✅ Website
-        - ✅ `SuikaScript Syntax`
-        - ✅ `SuikaScript API`
-        - ✅ `NovelML Tags`
-        - ✅ `Build Instructions`
-        - ✅ `NovelML Syntax`
-        - ✅ `Getting Started`
-        - `Plugin Development`
-        - `SRS: System Requirement Specification`
-        - `SDS: System Design Specification`
-- Quality Stabilization Period (March 30 - June 30, 2026)
-    - Milestone: `Suika3 26.07.0 RC1` (March 30, 2026)
-    - Milestone: `Suika3 26.07.0 RC2` (April 30, 2026)
-    - Milestone: `Suika3 26.07.0 RC3` (May 30, 2026)
-    - Milestone: `Suika3 26.07.0 RC4/GM` (June 30, 2026)
-- `Suika3 26.07.0` Release (July 1, 2026)
+- ✅ Milestone: `Suika3 26.07 RC1` (April 1, 2026)
+- Milestone: `Suika3 26.07 LTS RC2` (April 30, 2026)
+- Milestone: `Suika3 26.07 LTS RC3` (May 31, 2026)
+- Milestone: `Suika3 26.07 LTS RC4/GM` (June 30, 2026)
+- Goal: `Suika3 26.07 LTS` Release (July 1, 2026)
+
+**Remaining Tasks:**
+- Website Update
+- Longer Sample Game
+- Document: `Plugin Development`
+- Document: `SRS: System Requirement Specification`
+- Document: `SDS: System Design Specification`
 
 ---
 

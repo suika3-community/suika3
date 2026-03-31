@@ -125,7 +125,7 @@ static bool read_f32(float *ret);
 static bool read_string(char *val, size_t size);
 static bool read_data(void *data, size_t size);
 static bool read_skip(size_t size);
-static bool close_read_stream(void);
+static void close_read_stream(void);
 
 
 /*
@@ -149,6 +149,11 @@ s3i_init_save(void)
 			s3_destroy_image(save_thumb[i]);
 			save_thumb[i] = NULL;
 		}
+	}
+	for (i = 0; i < S3_ALL_SAVE_SLOTS; i++) {
+		save_thumb[i] = s3_create_image(conf_save_thumb_width, conf_save_thumb_height);
+		if (save_thumb[i] == NULL)
+			return false;
 	}
 
 	/* Load the basic data from the local save files. */
@@ -255,7 +260,12 @@ s3_execute_save_global(void)
 			const char *key = s3_get_config_key(i);
 			if (s3_is_global_save_config(key)) {
 				const char *val = s3_get_config_as_string(key);
+				if (!write_string(key))
+					break;
 				if (!write_string(val))
+					break;
+			} else {
+				if (!write_string("#l"))
 					break;
 			}
 		}
@@ -366,14 +376,15 @@ s3_execute_load_global(void)
 			break;	/* Error. */
 
 		/* Close the stream. */
-		if (!close_read_stream())
-			break;
+		close_read_stream();
 
 		success = true;
 	} while (0);
 
-	if (!success)
+	if (!success) {
+		close_read_stream();
 		return false;
+	}
 
 	return true;
 }
@@ -1255,10 +1266,16 @@ open_read_stream(
 		return false;
 	}
 
-	if (!s3_read_save_data(fname, stream_buf, size, &ret_size))
+	if (!s3_read_save_data(fname, stream_buf, size, &ret_size)) {
+		free(stream_buf);
+		stream_buf = NULL;
 		return false;
-	if (ret_size != size)
+	}
+	if (ret_size != size) {
+		free(stream_buf);
+		stream_buf = NULL;
 		return false;
+	}
 
 	stream_buf_alloc_size = size;
 	stream_buf_pos = 0;
@@ -1382,7 +1399,7 @@ read_skip(
 }
 
 /* Close the read stream */
-static bool
+static void
 close_read_stream(void)
 {
 	if (stream_buf != NULL) {
@@ -1391,6 +1408,4 @@ close_read_stream(void)
 		stream_buf_alloc_size = 0;
 		stream_buf_pos = 0;
 	}
-
-	return true;
 }

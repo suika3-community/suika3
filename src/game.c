@@ -47,6 +47,7 @@
 #include "text.h"
 #include "vars.h"
 #include "history.h"
+#include "save.h"
 
 #include <playfield/playfield.h>
 
@@ -229,6 +230,10 @@ s3i_on_game_start(void)
 
 	/* Initialize the history subsystem. */
 	if (!s3i_init_history())
+		return false;
+
+	/* Initialize the save subsystem. */
+	if (!s3i_init_save())
 		return false;
 
 	/* Initialize the game states. */

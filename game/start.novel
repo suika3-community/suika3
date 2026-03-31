@@ -1,5 +1,8 @@
 [chapter name="Chapter 1"]
 
+#
+# Fix the locale. (Please comment out to apply your OS locale!)
+#
 [config name="game.locale" value="en"]
 
 #

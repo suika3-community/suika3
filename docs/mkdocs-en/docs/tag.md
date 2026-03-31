@@ -266,17 +266,17 @@ Specify a filename to load an image onto a layer. Set to `none` to unload (hide)
 
 Each layer above (e.g., `center`) can be customized using the following suffixes (e.g., `center-x`, `center-rotate`).
 
-| Suffix    | Omissible     | Description                | Notes                                                         |
-|-----------|---------------|----------------------------|---------------------------------------------------------------|
-| `-x`      | Yes (`0`)     | X position.                | Supports absolute (e.g., `100`) or relative (e.g., `r50`).    |
-| `-y`      | Yes (`0`)     | Y position.                | Supports absolute (e.g., `100`) or relative (e.g., `r-50`).   |
-| `-a`      | Yes (`255`)   | Alpha value. (opacity)     | `0` (transparent) to `255` (opaque).                          |
-| `-sx`     | Yes (`1.0`)   | X scaling factor.          | `1.0` is original size. Supports `r` prefix.                  |
-| `-sy`     | Yes (`1.0`)   | Y scaling factor.          | `1.0` is original size. Supports `r` prefix.                  |
-| `-cx`     | Yes (`0`)     | X center for rotation.     | Pivot point for the rotation effect.                          |
-| `-cy`     | Yes (`0`)     | Y center for rotation.     | Pivot point for the rotation effect.                          |
-| `-rotate` | Yes (`0`)     | Rotation in degrees.       | Positive for clockwise. Supports `r` prefix.                  |
-| `-dim`    | Yes (`false`) | Dimming status.            | If `true`, the layer is rendered 50% darker.                  |
+| Suffix      | Omissible     | Description                | Notes                                                         |
+|-------------|---------------|----------------------------|---------------------------------------------------------------|
+| `-x`        | Yes (`0`)     | X position.                | Supports absolute (e.g., `100`) or relative (e.g., `r50`).    |
+| `-y`        | Yes (`0`)     | Y position.                | Supports absolute (e.g., `100`) or relative (e.g., `r-50`).   |
+| `-a`        | Yes (`255`)   | Alpha value. (opacity)     | `0` (transparent) to `255` (opaque).                          |
+| `-scale-x`  | Yes (`1.0`)   | X scaling factor.          | `1.0` is original size. Supports `r` prefix.                  |
+| `-scale-y`  | Yes (`1.0`)   | Y scaling factor.          | `1.0` is original size. Supports `r` prefix.                  |
+| `-center-x` | Yes (`0`)     | X center for rotation.     | Pivot point for the rotation effect.                          |
+| `-center-y` | Yes (`0`)     | Y center for rotation.     | Pivot point for the rotation effect.                          |
+| `-rotate`   | Yes (`0`)     | Rotation in degrees.       | Positive for clockwise. Supports `r` prefix.                  |
+| `-dim`      | Yes (`false`) | Dimming status.            | If `true`, the layer is rendered 50% darker.                  |
 
 ### Tips
 
@@ -721,6 +721,8 @@ It can show the main dialogue or narration, and optionally display a character's
 |------------------|-----------|--------------------------------------------------|--------------------------------------------------|
 | `text`           | No        | The message content to be displayed.             |                                                  |
 | `text-<locale>`  | Yes       | The message content to be displayed. (localized) |                                                  |
+| `voice`          | Yes       | The voice file.                                  |                                                  |
+| `voice-<locale>` | Yes       | The voice file. (localized)                                  |                                      |
 | `name`           | Yes       | The character's name to display in the name box. | If omitted, the name box will usually be hidden. |
 
 ### Localization
@@ -1377,17 +1379,17 @@ It is perfect for creating sliding effects, zooming in on characters, or rotatin
 | `face`         | Face character.                           |
 
 **(suffix):**
-| Suffix   | Omissible     | Description                | Notes                                                         |
-|----------|---------------|----------------------------|---------------------------------------------------------------|
-| `x`      | Yes (`0`)     | X position.                | Supports absolute (e.g., `100`) or relative (e.g., `r50`).    |
-| `y`      | Yes (`0`)     | Y position.                | Supports absolute (e.g., `100`) or relative (e.g., `r-50`).   |
-| `a`      | Yes (`255`)   | Alpha value. (opacity)     | `0` (transparent) to `255` (opaque).                          |
-| `sx`     | Yes (`1.0`)   | X scaling factor.          | `1.0` is original size. Supports `r` prefix.                  |
-| `sy`     | Yes (`1.0`)   | Y scaling factor.          | `1.0` is original size. Supports `r` prefix.                  |
-| `cx`     | Yes (`0`)     | X center for rotation.     | Pivot point for the rotation effect.                          |
-| `cy`     | Yes (`0`)     | Y center for rotation.     | Pivot point for the rotation effect.                          |
-| `rotate` | Yes (`0`)     | Rotation in degrees.       | Positive for clockwise. Supports `r` prefix.                  |
-| `dim`    | Yes (`false`) | Dimming status.            | If `true`, the layer is rendered 50% darker.                  |
+| Suffix      | Omissible     | Description                | Notes                                                         |
+|-------------|---------------|----------------------------|---------------------------------------------------------------|
+| `-x`        | Yes (`0`)     | X position.                | Supports absolute (e.g., `100`) or relative (e.g., `r50`).    |
+| `-y`        | Yes (`0`)     | Y position.                | Supports absolute (e.g., `100`) or relative (e.g., `r-50`).   |
+| `-a`        | Yes (`255`)   | Alpha value. (opacity)     | `0` (transparent) to `255` (opaque).                          |
+| `-scale-x`  | Yes (`1.0`)   | X scaling factor.          | `1.0` is original size. Supports `r` prefix.                  |
+| `-scale-y`  | Yes (`1.0`)   | Y scaling factor.          | `1.0` is original size. Supports `r` prefix.                  |
+| `-center-x` | Yes (`0`)     | X center for rotation.     | Pivot point for the rotation effect.                          |
+| `-center-y` | Yes (`0`)     | Y center for rotation.     | Pivot point for the rotation effect.                          |
+| `-rotate`   | Yes (`0`)     | Rotation in degrees.       | Positive for clockwise. Supports `r` prefix.                  |
+| `-dim`      | Yes (`false`) | Dimming status.            | If `true`, the layer is rendered 50% darker.                  |
 
 ### Tips
 

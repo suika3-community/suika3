@@ -2191,6 +2191,7 @@ update_save_buttons(void)
 	int i, base, save_index;
 
 	base = save_slots * save_page;
+
 	for (i = 0; i < S3_BUTTON_LAYERS; i++) {
 		if (button[i].type != TYPE_SAVE && button[i].type != TYPE_LOAD)
 			continue;

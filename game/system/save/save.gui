@@ -17,7 +17,7 @@ global {
     escapecancel: yes;
 
     # Sound effect on cancel.
-    cancelse: system/save/click.ogg;
+    cancelse: se/click.ogg;
 
     # Save slots per page.
     saveslots: 4;

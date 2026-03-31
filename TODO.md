@@ -1,9 +1,11 @@
 TODO
 ====
 
-## Remaining Taksk
+## Remaining Tasks
 
 - `Auto Focus` feature is not working.
+- Full screen novel style is not tested at all. (ported from Suika2 as is)
+- Unity version is not tested after the final shader change due to RC1 time limit.
 
 ---
 
@@ -143,7 +145,7 @@ Buzz testing on:
 
 ---
 
-## BG Tag Testing
+## Bg Tag Testing
 
 - Displaying a background image
 - Changing a background image
@@ -154,7 +156,7 @@ Buzz testing on:
 
 ---
 
-## CH Tag Testing
+## Ch Tag Testing
 
 - Change 1 character
     - Show a character
