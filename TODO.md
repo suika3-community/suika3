@@ -1,6 +1,12 @@
 TODO
 ====
 
+## Remaining Taksk
+
+- `Auto Focus` feature is not working.
+
+---
+
 ## Text Tag Testing
 
 ### Internationalization

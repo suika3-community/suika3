@@ -425,9 +425,6 @@ extern float conf_sound_vol_per_character;
  * Character Settings
  */
 
-/* Auto Focus */
-extern bool conf_character_auto_focus;
-
 /* Character name and folder mapping */
 extern char *conf_character_name[S3_CHARACTER_MAP_COUNT];
 extern char *conf_character_name_en[S3_CHARACTER_MAP_COUNT];
@@ -449,6 +446,15 @@ extern float conf_character_eyeblink_frame;
 /* Lip-sync */
 extern float conf_character_lipsync_frame;
 extern int conf_character_lipsync_chars;
+
+/*
+ * Auto Focus
+ */
+
+extern bool conf_autofocus_on_text_name;
+extern bool conf_autofocus_on_text_no_name;
+extern bool conf_autofocus_on_ch;
+extern bool conf_autofocus_on_choose;
 
 /*
  * Stage Settings

@@ -437,9 +437,6 @@ float conf_sound_vol_per_character;
  * Character Settings
  */
 
-/* Auto Focus */
-bool conf_character_auto_focus;
-
 /* Character name and folder mapping */
 char *conf_character_name[S3_CHARACTER_MAP_COUNT];
 char *conf_character_name_en[S3_CHARACTER_MAP_COUNT];
@@ -461,6 +458,15 @@ float conf_character_eyeblink_frame;
 /* Lip-sync */
 float conf_character_lipsync_frame;
 int conf_character_lipsync_chars;
+
+/*
+ * Auto Focus
+ */
+
+bool conf_autofocus_on_text_name;
+bool conf_autofocus_on_text_no_name;
+bool conf_autofocus_on_ch;
+bool conf_autofocus_on_choose;
 
 /*
  * Stage Settings
@@ -870,7 +876,6 @@ static struct rule {
 	{'f',	"sound.vol.per_character",	&conf_sound_vol_per_character,		MUST,	NOSAVE,	GLOBAL},
 
 	/* Character */
-	{'b',	"character.auto_focus",		&conf_character_auto_focus,		MUST,	SAVE,	LOCAL},
 	{'f',	"character.eyeblink.interval",	&conf_character_eyeblink_interval,	MUST,	NOSAVE,	GLOBAL},
 	{'f',	"character.eyeblink.frame",	&conf_character_eyeblink_frame,		MUST,	NOSAVE, GLOBAL},
 	{'f',	"character.lipsync.frame",	&conf_character_lipsync_frame,		MUST,	NOSAVE, GLOBAL},
@@ -1261,6 +1266,12 @@ static struct rule {
 	{'s',	"character.name32.zh-tw",	&conf_character_name_zh_tw[31],		OPTIONAL, NOSAVE,	GLOBAL},
 	{'s',	"character.name32.ja",		&conf_character_name_ja[31],		OPTIONAL, NOSAVE,	GLOBAL},
 	{'s',	"character.folder32",		&conf_character_folder[31],		OPTIONAL, NOSAVE,	GLOBAL},
+
+	/* Auto Focus */
+	{'b',	"autofocus.on_text_name",	&conf_autofocus_on_text_name,		OPTIONAL,	SAVE,	LOCAL},
+	{'b',	"autofocus.on_text_no_name",	&conf_autofocus_on_text_no_name,	OPTIONAL,	SAVE,	LOCAL},
+	{'b',	"autofocus.on_ch",		&conf_autofocus_on_ch,			OPTIONAL,	SAVE,	LOCAL},
+	{'b',	"autofocus.on_choose",		&conf_autofocus_on_choose,		OPTIONAL,	SAVE,	LOCAL},
 
 	/* Stage Margins */
 	{'i',	"stage.ch_margin.bottom",	&conf_stage_ch_margin_bottom,		MUST,	SAVE,	LOCAL},

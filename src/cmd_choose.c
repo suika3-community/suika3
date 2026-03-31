@@ -272,6 +272,11 @@ init(void)
 	/* Disable the skip  behavior by continuos swipe. */
 	s3_set_continuous_swipe_enabled(false);
 
+	/* Do autofocus. */
+	s3_set_ch_talking(-1);
+	if (conf_autofocus_on_choose)
+		s3_update_ch_dim_by_talking_ch();
+
 	return true;
 }
 

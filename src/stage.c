@@ -2605,6 +2605,9 @@ s3_start_fade(
 			layer_image[fo_layer] = layer_image[layer];
 			layer_image[layer] = desc[i].image;
 
+			/* Dimming. */
+			layer_dim[layer] = desc[i].dim;
+
 			/* Disable the eyes/lips layers. */
 			if (info[i].eye_layer != -1)
 				destroy_layer(info[i].eye_layer);
@@ -2818,31 +2821,18 @@ s3_update_ch_dim_by_talking_ch(void)
 		layer = s3_chpos_to_layer(i);
 
 		if (ch_talking == -1) {
-			/* No character is talking. */
-			if (!conf_character_auto_focus) {
-				/* All characters are light if auto focus is not enabled. */
-				layer_dim[layer] = true;
-			} else {
-				/* All characters are dark if auto focus is enabled. */
-				layer_dim[layer] = false;
-			}
+			/* No one is taling. */
+			layer_dim[layer] = false;
 		} else if (ch_name_mapping[i] == -1) {
 			/* This character is unknown. */
-			if (!conf_character_auto_focus) {
-				/* Unknown character is light if auto focus is not enabled. */
-				layer_dim[layer] = false;
-			} else {
-				/* Unknown character is dark if auto focus if enabled. */
-				layer_dim[layer] = true;
-			}
-
+			layer_dim[layer] = true;
 		} else if (ch_name_mapping[i] == ch_talking) {
-			/* This character is talking. */
+			/* This character is known and talking. */
 			layer_dim[layer] = false;
 		} else if (strncmp(conf_character_folder[ch_name_mapping[i]],
 				   conf_character_folder[ch_talking],
 				   strlen(conf_character_folder[ch_talking])) == 0) {
-			/* XXX: This is the same character as talking one. */
+			/* This is the same character as talking one. */
 			layer_dim[i] = false;
 		} else {
 			/* Not a talking character. */

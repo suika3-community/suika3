@@ -171,7 +171,7 @@ static float span;
 static bool change_chpos[S3_CH_BASIC_LAYERS];
 
 static bool init(void);
-static void update_ch_mapping(const char *fname, int layer);
+static bool update_ch_mapping(const char *fname, int layer);
 static void process_frame(void);
 static bool cleanup(void);
 
@@ -282,7 +282,7 @@ init(void)
 					int chpos = s3_layer_to_chpos(LAYER_INDEX);
 
 					/* Update the character mapping. */
-					update_ch_mapping(s, chpos);
+					desc[i].dim = update_ch_mapping(s, chpos);
 
 					/* Load eye/lip anime later. */
 					change_chpos[chpos] = true;
@@ -534,8 +534,7 @@ init(void)
 					desc[i].dim = false;
 				}
 			} else if (is_file_specified) {
-				/* If a file is specified and rotate is ommited. */
-				desc[i].dim = s3_get_ch_dim(s3_layer_to_chpos(LAYER_INDEX));
+				/* Dimming was already set above if a file is specified. */
 			} else {
 				/* If file and dim are both ommited. */
 				desc[i].dim = s3_get_layer_dim(LAYER_INDEX);
@@ -567,6 +566,9 @@ init(void)
 			return false;
 	}
 
+	if (conf_autofocus_on_ch)
+		s3_update_ch_dim_by_talking_ch();
+
 	/* Get the transition time. */
 	span = s3_get_tag_arg_float("time", true, 0);
 
@@ -589,7 +591,7 @@ init(void)
 }
 
 /* Update the character and name mapping. */
-static void
+static bool
 update_ch_mapping(
 	const char *fname,
 	int chpos)
@@ -614,6 +616,17 @@ update_ch_mapping(
 
 	/* Specify a character index for a character position. */
 	s3_set_ch_name_mapping(chpos, i);
+
+	/* Get the dimming. */
+	if (conf_autofocus_on_ch) {
+		if (s3_get_ch_talking() == i)
+			return false;	/* No dim. */
+		else
+			return true;	/* Dim. */
+	}
+
+	/* No dim. */
+	return false;
 }
 
 static void

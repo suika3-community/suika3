@@ -1281,29 +1281,46 @@ static void
 focus_character(void)
 {
 	const char *name;
-	int i;
+	int i, index;
 
+	/* Get the talking character. */
 	name = s3_get_tag_arg_string("name", true, NULL);
-	if (name == NULL)
-		return;
+	if (name == NULL) {
+		/* Update the talking character. */
+		s3_set_ch_talking(-1);
 
-	/* Check if the character is registered with a name */
-	for (i = 0; i < S3_CHARACTER_MAP_COUNT; i++) {
-		if (conf_character_name[i] == NULL)
-			continue;
-		if (conf_character_folder[i] == NULL)
-			continue;
-		if (strcmp(conf_character_name[i], name) == 0)
-			break;
-	}
+		/* Do autofocus. */
+		if (conf_autofocus_on_text_no_name) {
+			/* Update dimming based on the talking character. */
+			s3_update_ch_dim_by_talking_ch();
+		}
+	} else {
+		/* Check if the character is registered with a name */
+		for (i = 0; i < S3_CHARACTER_MAP_COUNT; i++) {
+			if (conf_character_name[i] == NULL)
+				continue;
+			if (conf_character_folder[i] == NULL)
+				continue;
 
-	/* Set the speaking character */
-	s3_set_ch_talking(i < S3_CHARACTER_MAP_COUNT ? i : -1);
+			if (strcmp(conf_character_name[i], name) == 0) {
+				/* Set the current talking character. */
+				s3_set_ch_talking(i < S3_CHARACTER_MAP_COUNT ? i : -1);
+				break;
+			}
+		}
+		if (i == S3_CHARACTER_MAP_COUNT)
+			index = -1;
+		else
+			index = i;
 
-	/* If character autofocus is enabled */
-	if (conf_character_auto_focus) {
-		/* Update dimming based on the speaking character */
-		s3_update_ch_dim_by_talking_ch();
+		/* Update the talking character. */
+		s3_set_ch_talking(index);
+
+		/* Do autofocus. */
+		if (conf_autofocus_on_text_name) {
+			/* Update dimming based on the talking character. */
+			s3_update_ch_dim_by_talking_ch();
+		}
 	}
 }
 
