@@ -76,6 +76,7 @@ enum pipeline
     PIPELINE_DIM,
     PIPELINE_RULE,
     PIPELINE_MELT,
+    PIPELINE_CROSS,
 };
 
 //
@@ -103,10 +104,10 @@ enum pipeline
 
 struct Vertex
 {
-    float Pos[3];        // Screen Position
-    float Tex1[2];        // Color Texture UV
-    float Tex2[2];        // Rule Texture UV
-    float Color[4];        // For Alpha and Dimming
+    float Pos[3];         // Screen Position
+    float Tex1[2];        // Texture1 UV
+    float Tex2[2];        // Texture2 UV
+    float Color[4];       // For Alpha and Dimming
 };
 
 //
@@ -179,6 +180,13 @@ const char szShader[] =
     "                  (input.Color.a * 2.0 - 1.0),             \n"
     "                  0.0, 1.0);                               \n"
     "    return pix;                                            \n"
+    "}                                                          \n"
+    "                                                           \n"
+    "float4 PS_Cross(PS_INPUT input) : SV_Target                \n"
+    "{                                                          \n"
+    "    float4 src1 = tx1.Sample(sm1, input.Tex1);             \n"
+    "    float4 src2 = tx2.Sample(sm1, input.Tex2);             \n"
+	"    return lerp(src2, src1, input.Color.a);                \n"
     "}                                                          \n";
 
 const uint8_t g_VS_Bytecode[] = {
@@ -501,6 +509,905 @@ const uint8_t g_PS_Melt_Bytecode[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
+const uint8_t g_PS_Cross_Bytecode[] = {
+0x44, 
+0x58, 
+0x42, 
+0x43, 
+0xe1, 
+0x61, 
+0x66, 
+0xce, 
+0xd1, 
+0xcf, 
+0xd4, 
+0xe4, 
+0x14, 
+0x75, 
+0xbf, 
+0x5a, 
+0x10, 
+0x57, 
+0x9b, 
+0x19, 
+0x01, 
+0x00, 
+0x00, 
+0x00, 
+0x80, 
+0x03, 
+0x00, 
+0x00, 
+0x05, 
+0x00, 
+0x00, 
+0x00, 
+0x34, 
+0x00, 
+0x00, 
+0x00, 
+0x0c, 
+0x01, 
+0x00, 
+0x00, 
+0x98, 
+0x01, 
+0x00, 
+0x00, 
+0xcc, 
+0x01, 
+0x00, 
+0x00, 
+0xe4, 
+0x02, 
+0x00, 
+0x00, 
+0x52, 
+0x44, 
+0x45, 
+0x46, 
+0xd0, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x03, 
+0x00, 
+0x00, 
+0x00, 
+0x3c, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x05, 
+0xff, 
+0xff, 
+0x00, 
+0x01, 
+0x00, 
+0x00, 
+0xa8, 
+0x00, 
+0x00, 
+0x00, 
+0x52, 
+0x44, 
+0x31, 
+0x31, 
+0x3c, 
+0x00, 
+0x00, 
+0x00, 
+0x18, 
+0x00, 
+0x00, 
+0x00, 
+0x20, 
+0x00, 
+0x00, 
+0x00, 
+0x28, 
+0x00, 
+0x00, 
+0x00, 
+0x24, 
+0x00, 
+0x00, 
+0x00, 
+0x0c, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x9c, 
+0x00, 
+0x00, 
+0x00, 
+0x03, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x01, 
+0x00, 
+0x00, 
+0x00, 
+0x01, 
+0x00, 
+0x00, 
+0x00, 
+0xa0, 
+0x00, 
+0x00, 
+0x00, 
+0x02, 
+0x00, 
+0x00, 
+0x00, 
+0x05, 
+0x00, 
+0x00, 
+0x00, 
+0x04, 
+0x00, 
+0x00, 
+0x00, 
+0xff, 
+0xff, 
+0xff, 
+0xff, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x01, 
+0x00, 
+0x00, 
+0x00, 
+0x0d, 
+0x00, 
+0x00, 
+0x00, 
+0xa4, 
+0x00, 
+0x00, 
+0x00, 
+0x02, 
+0x00, 
+0x00, 
+0x00, 
+0x05, 
+0x00, 
+0x00, 
+0x00, 
+0x04, 
+0x00, 
+0x00, 
+0x00, 
+0xff, 
+0xff, 
+0xff, 
+0xff, 
+0x01, 
+0x00, 
+0x00, 
+0x00, 
+0x01, 
+0x00, 
+0x00, 
+0x00, 
+0x0d, 
+0x00, 
+0x00, 
+0x00, 
+0x73, 
+0x6d, 
+0x31, 
+0x00, 
+0x74, 
+0x78, 
+0x31, 
+0x00, 
+0x74, 
+0x78, 
+0x32, 
+0x00, 
+0x4d, 
+0x69, 
+0x63, 
+0x72, 
+0x6f, 
+0x73, 
+0x6f, 
+0x66, 
+0x74, 
+0x20, 
+0x28, 
+0x52, 
+0x29, 
+0x20, 
+0x48, 
+0x4c, 
+0x53, 
+0x4c, 
+0x20, 
+0x53, 
+0x68, 
+0x61, 
+0x64, 
+0x65, 
+0x72, 
+0x20, 
+0x43, 
+0x6f, 
+0x6d, 
+0x70, 
+0x69, 
+0x6c, 
+0x65, 
+0x72, 
+0x20, 
+0x31, 
+0x30, 
+0x2e, 
+0x31, 
+0x00, 
+0x49, 
+0x53, 
+0x47, 
+0x4e, 
+0x84, 
+0x00, 
+0x00, 
+0x00, 
+0x04, 
+0x00, 
+0x00, 
+0x00, 
+0x08, 
+0x00, 
+0x00, 
+0x00, 
+0x68, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x01, 
+0x00, 
+0x00, 
+0x00, 
+0x03, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x0f, 
+0x00, 
+0x00, 
+0x00, 
+0x74, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x03, 
+0x00, 
+0x00, 
+0x00, 
+0x01, 
+0x00, 
+0x00, 
+0x00, 
+0x03, 
+0x03, 
+0x00, 
+0x00, 
+0x74, 
+0x00, 
+0x00, 
+0x00, 
+0x01, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x03, 
+0x00, 
+0x00, 
+0x00, 
+0x01, 
+0x00, 
+0x00, 
+0x00, 
+0x0c, 
+0x0c, 
+0x00, 
+0x00, 
+0x7d, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x03, 
+0x00, 
+0x00, 
+0x00, 
+0x02, 
+0x00, 
+0x00, 
+0x00, 
+0x0f, 
+0x08, 
+0x00, 
+0x00, 
+0x53, 
+0x56, 
+0x5f, 
+0x50, 
+0x4f, 
+0x53, 
+0x49, 
+0x54, 
+0x49, 
+0x4f, 
+0x4e, 
+0x00, 
+0x54, 
+0x45, 
+0x58, 
+0x43, 
+0x4f, 
+0x4f, 
+0x52, 
+0x44, 
+0x00, 
+0x43, 
+0x4f, 
+0x4c, 
+0x4f, 
+0x52, 
+0x00, 
+0xab, 
+0x4f, 
+0x53, 
+0x47, 
+0x4e, 
+0x2c, 
+0x00, 
+0x00, 
+0x00, 
+0x01, 
+0x00, 
+0x00, 
+0x00, 
+0x08, 
+0x00, 
+0x00, 
+0x00, 
+0x20, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x03, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x0f, 
+0x00, 
+0x00, 
+0x00, 
+0x53, 
+0x56, 
+0x5f, 
+0x54, 
+0x61, 
+0x72, 
+0x67, 
+0x65, 
+0x74, 
+0x00, 
+0xab, 
+0xab, 
+0x53, 
+0x48, 
+0x45, 
+0x58, 
+0x10, 
+0x01, 
+0x00, 
+0x00, 
+0x50, 
+0x00, 
+0x00, 
+0x00, 
+0x44, 
+0x00, 
+0x00, 
+0x00, 
+0x6a, 
+0x08, 
+0x00, 
+0x01, 
+0x5a, 
+0x00, 
+0x00, 
+0x03, 
+0x00, 
+0x60, 
+0x10, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x58, 
+0x18, 
+0x00, 
+0x04, 
+0x00, 
+0x70, 
+0x10, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x55, 
+0x55, 
+0x00, 
+0x00, 
+0x58, 
+0x18, 
+0x00, 
+0x04, 
+0x00, 
+0x70, 
+0x10, 
+0x00, 
+0x01, 
+0x00, 
+0x00, 
+0x00, 
+0x55, 
+0x55, 
+0x00, 
+0x00, 
+0x62, 
+0x10, 
+0x00, 
+0x03, 
+0x32, 
+0x10, 
+0x10, 
+0x00, 
+0x01, 
+0x00, 
+0x00, 
+0x00, 
+0x62, 
+0x10, 
+0x00, 
+0x03, 
+0xc2, 
+0x10, 
+0x10, 
+0x00, 
+0x01, 
+0x00, 
+0x00, 
+0x00, 
+0x62, 
+0x10, 
+0x00, 
+0x03, 
+0x82, 
+0x10, 
+0x10, 
+0x00, 
+0x02, 
+0x00, 
+0x00, 
+0x00, 
+0x65, 
+0x00, 
+0x00, 
+0x03, 
+0xf2, 
+0x20, 
+0x10, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x68, 
+0x00, 
+0x00, 
+0x02, 
+0x02, 
+0x00, 
+0x00, 
+0x00, 
+0x45, 
+0x00, 
+0x00, 
+0x8b, 
+0xc2, 
+0x00, 
+0x00, 
+0x80, 
+0x43, 
+0x55, 
+0x15, 
+0x00, 
+0xf2, 
+0x00, 
+0x10, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x46, 
+0x10, 
+0x10, 
+0x00, 
+0x01, 
+0x00, 
+0x00, 
+0x00, 
+0x46, 
+0x7e, 
+0x10, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x60, 
+0x10, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x45, 
+0x00, 
+0x00, 
+0x8b, 
+0xc2, 
+0x00, 
+0x00, 
+0x80, 
+0x43, 
+0x55, 
+0x15, 
+0x00, 
+0xf2, 
+0x00, 
+0x10, 
+0x00, 
+0x01, 
+0x00, 
+0x00, 
+0x00, 
+0xe6, 
+0x1a, 
+0x10, 
+0x00, 
+0x01, 
+0x00, 
+0x00, 
+0x00, 
+0x46, 
+0x7e, 
+0x10, 
+0x00, 
+0x01, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x60, 
+0x10, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x08, 
+0xf2, 
+0x00, 
+0x10, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x46, 
+0x0e, 
+0x10, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x46, 
+0x0e, 
+0x10, 
+0x80, 
+0x41, 
+0x00, 
+0x00, 
+0x00, 
+0x01, 
+0x00, 
+0x00, 
+0x00, 
+0x32, 
+0x00, 
+0x00, 
+0x09, 
+0xf2, 
+0x20, 
+0x10, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0xf6, 
+0x1f, 
+0x10, 
+0x00, 
+0x02, 
+0x00, 
+0x00, 
+0x00, 
+0x46, 
+0x0e, 
+0x10, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x46, 
+0x0e, 
+0x10, 
+0x00, 
+0x01, 
+0x00, 
+0x00, 
+0x00, 
+0x3e, 
+0x00, 
+0x00, 
+0x01, 
+0x53, 
+0x54, 
+0x41, 
+0x54, 
+0x94, 
+0x00, 
+0x00, 
+0x00, 
+0x05, 
+0x00, 
+0x00, 
+0x00, 
+0x02, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x04, 
+0x00, 
+0x00, 
+0x00, 
+0x02, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x01, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x02, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+0x00, 
+};
+
 //
 // Variables
 //
@@ -523,6 +1430,7 @@ static ComPtr<ID3D12PipelineState>          g_pipelineStateAdd;
 static ComPtr<ID3D12PipelineState>          g_pipelineStateSub;
 static ComPtr<ID3D12PipelineState>          g_pipelineStateRule;
 static ComPtr<ID3D12PipelineState>          g_pipelineStateMelt;
+static ComPtr<ID3D12PipelineState>          g_pipelineStateCross;
 static ComPtr<ID3D12GraphicsCommandList>    g_commandList;
 static UINT                                 g_rtvDescriptorSize;
 static UINT                                 g_srvDescriptorSize;
@@ -609,16 +1517,21 @@ static BOOL CreateFence();
 static void ReleaseAllD3D12Objects();
 static void WaitForPreviousFrame();
 static VOID DrawPrimitive2D(int dst_left, int dst_top, int dst_width,
-							int dst_height, struct hal_image *src_image,
-							struct hal_image *rule_image, int src_left,
-							int src_top, int src_width, int src_height,
-							int alpha, int pipeline);
+							int dst_height, struct hal_image *src1_image,
+							struct hal_image *src2_image, int src1_left,
+							int src1_top, int src1_width, int src1_height,
+							int src2_left, int src2_top, int src2_width,
+							int src2_height, int alpha, int pipeline);
 static VOID DrawPrimitive3D(float x1, float y1, float x2, float y2, float x3,
 							float y3, float x4, float y4,
-							struct hal_image *src_image,
-							struct hal_image *rule_image,
-							int src_left, int src_top, int src_width,
-							int src_height, int alpha, int pipeline);
+							struct hal_image *src1_image,
+							struct hal_image *src2_image,
+							float src1_tx1, float src1_ty1, float src1_tx2,
+							float src1_ty2, float src1_tx3, float src1_ty3,
+							float src1_tx4, float src1_ty4, float src2_tx1,
+							float src2_ty1, float src2_tx2, float src2_ty2,
+							float src2_tx3, float src2_ty3, float src2_tx4,
+							float src2_ty4, int alpha, int pipeline);
 static BOOL UploadTextureIfNeeded(struct hal_image *img);
 static UINT64 GetRequiredIntermediateSize_NoD3DX(
 	ID3D12Resource *destinationResource,
@@ -1096,10 +2009,12 @@ CreatePipelineState()
     uint8_t* pixelShaderNormal;
     uint8_t* pixelShaderRule;
     uint8_t* pixelShaderMelt;
+    uint8_t* pixelShaderCross;
     size_t vertexShaderSize;
     size_t pixelShaderNormalSize;
     size_t pixelShaderRuleSize;
     size_t pixelShaderMeltSize;
+    size_t pixelShaderCrossSize;
 
     HRESULT hr;
 
@@ -1116,6 +2031,10 @@ CreatePipelineState()
         return FALSE;
 
     hr = CompileShaderFromString(szShader, "PS_Melt", "ps_5_0", &pixelShaderMelt, &pixelShaderMeltSize);
+    if (FAILED(hr))
+        return FALSE;
+
+    hr = CompileShaderFromString(szShader, "PS_Cross", "ps_5_0", &pixelShaderCross, &pixelShaderCrossSize);
     if (FAILED(hr))
         return FALSE;
 
@@ -1141,7 +2060,7 @@ CreatePipelineState()
         normalBlendDesc.RenderTarget[i].SrcBlend = D3D12_BLEND_SRC_ALPHA;
         normalBlendDesc.RenderTarget[i].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
     }
-
+ 
 	D3D12_BLEND_DESC addBlendDesc = {};
 	for (int i = 0; i < 2; i++)
 	{
@@ -1324,6 +2243,36 @@ CreatePipelineState()
     if (FAILED(hr))
         return FALSE;
 
+    psoDesc.InputLayout = { inputElementDescs, _countof(inputElementDescs) };
+    psoDesc.pRootSignature = g_rootSignature.Get();
+    psoDesc.VS.pShaderBytecode = vertexShader;
+    psoDesc.VS.BytecodeLength = vertexShaderSize;
+    psoDesc.PS.pShaderBytecode = pixelShaderCross;
+    psoDesc.PS.BytecodeLength = pixelShaderCrossSize;
+	psoDesc.RasterizerState.FillMode              = D3D12_FILL_MODE_SOLID;
+	psoDesc.RasterizerState.CullMode              = D3D12_CULL_MODE_BACK;
+	psoDesc.RasterizerState.FrontCounterClockwise = FALSE;
+	psoDesc.RasterizerState.DepthBias             = D3D12_DEFAULT_DEPTH_BIAS;
+	psoDesc.RasterizerState.DepthBiasClamp        = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
+	psoDesc.RasterizerState.SlopeScaledDepthBias  = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
+	psoDesc.RasterizerState.DepthClipEnable       = TRUE;
+	psoDesc.RasterizerState.MultisampleEnable     = FALSE;
+	psoDesc.RasterizerState.AntialiasedLineEnable = FALSE;
+	psoDesc.RasterizerState.ForcedSampleCount     = 0;
+	psoDesc.RasterizerState.ConservativeRaster    = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
+    psoDesc.BlendState = normalBlendDesc;
+    psoDesc.DepthStencilState.DepthEnable = FALSE;
+    psoDesc.DepthStencilState.StencilEnable = FALSE;
+    psoDesc.SampleMask = UINT_MAX;
+    psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+    psoDesc.NumRenderTargets = 1;
+    psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+    psoDesc.SampleDesc.Count = 1;
+
+    hr = g_device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&g_pipelineStateCross));
+    if (FAILED(hr))
+        return FALSE;
+
     return TRUE;
 }
 
@@ -1342,19 +2291,18 @@ CompileShaderFromString(
     if (FAILED(hr))
     {
         auto msg = (char*)pErrorBlob->GetBufferPointer();
-
-        // Check this.
-        (void)msg;
+		hal_log_error(msg);
         return E_FAIL;
     }
 
-	log_info("shader_%s[] = {", szEntryPoint);
-	int size = ppBlobOut->GetBufferSize();
-	char *byte = (char *)ppBlobOut->GetBufferPointer();
+	int size = pBlobOut->GetBufferSize();
+	char *byte = (char *)pBlobOut->GetBufferPointer();
+	hal_log_info("%s = {", szEntryPoint);
 	for (int i = 0; i < size; i++) {
-		log_info("0x%02x, ", (unsigned int)(unsigned char)byte[i]);
+		hal_log_info("0x%02x, ", (unsigned int)(unsigned char)byte[i]);
 	}
-	log_info("};");
+	hal_log_info("};");
+	return S_OK;
 #else
     if (strcmp(szEntryPoint, "VS") == 0)
 	{
@@ -1381,6 +2329,13 @@ CompileShaderFromString(
 	{
 		*ppShaderData = (uint8_t*)g_PS_Melt_Bytecode;
 		*pShaderSize = sizeof(g_PS_Melt_Bytecode);
+		return S_OK;
+	}
+
+    if (strcmp(szEntryPoint, "PS_Cross") == 0)
+	{
+		*ppShaderData = (uint8_t*)g_PS_Cross_Bytecode;
+		*pShaderSize = sizeof(g_PS_Cross_Bytecode);
 		return S_OK;
 	}
 
@@ -1731,6 +2686,7 @@ D3D12RenderImageNormal(
 					src_top,
 					src_width,
 					src_height,
+					0, 0, 0, 0,
 					alpha,
 					PIPELINE_NORMAL);
 }
@@ -1758,6 +2714,7 @@ D3D12RenderImageAdd(
 					src_top,
 					src_width,
 					src_height,
+					0, 0, 0, 0,
 					alpha,
 					PIPELINE_ADD);
 }
@@ -1785,6 +2742,7 @@ D3D12RenderImageSub(
 					src_top,
 					src_width,
 					src_height,
+					0, 0, 0, 0,
 					alpha,
 					PIPELINE_SUB);
 }
@@ -1812,6 +2770,7 @@ D3D12RenderImageDim(
 					src_top,
 					src_width,
 					src_height,
+					0, 0, 0, 0,
 					alpha,
 					PIPELINE_DIM);
 }
@@ -1832,6 +2791,10 @@ D3D12RenderImageRule(
 					0,
 					g_nVirtualWidth,
 					g_nVirtualHeight,
+					0,
+					0,
+					rule_image->width,
+					rule_image->height,
 					threshold,
 					PIPELINE_RULE);
 }
@@ -1852,8 +2815,44 @@ D3D12RenderImageMelt(
 					0,
 					g_nVirtualWidth,
 					g_nVirtualHeight,
+					0,
+					0,
+					rule_image->width,
+					rule_image->height,
 					progress,
 					PIPELINE_MELT);
+}
+
+VOID
+D3D12RenderImageCross(
+	struct hal_image *src1_image,
+	struct hal_image *src2_image,
+	float src1_left,
+	float src1_top,
+	float src2_left,
+	float src2_top,
+	int alpha)
+{
+	D3D12RenderImage3DCross(
+		src1_image,
+		src2_image,
+		src1_left,
+		src1_top,
+		src1_left + src1_image->width,
+		src1_top,
+		src1_left,
+		src1_top + src1_image->height,
+		src1_left + src1_image->width,
+		src1_top + src1_image->height,
+		src2_left,
+		src2_top,
+		src2_left + src1_image->width,
+		src2_top,
+		src2_left,
+		src2_top + src1_image->height,
+		src2_left + src1_image->width,
+		src2_top + src1_image->height,
+		alpha);
 }
 
 VOID
@@ -1866,7 +2865,7 @@ D3D12RenderImage3DNormal(
 	float y3,
 	float x4,
 	float y4,
-	struct hal_image *src_image,
+	struct hal_image* src_image,
 	int src_left,
 	int src_top,
 	int src_width,
@@ -1883,10 +2882,15 @@ D3D12RenderImage3DNormal(
 					y4,
 					src_image,
 					NULL,
-					src_left,
-					src_top,
-					src_width,
-					src_height,
+					(float)src_left,
+					(float)src_top,
+					(float)(src_left + src_width),
+					(float)(src_top),
+					(float)(src_left),
+					(float)(src_top + src_height),
+					(float)(src_left + src_width),
+					(float)(src_top + src_height),
+					0, 0, 0, 0, 0, 0, 0, 0,
 					alpha,
 					PIPELINE_NORMAL);
 }
@@ -1918,10 +2922,15 @@ D3D12RenderImage3DAdd(
 					y4,
 					src_image,
 					NULL,
-					src_left,
-					src_top,
-					src_width,
-					src_height,
+					(float)src_left,
+					(float)src_top,
+					(float)(src_left + src_width),
+					(float)(src_top),
+					(float)(src_left),
+					(float)(src_top + src_height),
+					(float)(src_left + src_width),
+					(float)(src_top + src_height),
+					0, 0, 0, 0, 0, 0, 0, 0,
 					alpha,
 					PIPELINE_ADD);
 }
@@ -1953,10 +2962,15 @@ D3D12RenderImage3DSub(
 					y4,
 					src_image,
 					NULL,
-					src_left,
-					src_top,
-					src_width,
-					src_height,
+					(float)src_left,
+					(float)src_top,
+					(float)(src_left + src_width),
+					(float)(src_top),
+					(float)(src_left),
+					(float)(src_top + src_height),
+					(float)(src_left + src_width),
+					(float)(src_top + src_height),
+					0, 0, 0, 0, 0, 0, 0, 0,
 					alpha,
 					PIPELINE_SUB);
 }
@@ -1988,12 +3002,111 @@ D3D12RenderImage3DDim(
 					y4,
 					src_image,
 					NULL,
-					src_left,
-					src_top,
-					src_width,
-					src_height,
+					(float)src_left,
+					(float)src_top,
+					(float)(src_left + src_width),
+					(float)(src_top),
+					(float)(src_left),
+					(float)(src_top + src_height),
+					(float)(src_left + src_width),
+					(float)(src_top + src_height),
+					0, 0, 0, 0, 0, 0, 0, 0,
 					alpha,
 					PIPELINE_DIM);
+}
+
+VOID
+D3D12RenderImage3DCross(
+	struct hal_image *src1_image,
+	struct hal_image *src2_image,
+	float src1_x1,
+	float src1_y1,
+	float src1_x2,
+	float src1_y2,
+	float src1_x3,
+	float src1_y3,
+	float src1_x4,
+	float src1_y4,
+	float src2_x1,
+	float src2_y1,
+	float src2_x2,
+	float src2_y2,
+	float src2_x3,
+	float src2_y3,
+	float src2_x4,
+	float src2_y4,
+	int alpha)
+{
+    float s1_tx[4], s1_ty[4];
+    float s2_tx[4], s2_ty[4];
+    float screen_x[] = { 0.0f, (float)g_nVirtualWidth, 0.0f, (float)g_nVirtualWidth };
+    float screen_y[] = { 0.0f, 0.0f, (float)g_nVirtualHeight, (float)g_nVirtualHeight };
+
+	{
+		float dx1 = src1_x2 - src1_x1;
+		float dy1 = src1_y2 - src1_y1;
+		float dx2 = src1_x3 - src1_x1;
+		float dy2 = src1_y3 - src1_y1;
+		float det = dx1 * dy2 - dy1 * dx2;
+		if (det != 0.0f)
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				float rx = screen_x[i] - src1_x1;
+				float ry = screen_y[i] - src1_y1;
+				float a = ( dy2 * rx - dx2 * ry) / det;
+				float b = (-dy1 * rx + dx1 * ry) / det;
+				s1_tx[i] = a * (float)src1_image->width;
+				s1_ty[i] = b * (float)src1_image->height;
+			}
+		}
+		else
+		{
+			for (int i = 0; i < 4; i++) s1_tx[i] = s1_ty[i] = 0.0f;
+		}
+	}
+
+	{
+		float dx1 = src2_x2 - src2_x1;
+		float dy1 = src2_y2 - src2_y1;
+		float dx2 = src2_x3 - src2_x1;
+		float dy2 = src2_y3 - src2_y1;
+		float det = dx1 * dy2 - dy1 * dx2;
+
+		if (det != 0.0f)
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				float rx = screen_x[i] - src2_x1;
+				float ry = screen_y[i] - src2_y1;
+				float a = ( dy2 * rx - dx2 * ry) / det;
+				float b = (-dy1 * rx + dx1 * ry) / det;
+				s2_tx[i] = a * (float)src2_image->width;
+				s2_ty[i] = b * (float)src2_image->height;
+			}
+		}
+		else
+		{
+			for (int i = 0; i < 4; i++) s2_tx[i] = s2_ty[i] = 0.0f;
+		}
+	}
+
+    DrawPrimitive3D(0.0f,
+					0.0f,
+					(float)g_nVirtualWidth,
+					0.0f,
+					0.0f,
+					(float)g_nVirtualHeight,
+					(float)g_nVirtualWidth,
+					(float)g_nVirtualHeight,
+					src1_image,
+					src2_image,
+					s1_tx[0], s1_ty[0], s1_tx[1], s1_ty[1],
+					s1_tx[2], s1_ty[2], s1_tx[3], s1_ty[3],
+					s2_tx[0], s2_ty[0], s2_tx[1], s2_ty[1],
+					s2_tx[2], s2_ty[2], s2_tx[3], s2_ty[3],
+					alpha,
+					PIPELINE_CROSS);
 }
 
 static VOID
@@ -2002,23 +3115,27 @@ DrawPrimitive2D(
 	int dst_top,
 	int dst_width,
 	int dst_height,
-	struct hal_image *src_image,
-	struct hal_image *rule_image,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
+	struct hal_image *src1_image,
+	struct hal_image *src2_image,
+	int src1_left,
+	int src1_top,
+	int src1_width,
+	int src1_height,
+	int src2_left,
+	int src2_top,
+	int src2_width,
+	int src2_height,
 	int alpha,
 	int pipeline)
 {
     if (dst_width == -1)
-        dst_width = src_image->width;
+        dst_width = src1_image->width;
     if (dst_height == -1)
-        dst_height = src_image->height;
-    if (src_width == -1)
-        src_width = src_image->width;
-    if (src_height == -1)
-        src_height = src_image->height;
+        dst_height = src1_image->height;
+    if (src1_width == -1)
+        src1_width = src1_image->width;
+    if (src1_height == -1)
+        src1_height = src1_image->height;
 
     DrawPrimitive3D((float)dst_left,
                     (float)dst_top,
@@ -2028,12 +3145,24 @@ DrawPrimitive2D(
                     (float)(dst_top + dst_height),
                     (float)(dst_left + dst_width),
                     (float)(dst_top + dst_height),
-                    src_image,
-                    rule_image,
-                    src_left,
-                    src_top,
-                    src_width,
-                    src_height,
+                    src1_image,
+                    src2_image,
+                    src1_left,
+                    src1_top,
+                    src1_left + src1_width,
+                    src1_top,
+                    src1_left,
+                    src1_top + src1_height,
+                    src1_left + src1_width,
+                    src1_top + src1_height,
+                    src2_left,
+                    src2_top,
+                    src2_left + src2_width,
+                    src2_top,
+                    src2_left,
+                    src2_top + src2_height,
+                    src2_left + src2_width,
+                    src2_top + src2_height,
                     alpha,
                     pipeline);
 }
@@ -2048,25 +3177,37 @@ DrawPrimitive3D(
 	float y3,
 	float x4,
 	float y4,
-	struct hal_image *src_image,
-	struct hal_image *rule_image,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
+	struct hal_image *src1_image,
+	struct hal_image *src2_image,
+	float src1_tx1,
+	float src1_ty1,
+	float src1_tx2,
+	float src1_ty2,
+	float src1_tx3,
+	float src1_ty3,
+	float src1_tx4,
+	float src1_ty4,
+	float src2_tx1,
+	float src2_ty1,
+	float src2_tx2,
+	float src2_ty2,
+	float src2_tx3,
+	float src2_ty3,
+	float src2_tx4,
+	float src2_ty4,
 	int alpha,
 	int pipeline)
 {
-    // Check src_image.
-    if (!UploadTextureIfNeeded(src_image))
+    // Check src1_image.
+    if (!UploadTextureIfNeeded(src1_image))
         return;
-    TextureBundle* pTextureBundle1 = (TextureBundle*)src_image->texture;
+    TextureBundle* pTextureBundle1 = (TextureBundle*)src1_image->texture;
 
-    // Check rule_image.
-    if (rule_image != nullptr)
-        if (!UploadTextureIfNeeded(rule_image))
+    // Check src2_image.
+    if (src2_image != nullptr)
+        if (!UploadTextureIfNeeded(src2_image))
             return;
-    TextureBundle* pTextureBundle2 = rule_image != nullptr ? (TextureBundle*)rule_image->texture : nullptr;
+    TextureBundle* pTextureBundle2 = src2_image != nullptr ? (TextureBundle*)src2_image->texture : nullptr;
 
     // Normalize vertices.
     float x1_ = (x1 * g_fScale + g_fOffsetX) / (g_fDisplayWidth / 2.0f) - 1.0f;
@@ -2079,22 +3220,46 @@ DrawPrimitive3D(
     float y4_ = 1.0f - (y4 * g_fScale + g_fOffsetY) / (g_fDisplayHeight / 2.0f);
 
     // Normalize texture UV.
-    float u1 = (float)src_left / (float)src_image->width;
-    float v1 = (float)src_top / (float)src_image->height;
-    float u2 = (float)(src_left + src_width) / (float)src_image->width;
-    float v2 = (float)src_top / (float)src_image->height;
-    float u3 = (float)src_left / (float)src_image->width;
-    float v3 = (float)(src_top + src_height) / (float)src_image->height;
-    float u4 = (float)(src_left + src_width) / (float)src_image->width;
-    float v4 = (float)(src_top + src_height) / (float)src_image->height;
+	float src1_u1, src1_v1, src1_u2, src1_v2, src1_u3, src1_v3, src1_u4, src1_v4;
+	float src2_u1, src2_v1, src2_u2, src2_v2, src2_u3, src2_v3, src2_u4, src2_v4;
+    src1_u1 = src1_tx1 / (float)src1_image->width;
+    src1_v1 = src1_ty1 / (float)src1_image->height;
+    src1_u2 = src1_tx2 / (float)src1_image->width;
+    src1_v2 = src1_ty2 / (float)src1_image->height;
+    src1_u3 = src1_tx3 / (float)src1_image->width;
+    src1_v3 = src1_ty3 / (float)src1_image->height;
+    src1_u4 = src1_tx4 / (float)src1_image->width;
+    src1_v4 = src1_ty4 / (float)src1_image->height;
+	if (src2_image != NULL)
+	{
+		src2_u1 = src2_tx1 / (float)src2_image->width;
+		src2_v1 = src2_ty1 / (float)src2_image->height;
+		src2_u2 = src2_tx2 / (float)src2_image->width;
+		src2_v2 = src2_ty2 / (float)src2_image->height;
+		src2_u3 = src2_tx3 / (float)src2_image->width;
+		src2_v3 = src2_ty3 / (float)src2_image->height;
+		src2_u4 = src2_tx4 / (float)src2_image->width;
+		src2_v4 = src2_ty4 / (float)src2_image->height;
+	}
+	else
+	{
+		src2_u1 = 0;
+		src2_v1 = 0;
+		src2_u2 = 0;
+		src2_v2 = 0;
+		src2_u3 = 0;
+		src2_v3 = 0;
+		src2_u4 = 0;
+		src2_v4 = 0;
+	}
 
     // Create a vertex array.
     float color = (pipeline == PIPELINE_DIM) ? 0.5f : 1.0f;
     Vertex v[4] = {
-        {{x1_, y1_, 0.0f}, {u1, v1}, {  0,   0}, {color, color, color, (float)alpha / 255.0f}},
-        {{x2_, y2_, 0.0f}, {u2, v2}, {1.0,   0}, {color, color, color, (float)alpha / 255.0f}},
-        {{x3_, y3_, 0.0f}, {u3, v3}, {  0, 1.0}, {color, color, color, (float)alpha / 255.0f}},
-        {{x4_, y4_, 0.0f}, {u4, v4}, {1.0, 1.0}, {color, color, color, (float)alpha / 255.0f}},
+        {{x1_, y1_, 0.0f}, {src1_u1, src1_v1}, {src2_u1, src2_v1}, {color, color, color, (float)alpha / 255.0f}},
+        {{x2_, y2_, 0.0f}, {src1_u2, src1_v2}, {src2_u2, src2_v2}, {color, color, color, (float)alpha / 255.0f}},
+        {{x3_, y3_, 0.0f}, {src1_u3, src1_v3}, {src2_u3, src2_v3}, {color, color, color, (float)alpha / 255.0f}},
+        {{x4_, y4_, 0.0f}, {src1_u4, src1_v4}, {src2_u4, src2_v4}, {color, color, color, (float)alpha / 255.0f}},
     };
 
     // Save the vertices to the temporary buffer.
@@ -2122,6 +3287,9 @@ DrawPrimitive3D(
         break;
     case PIPELINE_MELT:
         g_commandList->SetPipelineState(g_pipelineStateMelt.Get());
+        break;
+    case PIPELINE_CROSS:
+        g_commandList->SetPipelineState(g_pipelineStateCross.Get());
         break;
     }
 

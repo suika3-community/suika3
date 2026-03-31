@@ -49,6 +49,7 @@ enum pipeline
     PIPELINE_DIM,
     PIPELINE_RULE,
     PIPELINE_MELT,
+    PIPELINE_CROSS,
 };
 
 //
@@ -109,13 +110,20 @@ const char szShader[] =
     "                  (input.Color.a * 2.0 - 1.0),             \n"
     "                  0.0, 1.0);                               \n"
     "    return pix;                                            \n"
+    "}                                                          \n"
+    "                                                           \n"
+    "float4 PS_Cross(PS_INPUT input) : SV_Target                \n"
+    "{                                                          \n"
+    "    float4 src1 = tx1.Sample(samLinear, input.Tex1);       \n"
+    "    float4 src2 = tx2.Sample(samLinear, input.Tex2);       \n"
+	"    return lerp(src2, src1, input.Color.a);                \n"
     "}                                                          \n";
 
 //
 // Vertex Structure
 //
 
-struct SimpleVertex
+struct Vertex
 {
     float Pos[3];
     float Tex1[2];
@@ -154,6 +162,7 @@ static ID3D11VertexShader*      g_pVertexShader;
 static ID3D11PixelShader*       g_pPixelShaderNormal;
 static ID3D11PixelShader*       g_pPixelShaderRule;
 static ID3D11PixelShader*       g_pPixelShaderMelt;
+static ID3D11PixelShader*       g_pPixelShaderCross;
 static ID3D11InputLayout*       g_pVertexLayout;
 static ID3D11Buffer*            g_pVertexBuffer;
 static ID3D11SamplerState*      g_pSamplerLinear;
@@ -186,14 +195,19 @@ static HRESULT CompileShaderFromString(const char *szShader,
 static BOOL CreateVertexBuffer();
 static BOOL CreateSamplerState();
 static VOID DrawPrimitive2D(int dst_left, int dst_top, int dst_width,
-							int dst_height, struct hal_image *src_image,
-							struct hal_image *rule_image, int src_left,
-							int src_top, int src_width, int src_height,
-							int alpha, int pipeline);
+							int dst_height, struct hal_image *src1_image,
+							struct hal_image *src2_image, int src1_left,
+							int src1_top, int src1_width, int src1_height,
+							int src2_left, int src2_top, int src2_width,
+							int src2_height, int alpha, int pipeline);
 static VOID DrawPrimitive3D(float x1, float y1, float x2, float y2, float x3,
 							float y3, float x4, float y4,
-							struct hal_image *src_image, int src_left,
-							int src_top, int src_width, int src_height,
+							struct hal_image *src1_image,
+							struct hal_image *src2_image,
+							float src1_tx1, float src1_ty1, float src1_tx2, float src1_ty2,
+							float src1_tx3, float src1_ty3, float src1_tx4, float src1_ty4,
+							float src2_tx1, float src2_ty1, float src2_tx2, float src2_ty2,
+							float src2_tx3, float src2_ty3, float src2_tx4, float src2_ty4,
 							int alpha, int pipeline);
 static BOOL UploadTextureIfNeeded(struct hal_image *img);
 
@@ -497,9 +511,9 @@ CreateVertexShader()
     // Define the input layout.
     D3D11_INPUT_ELEMENT_DESC layout[] =
     {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT,    0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,       0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,          0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT,          0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT,    0, 28, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
     UINT numElements = ARRAYSIZE(layout);
@@ -553,6 +567,17 @@ CompilePixelShaders()
     if (FAILED(hr))
         return FALSE;
 
+    // Cross Shader
+    pPSBlob = nullptr;
+    hr = CompileShaderFromString(szShader, "PS_Cross", "ps_4_0", &pPSBlob);
+    if (FAILED(hr))
+        return FALSE;
+
+    hr = g_pd3dDevice->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), nullptr, &g_pPixelShaderCross);
+    pPSBlob->Release();
+    if (FAILED(hr))
+        return FALSE;
+
     return TRUE;
 }
 
@@ -561,12 +586,17 @@ CreateSamplerState()
 {
     D3D11_SAMPLER_DESC sampDesc = {};
     sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-    sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-    sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-    sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+    sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+    sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+    sampDesc.BorderColor[0] = 0.0f; // R
+    sampDesc.BorderColor[1] = 0.0f; // G
+    sampDesc.BorderColor[2] = 0.0f; // B
+    sampDesc.BorderColor[3] = 0.0f; // A
     sampDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
     sampDesc.MinLOD = 0;
     sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
     HRESULT hr = g_pd3dDevice->CreateSamplerState(&sampDesc, &g_pSamplerLinear);
     if (FAILED(hr))
         return FALSE;
@@ -591,7 +621,7 @@ CompileShaderFromString(
         return E_FAIL;
 
     ID3DBlob* pErrorBlob = nullptr;
-    HRESULT hr = pD3DCompile(szShader, strlen(szShader), NULL, NULL, NULL, szEntryPoint, szShaderModel, 0, 0, ppBlobOut, &pErrorBlob);
+    HRESULT hr = pD3DCompile(szShader, strlen(szShader), nullptr, nullptr, nullptr, szEntryPoint, szShaderModel, 0, 0, ppBlobOut, &pErrorBlob);
     if (FAILED(hr))
     {
         auto error = (char*)pErrorBlob->GetBufferPointer();
@@ -605,11 +635,11 @@ static BOOL
 CreateVertexBuffer()
 {
     // Create vertex buffer
-    SimpleVertex vertices[4] = {};
+    Vertex vertices[4] = {};
 
     D3D11_BUFFER_DESC bd = {};
     bd.Usage = D3D11_USAGE_DYNAMIC;
-    bd.ByteWidth = sizeof(SimpleVertex) * 4;
+    bd.ByteWidth = sizeof(Vertex) * 4;
     bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
@@ -620,7 +650,7 @@ CreateVertexBuffer()
         return FALSE;
 
     // Set vertex buffer
-    UINT stride = sizeof(SimpleVertex);
+    UINT stride = sizeof(Vertex);
     UINT offset = 0;
     g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
 
@@ -647,6 +677,11 @@ D3D11Cleanup(VOID)
     {
         g_pVertexLayout->Release();
         g_pVertexLayout = nullptr;
+    }
+    if (g_pPixelShaderCross)
+    {
+        g_pPixelShaderCross->Release();
+        g_pPixelShaderCross = nullptr;
     }
     if (g_pPixelShaderMelt)
     {
@@ -848,6 +883,7 @@ D3D11RenderImageNormal(
 					src_top,
 					src_width,
 					src_height,
+					0, 0, 0, 0,
 					alpha,
 					PIPELINE_NORMAL);
 }
@@ -875,6 +911,7 @@ D3D11RenderImageAdd(
 					src_top,
 					src_width,
 					src_height,
+					0, 0, 0, 0,
 					alpha,
 					PIPELINE_ADD);
 }
@@ -902,6 +939,7 @@ D3D11RenderImageSub(
 					src_top,
 					src_width,
 					src_height,
+					0, 0, 0, 0,
 					alpha,
 					PIPELINE_SUB);
 }
@@ -929,6 +967,7 @@ D3D11RenderImageDim(
 					src_top,
 					src_width,
 					src_height,
+					0, 0, 0, 0,
 					alpha,
 					PIPELINE_DIM);
 }
@@ -949,6 +988,10 @@ D3D11RenderImageRule(
 					0,
 					g_nWindowWidth,
 					g_nWindowHeight,
+					0,
+					0,
+					rule_image->width,
+					rule_image->height,
 					threshold,
 					PIPELINE_RULE);
 }
@@ -969,8 +1012,44 @@ D3D11RenderImageMelt(
 					0,
 					g_nWindowWidth,
 					g_nWindowHeight,
+					0,
+					0,
+					rule_image->width,
+					rule_image->height,
 					progress,
 					PIPELINE_MELT);
+}
+
+VOID
+D3D11RenderImageCross(
+	struct hal_image *src1_image,
+	struct hal_image *src2_image,
+	float src1_left,
+	float src1_top,
+	float src2_left,
+	float src2_top,
+	int alpha)
+{
+	D3D11RenderImage3DCross(
+		src1_image,
+		src2_image,
+		src1_left,
+		src1_top,
+		src1_left + src1_image->width,
+		src1_top,
+		src1_left,
+		src1_top + src1_image->height,
+		src1_left + src1_image->width,
+		src1_top + src1_image->height,
+		src2_left,
+		src2_top,
+		src2_left + src2_image->width,
+		src2_top,
+		src2_left,
+		src2_top + src2_image->height,
+		src2_left + src2_image->width,
+		src2_top + src2_image->height,
+		alpha);
 }
 
 VOID
@@ -999,10 +1078,16 @@ D3D11RenderImage3DNormal(
 					x4,
 					y4,
 					src_image,
-					src_left,
-					src_top,
-					src_width,
-					src_height,
+					nullptr,
+					(float)src_left,
+					(float)src_top,
+					(float)(src_left + src_width),
+					(float)(src_top),
+					(float)(src_left),
+					(float)(src_top + src_height),
+					(float)(src_left + src_width),
+					(float)(src_top + src_height),
+					0, 0, 0, 0, 0, 0, 0, 0,
 					alpha,
 					PIPELINE_NORMAL);
 }
@@ -1033,10 +1118,16 @@ D3D11RenderImage3DAdd(
 					x4,
 					y4,
 					src_image,
-					src_left,
-					src_top,
-					src_width,
-					src_height,
+					nullptr,
+					(float)src_left,
+					(float)src_top,
+					(float)(src_left + src_width),
+					(float)(src_top),
+					(float)(src_left),
+					(float)(src_top + src_height),
+					(float)(src_left + src_width),
+					(float)(src_top + src_height),
+					0, 0, 0, 0, 0, 0, 0, 0,
 					alpha,
 					PIPELINE_ADD);
 }
@@ -1067,10 +1158,16 @@ D3D11RenderImage3DSub(
 					x4,
 					y4,
 					src_image,
-					src_left,
-					src_top,
-					src_width,
-					src_height,
+					nullptr,
+					(float)src_left,
+					(float)src_top,
+					(float)(src_left + src_width),
+					(float)(src_top),
+					(float)(src_left),
+					(float)(src_top + src_height),
+					(float)(src_left + src_width),
+					(float)(src_top + src_height),
+					0, 0, 0, 0, 0, 0, 0, 0,
 					alpha,
 					PIPELINE_SUB);
 }
@@ -1101,12 +1198,112 @@ D3D11RenderImage3DDim(
 					x4,
 					y4,
 					src_image,
-					src_left,
-					src_top,
-					src_width,
-					src_height,
+					nullptr,
+					(float)src_left,
+					(float)src_top,
+					(float)(src_left + src_width),
+					(float)(src_top),
+					(float)(src_left),
+					(float)(src_top + src_height),
+					(float)(src_left + src_width),
+					(float)(src_top + src_height),
+					0, 0, 0, 0, 0, 0, 0, 0,
 					alpha,
 					PIPELINE_DIM);
+}
+
+VOID
+D3D11RenderImage3DCross(
+	struct hal_image *src1_image,
+	struct hal_image *src2_image,
+	float src1_x1,
+	float src1_y1,
+	float src1_x2,
+	float src1_y2,
+	float src1_x3,
+	float src1_y3,
+	float src1_x4,
+	float src1_y4,
+	float src2_x1,
+	float src2_y1,
+	float src2_x2,
+	float src2_y2,
+	float src2_x3,
+	float src2_y3,
+	float src2_x4,
+	float src2_y4,
+	int alpha)
+{
+    float s1_tx[4], s1_ty[4];
+    float s2_tx[4], s2_ty[4];
+    float screen_x[] = { 0.0f, (float)g_nWindowWidth, 0.0f, (float)g_nWindowWidth };
+    float screen_y[] = { 0.0f, 0.0f, (float)g_nWindowHeight, (float)g_nWindowHeight };
+
+	{
+		float dx1 = src1_x2 - src1_x1;
+		float dy1 = src1_y2 - src1_y1;
+		float dx2 = src1_x3 - src1_x1;
+		float dy2 = src1_y3 - src1_y1;
+		float det = dx1 * dy2 - dy1 * dx2;
+		if (det != 0.0f)
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				float rx = screen_x[i] - src1_x1;
+				float ry = screen_y[i] - src1_y1;
+				float a = ( dy2 * rx - dx2 * ry) / det;
+				float b = (-dy1 * rx + dx1 * ry) / det;
+				s1_tx[i] = a * (float)src1_image->width;
+				s1_ty[i] = b * (float)src1_image->height;
+			}
+		}
+		else
+		{
+			for (int i = 0; i < 4; i++) s1_tx[i] = s1_ty[i] = 0.0f;
+		}
+	}
+
+	{
+		float dx1 = src2_x2 - src2_x1;
+		float dy1 = src2_y2 - src2_y1;
+		float dx2 = src2_x3 - src2_x1;
+		float dy2 = src2_y3 - src2_y1;
+		float det = dx1 * dy2 - dy1 * dx2;
+
+		if (det != 0.0f)
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				float rx = screen_x[i] - src2_x1;
+				float ry = screen_y[i] - src2_y1;
+				float a = ( dy2 * rx - dx2 * ry) / det;
+				float b = (-dy1 * rx + dx1 * ry) / det;
+				s2_tx[i] = a * (float)src2_image->width;
+				s2_ty[i] = b * (float)src2_image->height;
+			}
+		}
+		else
+		{
+			for (int i = 0; i < 4; i++) s2_tx[i] = s2_ty[i] = 0.0f;
+		}
+	}
+
+    DrawPrimitive3D(0.0f,
+					0.0f,
+					(float)g_nWindowWidth,
+					0.0f,
+					0.0f,
+					(float)g_nWindowHeight,
+					(float)g_nWindowWidth,
+					(float)g_nWindowHeight,
+					src1_image,
+					src2_image,
+					s1_tx[0], s1_ty[0], s1_tx[1], s1_ty[1],
+					s1_tx[2], s1_ty[2], s1_tx[3], s1_ty[3],
+					s2_tx[0], s2_ty[0], s2_tx[1], s2_ty[1],
+					s2_tx[2], s2_ty[2], s2_tx[3], s2_ty[3],
+					alpha,
+					PIPELINE_CROSS);
 }
 
 static VOID
@@ -1115,60 +1312,151 @@ DrawPrimitive2D(
 	int dst_top,
 	int dst_width,
 	int dst_height,
-	struct hal_image *src_image,
-	struct hal_image *rule_image,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
+	struct hal_image *src1_image,
+	struct hal_image *src2_image,
+	int src1_left,
+	int src1_top,
+	int src1_width,
+	int src1_height,
+	int src2_left,
+	int src2_top,
+	int src2_width,
+	int src2_height,
 	int alpha,
 	int pipeline)
 {
-    UNUSED_PARAMETER(alpha);
-
-    if (!UploadTextureIfNeeded(src_image))
-        return;
-    if (rule_image != nullptr)
-        if (!UploadTextureIfNeeded(rule_image))
-            return;
-
-    TextureBundle* pTextureBundle1 = (TextureBundle*)src_image->texture;
-    TextureBundle* pTextureBundle2 = rule_image != nullptr ? (TextureBundle*)rule_image->texture : nullptr;
-
     if (dst_width == -1)
-        dst_width = src_image->width;
+        dst_width = src1_image->width;
     if (dst_height == -1)
-        dst_height = src_image->height;
-    if (src_width == -1)
-        src_width = src_image->width;
-    if (src_height == -1)
-        src_height = src_image->height;
+        dst_height = src1_image->height;
+    if (src1_width == -1)
+        src1_width = src1_image->width;
+    if (src1_height == -1)
+        src1_height = src1_image->height;
 
-    float x1 = (float)dst_left / ((float)g_nWindowWidth / 2.0f) - 1.0f;
-    float y1 = 1.0f - (float)dst_top / ((float)g_nWindowHeight / 2.0f);
-    float x2 = (float)(dst_left + dst_width) / ((float)g_nWindowWidth / 2.0f) - 1.0f;
-    float y2 = 1.0f - (float)dst_top / ((float)g_nWindowHeight / 2.0f);
-    float x3 = (float)dst_left / ((float)g_nWindowWidth / 2.0f) - 1.0f;
-    float y3 = 1.0f - (float)(dst_top + dst_height) / ((float)g_nWindowHeight / 2.0f);
-    float x4 = (float)(dst_left + dst_width) / ((float)g_nWindowWidth / 2.0f) - 1.0f;
-    float y4 = 1.0f - (float)(dst_top + dst_height) / ((float)g_nWindowHeight / 2.0f);
+    DrawPrimitive3D((float)dst_left,
+                    (float)dst_top,
+                    (float)(dst_left + dst_width),
+                    (float)dst_top,
+                    (float)dst_left,
+                    (float)(dst_top + dst_height),
+                    (float)(dst_left + dst_width),
+                    (float)(dst_top + dst_height),
+                    src1_image,
+                    src2_image,
+                    src1_left,
+                    src1_top,
+                    src1_left + src1_width,
+                    src1_top,
+                    src1_left,
+                    src1_top + src1_height,
+                    src1_left + src1_width,
+                    src1_top + src1_height,
+                    src2_left,
+                    src2_top,
+                    src2_left + src2_width,
+                    src2_top,
+                    src2_left,
+                    src2_top + src2_height,
+                    src2_left + src2_width,
+                    src2_top + src2_height,
+                    alpha,
+                    pipeline);
+}
 
-    float u1 = (float)src_left / (float)src_image->width;
-    float v1 = (float)src_top / (float)src_image->height;
-    float u2 = (float)(src_left + src_width) / (float)src_image->width;
-    float v2 = (float)src_top / (float)src_image->height;
-    float u3 = (float)src_left / (float)src_image->width;
-    float v3 = (float)(src_top + src_height) / (float)src_image->height;
-    float u4 = (float)(src_left + src_width) / (float)src_image->width;
-    float v4 = (float)(src_top + src_height) / (float)src_image->height;
+static VOID
+DrawPrimitive3D(
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	struct hal_image *src1_image,
+	struct hal_image *src2_image,
+	float src1_tx1,
+	float src1_ty1,
+	float src1_tx2,
+	float src1_ty2,
+	float src1_tx3,
+	float src1_ty3,
+	float src1_tx4,
+	float src1_ty4,
+	float src2_tx1,
+	float src2_ty1,
+	float src2_tx2,
+	float src2_ty2,
+	float src2_tx3,
+	float src2_ty3,
+	float src2_tx4,
+	float src2_ty4,
+	int alpha,
+	int pipeline)
+{
+    // Check src1_image.
+    if (!UploadTextureIfNeeded(src1_image))
+        return;
+    TextureBundle* pTextureBundle1 = (TextureBundle*)src1_image->texture;
 
+    // Check src2_image.
+    if (src2_image != nullptr)
+        if (!UploadTextureIfNeeded(src2_image))
+            return;
+    TextureBundle* pTextureBundle2 = src2_image != nullptr ? (TextureBundle*)src2_image->texture : nullptr;
+
+    // Normalize vertices.
+    float x1_ = x1 / ((float)g_nWindowWidth / 2.0f) - 1.0f;
+    float y1_ = 1.0f - y1 / ((float)g_nWindowHeight / 2.0f);
+    float x2_ = x2 / ((float)g_nWindowWidth / 2.0f) - 1.0f;
+    float y2_ = 1.0f - y2 / ((float)g_nWindowHeight / 2.0f);
+    float x3_ = x3 / ((float)g_nWindowWidth / 2.0f) - 1.0f;
+    float y3_ = 1.0f - y3 / ((float)g_nWindowHeight / 2.0f);
+    float x4_ = x4 / ((float)g_nWindowWidth / 2.0f) - 1.0f;
+    float y4_ = 1.0f - y4 / ((float)g_nWindowHeight / 2.0f);
+
+    // Normalize texture UV.
+	float src1_u1, src1_v1, src1_u2, src1_v2, src1_u3, src1_v3, src1_u4, src1_v4;
+	float src2_u1, src2_v1, src2_u2, src2_v2, src2_u3, src2_v3, src2_u4, src2_v4;
+    src1_u1 = src1_tx1 / (float)src1_image->width;
+    src1_v1 = src1_ty1 / (float)src1_image->height;
+    src1_u2 = src1_tx2 / (float)src1_image->width;
+    src1_v2 = src1_ty2 / (float)src1_image->height;
+    src1_u3 = src1_tx3 / (float)src1_image->width;
+    src1_v3 = src1_ty3 / (float)src1_image->height;
+    src1_u4 = src1_tx4 / (float)src1_image->width;
+    src1_v4 = src1_ty4 / (float)src1_image->height;
+	if (src2_image != NULL)
+	{
+		src2_u1 = src2_tx1 / (float)src2_image->width;
+		src2_v1 = src2_ty1 / (float)src2_image->height;
+		src2_u2 = src2_tx2 / (float)src2_image->width;
+		src2_v2 = src2_ty2 / (float)src2_image->height;
+		src2_u3 = src2_tx3 / (float)src2_image->width;
+		src2_v3 = src2_ty3 / (float)src2_image->height;
+		src2_u4 = src2_tx4 / (float)src2_image->width;
+		src2_v4 = src2_ty4 / (float)src2_image->height;
+	}
+	else
+	{
+		src2_u1 = 0;
+		src2_v1 = 0;
+		src2_u2 = 0;
+		src2_v2 = 0;
+		src2_u3 = 0;
+		src2_v3 = 0;
+		src2_u4 = 0;
+		src2_v4 = 0;
+	}
+
+    // Create a vertex array.
     float color = (pipeline == PIPELINE_DIM) ? 0.5f : 1.0f;
-
-    SimpleVertex v[4] = {
-        {{x1, y1, 0.0f}, {u1, v1}, {  0,   0}, {color, color, color, (float)alpha / 255.0f}},
-        {{x2, y2, 0.0f}, {u2, v2}, {1.0,   0}, {color, color, color, (float)alpha / 255.0f}},
-        {{x3, y3, 0.0f}, {u3, v3}, {  0, 1.0}, {color, color, color, (float)alpha / 255.0f}},
-        {{x4, y4, 0.0f}, {u4, v4}, {1.0, 1.0}, {color, color, color, (float)alpha / 255.0f}},
+    Vertex v[4] = {
+        {{x1_, y1_, 0.0f}, {src1_u1, src1_v1}, {src2_u1, src2_v1}, {color, color, color, (float)alpha / 255.0f}},
+        {{x2_, y2_, 0.0f}, {src1_u2, src1_v2}, {src2_u2, src2_v2}, {color, color, color, (float)alpha / 255.0f}},
+        {{x3_, y3_, 0.0f}, {src1_u3, src1_v3}, {src2_u3, src2_v3}, {color, color, color, (float)alpha / 255.0f}},
+        {{x4_, y4_, 0.0f}, {src1_u4, src1_v4}, {src2_u4, src2_v4}, {color, color, color, (float)alpha / 255.0f}},
     };
 
     D3D11_MAPPED_SUBRESOURCE resource;
@@ -1176,7 +1464,7 @@ DrawPrimitive2D(
     memcpy(resource.pData, (void*)&v, sizeof(v));
     g_pImmediateContext->Unmap(g_pVertexBuffer, 0);
 
-    UINT stride = sizeof(SimpleVertex);
+    UINT stride = sizeof(Vertex);
     UINT offset = 0;
     g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
     g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
@@ -1206,6 +1494,10 @@ DrawPrimitive2D(
 		g_pImmediateContext->OMSetBlendState(g_pBlendStateNormal, factor, 0xffffffff);
         g_pImmediateContext->PSSetShader(g_pPixelShaderMelt, nullptr, 0);
         break;
+    case PIPELINE_CROSS:
+		g_pImmediateContext->OMSetBlendState(g_pBlendStateNormal, factor, 0xffffffff);
+        g_pImmediateContext->PSSetShader(g_pPixelShaderCross, nullptr, 0);
+        break;
     }
 
     g_pImmediateContext->PSSetSamplers(0, 1, &g_pSamplerLinear);
@@ -1214,80 +1506,6 @@ DrawPrimitive2D(
     pView[0] = pTextureBundle1->pView;
     pView[1] = pTextureBundle2 != nullptr ? pTextureBundle2->pView : nullptr;
     g_pImmediateContext->PSSetShaderResources(0, 2, pView);
-
-    g_pImmediateContext->Draw(4, 0);
-}
-
-static VOID
-DrawPrimitive3D(
-	float x1,
-	float y1,
-	float x2,
-	float y2,
-	float x3,
-	float y3,
-	float x4,
-	float y4,
-	struct hal_image *src_image,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
-	int alpha,
-	int pipeline)
-{
-	UNUSED_PARAMETER(pipeline);
-
-    if (!UploadTextureIfNeeded(src_image))
-        return;
-
-    TextureBundle* pTextureBundle = (TextureBundle*)src_image->texture;
-
-    float x1_ = x1 / ((float)g_nWindowWidth / 2.0f) - 1.0f;
-    float y1_ = 1.0f - y1 / ((float)g_nWindowHeight / 2.0f);
-    float x2_ = x2 / ((float)g_nWindowWidth / 2.0f) - 1.0f;
-    float y2_ = 1.0f - y2 / ((float)g_nWindowHeight / 2.0f);
-    float x3_ = x3 / ((float)g_nWindowWidth / 2.0f) - 1.0f;
-    float y3_ = 1.0f - y3 / ((float)g_nWindowHeight / 2.0f);
-    float x4_ = x4 / ((float)g_nWindowWidth / 2.0f) - 1.0f;
-    float y4_ = 1.0f - y4 / ((float)g_nWindowHeight / 2.0f);
-
-    float u1 = (float)src_left / (float)src_image->width;
-    float v1 = (float)src_top / (float)src_image->height;
-    float u2 = (float)(src_left + src_width) / (float)src_image->width;
-    float v2 = (float)src_top / (float)src_image->height;
-    float u3 = (float)src_left / (float)src_image->width;
-    float v3 = (float)(src_top + src_height) / (float)src_image->height;
-    float u4 = (float)(src_left + src_width) / (float)src_image->width;
-    float v4 = (float)(src_top + src_height) / (float)src_image->height;
-
-    SimpleVertex v[4] = {
-        {{x1_, y1_, 0.0f}, {u1, v1}, {  0,   0}, {1.0f, 1.0f, 1.0f, (float)alpha / 255.0f}},
-        {{x2_, y2_, 0.0f}, {u2, v2}, {1.0,   0}, {1.0f, 1.0f, 1.0f, (float)alpha / 255.0f}},
-        {{x3_, y3_, 0.0f}, {u3, v3}, {  0, 1.0}, {1.0f, 1.0f, 1.0f, (float)alpha / 255.0f}},
-        {{x4_, y4_, 0.0f}, {u4, v4}, {1.0, 1.0}, {1.0f, 1.0f, 1.0f, (float)alpha / 255.0f}},
-    };
-
-    D3D11_MAPPED_SUBRESOURCE resource;
-    g_pImmediateContext->Map(g_pVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-    memcpy(resource.pData, (void*)&v, sizeof(v));
-    g_pImmediateContext->Unmap(g_pVertexBuffer, 0);
-
-    UINT stride = sizeof(SimpleVertex);
-    UINT offset = 0;
-    g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
-    g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-
-    g_pImmediateContext->VSSetShader(g_pVertexShader, nullptr, 0);
-    g_pImmediateContext->PSSetShader(g_pPixelShaderNormal, nullptr, 0);
-    g_pImmediateContext->PSSetSamplers(0, 1, &g_pSamplerLinear);
-
-    ID3D11ShaderResourceView* pView[2];
-    pView[0] = pTextureBundle->pView;
-    pView[1] = nullptr;
-    g_pImmediateContext->PSSetShaderResources(0, 2, pView);
-
-    // TODO: PIPELINE_ADD
 
     g_pImmediateContext->Draw(4, 0);
 }

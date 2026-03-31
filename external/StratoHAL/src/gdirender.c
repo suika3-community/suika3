@@ -60,9 +60,9 @@ BOOL GDIInitialize(HWND hWnd, int nWidth, int nHeight)
 	bi.bmiHeader.biBitCount = 32;
 	bi.bmiHeader.biCompression = BI_BITFIELDS;
 	masks = (uint32_t *)&bi.bmiColors;
-	masks[0] = 0x000000ff; // Red mask
+	masks[0] = 0x00ff0000; // Red mask
 	masks[1] = 0x0000ff00; // Green mask
-	masks[2] = 0x00ff0000; // Blue mask
+	masks[2] = 0x000000ff; // Blue mask
 	hBitmapDC = CreateCompatibleDC(NULL);
 	if(hBitmapDC == NULL)
 		return FALSE;
@@ -275,6 +275,25 @@ void GDIRenderImageMelt(
 						progress);
 }
 
+VOID GDIRenderImageCross(
+	struct hal_image *src1_image,
+	struct hal_image *src2_image,
+	float src1_left,
+	float src1_top,
+	float src2_left,
+	float src2_top,
+	int alpha)
+{
+	hal_draw_image_cross(pBackImage,
+						 src1_image,
+						 src2_image,
+						 src1_left,
+						 src1_top,
+						 src2_left,
+						 src2_top,
+						 alpha);
+}
+
 VOID GDIRenderImage3DNormal(
 	float x1,
 	float y1,
@@ -405,4 +424,47 @@ VOID GDIRenderImage3DDim(
 						  src_width,
 						  src_height,
 						  alpha);
+}
+
+VOID GDIRenderImage3DCross(
+	struct hal_image *src1_image,
+	struct hal_image *src2_image,
+	float src1_x1,
+	float src1_y1,
+	float src1_x2,
+	float src1_y2,
+	float src1_x3,
+	float src1_y3,
+	float src1_x4,
+	float src1_y4,
+	float src2_x1,
+	float src2_y1,
+	float src2_x2,
+	float src2_y2,
+	float src2_x3,
+	float src2_y3,
+	float src2_x4,
+	float src2_y4,
+	int alpha)
+{
+	hal_draw_image_3d_cross(pBackImage,
+							src1_image,
+							src2_image,
+							src1_x1,
+							src1_y1,
+							src1_x2,
+							src1_y2,
+							src1_x3,
+							src1_y3,
+							src1_x4,
+							src1_y4,
+							src2_x1,
+							src2_y1,
+							src2_x2,
+							src2_y2,
+							src2_x3,
+							src2_y3,
+							src2_x4,
+							src2_y4,
+							alpha);
 }
