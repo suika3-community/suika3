@@ -2820,16 +2820,25 @@ D3D12RenderImageCross(
 	float src2_top,
 	int alpha)
 {
-	D3D12RenderImageNormal(
-		0,
-		0,
-		g_nVirtualWidth,
-		g_nVirtualHeight,
+	D3D12RenderImage3DCross(
 		src1_image,
+		src2_image,
 		src1_left,
 		src1_top,
-		src1_image->width,
-		src1_image->height,
+		src1_left + src1_image->width,
+		src1_top,
+		src1_left,
+		src1_top + src1_image->height,
+		src1_left + src1_image->width,
+		src1_top + src1_image->height,
+		src2_left,
+		src2_top,
+		src2_left + src1_image->width,
+		src2_top,
+		src2_left,
+		src2_top + src1_image->height,
+		src2_left + src1_image->width,
+		src2_top + src1_image->height,
 		alpha);
 }
 
@@ -3187,22 +3196,38 @@ DrawPrimitive3D(
     float y4_ = 1.0f - (y4 * g_fScale + g_fOffsetY) / (g_fDisplayHeight / 2.0f);
 
     // Normalize texture UV.
-    float src1_u1 = src1_tx1 / (float)src1_image->width;
-    float src1_v1 = src1_ty1 / (float)src1_image->height;
-    float src1_u2 = src1_tx2 / (float)src1_image->width;
-    float src1_v2 = src1_ty2 / (float)src1_image->height;
-    float src1_u3 = src1_tx3 / (float)src1_image->width;
-    float src1_v3 = src1_ty3 / (float)src1_image->height;
-    float src1_u4 = src1_tx4 / (float)src1_image->width;
-    float src1_v4 = src1_ty4 / (float)src1_image->height;
-    float src2_u1 = src2_tx1 / (float)src2_image->width;
-    float src2_v1 = src2_ty1 / (float)src2_image->height;
-    float src2_u2 = src2_tx2 / (float)src2_image->width;
-    float src2_v2 = src2_ty2 / (float)src2_image->height;
-    float src2_u3 = src2_tx3 / (float)src2_image->width;
-    float src2_v3 = src2_ty3 / (float)src2_image->height;
-    float src2_u4 = src2_tx4 / (float)src2_image->width;
-	float src2_v4 = src2_ty4 / (float)src2_image->height;
+	float src1_u1, src1_v1, src1_u2, src1_v2, src1_u3, src1_v3, src1_u4, src1_v4;
+	float src2_u1, src2_v1, src2_u2, src2_v2, src2_u3, src2_v3, src2_u4, src2_v4;
+    src1_u1 = src1_tx1 / (float)src1_image->width;
+    src1_v1 = src1_ty1 / (float)src1_image->height;
+    src1_u2 = src1_tx2 / (float)src1_image->width;
+    src1_v2 = src1_ty2 / (float)src1_image->height;
+    src1_u3 = src1_tx3 / (float)src1_image->width;
+    src1_v3 = src1_ty3 / (float)src1_image->height;
+    src1_u4 = src1_tx4 / (float)src1_image->width;
+    src1_v4 = src1_ty4 / (float)src1_image->height;
+	if (src2_image != NULL)
+	{
+		src2_u1 = src2_tx1 / (float)src2_image->width;
+		src2_v1 = src2_ty1 / (float)src2_image->height;
+		src2_u2 = src2_tx2 / (float)src2_image->width;
+		src2_v2 = src2_ty2 / (float)src2_image->height;
+		src2_u3 = src2_tx3 / (float)src2_image->width;
+		src2_v3 = src2_ty3 / (float)src2_image->height;
+		src2_u4 = src2_tx4 / (float)src2_image->width;
+		src2_v4 = src2_ty4 / (float)src2_image->height;
+	}
+	else
+	{
+		src2_u1 = 0;
+		src2_v1 = 0;
+		src2_u2 = 0;
+		src2_v2 = 0;
+		src2_u3 = 0;
+		src2_v3 = 0;
+		src2_u4 = 0;
+		src2_v4 = 0;
+	}
 
     // Create a vertex array.
     float color = (pipeline == PIPELINE_DIM) ? 0.5f : 1.0f;
@@ -3240,7 +3265,7 @@ DrawPrimitive3D(
         g_commandList->SetPipelineState(g_pipelineStateMelt.Get());
         break;
     case PIPELINE_CROSS:
-        g_commandList->SetPipelineState(g_pipelineStateNormal.Get());
+        g_commandList->SetPipelineState(g_pipelineStateCross.Get());
         break;
     }
 
