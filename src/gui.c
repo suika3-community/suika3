@@ -665,7 +665,7 @@ s3_load_gui_file(
 
 		draw_history_buttons();
 
-		/* Initialize TYPE_NAMEVAR buttons. */
+		/* Initialize TYPE_VAR buttons. */
 		if (!init_var_buttons())
 			break;
 
@@ -1498,8 +1498,8 @@ process_button_point(int index, bool key)
 	if (b->type == TYPE_PREVIEW)
 		return false;
 
-	/* If the button is TYPE_NAMEVAR, it cannot be pointed at. */
-	if (b->type == TYPE_NAMEVAR)
+	/* If the button is TYPE_VAR, it cannot be pointed at. */
+	if (b->type == TYPE_VAR)
 		return false;
 
 	/* If another item is being dragged. */
@@ -1893,7 +1893,7 @@ process_button_render(
 		/* Render a preview button. */
 		process_button_render_preview(index);
 		break;
-	case TYPE_NAMEVAR:
+	case TYPE_VAR:
 		/* Render a variable button. */
 		process_button_render_var(index);
 		break;
@@ -2145,7 +2145,7 @@ process_button_render_var(
 	struct gui_button *b;
 
 	b = &button[index];
-	assert(b->type == TYPE_NAMEVAR);
+	assert(b->type == TYPE_VAR);
 
 	render_image_helper(b->rt.img_canvas_idle, b->bid);
 }
@@ -3380,7 +3380,7 @@ init_var_buttons(void)
 	int i;
 
 	for (i = 0; i < S3_BUTTON_LAYERS; i++) {
-		if (button[i].type != TYPE_NAMEVAR)
+		if (button[i].type != TYPE_VAR)
 			continue;
 		if (button[i].width <= 0)
 			button[i].width = 1;
@@ -3407,18 +3407,18 @@ init_var_buttons(void)
 	return true;
 }
 
-/* Draw all buttons of type TYPE_NAMEVAR. */
+/* Draw all buttons of type TYPE_VAR. */
 static void
 draw_var_buttons(void)
 {
 	int i;
 
 	for (i = 0; i < S3_BUTTON_LAYERS; i++)
-		if (button[i].type == TYPE_NAMEVAR)
+		if (button[i].type == TYPE_VAR)
 			draw_var_button(i);
 }
 
-/* Draw buttons of type TYPE_VARIABLE. */
+/* Draw buttons of type TYPE_VAR. */
 static void
 draw_var_button(int index)
 {
