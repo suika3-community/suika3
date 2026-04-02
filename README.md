@@ -8,6 +8,9 @@
 <div align="center">
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/logo-small.png" alt="Suika3 Logo" width="120" hspace="20">
   <p>
+    Welcome Home, Master!
+  </p>
+  <p>
     Suika3 is a production-grade visual novel engine designed to run natively across a wide range of platforms
   </p>
   <a href="https://discord.gg/YZsq9u9Mgr"><img src="https://img.shields.io/badge/suika3.vn-Discord-orange"></a>
