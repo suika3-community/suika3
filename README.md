@@ -16,7 +16,7 @@
     across a diverse range of platforms.
   </p>
   <p>
-    <i>"Port it to the iPhone, Moé-Moé Kyun!" </i>#&x1f370;&#x2615;&#x1f497;
+    <i>"Port it to the iPhone, Moé-Moé Kyun!"</i> &#x1f370;&#x2615;&#x1f497;
   </p>
   <a href="https://discord.gg/YZsq9u9Mgr"><img src="https://img.shields.io/badge/suika3.vn-Discord-orange"></a>
   <img src="https://img.shields.io/github/stars/suika3-community/suika3.svg?style=flat&logo=github&colorB=orange&label=stars">
