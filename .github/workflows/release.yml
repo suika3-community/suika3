@@ -265,6 +265,24 @@ jobs:
           xcodebuild -create-xcframework -library build-ios-device/libsuika3.a -headers include -library build-ios-simulator/libsuika3.a -headers include -output Suika3.xcframework
           tar czf Suika3.xcframework.tar.gz Suika3.xcframework
 
+          mkdir ios
+          mkdir ios/Resources
+          cp resources/assets.arc ios/Resources/
+          mkdir ios/Resources/video
+          mkdir ios/ios.xcodeproj
+          cp resources/projects/ios/ios.xcodeproj/project.pbxproj ios/ios.xcodeproj/
+          mkdir ios/ios
+          cp -R Suika3.xcframework ios/ios/
+          cp -R resources/projects/ios/ios/Assets.xcassets ios/ios/
+          cp resources/projects/ios/ios/entry.c ios/ios/
+          cp resources/projects/ios/ios/Info.plist ios/ios/
+          cp resources/projects/ios/ios/ios.entitlements ios/ios/
+          cp resources/projects/ios/ios/LaunchScreen.storyboard ios/ios/
+
+          xcodebuild archive -scheme ios -archivePath app.xcarchive CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+          xcodebuild -exportArchive -archivePath app.xcarchive -exportPath ./output -exportOptionsPlist resources/ios/ExportOptions.plist CODE_SIGNING_ALLOWED=NO
+          tree output
+
       - name: Upload iOS
         uses: actions/upload-artifact@v4
         with:
