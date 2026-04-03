@@ -174,7 +174,7 @@ init_locale(
 	    jLang = NULL;
 
 	    /* Get the MainActivity class. */
-	    clazz = (*env)->FindClass(env, "com/example/myapp/MainActivity");
+	    clazz = (*env)->FindClass(env, "io/noctvm/playfield/engineandroid/MainActivity");
 	    if (clazz == NULL)
 		    break;
 
