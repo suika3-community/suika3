@@ -93,13 +93,13 @@ scripting platform.
 - **NovelML**: A tag-based, human-readable, extensible DSL designed
   specifically for visual novels. It features concise, declarative
   tags for seamless dialogue and scene control. Developers can add
-  custom tags using the Ray language.
+  custom tags using `Ray`.
 
 - **Ray**: The robust scripting language for Suika3. It utilizes a
-  high-speed JIT compiler on desktop platforms (Sunlight Virtual
-  Machine) and can be compiled into native binaries (Moonlight
-  AOT compiler) for production or mobile environments. Ray enables you
-  to make not only VN but also generic 2D games.
+  high-speed JIT compiler on desktop platforms (Sun-Ray JIT Compiler; "陽光")
+  and can be compiled into native binaries (Lunar-Ray AOT Compiler; "月光") for
+  production or mobile environments. Ray enables you to make not only
+  VN but also generic 2D games.
 
 Although Suika3 is designed as a professional tool, you are absolutely
 welcome to use it just for fun — after all, fun is the driving force
