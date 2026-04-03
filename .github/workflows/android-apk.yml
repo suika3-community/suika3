@@ -50,15 +50,15 @@ jobs:
           mkdir -p android/app/src/main/java/io/noctvm/playfield/engineandroid
           cp external/PlayfieldEngine/external/StratoHAL/src/MainActivity.java android/app/src/main/java/io/noctvm/playfield/engineandroid/
           mkdir -p android/app/src/main/jniLibs/arm64-v8a
-          cp android-arm64/libsuika3.so android/app/src/main/jniLibs/arm64-v8a/libplayfield.so
+          cp build-android-arm64/libsuika3.so android/app/src/main/jniLibs/arm64-v8a/libplayfield.so
           mkdir -p android/app/src/main/jniLibs/armeabi-v7a
-          cp android-armv7/libsuika3.so android/app/src/main/jniLibs/armeabi-v7a/libplayfield.so
+          cp build-android-armv7/libsuika3.so android/app/src/main/jniLibs/armeabi-v7a/libplayfield.so
           mkdir -p android/app/src/main/jniLibs/x86_64
-          cp android-x86_64/libsuika3.so android/app/src/main/jniLibs/x86_64/libplayfield.so
+          cp build-android-x86_64/libsuika3.so android/app/src/main/jniLibs/x86_64/libplayfield.so
           mkdir -p android/app/src/main/jniLibs/x86
-          cp android-x86/libsuika3.so android/app/src/main/jniLibs/x86/libplayfield.so
+          cp build-android-x86/libsuika3.so android/app/src/main/jniLibs/x86/libplayfield.so
           mkdir -p android/app/src/main/jniLibs/riscv64
-          cp android-riscv64/libsuika3.so android/app/src/main/jniLibs/riscv64/libplayfield.so
+          cp build-android-riscv64/libsuika3.so android/app/src/main/jniLibs/riscv64/libplayfield.so
 
       - name: Build Project
         run: |
