@@ -1,4 +1,4 @@
-name: CI
+name: Android APK
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build-android:
+  build-android-apk:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,12 +23,6 @@ jobs:
         with:
           ndk-version: r28c
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          api-level: 35
-          build-tools: 35.0.0
-
       - name: Build Libraries
         run: |
           cmake --preset android-arm64
@@ -41,6 +35,12 @@ jobs:
           cmake --build --preset android-x86
           cmake --preset android-riscv64
           cmake --build --preset android-riscv64
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          api-level: 35
+          build-tools: 35.0.0
 
       - name: Prepare Project
         run: |
