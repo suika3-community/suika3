@@ -283,59 +283,30 @@ jobs:
       - name: Install deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake ninja-build flex bison
-
-      - name: Setup for Android
-        uses: nttld/setup-ndk@v1
-        with:
-          ndk-version: r28c
-
-      - name: Build for Android
-        run: |
-          cmake --preset android-arm64
-          cmake --build --preset android-arm64
-          cmake --preset android-armv7
-          cmake --build --preset android-armv7
-          cmake --preset android-x86_64
-          cmake --build --preset android-x86_64
-          cmake --preset android-x86
-          cmake --build --preset android-x86
-          cmake --preset android-riscv64
-          cmake --build --preset android-riscv64
-
-  build-android-apk:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install deps
-        run: |
-          sudo apt-get update
           sudo apt-get install -y cmake ninja-build flex bison openjdk-17-jdk gradle
 
-      - name: Setup for Android
+      - name: Setup for Android NDK
         uses: nttld/setup-ndk@v1
         with:
           ndk-version: r28c
-
-      - name: Build Libraries
-        run: |
-          cmake --preset android-arm64
-          cmake --build --preset android-arm64
-          cmake --preset android-armv7
-          cmake --build --preset android-armv7
-          cmake --preset android-x86_64
-          cmake --build --preset android-x86_64
-          cmake --preset android-x86
-          cmake --build --preset android-x86
-          cmake --preset android-riscv64
-          cmake --build --preset android-riscv64
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Prepare Project
+      - name: Build Native Libraries
+        run: |
+          cmake --preset android-arm64
+          cmake --build --preset android-arm64
+          cmake --preset android-armv7
+          cmake --build --preset android-armv7
+          cmake --preset android-x86_64
+          cmake --build --preset android-x86_64
+          cmake --preset android-x86
+          cmake --build --preset android-x86
+          cmake --preset android-riscv64
+          cmake --build --preset android-riscv64
+
+      - name: Prepare Android Studio Project
         run: |
           cp -R resources/projects/android ./
           mkdir -p android/app/src/main/assets
@@ -353,7 +324,7 @@ jobs:
           mkdir -p android/app/src/main/jniLibs/riscv64
           cp build-android-riscv64/libsuika3.so android/app/src/main/jniLibs/riscv64/libplayfield.so
 
-      - name: Build Project
+      - name: Build Android Studio Project
         run: |
           cd android
           ./gradlew assembleDebug
