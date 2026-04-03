@@ -282,7 +282,7 @@ jobs:
           cd ios
           xcodebuild archive -scheme ios -archivePath app.xcarchive CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
           #xcodebuild -exportArchive -archivePath app.xcarchive -exportPath ./output -exportOptionsPlist ../resources/ios/ExportOptions.plist CODE_SIGNING_ALLOWED=NO
-          ls -R app.xarchive
+          ls -R .
           mkdir Payload
           zip -r suika3-ios-build-check.ipa Payload
           tree output
