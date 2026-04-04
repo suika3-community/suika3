@@ -558,16 +558,16 @@ static struct rule {
 	bool global;
 } rule_tbl[] = {
 	/* Game Info */
-	{'s',	"game.title.en",		&conf_game_title_en,			MUST,	NOSAVE,	GLOBAL},
-	{'s',	"game.title.ja",		&conf_game_title_ja,			MUST,	NOSAVE,	GLOBAL},
-	{'b',	"game.novel",			&conf_game_novel,			MUST,	SAVE,	GLOBAL},
-	{'s',	"game.locale",			&conf_game_locale,			MUST,	SAVE,	GLOBAL},
+	{'s',	"game.title.en",		&conf_game_title_en,			MUST,		NOSAVE,	GLOBAL},
+	{'s',	"game.title.ja",		&conf_game_title_ja,			MUST,		NOSAVE,	GLOBAL},
+	{'b',	"game.novel",			&conf_game_novel,			MUST,		SAVE,	GLOBAL},
+	{'s',	"game.locale",			&conf_game_locale,			OPTIONAL,	SAVE,	GLOBAL},
 
 	/* Font */
-	{'s',	"font.ttf1",			&conf_font_ttf[0],			MUST,	SAVE,	GLOBAL},
-	{'s',	"font.ttf2",			&conf_font_ttf[1],			OPTIONAL, SAVE,	GLOBAL},
-	{'s',	"font.ttf3",			&conf_font_ttf[2],			OPTIONAL, SAVE,	GLOBAL},
-	{'s',	"font.ttf4",			&conf_font_ttf[3],			OPTIONAL, SAVE,	GLOBAL},
+	{'s',	"font.ttf1",			&conf_font_ttf[0],			MUST,		SAVE,	GLOBAL},
+	{'s',	"font.ttf2",			&conf_font_ttf[1],			OPTIONAL,	SAVE,	GLOBAL},
+	{'s',	"font.ttf3",			&conf_font_ttf[2],			OPTIONAL,	SAVE,	GLOBAL},
+	{'s',	"font.ttf4",			&conf_font_ttf[3],			OPTIONAL,	SAVE,	GLOBAL},
 
 	/* Message Box */
 	{'s',	"msgbox.image",			&conf_msgbox_image,			MUST,	SAVE,	LOCAL},
