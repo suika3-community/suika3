@@ -19,7 +19,6 @@
 #
 
 [bg file="bg/school.png" time="0.5"]
-[pencil layer="0" text="Test"]
 
 #
 # Let Xiaoling enter and say.
