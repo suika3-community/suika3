@@ -40,9 +40,6 @@
   <img src="https://img.shields.io/badge/Exotic-FreeBSD%20%2F%20NetBSD%20%2F%20OpenBSD%20%2F%20Solaris%2011%20%2F%20Haiku-blue"><br>
   <img src="https://img.shields.io/badge/Store-App%20Store%20%2F%20Play%20Store%20%2F%20Microsoft%20Store%20%2F%20Steam%20%2F%20itch%2eio%20%2F%20App%20Gallery-green"><br>
   <br>
-  <p>
-    With our love for mobile devices!
-  </p>
 </div>
 
 ---
@@ -90,18 +87,18 @@ developed by the Suika3 Project, led by Awe Morris.
 Games made with Suika3 are powered by `NovelML` and the `Ray`
 scripting platform.
 
-- **NovelML**: A tag-based, human-readable, extensible DSL designed
-  specifically for visual novels. It features concise, declarative
-  tags for seamless dialogue and scene control. Developers can add
-  custom tags using `Ray`.
+- **NovelML** ("演戯標記"): A tag-based, human-readable, extensible
+  DSL designed specifically for visual novels. It features concise,
+  declarative tags for seamless dialogue and scene control. Developers
+  can add custom tags using `Ray`.
 
-- **Ray** (codename "光陰脚本"): The robust scripting language for
-  Suika3. It utilizes a high-speed JIT compiler on desktop platforms
-  (Sun-Ray JIT VM; codename "諏訪武叡") and can be compiled into native
-  binaries (Lunar-Ray AOT Compiler; codename "少彦智叡") for
-  production or mobile environments, alongside the interpreter (Ray
-  Run; codename "天満梅貴"). Ray enables you to make not only VN but
-  also generic 2D games.
+- **Ray** ("光陰脚本"): The robust scripting language for Suika3. It
+  utilizes a high-speed JIT compiler on desktop platforms (Sun-Ray JIT
+  VM; codename:"諏訪武叡") and can be compiled into native binaries
+  (Lunar-Ray AOT Compiler; codename:"少彦智叡") for production or
+  mobile environments, alongside the interpreter (Ubi-Ray; codename
+  "天満梅貴"). Ray enables you to make not only VN but also generic 2D
+  games.
 
 Although Suika3 is designed as a professional tool, you are absolutely
 welcome to use it just for fun — after all, fun is the driving force
