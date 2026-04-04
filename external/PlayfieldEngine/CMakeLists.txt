@@ -305,11 +305,11 @@ if(   PLAYFIELD_ENABLE_STATIC
 else()
   # If we make an executable, StratoHAL should be a static library.
   set(STRATO_ENABLE_STATIC ON)
+endif()
 
-  # If we use dynamic link for dependencies.
-  if(PLAYFIELD_ENABLE_DIST)
-    set(STRATO_ENABLE_DIST ON)
-  endif()
+# If we use dynamic link for dependencies.
+if(PLAYFIELD_ENABLE_DIST)
+  set(STRATO_ENABLE_DIST ON)
 endif()
 
 # Use translation.
