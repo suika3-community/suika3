@@ -96,9 +96,9 @@ scripting platform.
   utilizes a high-speed JIT compiler on desktop platforms (Sun-Ray JIT
   VM; codename "諏訪武叡") and can be compiled into native binaries
   (Lunar-Ray AOT Compiler; codename "少彥智叡") for production or
-  mobile environments, alongside the interpreter (Ubi-Ray; codename
-  "天滿梅貴"). Ray enables you to make not only VN but also generic 2D
-  games.
+  mobile environments, alongside the interpreter (Ubi-Ray Interpreter;
+  codename "天滿梅貴"). Ray enables you to make not only VN but also
+  generic 2D games.
 
 Although Suika3 is designed as a professional tool, you are absolutely
 welcome to use it just for fun — after all, fun is the driving force
