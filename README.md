@@ -97,11 +97,11 @@ scripting platform.
 
 - **Ray** (codename "光陰脚本"): The robust scripting language for
   Suika3. It utilizes a high-speed JIT compiler on desktop platforms
-  (Ray JIT VM; codename "諏訪武叡") and can be compiled into native
-  binaries (Ray AOT Compiler; codename "少彦智叡") for production or
-  mobile environments, alongside the interpreter (Ray Run; codename
-  "天満梅貴"). Ray enables you to make not only VN but also generic 2D
-  games.
+  (Sun-Ray JIT VM; codename "諏訪武叡") and can be compiled into native
+  binaries (Lunar-Ray AOT Compiler; codename "少彦智叡") for
+  production or mobile environments, alongside the interpreter (Ray
+  Run; codename "天満梅貴"). Ray enables you to make not only VN but
+  also generic 2D games.
 
 Although Suika3 is designed as a professional tool, you are absolutely
 welcome to use it just for fun — after all, fun is the driving force
@@ -113,9 +113,9 @@ behind every great community.
 
 Suika3 is engineered with modern techniques, and delivers:
 
-- **High Performance**: Powered by the Ray JIT VM, it delivers
-  2.5-4.5x faster execution speed compared to our interpreter backend
-  in synthetic benchmarks.
+- **High Performance**: Powered by Ray JIT, it delivers 2.5-4.5x
+  faster execution speed compared to our interpreter backend in
+  synthetic benchmarks.
 
 - **Lightweight**: Engineered to run smoothly at 60 fps even on
   low-spec hardware such as Raspberry Pi in developing regions.
