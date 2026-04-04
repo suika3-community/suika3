@@ -1,0 +1,37 @@
+.\" suika3-aotc.1 - Suika3 AOT compiler manpage
+.TH SUIKA3-AOTC 1 "April 2026" "Suika3 26.07" "User Commands"
+.SH NAME
+suika3-aotc \- compile Ray scripts into a C source file
+.SH SYNOPSIS
+.B suika3-aotc
+[\fIsourcefiles...\fR]
+
+.SH DESCRIPTION
+The
+.B suika3-aotc
+translates Ray scripts (\fB.ray\fR) into a C source file named \fBlibrary.c\fR.
+
+.SH EXAMPLES
+Compile a single script:
+.EX
+suika3-aotc main.ray
+.EE
+
+Compile multiple scripts:
+.EX
+suika3-aotc main.ray enemy.ray level.ray
+.EE
+
+The above command produces:
+.EX
+library.c
+.EE
+
+.SH SEE ALSO
+.BR suika3 (1),
+.BR suika3-bcc (1),
+.BR suika3-pack (1)
+
+.SH AUTHORS
+Awe Morris <awe@noctvm.io> and contributors.
+Project homepage: <https://github.com/awemorris/suika3>

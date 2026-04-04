@@ -704,13 +704,13 @@ if(SUIKA_ENABLE_BYTECOMP)
   endif()
 
   add_executable(
-    suika3-bytecomp
+    suika3-bcc
     external/PlayfieldEngine/src/compiler.c
     ${SUIKA_BYTECOMP_RESOURCE}
   )
 
   target_include_directories(
-    suika3-bytecomp
+    suika3-bcc
     PRIVATE
     include
     external/PlayfieldEngine/include
@@ -719,10 +719,10 @@ if(SUIKA_ENABLE_BYTECOMP)
     external/PlayfieldEngine/external/NoctLang/src/backend
   )
 
-  target_link_libraries(suika3-bytecomp noctlang)
+  target_link_libraries(suika3-bcc noctlang)
 
   if(UNIX)
-    target_link_libraries(suika3-bytecomp m)
+    target_link_libraries(suika3-bcc m)
   endif()
 endif()
 
@@ -738,14 +738,14 @@ if(SUIKA_ENABLE_AOTCOMP)
   endif()
 
   add_executable(
-    suika3-aotcomp
+    suika3-aotc
     external/PlayfieldEngine/src/aot.c
     external/PlayfieldEngine/external/NoctLang/src/backend/cback.c
     ${SUIKA_AOTCOMP_RESOURCE}
   )
 
   target_include_directories(
-    suika3-aotcomp
+    suika3-aotc
     PRIVATE
     include
     external/PlayfieldEngine/include
@@ -754,10 +754,10 @@ if(SUIKA_ENABLE_AOTCOMP)
     external/PlayfieldEngine/external/NoctLang/src/backend
   )
 
-  target_link_libraries(suika3-aotcomp noctlang)
+  target_link_libraries(suika3-aotc noctlang)
 
   if(UNIX)
-    target_link_libraries(suika3-aotcomp m)
+    target_link_libraries(suika3-aotc m)
   endif()
 endif()
 
@@ -826,10 +826,10 @@ endif()
 
 if(SUIKA_ENABLE_INSTALL)
   include(GNUInstallDirs)
-  install(TARGETS suika3          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-  install(TARGETS suika3-pack     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-  install(TARGETS suika3-bytecomp RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-  install(TARGETS suika3-aotcomp  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+  install(TARGETS suika3       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+  install(TARGETS suika3-pack  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+  install(TARGETS suika3-bcc   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+  install(TARGETS suika3-aotc  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
   if (   SUIKA_TARGET_FREEBSD
       OR SUIKA_TARGET_FREEBSD_WAYLAND
@@ -850,22 +850,22 @@ if(SUIKA_ENABLE_INSTALL)
       RENAME      "suika3-pack.1"
     )
     install(
-      FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-bytecomp.1.mdoc"
+      FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-bcc.1.mdoc"
       DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
-      RENAME      "suika3-bytecomp.1"
+      RENAME      "suika3-bcc.1"
     )
     install(
-      FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-aotcomp.1.mdoc"
+      FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-aotc.1.mdoc"
       DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
-      RENAME      "suika3-aotcomp.1"
+      RENAME      "suika3-aotc.1"
     )
   else()
     # Linux / UNIX manpage
     install(
       FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3.1"
                   "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-pack.1"
-                  "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-bytecomp.1"
-                  "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-aotcomp.1"
+                  "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-bcc.1"
+                  "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-aotc.1"
       DESTINATION "${CMAKE_INSTALL_MANDIR}/man1"
     )
   endif()

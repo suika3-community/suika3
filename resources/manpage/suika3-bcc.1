@@ -1,34 +1,34 @@
-.\" playfield-compiler.1 - Playfield compiler manpage
-.TH PLAYFIELD-COMPILER 1 "September 2025" "Playfield 1.0" "User Commands"
+.\" suika3-bcc.1 - Suika3 bytecode compiler manpage
+.TH SUIKA3-BCC 1 "April 2026" "Suika3 26.07" "User Commands"
 .SH NAME
-suika3-compiler \- compile Suika3 SeedScript scripts into bytecode
+suika3-bcc \- compile Ray scripts into bytecode files
 .SH SYNOPSIS
-.B suika3-compiler
+.B suika3-bcc
 [\fIsourcefiles...\fR]
 
 .SH DESCRIPTION
 The
-.B suika3-compiler
-translates Suika3 SeedScript files (\fB.pf\fR) into bytecode files
+.B suika3-bcc
+translates Ray scripts (\fB.ray\fR) into bytecode files
 with the extension \fB.pfc\fR.
 
 Each input file is compiled independently. The output file has the same
 basename as the input, with its extension replaced by \fB.pfc\fR.
 For example, compiling
-.I sample.pf
+.I main.ray
 produces
-.I sample.pfc
+.I main.pfc
 in the same directory.
 
 .SH EXAMPLES
 Compile a single script:
 .EX
-suika3-compiler sample.pf
+suika3-bcc main.ray
 .EE
 
 Compile multiple scripts:
 .EX
-suika3-compiler main.pf enemy.pf level.pf
+suika3-bcc main.ray enemy.ray level.ray
 .EE
 
 The above command produces:
@@ -38,8 +38,9 @@ main.pfc enemy.pfc level.pfc
 
 .SH SEE ALSO
 .BR suika3 (1),
+.BR suika3-aotc (1),
 .BR suika3-pack (1)
 
 .SH AUTHORS
 Awe Morris <awe@noctvm.io> and contributors.
-Project homepage: <https://github.com/suika3-community/suika3>
+Project homepage: <https://github.com/awemorris/suika3>
