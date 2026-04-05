@@ -1610,6 +1610,7 @@ png_read_callback(
  */
 
 #if defined(HAL_TARGET_WASM) || \
+    (defined(HAL_TARGET_MACOS) && defined(HAL_USE_SHARED)) || \
     (defined(HAL_TARGET_POSIX) && defined(HAL_USE_SHARED)) || \
     defined(HAL_USE_QT)
 #include <jpeglib.h>
