@@ -659,7 +659,7 @@ endif()
 
 # OpenBSD
 if(STRATO_TARGET_OPENBSD)
-  target_include_directories(strato PUBLIC /usr/local/include /usr/X11R6/include)
+  target_include_directories(strato PUBLIC /usr/pkg/include /usr/X11R6/include)
 endif()
 
 # Solaris11
@@ -960,7 +960,7 @@ endif()
 # NetBSD
 if(   STRATO_TARGET_NETBSD
    OR STRATO_TARGET_NETBSD_X11SOFT)
-  target_link_directories(strato PUBLIC /usr/local/lib /usr/X11R7/lib)
+  target_link_directories(strato PUBLIC /usr/pkg/lib /usr/X11R7/lib)
 endif()
 
 # OpenBSD
