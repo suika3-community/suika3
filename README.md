@@ -48,7 +48,7 @@
 <div align="center">
   <a href="https://noctvm.io/test/">
     Click to play on the browser!<br>
-    <img src="https://github.com/suika3-community/suika3/blob/main/docs/img/screenshot-20260325.webp" alt="Suika3 Screenshot"><br>
+    <img src="https://github.com/suika3-community/suika3/blob/main/docs/img/screenshot-20260406.webp" alt="Suika3 Screenshot"><br>
   </a>
 </div>
 
@@ -67,14 +67,22 @@
     - **More:** FreeBSD, NetBSD, OpenBSD, Solaris, Haiku
 - **Users:** Professional creators, indie studios, enterprise teams.
 
-To build and run:
+---
+
+## Build
+
+In general, the following works:
 ```
-./configure --prefix=/usr/local
+git clone https://github.com/awemorris/suika3.git
+cd suika3
+./configure
 make
-make install
+sudo make install
 cd game
 suika3
 ```
+
+Please refer to [build.md](docs/mkdocs-en/docs/build.md) for platform-specific instructions.
 
 ---
 
@@ -154,6 +162,7 @@ Suika3 is engineered with modern techniques, and delivers:
 - [Getting Started Guide](#getting-started-guide)
 - [Building Locally](#building-locally)
 - [Quick Look](#quick-look)
+- [Packages](#packages)
 - [Examples](#examples)
 - [Why Ray?](#why-ray)
 - [Technical Overview](#technical-overview)
@@ -233,9 +242,15 @@ project in just a few easy steps.
 
 Let's get the engine running so you can see the magic happen!
 
-- **Download:** Grab the latest release ZIP file from the official source.
-- **Extract:** Right-click the ZIP file and select "Extract All" to a folder of your choice.
-- **Launch:** Open the folder and run `suika3.exe`. A sample game will start immediately!
+- **Download:** Grab the latest release ZIP file.
+- **Extract:** Extract the ZIP file.
+    - On Windows: Just extract.
+    - On macOS: Open `misc/macos/Suika3.dmg` and copy the `Suika3` app to the folder where `suika3.exe` exists.
+    - On Linux: copy `misc/linux/suika3-x86_64.AppImage` to the folder where `suika3.exe` exists.
+- **Launch:** Open the folder and:
+    - On Windows: Run `suika3.exe`
+    - On macOS: Run `Suika3`
+    - On Linux: Run `suika3-x86_64.AppImage`
 
 ### 2. Personalize Your Story (`start.novel`)
 
@@ -347,9 +362,17 @@ func render() {
 
 ---
 
-## Build Locally
+## Packages
 
-Refer to [build.md](docs/mkdocs-en/docs/build.md) for platform-specific instructions.
+Homebrew:
+```
+brew tap awemorris/suika3
+brew install suika3
+```
+
+Debian: WIP
+
+Ubuntu: WIP
 
 ---
 
