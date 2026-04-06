@@ -760,6 +760,7 @@
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/unity-win64.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
+                "CMAKE_C_FLAGS":               "-Iexternal/PlayfieldEngine/resources/msvc-include",
                 "SUIKA_TARGET_UNITY":          "ON",
                 "SUIKA_ENABLE_SHARED":         "ON"
             }
@@ -772,6 +773,7 @@
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/unity-winarm64.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Debug",
+                "CMAKE_C_FLAGS":                    "-Iexternal/PlayfieldEngine/resources/msvc-include",
                 "SUIKA_TARGET_UNITY":          "ON",
                 "SUIKA_ENABLE_SHARED":         "ON"
             }
@@ -784,6 +786,7 @@
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/unity-switch.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":                 "Release",
+                "CMAKE_C_FLAGS":                    "-Iexternal/PlayfieldEngine/resources/clang-include",
                 "SUIKA_TARGET_UNITY":               "ON",
                 "SUIKA_TARGET_UNITY_SWITCH":        "ON",
                 "SUIKA_ENABLE_STATIC":              "ON"
@@ -797,6 +800,7 @@
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/unity-ps5.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
+                "CMAKE_C_FLAGS":               "-Iexternal/PlayfieldEngine/resources/clang-include",
                 "SUIKA_TARGET_UNITY":          "ON",
                 "SUIKA_TARGET_UNITY_PS5":      "ON",
                 "SUIKA_ENABLE_STATIC":         "ON"
@@ -810,6 +814,7 @@
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/unity-xbox.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
+                "CMAKE_C_FLAGS":               "-Iexternal/PlayfieldEngine/resources/msvc-include",
                 "SUIKA_TARGET_UNITY":          "ON",
                 "SUIKA_TARGET_UNITY_XBOX":     "ON",
                 "SUIKA_ENABLE_STATIC":         "ON"
