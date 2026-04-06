@@ -814,7 +814,7 @@
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/unity-xbox.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
-                "CMAKE_C_FLAGS":               "-I${sourceDir}/external/PlayfieldEngine/resources/msvc-include",
+                "CMAKE_C_FLAGS":               "/I ${sourceDir}/external/PlayfieldEngine/resources/msvc-include",
                 "SUIKA_TARGET_UNITY":          "ON",
                 "SUIKA_TARGET_UNITY_XBOX":     "ON",
                 "SUIKA_ENABLE_STATIC":         "ON"
