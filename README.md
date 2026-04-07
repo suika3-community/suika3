@@ -486,21 +486,22 @@ alternative, StratoHAL covers:
 
 ### Platform Support and Components
 
-|Platform Type  |OS / Platform       |Graphics                 |Sound                 |SDK                  |
-|---------------|--------------------|-------------------------|----------------------|---------------------|
-|Desktop        |Windows             |DirectX 12/11/9          |DirectSound           |Win32 API            |
-|               |macOS               |Metal                    |Audio Unit            |AppKit (Objective-C) |
-|               |ChromeOS            |WebGL 2                  |OpenAL (Emscripten)   |Emscripten (C)       |
-|               |Linux               |OpenGL 3                 |ALSA                  |C, X11 or Wayland    |
-|               |*BSD                |OpenGL 3                 |OSS (/dev/dsp)        |C, X11               |
-|               |Solaris 11          |Software                 |OSS (/dev/dsp)        |C, X11               |
-|               |Qt                  |OpenGL 3                 |Qt Sound              |Qt                   |
-|Mobile         |iOS                 |Metal                    |Audio Unit            |UIKit (Objective-C)  |
-|               |Android             |OpenGL ES 2              |OpenSL ES             |Android NDK          |
-|               |HarmonyOS NEXT      |OpenGL ES 2              |OpenSL ES             |OpenHarmony SDK      |
-|Web            |WebAssembly (Wasm)  |WebGL 2                  |OpenAL (Emscripten)   |Emscripten (C)       |
-|Console        |Unity               |Unity                    |Unity                 |Unity Native Plugin  |
-|               |Xbox Series X\|S    |DirectX 12               |XAudio2               |Microsoft GDK        |
+|Platform Type  |OS / Platform       |Graphics                 |Sound                  |SDK                  |
+|---------------|--------------------|-------------------------|-----------------------|---------------------|
+|Desktop        |Windows             |DirectX 12/11/9          |DirectSound            |Win32 API            |
+|               |macOS               |Metal                    |Audio Unit             |AppKit (Objective-C) |
+|               |ChromeOS            |WebGL 2                  |OpenAL (Emscripten)    |Emscripten (C)       |
+|               |Linux               |OpenGL 3                 |ALSA                   |C, X11 or Wayland    |
+|               |*BSD                |OpenGL 3                 |/dev/dsp \| /dev/audio |C, X11               |
+|               |Solaris 11          |Software                 |/dev/dsp               |C, X11               |
+|               |Solaris 10          |Software                 |/dev/audio             |C, X11               |
+|               |Qt                  |OpenGL 3                 |Qt Sound               |Qt                   |
+|Mobile         |iOS                 |Metal                    |Audio Unit             |UIKit (Objective-C)  |
+|               |Android             |OpenGL ES 2              |OpenSL ES              |Android NDK          |
+|               |HarmonyOS NEXT      |OpenGL ES 2              |OpenSL ES              |OpenHarmony SDK      |
+|Web            |WebAssembly (Wasm)  |WebGL 2                  |OpenAL (Emscripten)    |Emscripten (C)       |
+|Console        |Unity               |Unity                    |Unity                  |Unity Native Plugin  |
+|               |Xbox Series X\|S    |DirectX 12               |XAudio2                |Microsoft GDK        |
 
 ### Console Unity Plugin Notice
 
@@ -884,7 +885,7 @@ supporting legacy systems through older runtimes.
 | OS         | Status |
 |------------|--------|
 | Solaris 11 | ✅     |
-| Solaris 10 | ✅ gcc |
+| Solaris 10 | ✅     |
 | Solaris 9  | -      |
 | Solaris 8  | -      |
 | Solaris 7  | -      |
@@ -1036,6 +1037,7 @@ configurations.
 |netbsd                         |NetBSD                |GCC        |build-netbsd                           |suika3        |Executable     |
 |openbsd                        |OpenBSD               |Clang      |build-openbsd                          |suika3        |Executable     |
 |solaris11                      |Solaris11             |SunCC      |build-solaris11                        |suika3        |Executable     |
+|solaris10                      |Solaris10             |SunCC      |build-solaris10                        |suika3        |Executable     |
 |haiku                          |Haiku OS              |GCC        |build-haiku                            |suika3        |Executable     |
 |wasm                           |WebAssembly           |Emscripten |build-wasm                             |index.html    |HTML + Wasm    |
 |wasm-local                     |Chromebook            |Emscripten |build-wasm-local                       |index.html    |HTML + Wasm    |
