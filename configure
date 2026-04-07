@@ -94,7 +94,7 @@ fi
 case "`uname`" in
   *BSD)
     DOCS="share/doc/suika3"
-    GAME="share/examples/suika3/game"
+    GAME="share/examples/suika3"
     ;;
   *)
     DOCS="share/doc/suika3"

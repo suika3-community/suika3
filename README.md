@@ -361,20 +361,6 @@ func render() {
 
 ---
 
-## Packages
-
-Homebrew:
-```
-brew tap awemorris/suika3
-brew install suika3
-```
-
-Debian: WIP
-
-Ubuntu: WIP
-
----
-
 ## Examples
 
 A sample game is planned to be built in the end of March 2026.
@@ -1486,6 +1472,43 @@ barriers.
 Our commitment to the permissive license is for those people who
 publish and sell original visual novels on the App Store and Google
 Play, regardless of their software, hardware, and budget limitations.
+
+---
+
+## Binary Downloads
+
+Now preparing...
+
+**Documents:**
+| Type                    | Link                                                      |
+|-------------------------|-----------------------------------------------------------|
+| Sample Game             | -                                                         |
+| Documents (English)     | -                                                         |
+
+**Binaries:**
+| Platform                                        | Link                                                      |
+|-------------------------------------------------|-----------------------------------------------------------|
+| Microsoft Windows 64-bit (11/10/8/7/Vista)      | -                                                         |
+| Microsoft Windows Arm64 (11/10)                 | -                                                         |
+| Microsoft Windows 32-bit (10/8/7/Vista/XP/2000) | -                                                         |
+| Linux (AppImage x86_64)                         | -                                                         |
+| Apple macOS (10.11+ Universal)                  | -                                                         |
+| Apple iOS Xcode Project                         | -                                                         |
+| Android Studio Project                          | -                                                         |
+| HarmonyOS NEXT DevEco Project                   | -                                                         |
+| WebAssembly (HTML5)                             | -                                                         |
+| Unity Native Plugin                             | -                                                         |
+
+| Platform                                  | Steps                                                     |
+|-------------------------------------------|-----------------------------------------------------------|
+| macOS Homebrew                            | brew tap awemorris/suika3<br>brew install suika3          |
+| Debian                                    | -                                                         |
+| FreeBSD 15                                | -                                                         |
+| NetBSD 10                                 | -                                                         |
+| OpenBSD                                   | -                                                         |
+| Solaris 11                                | -                                                         |
+| Solaris 10                                | -                                                         |
+| Haiku                                     | -                                                         |
 
 ---
 
