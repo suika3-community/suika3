@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.13)
-project(suika3 LANGUAGES C CXX)
+project(suika3 LANGUAGES C)
 
 #
 # Configuration
@@ -30,6 +30,7 @@ option(SUIKA_TARGET_NETBSD_X11SOFT   "Build for NetBSD (X11, Soft3D)"           
 option(SUIKA_TARGET_OPENBSD          "Build for OpenBSD (X11, OpenGL)"                OFF)
 option(SUIKA_TARGET_OPENBSD_X11SOFT  "Build for OpenBSD (X11, Soft3D)"                OFF)
 option(SUIKA_TARGET_SOLARIS11        "Build for Solaris 11 (X11, Soft3D)"             OFF)
+option(SUIKA_TARGET_SOLARIS10        "Build for Solaris 10 (X11, Soft3D)"             OFF)
 option(SUIKA_TARGET_GENERICUNIX      "Build for Generic Unknow UNIX (X11, Soft3D)"    OFF)
 option(SUIKA_TARGET_HAIKU            "Build for Haiku OS (Soft3D)"                    OFF)
 
@@ -80,6 +81,7 @@ if(   SUIKA_TARGET_WINDOWS
    OR SUIKA_TARGET_OPENBSD
    OR SUIKA_TARGET_OPENBSD_X11SOFT
    OR SUIKA_TARGET_SOLARIS11
+   OR SUIKA_TARGET_SOLARIS10
    OR SUIKA_TARGET_GENERICUNIX
    OR SUIKA_TARGET_HAIKU
 )
@@ -149,7 +151,16 @@ else()
 
   elseif(CMAKE_SYSTEM_NAME STREQUAL "SunOS" AND CMAKE_SYSTEM_VERSION VERSION_GREATER_EQUAL "5.11")
     set(SUIKA_TARGET_SOLARIS11          ON)
-    set(SUIKA_ENABLE_JIT                ON)
+    set(SUIKA_ENABLE_JIT                OFF)
+    set(SUIKA_ENABLE_I18N               ON)
+    set(SUIKA_ENABLE_PACK               ON)
+    set(SUIKA_ENABLE_BYTECOMP           ON)
+    set(SUIKA_ENABLE_AOTCOMP            ON)
+    set(SUIKA_ENABLE_INSTALL            ON)
+
+  elseif(CMAKE_SYSTEM_NAME STREQUAL "SunOS" AND CMAKE_SYSTEM_VERSION VERSION_EQUAL "5.10")
+    set(SUIKA_TARGET_SOLARIS10          ON)
+    set(SUIKA_ENABLE_JIT                OFF)
     set(SUIKA_ENABLE_I18N               ON)
     set(SUIKA_ENABLE_PACK               ON)
     set(SUIKA_ENABLE_BYTECOMP           ON)
@@ -251,6 +262,8 @@ elseif(SUIKA_TARGET_OPENBSD_X11SOFT)
   set(PLAYFIELD_TARGET_OPENBSD_X11SOFT ON)
 elseif(SUIKA_TARGET_SOLARIS11)
   set(PLAYFIELD_TARGET_SOLARIS11 ON)
+elseif(SUIKA_TARGET_SOLARIS10)
+  set(PLAYFIELD_TARGET_SOLARIS10 ON)
 elseif(SUIKA_TARGET_GENERICUNIX)
   set(PLAYFIELD_TARGET_GENERICUNIX ON)
 elseif(SUIKA_TARGET_HAIKU)

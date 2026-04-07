@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.13)
-project(StratoHAL LANGUAGES C CXX)
+project(StratoHAL LANGUAGES C)
 
 #
 # Configuration
@@ -28,6 +28,7 @@ option(STRATO_TARGET_NETBSD_X11SOFT   "Build for NetBSD (X11, Soft3D)"          
 option(STRATO_TARGET_OPENBSD          "Build for OpenBSD (X11, OpenGL)"         OFF)
 option(STRATO_TARGET_OPENBSD_X11SOFT  "Build for OpenBSD (X11, Soft3D)"         OFF)
 option(STRATO_TARGET_SOLARIS11        "Build for Solaris 11 (X11, Soft3D)"      OFF)
+option(STRATO_TARGET_SOLARIS10        "Build for Solaris 10 (X11, Soft3D)"      OFF)
 option(STRATO_TARGET_GENERICUNIX      "Build for Unknown UNIX (X11, Soft3D)"    OFF)
 option(STRATO_TARGET_HAIKU            "Build for Haiku OS (Soft3D)"             OFF)
 option(STRATO_TARGET_UWP              "Build for UWP"                           OFF)
@@ -73,6 +74,7 @@ if(   STRATO_TARGET_WINDOWS
    OR STRATO_TARGET_OPENBSD
    OR STRATO_TARGET_OPENBSD_X11SOFT
    OR STRATO_TARGET_SOLARIS11
+   OR STRATO_TARGET_SOLARIS10
    OR STRATO_TARGET_GENERICUNIX
    OR STRATO_TARGET_HAIKU
    OR STRATO_TARGET_UWP
@@ -119,6 +121,12 @@ else()
 
   elseif(CMAKE_SYSTEM_NAME STREQUAL "SunOS" AND CMAKE_SYSTEM_VERSION VERSION_GREATER_EQUAL "5.11")
     message(STATUS "Targeting Solaris 11.")
+    set(STRATO_TARGET_SOLARIS11                   ON)
+    set(STRATO_ENABLE_SHARED                      ON)
+    set(STRATO_ENABLE_DIST                        ON)
+
+  elseif(CMAKE_SYSTEM_NAME STREQUAL "SunOS" AND CMAKE_SYSTEM_VERSION VERSION_EQUAL "5.10")
+    message(STATUS "Targeting Solaris 10.")
     set(STRATO_TARGET_SOLARIS11                   ON)
     set(STRATO_ENABLE_SHARED                      ON)
     set(STRATO_ENABLE_DIST                        ON)
@@ -215,6 +223,7 @@ if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_OPENBSD
    OR STRATO_TARGET_OPENBSD_X11SOFT
    OR STRATO_TARGET_SOLARIS11
+   OR STRATO_TARGET_SOLARIS10
    OR STRATO_TARGET_GENERICUNIX)
   # Common
   find_library(X11_LIBRARY X11 REQUIRED)
@@ -392,6 +401,7 @@ if(   STRATO_TARGET_LINUX_X11SOFT
    OR STRATO_TARGET_NETBSD_X11SOFT
    OR STRATO_TARGET_OPENBSD_X11SOFT
    OR STRATO_TARGET_SOLARIS11
+   OR STRATO_TARGET_SOLARIS10
    OR STRATO_TARGET_GENERICUNIX)
   set(STRATO_SOURCES
       src/image.c
@@ -707,6 +717,11 @@ if(STRATO_TARGET_SOLARIS11)
   target_include_directories(strato PUBLIC /usr/local/include /usr/X11R6/include)
 endif()
 
+# Solaris 10
+if(STRATO_TARGET_SOLARIS10)
+  target_include_directories(strato PUBLIC /usr/local/include /usr/X11R6/include)
+endif()
+
 # Generic Unknown UNIX
 if(STRATO_TARGET_GENERICUNIX)
   target_include_directories(
@@ -809,6 +824,7 @@ if(   STRATO_TARGET_LINUX_X11SOFT
    OR STRATO_TARGET_NETBSD_X11SOFT
    OR STRATO_TARGET_OPENBSD_X11SOFT
    OR STRATO_TARGET_SOLARIS11
+   OR STRATO_TARGET_SOLARIS10
    OR STRATO_TARGET_GENERICUNIX)
   target_compile_definitions(strato PUBLIC HAL_USE_X11_SOFTRENDER)
 endif()
@@ -929,8 +945,7 @@ endif()
 if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_NETBSD
-   OR STRATO_TARGET_OPENBSD
-   OR STRATO_TARGET_SOLARIS11)
+   OR STRATO_TARGET_OPENBSD)
   target_link_libraries(strato PUBLIC GL ${GLX_LIBRARY})
 endif()
 
@@ -1029,6 +1044,11 @@ if(STRATO_TARGET_OPENHARMONY)
 endif()
 
 # Solaris11
+if(STRATO_TARGET_SOLARIS11)
+  target_link_directories(strato PUBLIC /usr/local/lib /usr/X11R6/lib)
+endif()
+
+# Solaris10
 if(STRATO_TARGET_SOLARIS11)
   target_link_directories(strato PUBLIC /usr/local/lib /usr/X11R6/lib)
 endif()

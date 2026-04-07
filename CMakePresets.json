@@ -935,6 +935,21 @@
             }
         },
         {
+            "name":           "solaris10",
+            "displayName":    "Solaris 10",
+            "generator":      "Unix Makefiles",
+            "binaryDir":      "${sourceDir}/build-solaris10",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Release",
+                "CMAKE_C_COMPILER":            "/opt/developerstudio12.6/bin/cc",
+                "SUIKA_TARGET_SOLARIS10":      "ON",
+                "SUIKA_ENABLE_JIT":            "OFF",
+                "SUIKA_ENABLE_PACK":           "ON",
+                "SUIKA_ENABLE_BYTECOMP":       "ON",
+                "SUIKA_ENABLE_AOTCOMP":        "ON"
+            }
+        },
+        {
             "name":           "aix",
             "displayName":    "AIX",
             "generator":      "Unix Makefiles",
