@@ -942,6 +942,7 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
                 "CMAKE_C_COMPILER":            "/opt/developerstudio12.6/bin/cc",
+                "CMAKE_CXX_COMPILER":          "/opt/developerstudio12.6/bin/CC",
                 "CMAKE_AR":                    "/usr/ccs/bin/ar",
                 "SUIKA_TARGET_SOLARIS10":      "ON",
                 "SUIKA_ENABLE_JIT":            "OFF",
