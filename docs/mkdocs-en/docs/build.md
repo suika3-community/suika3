@@ -15,6 +15,20 @@ Suika3 fully utilizes the CMake build system.
 
 ---
 
+## For Packaging
+
+Use the `configure` script to build with shared libraries for
+packaging. (Other methods generate statically linked binaries.)
+
+```
+mkdir build
+../configure
+make
+make install
+```
+
+---
+
 ## Windows (Visual Studio 2026)
 
 Visual Studio is the recommended build environment for Windows, and is used for the official binary.
