@@ -663,18 +663,18 @@ makes NoctLang both portable and maintainable.
 
 ### Unified Execution Model
 
-NoctLang preserves bytecode semantics across JIT, AOT, and interpreter
-execution models. Each NoctLang bytecode instruction is equivalent to
-a runtime C function call. The NoctLang JIT is a method-level baseline
-JIT in which each bytecode instruction is translated into a runtime
-function call. The same applies to both AOT and interpreter
-execution. Therefore, all three execution models share a unified
-infrastructure and are semantically equivalent.
+NoctLang preserves strict bytecode semantics across its JIT, AOT, and
+interpreter execution models. Each NoctLang bytecode instruction maps
+directly to a corresponding runtime C function. In the NoctLang JIT—a
+method-level baseline JIT—every bytecode instruction is translated
+into a runtime function call. The same mechanism applies to both AOT
+and interpreter execution. Consequently, all three execution models
+leverage a unified infrastructure, ensuring full semantic equivalence.
 
-This clean, unified execution model is the key novelty of NoctLang.
-To the best of our knowledge, NoctLang is the first practical
-language that unifies JIT, AOT, and interpreter execution models
-in this way.
+This streamlined, unified execution model represents the core novelty
+of NoctLang. To the best of our knowledge, NoctLang is the first
+practical language to unify JIT, AOT, and interpreter execution while
+maintaining rigorous semantic consistency across all execution modes.
 
 ---
 
