@@ -127,7 +127,7 @@ else()
     set(SUIKA_ENABLE_BYTECOMP           ON)
     set(SUIKA_ENABLE_AOTCOMP            ON)
     set(SUIKA_ENABLE_INSTALL            ON)
-    set(SUIKA_ENABLE_GST                OFF)
+    set(SUIKA_ENABLE_GST                ON)
 
   elseif(CMAKE_SYSTEM_NAME STREQUAL "NetBSD")
     set(SUIKA_TARGET_NETBSD_X11SOFT     ON)
