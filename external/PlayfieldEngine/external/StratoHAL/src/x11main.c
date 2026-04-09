@@ -1071,14 +1071,14 @@ event_button_release(
 	case Button1:
 		hal_callback_on_event_mouse_release(
 			HAL_MOUSE_LEFT,
-			(int)(event->xbutton.x / mouse_scale),
-			(int)(event->xbutton.y / mouse_scale));
+			(int)((float)event->xbutton.x * mouse_scale),
+			(int)((float)event->xbutton.y * mouse_scale));
 		break;
 	case Button3:
 		hal_callback_on_event_mouse_release(
 			HAL_MOUSE_RIGHT,
-			(int)(event->xbutton.x / mouse_scale),
-			(int)(event->xbutton.y / mouse_scale));
+			(int)((float)event->xbutton.x * mouse_scale),
+			(int)((float)event->xbutton.y * mouse_scale));
 		break;
 	}
 }
