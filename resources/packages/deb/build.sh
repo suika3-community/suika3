@@ -15,7 +15,7 @@ echo 'Enter a minor version:'
 read MINOR
 
 # Update the changelog
-echo "suika3 ($VERSION-$MINOR) noble; urgency=medium" > meta/debian/changelog;
+echo "suika3 ($VERSION-$MINOR) trixie; urgency=medium" > meta/debian/changelog;
 echo '' >> meta/debian/changelog;
 echo '  * Sync upstream' >> meta/debian/changelog;
 echo '' >> meta/debian/changelog;
