@@ -1,13 +1,16 @@
 cmake_minimum_required(VERSION 3.13)
 project(suika3 LANGUAGES C CXX)
 
+# ---
+
 #
-# Configuration
+# Target Configuration
+#  - Only one target can be turned ON.
+#  - If not manually specified, automatically detected later.
 #
 
-# Targets
-option(SUIKA_TARGET_WINDOWS          "Build for Windows XP or later"                  OFF)
-option(SUIKA_TARGET_WINDOWS95        "Build for Windows 95/98/Me/2000"                OFF)
+option(SUIKA_TARGET_WINDOWS          "Build for Windows 2000 or later"                OFF)
+option(SUIKA_TARGET_WINDOWS95        "Build for Windows 95/98/Me"                     OFF)
 option(SUIKA_TARGET_MACOS            "Build for macOS (App)"                          OFF)
 option(SUIKA_TARGET_MACOS_CLI        "Build for macOS (CLI)"                          OFF)
 option(SUIKA_TARGET_MACOS_LIB        "Build for macOS (Library)"                      OFF)
@@ -17,10 +20,10 @@ option(SUIKA_TARGET_LINUX_GBM        "Build for Linux (GBM, OpenGL ES)"         
 option(SUIKA_TARGET_LINUX_FBDEV      "Build for Linux (fbdev, Soft3D)"                OFF)
 option(SUIKA_TARGET_LINUX_X11SOFT    "Build for Linux (X11, Soft3D)"                  OFF)
 option(SUIKA_TARGET_IOS              "Build for iOS"                                  OFF)
-option(SUIKA_TARGET_ANDROID          "Build for Android (OpenGL ES)"                  OFF)
-option(SUIKA_TARGET_OPENHARMONY      "Build for HarmonyOS NEXT (OpenGL ES)"           OFF)
-option(SUIKA_TARGET_WASM             "Build for Emscripten (WebGL)"                   OFF)
-option(SUIKA_TARGET_WASM_LOCAL       "Build for Emscripten Local (WebGL)"             OFF)
+option(SUIKA_TARGET_ANDROID          "Build for Android"                              OFF)
+option(SUIKA_TARGET_OPENHARMONY      "Build for HarmonyOS NEXT"                       OFF)
+option(SUIKA_TARGET_WASM             "Build for Emscripten"                           OFF)
+option(SUIKA_TARGET_WASM_LOCAL       "Build for Emscripten (Local files)"             OFF)
 option(SUIKA_TARGET_UNITY            "Build for Unity"                                OFF)
 option(SUIKA_TARGET_FREEBSD          "Build for FreeBSD (X11, OpenGL)"                OFF)
 option(SUIKA_TARGET_FREEBSD_WAYLAND  "Build for FreeBSD (Wayland, OpenGL ES)"         OFF)
@@ -34,21 +37,118 @@ option(SUIKA_TARGET_SOLARIS10        "Build for Solaris 10 (X11, Soft3D)"       
 option(SUIKA_TARGET_GENERICUNIX      "Build for Generic Unknow UNIX (X11, Soft3D)"    OFF)
 option(SUIKA_TARGET_HAIKU            "Build for Haiku OS (Soft3D)"                    OFF)
 
-# Options
-option(SUIKA_ENABLE_STATIC           "Build a static library"                         OFF)
-option(SUIKA_ENABLE_SHARED           "Build a dynamic library"                        OFF)
-option(SUIKA_ENABLE_OBJECT           "Build an object library"                        OFF)
-option(SUIKA_ENABLE_DIST             "Build for OS package"                           OFF)
-option(SUIKA_ENABLE_JIT              "Enable JIT"                                     OFF)
-option(SUIKA_ENABLE_I18N             "Enable translation"                             OFF)
-option(SUIKA_ENABLE_PACK             "Enable packager"                                OFF)
-option(SUIKA_ENABLE_BYTECOMP         "Enable bytecode compiler"                       OFF)
-option(SUIKA_ENABLE_AOTCOMP          "Enable AOT compiler"                            OFF)
-option(SUIKA_ENABLE_WEBSERVER        "Enable simple Web server"                       OFF)
-option(SUIKA_ENABLE_ROT90            "Rotate screen"                                  OFF)
-option(SUIKA_ENABLE_GST              "Enable Gstreamer support"                       OFF)
-option(SUIKA_ENABLE_MAIN2            "Enable macOS main2()"                           OFF)
-option(SUIKA_ENABLE_INSTALL          "Enable installation"                            OFF)
+# ---
+
+#
+# Build Options (all OFF by default)
+#
+
+#
+# [SUIKA_ENABLE_DIST]
+#  - Build for OS packages such as FreeBSD Ports and Debian packages.
+#  - This configuration uses dynamic linking to system's shared libraries for
+#    dependencies such as libpng, libvorbis, and freetype2.
+#
+option(SUIKA_ENABLE_DIST "Build for OS package" OFF)
+
+#
+# [SUIKA_ENABLE_INSTALL]
+#  - Install binaries and documents to the system.
+#
+option(SUIKA_ENABLE_INSTALL "Enable installation" OFF)
+
+#
+# [SUIKA_ENABLE_STATIC]
+#  - Build a static library for use with project templates for IDEs.
+#  - Currenly used by the "macos-lib", "ios-*", "openharmony-*", and "unity-*"
+#    presets.
+#
+option(SUIKA_ENABLE_STATIC "Build a static library" OFF)
+
+#
+# [SUIKA_ENABLE_SHARED]
+#  - Build a shared library for use with project templates for IDEs.
+#  - Currenly used by android-* and unity-*.
+#
+option(SUIKA_ENABLE_SHARED "Build a dynamic library" OFF)
+
+#
+# [SUIKA_ENABLE_OBJECT]
+#  - Build object files only.
+#  - Currently not used, but can be used for derived projects.
+#
+option(SUIKA_ENABLE_OBJECT "Build an object library" OFF)
+
+#
+# [SUIKA_ENABLE_JIT]
+#  - Enable Just-in-Time compiler if the architecture is supported by NoctLang.
+#
+option(SUIKA_ENABLE_JIT "Enable JIT" OFF)
+
+#
+# [SUIKA_ENABLE_I18N]
+#  - Enable i18n translation.
+#  - Error messages will be customized by the system locale.
+#
+option(SUIKA_ENABLE_I18N "Enable translation" OFF)
+
+#
+# [SUIKA_ENABLE_PACK]
+#  - Build the "suika3-pack" executable that generates package files.
+#
+option(SUIKA_ENABLE_PACK "Enable packager" OFF)
+
+#
+# [SUIKA_ENABLE_BYTECOMP]
+#  - Build the "suika3-bcc" executable that generates bytecode files from Ray
+#    scripts.
+#
+option(SUIKA_ENABLE_BYTECOMP "Enable bytecode compiler" OFF)
+
+#
+# [SUIKA_ENABLE_AOTCOMP]
+#  - Build the "suika3-aotc" executable that generates a C source file from Ray
+#    scripts.
+#
+option(SUIKA_ENABLE_AOTCOMP "Enable AOT compiler" OFF)
+
+#
+# [SUIKA_ENABLE_WEBSERVER]
+#  - Build the "suika3-web" executable that opens a Web browser and acts as
+#    a simple httpd server to let the browser load game file.
+#  - Currently Windows-only. (Use "python3 -m http.server" on other platforms)
+#
+option(SUIKA_ENABLE_WEBSERVER "Enable simple Web server" OFF)
+
+#
+# [SUIKA_ENABLE_ROT90]
+#  - Rotate the screen for framebuffer devices.
+#  - Currently used by the "linux-gbm-rot90" preset.
+#
+option(SUIKA_ENABLE_ROT90 "Rotate screen" OFF)
+
+#
+# [SUIKA_ENABLE_GST]
+#  - Enable Gstreamer support for video playback on X11.
+#  - Currently used by the "linux" and "freebsd" presets.
+#
+option(SUIKA_ENABLE_GST "Enable Gstreamer support" OFF)
+
+#
+# [SUIKA_ENABLE_MAIN2]
+#  - Rename main() to main2() for librarization.
+#  - Currently used by the "macos-lib" preset.
+#
+option(SUIKA_ENABLE_MAIN2 "Enable main2() hook" OFF)
+
+# --
+
+#
+# Path Options
+#
+
+option(SUIKA_DIR_DOCS "Document installation destination"   "share/suika3")
+option(SUIKA_DIR_GAME "Example installation destination"    "share/suika3")
 
 # ---
 
@@ -213,7 +313,7 @@ endif()
 # Use pf_init_hook() function.
 set(PLAYFIELD_ENABLE_INITHOOK  ON)
 
-# Set the target.
+# Set the target. (SUIKA_TARGET_XXX --> PLAYFIELD_TARGET_XXX)
 if(SUIKA_TARGET_WINDOWS)
   set(PLAYFIELD_TARGET_WINDOWS ON)
 elseif(SUIKA_TARGET_WINDOWS95)
@@ -276,7 +376,7 @@ else()
   error("No target specified or detected.")
 endif()
 
-# Unity OS
+# Unity
 if(SUIKA_TARGET_UNITY_SWITCH)
   set(PLAYFIELD_TARGET_UNITY_SWITCH)
 elseif(SUIKA_TARGET_UNITY_PS5)
@@ -285,7 +385,7 @@ elseif(SUIKA_TARGET_UNITY_XBOX)
   set(PLAYFIELDTARGET_UNITY_XBOX)
 endif()
 
-# Distribution binary
+# Packaging
 if(SUIKA_ENABLE_DIST)
   set(PLAYFIELD_ENABLE_DIST ON)
 endif()
@@ -366,7 +466,8 @@ endif()
 if(   SUIKA_TARGET_MACOS
    OR SUIKA_TARGET_MACOS_CLI
    OR SUIKA_TARGET_MACOS_LIB)
-  if(NOT PLAYFIELD_ENABLE_DIST)
+  # Exclude the build for Homebrew packaging.
+  if(NOT SUIKA_ENABLE_DIST)
     set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64" CACHE STRING "" FORCE)
   endif()
 endif()
@@ -380,6 +481,7 @@ endif()
 # PlayfieldEngine
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/PlayfieldEngine)
 
+# Change the startup file name. (main.pf --> main.ray)
 target_compile_definitions(playfield PRIVATE STARTUP_FILE="main.ray")
 
 # ---
@@ -390,16 +492,19 @@ target_compile_definitions(playfield PRIVATE STARTUP_FILE="main.ray")
 
 include(CheckIncludeFile)
 
+# stdint.h
 check_include_file("stdint.h" HAVE_STDINT_H)
 if(HAVE_STDINT_H)
   add_definitions(-DHAVE_STDINT_H=1)
 endif()
 
+# inttypes.h
 check_include_file("inttypes.h" HAVE_INTTYPES_H)
 if(HAVE_INTTYPES_H)
   add_definitions(-DHAVE_INTTYPES_H=1)
 endif()
 
+# sys/types.h
 check_include_file("sys/types.h" HAVE_SYS_TYPES_H)
 if(HAVE_SYS_TYPES_H)
   add_definitions(-DHAVE_SYS_TYPES_H=1)
@@ -408,7 +513,7 @@ endif()
 # ---
 
 #
-# Main Target
+# Main Target (the "suika3" executable)
 #
 
 # Base Source
@@ -469,7 +574,7 @@ if(SUIKA_ENABLE_I18N)
   )
 endif()
 
-# Resource
+# Resources for Windows
 if(   SUIKA_TARGET_WINDOWS
    OR SUIKA_TARGET_WINDOWS95)
   if(NOT SUIKA3_ENABLE_STATIC)
@@ -479,10 +584,13 @@ if(   SUIKA_TARGET_WINDOWS
   endif()
 endif()
 
-# Add Target
+# Add the target
 if(   SUIKA_ENABLE_STATIC
    OR SUIKA_ENABLE_SHARED
    OR SUIKA_ENABLE_OBJECT)
+  # Build a library.
+
+  # Get the library type.
   if(SUIKA_ENABLE_STATIC)
     set(SUIKA_LIB_TYPE STATIC)
   elseif(SUIKA_ENABLE_SHARED)
@@ -491,6 +599,7 @@ if(   SUIKA_ENABLE_STATIC
     set(SUIKA_LIB_TYPE OBJECT)
   endif()
 
+  # Link dependencies into the library if not packaing.
   if(NOT SUIKA_ENABLE_DIST)
     set(SUIKA_DEPS
         $<TARGET_OBJECTS:png>
@@ -507,6 +616,7 @@ if(   SUIKA_ENABLE_STATIC
     )
   endif()
 
+  # Make a library.
   add_library(
     suika3
     ${SUIKA_LIB_TYPE}
@@ -683,7 +793,7 @@ endif()
 # ---
 
 #
-# Packager Target
+# Packager Target (The "suika3-pack" executable)
 #
 
 if(SUIKA_ENABLE_PACK)
@@ -714,7 +824,7 @@ endif()
 # ---
 
 #
-# Bytcode Compiler Target
+# Bytcode Compiler Target (The "suika3-bcc" executable)
 #
 
 if(SUIKA_ENABLE_BYTECOMP)
@@ -748,7 +858,7 @@ endif()
 # ---
 
 #
-# AOT Compiler Target
+# AOT Compiler Target (The "suika3-aotc" executable)
 #
 
 if(SUIKA_ENABLE_AOTCOMP)
@@ -783,7 +893,7 @@ endif()
 # ---
 
 #
-# Web Server Target
+# Web Server Target (The "suika3-web.exe" executable)
 #
 
 if(SUIKA_ENABLE_WEBSERVER)
@@ -805,7 +915,7 @@ endif()
 # ---
 
 #
-# macOS Bundle
+# macOS Bundle Handling
 #
 
 if(SUIKA_TARGET_MACOS)
@@ -903,7 +1013,172 @@ if(SUIKA_ENABLE_INSTALL)
   endif()
 
   install(
-    DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/game"
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/${SUIKA_DIR_GAME}
+    FILES       "${CMAKE_CURRENT_SOURCE_DIR}/game/bg/black.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/bg/school.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/bg/white.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/bgm/afternoon2.ogg"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/ch/midori/eye/midori-normal.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/ch/midori/eye/midori-positive.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/ch/midori/eye/midori-smile.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/ch/midori/lip/combined.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/ch/midori/lip/midori-happy.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/ch/midori/lip/midori-normal.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/ch/midori/lip/midori-positive.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/ch/midori/lip/midori-smile.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/ch/midori/midori-happy.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/ch/midori/midori-normal.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/ch/midori/midori-smile.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/ch/xiaoling/eye/xiaoling-normal.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/ch/xiaoling/eye/xiaoling-smile.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/ch/xiaoling/lip/xiaoling-happy.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/ch/xiaoling/lip/xiaoling-normal.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/ch/xiaoling/lip/xiaoling-smile.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/ch/xiaoling/xiaoling-happy.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/ch/xiaoling/xiaoling-normal.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/ch/xiaoling/xiaoling-smile.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/config.ini"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/main.ray"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/rule/mask.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/rule/suika.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/se/click.ogg"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/start.novel"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/choose/button.ogg"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/choose/hover.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/choose/hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/choose/idle.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/choose/idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/config/config-bar-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/config/config-bar-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/config/config-bar-knob.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/config/config-base.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/config/config-lang-en-active.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/config/config-lang-en-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/config/config-lang-en-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/config/config-lang-jp-active.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/config/config-lang-jp-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/config/config-lang-jp-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/config/config-preview.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/config/config.gui"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/config/reset-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/config/reset-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/effect/rain/1.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/effect/rain/rain.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/emoji/heart.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/emoji/sweat.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/history/history-bar-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/history/history-bar-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/history/history-bar-knob.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/history/history-base.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/history/history-item-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/history/history-item-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/history/history.gui"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/load/load-base.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/load/load-item-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/load/load-item-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/load/load-page-1-active.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/load/load-page-1-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/load/load-page-1-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/load/load-page-2-active.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/load/load-page-2-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/load/load-page-2-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/load/load-page-3-active.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/load/load-page-3-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/load/load-page-3-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/load/load-page-4-active.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/load/load-page-4-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/load/load-page-4-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/load/load-page-5-active.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/load/load-page-5-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/load/load-page-5-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/load/load-page-active.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/load/load-page-hover.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/load/load-page-idle.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/load/load.gui"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/menu/large-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/menu/large-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/menu/small-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/menu/small-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/message/auto-hide.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/message/auto-show.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/message/auto.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/message/click1.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/message/click2.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/message/msgbox-hide.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/message/msgbox-show.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/message/msgbox.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/message/namebox-hide.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/message/namebox-show.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/message/namebox.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/message/skip-hide.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/message/skip-show.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/message/skip.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/plugins/testplugin/testplugin.ray"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-base.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-item-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-item-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-page-1-active.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-page-1-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-page-1-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-page-1.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-page-2-active.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-page-2-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-page-2-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-page-2.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-page-3-active.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-page-3-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-page-3-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-page-3.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-page-4-active.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-page-4-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-page-4-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-page-4.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-page-5-active.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-page-5-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-page-5-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-page-5.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-page-active.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-page-hover.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save-page-idle.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/save/save.gui"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/sysbtn/anime-appear.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/sysbtn/anime-fadein.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/sysbtn/anime-fadeout.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/sysbtn/anime-hover.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/sysbtn/anime-out.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/sysbtn/sysbtn-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/sysbtn/sysbtn-idle.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/sysbtn/sysbtn-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/sysmenu/auto-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/sysmenu/auto-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/sysmenu/base.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/sysmenu/config-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/sysmenu/config-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/sysmenu/item-hover.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/sysmenu/item-idle.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/sysmenu/load-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/sysmenu/load-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/sysmenu/log-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/sysmenu/log-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/sysmenu/save-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/sysmenu/save-idle.anime"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/sysmenu/save-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/sysmenu/skip-hover.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/sysmenu/skip-idle.png"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/system/sysmenu/sysmenu.gui"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/voice/001.ogg"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/voice/002.ogg"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/voice/003.ogg"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/voice/004.ogg"
+                "${CMAKE_CURRENT_SOURCE_DIR}/game/voice/005.ogg"
+    DESTINATION "${CMAKE_INSTALL_PREFIX}/${SUIKA_DIR_GAME}"
   )
+
+  # Avoid installing the font when packaging.
+  if(NOT SUIKA_ENABLE_DIST)
+    install(
+      FILES       "${CMAKE_CURRENT_SOURCE_DIR}/game/system/font/rounded-l-mplus-1c-bold.ttf"
+                  "${CMAKE_CURRENT_SOURCE_DIR}/game/system/font/LICENSE"
+      DESTINATION "${CMAKE_INSTALL_PREFIX}/${SUIKA_DIR_GAME}"
+    )
+  endif()
 endif()
