@@ -1170,7 +1170,7 @@ if(SUIKA_ENABLE_INSTALL)
                 "${CMAKE_CURRENT_SOURCE_DIR}/game/voice/003.ogg"
                 "${CMAKE_CURRENT_SOURCE_DIR}/game/voice/004.ogg"
                 "${CMAKE_CURRENT_SOURCE_DIR}/game/voice/005.ogg"
-    DESTINATION "${CMAKE_INSTALL_PREFIX}/${SUIKA_DIR_GAME}"
+    DESTINATION "${CMAKE_INSTALL_PREFIX}/${SUIKA_DIR_GAME}/game"
   )
 
   # Avoid installing the font when packaging.
