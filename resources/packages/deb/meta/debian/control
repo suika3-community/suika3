@@ -44,6 +44,7 @@ Depends: ${misc:Depends}, ${shlibs:Depends},
          libgstreamer-plugins-base1.0-0,
          gstreamer1.0-x,
          libxpm4,
-         libbrotli1
+         libbrotli1,
+         fonts-noto-core
 Description: Portable 2D Game and Visual Novel Scripting Runtime
  This program can be used to develop 2D games and visual novels.
