@@ -568,16 +568,18 @@ jobs:
 
   build-deb-debian:
     runs-on: ubuntu-latest
-    container: debian:sid
+    container: debian:trixie
+
+    defaults:
+      run:
+        shell: bash
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Install dependencies
+      - name: Show environment
         run: |
+          set -eu
+
+          echo "Installing dependencies (1)"
           export DEBIAN_FRONTEND=noninteractive
           apt-get update
           apt-get install -y --no-install-recommends \
@@ -588,34 +590,34 @@ jobs:
               git \
               git-buildpackage \
               ca-certificates
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          mk-build-deps -i -r -t "apt-get -y --no-install-recommends" debian/control
 
-      - name: Build package
-        run: |
-          set -eu
-
+          echo "Cloning the git repository"
           git clone https://github.com/awemorris/suika3.git
           cd suika3
 
+          echo "Installing dependencies (2)"
+          mk-build-deps -i -r -t "apt-get -y --no-install-recommends" debian/control
+
+          echo "Searching for latest tag"
           LATEST_TAG="$( \
                          git tag --list '26.*' --sort=-version:refname | \
                          grep -E '^26\.[0-9]+\.[0-9]+$' | \
                          head -n1 \
                        )"
           test -n "$LATEST_TAG"
+          echo "Tag: $LATEST_TAG"
 
+          echo "Writing debian/changelog"
           UPSTREAM_VERSION="$LATEST_TAG"
           DEBIAN_REVISION="1"
-          DISTRO="sid"
+          DISTRO="trixie"
           CI_SUFFIX="~git${GITHUB_RUN_NUMBER}"
           NEW_VERSION="${UPSTREAM_VERSION}-${DEBIAN_REVISION}~${DISTRO}${CI_SUFFIX}"
-
+          echo "Version: $NEW_VERSION"
           export DEBFULLNAME="GitHub Actions"
           export DEBEMAIL="actions@github.com"
-
           dch --newversion "$NEW_VERSION" \
-              --distribution sid \
+              --distribution "$DISTRO" \
               "Automated CI build for sid from tag ${LATEST_TAG}."
 
           #git config user.email "awe@noctvm.io"
@@ -623,11 +625,13 @@ jobs:
           #git add debian/changelog
           #git commit -m "Update debian/changelog for sid"
 
+          echo "Building package"
           gbp buildpackage -us -uc -b \
               --git-upstream-tree=SLOPPY \
               --git-ignore-new \
               --git-no-pristine-tar
 
+          echo "Copying artifacts"
           mkdir -p artifacts
           find .. -maxdepth 1 -type f \
                \( -name '*.deb' -o -name '*.buildinfo' -o -name '*.changes' \) \
