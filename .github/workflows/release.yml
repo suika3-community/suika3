@@ -886,6 +886,18 @@ jobs:
           name: unity-xbox
           path: unity-xbox
 
+      - name: Download Debian trixie artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: deb-trixie
+          path: deb-trixie
+
+      - name: Download Ubuntu noble artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: deb-noble
+          path: deb-noble
+
       - name: Copy for Unity
         run: |
           mkdir dist/misc/unity/Assets
@@ -944,14 +956,26 @@ jobs:
           files: |
             Suika3-CI-${{ env.DATE }}-${{ env.SHORT_SHA }}.zip
             Suika3-CI-${{ env.DATE }}-${{ env.SHORT_SHA }}.7z
-            android-apk/suika3-android-build-check.apk
-            ios-engine/suika3-ios-build-check.ipa
             windows/build/windows-vs2022-x64/Release/suika3.exe
             macos/build-macos/Suika3.dmg
+            linux/suika3-x86_64.AppImage
+            android-apk/suika3-android.apk
+            ios-engine/suika3-ios.ipa
+            deb-trixie/*.deb
+            deb-noble/*.deb
           body: |
-            This is an automated build from CI and is not an official release.
-            The ZIP archive contains standalone engines for Windows, macOS, and Linux.
-            It also includes export kits for iOS, Android, HarmonyOS NEXT (OpenHarmony), WebAssembly, and Unity (Win64/Switch/PS5/Xbox Series X|S).
-            The 7z version contains the same files but offers a smaller download size for smaller download size.
+            - This is an automated build from CI and is not an official release.
+            - The ZIP archive contains: 
+                - Windows standalone engine (64-bit)
+                - Windows standalone engine (32-bit)
+                - macOS standalone engine
+                - Linux standalone engine
+                - iOS export kit (Xcode project)
+                - Android export kit (Android Studio project)
+                - HarmonyOS NEXT export kit (DevEco Studio project)
+                - WebAssembly export kit (HTML5-embedded Wasm)
+                - Unity export kit (Win64/Switch/PS5/Xbox Series X|S)
+                - Sample game
+                - Documents
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
