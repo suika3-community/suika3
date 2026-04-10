@@ -615,13 +615,14 @@ jobs:
               --distribution sid \
               "Automated CI build for sid from tag ${LATEST_TAG}."
 
-          git config user.email "awe@noctvm.io"
-          git config user.name "Awe Morris"
-          git add debian/changelog
-          git commit -m "Update debian/changelog for sid"
+          #git config user.email "awe@noctvm.io"
+          #git config user.name "Awe Morris"
+          #git add debian/changelog
+          #git commit -m "Update debian/changelog for sid"
 
           gbp buildpackage -us -uc -b \
               --git-upstream-tree=SLOPPY \
+              --git-ignore-new \
               --git-no-pristine-tar
 
           mkdir -p artifacts
