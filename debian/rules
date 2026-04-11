@@ -9,7 +9,7 @@ override_dh_auto_configure:
 		-DSUIKA_ENABLE_BYTECOMP=ON \
 		-DSUIKA_ENABLE_AOTCOMP=ON \
 		-DSUIKA_DIR_DOCS="share/doc/suika3" \
-		-DSUIKA_DIR_GAME="share/doc/suika3/examples/game"
+		-DSUIKA_DIR_GAME="share/doc/suika3/examples"
 
 override_dh_auto_install:
 	dh_auto_install
