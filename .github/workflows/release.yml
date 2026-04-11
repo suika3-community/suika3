@@ -658,7 +658,7 @@ jobs:
           retention-days: 7
 
   zip:
-    needs: [build-windows-vs2022, build-windows-mingw-w64, build-linux, build-macos, build-wasm, build-ios, build-android, build-openharmony, build-unity, build-mkdocs]
+    needs: [build-windows-vs2022, build-windows-mingw-w64, build-linux, build-macos, build-wasm, build-ios, build-android, build-openharmony, build-unity, build-mkdocs, build-deb-debian]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
