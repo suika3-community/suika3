@@ -647,7 +647,7 @@ jobs:
               --git-ignore-new \
               --git-no-pristine-tar
           ls -lha ../
-          mv ../*.deb ../suika3-${DISTRO}.deb
+          mv ../suika3_${NEW_VERSION}_amd64.deb ../suika3-${DISTRO}.deb
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
