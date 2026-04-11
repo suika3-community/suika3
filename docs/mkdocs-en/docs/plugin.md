@@ -29,7 +29,9 @@ func plugin_init_testplugin() {
 
 // New tag.
 func Tag_testplugintag(params) {
-    Suika.print("Plugin tag is called.");
+    print("Plugin tag is called.");
+    print("parameter: " + params.text);
+
     Suika.moveToNextTag();
 }
 ```
@@ -47,5 +49,5 @@ func start() {
 
 In `start.novel`:
 ```
-[testplugintag]
+[testplugintag text="hello"]
 ```

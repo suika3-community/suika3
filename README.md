@@ -98,16 +98,16 @@ Binary Downloads:
 | Ubuntu 24.04 LTS amd64 | [Deb](https://github.com/awemorris/suika3/releases/latest/download/suika3-noble.deb)                   |
 | Other Linux amd64      | [Full](https://github.com/awemorris/suika3/releases/latest/download/Suika3.zip)                        |
 
-- Packages
-    - macOS:
-    ```
-    brew tap awemorris/suika3
-    brew install suika3
-    ```
-    - FreeBSD:
-    ```
-    pkg install suika3
-    ```
+- macOS:
+```
+brew tap awemorris/suika3
+brew install suika3
+```
+
+- FreeBSD:
+```
+cd /usr/ports/games/suika3 && make install clean
+```
 
 ---
 
@@ -133,7 +133,6 @@ scripting platform.
   codename "天滿梅貴"). Our native technology, Ray, enables you to
   make not only VN but also generic 2D games.
   (Ray codename: "神威/和光全球之天媛")
-
 
 Although Suika3 is designed as a professional tool, you are absolutely
 welcome to use it just for fun — after all, fun is the driving force
@@ -220,7 +219,7 @@ Suika3 is engineered with modern techniques, and delivers:
 
 ## Kanban (Status)
 
-The current version is `26.04.1-openbeta` (=26.07 LTS RC1).**
+The current version is `26.04.x`.**
 
 We are in the `Quality Stabilization Period` (April 1 - June 30, 2026) for
 the planned release `Suika3 26.07 LTS` (scheduled on July 1 2026).
@@ -245,16 +244,14 @@ See [Quality Assurance](#quality-assurance) for the details.
 - ✅ API Freeze (March 7, 2026)
 - ✅ GUI Animation Implementation (March 10, 2026)
 - ✅ Code Freeze (March 12, 2026)
-- ✅ Milestone: `Suika3 26.04 (aka 26.07 RC1)` (April 1, 2026)
-- Milestone: `Suika3 26.05 (aka 26.07 RC2)` (May 1, 2026)
-- Milestone: `Suika3 26.06 (aka 26.07 RC3)` (June 1, 2026)
-- Milestone: `Suika3 26.07 LTS GM` (June 25, 2026)
+- ✅ Milestone: `Suika3 26.04 (=LTS RC1)` (April 1, 2026)
+- Milestone: `Suika3 26.05 (=LTS RC2)` (May 1, 2026)
+- Milestone: `Suika3 26.06 (=LTS RC3/GM)` (June 1, 2026)
 - Goal: `Suika3 26.07 LTS` Public Release (July 1, 2026)
 
 **Remaining Tasks:**
 - Website Update
 - Longer Sample Game
-- Document: `Plugin Development`
 - Document: `SRS: System Requirement Specification`
 - Document: `SDS: System Design Specification`
 
@@ -1105,30 +1102,28 @@ This is not a weekend project but a mature codebase evolved over 25+ years.
 
 ## Quality Assurance
 
-In `Software Engineering`, reliability is a function of time. As
-Suika3 is currently in its pre-release phase, we define its cumulative
-operational time as zero. Consequently, formal quality metrics are not
-yet applicable.
+In **Software Engineering**, reliability is fundamentally a function
+of time. As Suika3 has been newly released in April 2026, the engine
+is currently in its early lifecycle stage regarding field-tested
+uptime. Consequently, formal quality metrics are not yet fully
+applicable. However, the architecture inherits over two decades of
+development expertise, ensuring a solid foundation for the QA process
+leading toward our first LTS (Long-Term Support).
 
 ### Our Path to Stability
 
 We are committed to delivering a production-grade engine. Our QA
 roadmap is as follows:
 
-1. **Release Candidate (RC) Phase**: Upon reaching the RC milestone,
-  we will initiate rigorous tracking of all identified issues.
-  See [BUGS.md](BUGS.md)
+1. **Bug Tracking**: We maintain a comprehensive log of all
+  identified issues. See [BUGS.md](BUGS.md)
 
-2. **Data-Driven Hardening**: We will analyze bug discovery and
-  resolution rates to quantify the software's stability.
+2. **Data-Driven Hardening**: We analyze root causes and resolution
+  rates to quantify and improve software stability.
 
-3. **Commercial-Grade Standards**: Our final goal is to achieve a
-  level of robustness that meets the requirements of commercial visual
-  novel productions.
-
-While the engine is still "young" in terms of uptime, the underlying
-architecture inherits over two decades of development philosophy,
-ensuring a solid foundation for the upcoming QA process.
+3. **Commercial-Grade Standards**: Our ultimate goal is to achieve
+  a level of robustness that meets the rigorous requirements of
+  commercial app production.
 
 ---
 
@@ -1266,36 +1261,36 @@ tampering. The obfuscation key can be changed in "key.h".)
 
 `Year.Month.Patch-Level`
 
-| Version  | Level             | Release Date        | Support Period     |
-|----------|-------------------|---------------------|--------------------|
-| 26.04    | LTS RC1           | April 2026          | -                  |
-| 26.05    | LTS RC2           | May 2026            | -                  |
-| 26.06    | LTS RC3           | June 2026           | -                  |
-| 26.07    | Long Term Support | July 2026           | 10 years (minimum), codename "北辰天歸" |
-| 26.08    | Feature Rollup    | August 2026         | -                  |
-| 26.09    | Feature Rollup    | September 2026      | -                  |
-| 26.10    | Feature Rollup    | October 2026        | -                  |
-| 26.11    | Feature Rollup    | November 2026       | -                  |
-| 26.12    | Feature Rollup    | December 2026       | -                  |
-| 27.01    | Feature Rollup    | January 2027        | -                  |
-| 27.02    | Feature Rollup    | February 2027       | -                  |
-| 27.03    | Feature Rollup    | March 2027          | -                  |
-| 27.04    | LTS RC1           | April 2027          | -                  |
-| 27.05    | LTS RC2           | May 2027            | -                  |
-| 27.06    | LTS RC3           | June 2027           | -                  |
-| 27.07    | Long Term Support | July 2027           | 10 years (minimum) |
-| 27.08    | Feature Rollup    | August 2027         | -                  |
-| 27.09    | Feature Rollup    | September 2027      | -                  |
-| 27.10    | Feature Rollup    | October 2027        | -                  |
-| 27.11    | Feature Rollup    | November 2027       | -                  |
-| 27.12    | Feature Rollup    | December 2027       | -                  |
-| 28.01    | Feature Rollup    | January 2028        | -                  |
-| 28.02    | Feature Rollup    | February 2028       | -                  |
-| 28.03    | Feature Rollup    | March 2028          | -                  |
-| 28.04    | LTS RC1           | April 2028          | -                  |
-| 28.05    | LTS RC2           | May 2028            | -                  |
-| 28.06    | LTS RC3           | June 2028           | -                  |
-| 28.07    | Long Term Support | July 2028           | 10 years (minimum) |
+| Version  | Level                              | Release Date        | Support Period     |
+|----------|------------------------------------|---------------------|--------------------|
+| 26.04    | Feature Rollup / LTS RC1           | April 2026          | - codename "北辰天歸" |
+| 26.05    | Feature Rollup / LTS RC2           | May 2026            | -                  |
+| 26.06    | Feature Rollup / LTS RC3           | June 2026           | -                  |
+| 26.07    | Long Term Support                  | July 2026           | 10 years (minimum) |
+| 26.08    | Feature Rollup                     | August 2026         | -                  |
+| 26.09    | Feature Rollup                     | September 2026      | -                  |
+| 26.10    | Feature Rollup                     | October 2026        | -                  |
+| 26.11    | Feature Rollup                     | November 2026       | -                  |
+| 26.12    | Feature Rollup                     | December 2026       | -                  |
+| 27.01    | Feature Rollup                     | January 2027        | -                  |
+| 27.02    | Feature Rollup                     | February 2027       | -                  |
+| 27.03    | Feature Rollup                     | March 2027          | -                  |
+| 27.04    | Feature Rollup / LTS RC1           | April 2027          | -                  |
+| 27.05    | Feature Rollup / LTS RC2           | May 2027            | -                  |
+| 27.06    | Feature Rollup / LTS RC3           | June 2027           | -                  |
+| 27.07    | Long Term Support                  | July 2027           | 10 years (minimum) |
+| 27.08    | Feature Rollup                     | August 2027         | -                  |
+| 27.09    | Feature Rollup                     | September 2027      | -                  |
+| 27.10    | Feature Rollup                     | October 2027        | -                  |
+| 27.11    | Feature Rollup                     | November 2027       | -                  |
+| 27.12    | Feature Rollup                     | December 2027       | -                  |
+| 28.01    | Feature Rollup                     | January 2028        | -                  |
+| 28.02    | Feature Rollup                     | February 2028       | -                  |
+| 28.03    | Feature Rollup                     | March 2028          | -                  |
+| 28.04    | Feature Rollup / LTS RC1           | April 2028          | -                  |
+| 28.05    | Feature Rollup / LTS RC2           | May 2028            | -                  |
+| 28.06    | Feature Rollup / LTS RC3           | June 2028           | -                  |
+| 28.07    | Long Term Support                  | July 2028           | 10 years (minimum) |
 
 ---
 
