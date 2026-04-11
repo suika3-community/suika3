@@ -34,4 +34,8 @@ Depends: ${misc:Depends}, ${shlibs:Depends},
          gstreamer1.0-x,
          fonts-noto-core
 Description: Portable 2D Game and Visual Novel Scripting Runtime
- This program can be used to develop 2D games and visual novels.
+ Suika3 is a portable 2D game and visual novel scripting runtime
+ designed for cross-platform deployment across desktop, mobile,
+ and legacy systems. It features a lightweight C89-based engine,
+ hybrid JIT/AOT scripting, and high portability across Unix-like
+ systems including Linux, BSD, and others.
