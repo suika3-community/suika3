@@ -857,10 +857,8 @@ jobs:
             windows/build/windows-vs2022-x64/Release/suika3.exe
             macos/build-macos/Suika3.dmg
             linux/suika3-x86_64.AppImage
-            android-apk/suika3-android.apk
-            ios-engine/suika3-ios.ipa
-            deb-trixie/suika3-trixie.deb
-            deb-noble/suika3-noble.deb
+            android-apk/*.apk
+            ios-engine/*.ipa
           body: |
             - This is an automated build from CI and is not an official release.
             - The ZIP archive contains: 
