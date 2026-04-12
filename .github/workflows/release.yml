@@ -841,9 +841,9 @@ jobs:
 
       - name: Make documents
         run: |
-          mv dist "Suika3-CI-$DATE-$SHORT_SHA"
-          7z a -tzip -mx=9 "Suika3-CI-$DATE-$SHORT_SHA.zip" "Suika3-CI-$DATE-$SHORT_SHA"
-          7z a -t7z -mx=9 "Suika3-CI-$DATE-$SHORT_SHA.7z" "Suika3-CI-$DATE-$SHORT_SHA"
+          mv dist Suika3
+          7z a -tzip -mx=9 Suika3.zip Suika3
+          7z a -t7z -mx=9 Suika3.7z Suika3
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -852,9 +852,10 @@ jobs:
           name: Suika3-CI-${{ env.DATE }}-${{ env.SHORT_SHA }}
           prerelease: true
           files: |
-            Suika3-CI-${{ env.DATE }}-${{ env.SHORT_SHA }}.zip
-            Suika3-CI-${{ env.DATE }}-${{ env.SHORT_SHA }}.7z
+            Suika3.zip
+            Suika3.7z
             windows/build/windows-vs2022-x64/Release/suika3.exe
+            dist/misc/windows/suika3-32.exe
             macos/build-macos/Suika3.dmg
             linux/suika3-x86_64.AppImage
             android-apk/*.apk
