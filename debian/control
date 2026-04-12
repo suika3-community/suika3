@@ -1,5 +1,5 @@
 Source: suika3
-Section: devel
+Section: games
 Priority: optional
 Maintainer: Awe Morris <awe@noctvm.io>
 Build-Depends: debhelper-compat (= 13),
@@ -33,9 +33,23 @@ Depends: ${misc:Depends}, ${shlibs:Depends},
          gstreamer1.0-plugins-good,
          gstreamer1.0-x,
          fonts-noto-core
-Description: Portable 2D Game and Visual Novel Scripting Runtime
- Suika3 is a portable 2D game and visual novel scripting runtime
- designed for cross-platform deployment across desktop, mobile,
- and legacy systems. It features a lightweight C89-based engine,
- hybrid JIT/AOT scripting, and high portability across Unix-like
- systems including Linux, BSD, and others.
+Description: Portable 2D game engine with a DSL for visual novels
+ Suika3 is a highly portable and high-performance 2D game scripting
+ runtime with a domain-specific language (DSL) for visual novels.
+ .
+ It is designed for cross-platform deployment across desktop systems,
+ mobile phones, single-board computers such as Raspberry Pi,
+ game consoles, and legacy UNIX systems with X11.
+ .
+ It features a lightweight engine written in C89, hybrid JIT/AOT
+ compilation for its scripting language, and high portability across
+ operating systems including Linux, BSD, Windows, macOS, iOS, Android,
+ HarmonyOS NEXT, Solaris, Haiku, and others, as well as WebAssembly.
+ .
+ The JIT compiler supports multiple architectures including x86,
+ x86_64, armv5-armv7, aarch64, riscv32, riscv64, mips, mips64,
+ ppc, and ppc64. It falls back to an interpreter on other architectures
+ such as sparc64 and s390x.
+ .
+ The AOT compiler enables deployment on JIT-restricted platforms
+ such as mobile app stores and game consoles.
