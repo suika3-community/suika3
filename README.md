@@ -90,14 +90,12 @@ Please refer to [build.md](docs/mkdocs-en/docs/build.md) for platform-specific i
 ### Binary Installation
 
 Binary Downloads:
-| OS                     | Link                                                                                                    |
-|------------------------|---------------------------------------------------------------------------------------------------------|
-| Full                   | [Full](https://github.com/awemorris/suika3/releases/latest/download/Suika3.zip)                         |
-| Windows                | [Full](https://github.com/awemorris/suika3/releases/latest/download/Suika3.zip) \| [EXE](https://github.com/awemorris/suika3/releases/latest/download/suika3.exe) |
-| macOS                  | [Full](https://github.com/awemorris/suika3/releases/latest/download/Suika3.zip) \| [DMG](https://github.com/awemorris/suika3/releases/latest/download/Suika3.dmg) |
-| Debian 13 amd64        | [Deb](https://github.com/awemorris/suika3/releases/latest/download/suika3-trixie.deb)                   |
-| Ubuntu 24.04 LTS amd64 | [Deb](https://github.com/awemorris/suika3/releases/latest/download/suika3-noble.deb)                    |
-| Other Linux amd64      | [AppImage x86_64](https://github.com/awemorris/suika3/releases/download/26.04.5/suika3-x86_64.AppImage) |
+| OS               | Link                                                                                                    |
+|------------------|---------------------------------------------------------------------------------------------------------|
+| Full             | [Full](https://github.com/awemorris/suika3/releases/latest/download/Suika3.zip)                         |
+| Windows          | [EXE](https://github.com/awemorris/suika3/releases/latest/download/suika3.exe)                          |
+| macOS            | [DMG](https://github.com/awemorris/suika3/releases/latest/download/Suika3.dmg)                          |
+| Linux amd64      | [AppImage x86_64](https://github.com/awemorris/suika3/releases/latest/download/suika3-x86_64.AppImage)  |
 
 **macOS:**
 ```
