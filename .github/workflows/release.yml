@@ -590,7 +590,7 @@ jobs:
         shell: bash
 
   zip:
-    needs: [build-windows-vs2022, build-windows-mingw-w64, build-linux, build-macos, build-wasm, build-ios, build-android, build-openharmony, build-unity, build-mkdocs, build-deb-debian]
+    needs: [build-windows-vs2022, build-windows-mingw-w64, build-linux, build-macos, build-wasm, build-ios, build-android, build-openharmony, build-unity, build-mkdocs]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
