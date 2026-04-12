@@ -566,29 +566,6 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-  build-deb-debian:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - name: debian-trixie
-            container: debian:trixie
-            distro: trixie
-            artifact: deb-debian-trixie
-
-          - name: ubuntu-noble
-            container: ubuntu:noble
-            distro: noble
-            artifact: deb-ubuntu-noble
-
-    container:
-      image: ${{ matrix.container }}
-
-    defaults:
-      run:
-        shell: bash
-
   zip:
     needs: [build-windows-vs2022, build-windows-mingw-w64, build-linux, build-macos, build-wasm, build-ios, build-android, build-openharmony, build-unity, build-mkdocs]
     runs-on: ubuntu-latest
