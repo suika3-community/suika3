@@ -24,7 +24,7 @@ In `system/plugin/testplugin/testplugin.ray`:
 ```
 func plugin_init_testplugin() {
     // Called when loaded.
-    Suika.print("Plugin is loaded.");
+    print("Plugin is loaded.");
 }
 
 // New tag.

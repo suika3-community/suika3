@@ -732,12 +732,12 @@ It can show the main dialogue or narration, and optionally display a character's
 | `voice`          | Yes       | The voice file.                                  |                                                  |
 | `voice-<locale>` | Yes       | The voice file. (localized)                      |                                                  |
 | `name`           | Yes       | The character's name to display in the name box. | If omitted, the name box will usually be hidden. |
-| `action`         | Yes       | For NVL mode.                                    |                                                  |
+| `action`         | Yes       | For NVL mode and manual show/hide.               |                                                  |
 | `space`          | Yes       | For NVL mode.                                    |                                                  |
 
 ### Localization
 
-For example, if the user OS environment is set to Japanese, `text1-ja` is preferred instead of `text1`.
+For example, if the user OS environment is set to Japanese, `text-ja` is preferred instead of `text`.
 
 | Suffix      | Language                                 |
 |-------------|------------------------------------------|
@@ -768,8 +768,8 @@ preferred. The same mechanism is applied to Spanish and French. Note
 that there is no fallback from Traditional Chinese to Simplified
 Chinese.
 
-For example, if the user locale is `en-AU`, the following priority is applied:
-* 1. text-en-au
+For example, if the user locale is `en-GB`, the following priority is applied:
+* 1. text-en-gb
 * 2. text-en
 * 3. text
 
@@ -804,7 +804,7 @@ You can use special parameters in the `text` tag.
 [text action="new"]
 
 # Show the message box.
-[text action="shoe"]
+[text action="show"]
 
 # Hide the message box.
 [text action="hide"]
@@ -880,6 +880,22 @@ In NVM mode, you can control text messages like this:
 [text action="clear"]
 [text text="Please clear the message box explicitly."]
 ```
+
+### Voice
+
+If the current language is `en-us`, a voice file will resolved in the following order:
+
+1. `voice-en-us` parameter
+2. `voice/en-us/` + `voice` parameter
+3. `voice-en` parameter
+4. `voice/en/` + `voice` parameter
+5. `voice` parameter
+
+If the current language is `ja`, a voice file will resolved in the following order:
+
+1. `voice-ja` parameter
+2. `voice/ja/` + `voice` parameter
+3. `voice` parameter
 
 ### Tips
 
