@@ -665,12 +665,12 @@ jobs:
           cp wasm/index.html dist/misc/wasm/
           cp resources/assets.arc dist/misc/wasm/
 
-      - name: Download iOS artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: ios
-          path: ios
-
+#     - name: Download iOS artifacts
+#       uses: actions/download-artifact@v4
+#       with:
+#         name: ios
+#         path: ios
+#
 #      - name: Download iOS ipa artifacts
 #        uses: actions/download-artifact@v4
 #        with:
