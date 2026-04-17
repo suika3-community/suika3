@@ -108,11 +108,22 @@ EN {
     id: 7;
     type: language;
     lang: en-us;
-    x: 1100;
+    x: 1050;
     y: 20;
     image-idle:    system/config/config-lang-en-idle.png;
     image-hover:   system/config/config-lang-en-hover.png;
     image-active:  system/config/config-lang-en-active.png;
+}
+
+ZH {
+    id: 8;
+    type: language;
+    lang: zh-cn;
+    x: 1100;
+    y: 20;
+    image-idle:    system/config/config-lang-zh-idle.png;
+    image-hover:   system/config/config-lang-zh-hover.png;
+    image-active:  system/config/config-lang-zh-active.png;
 }
 
 JP {

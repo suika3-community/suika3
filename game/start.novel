@@ -67,18 +67,21 @@
 [text name="Xiaoling" voice="voice/001.ogg"
   text="Would you like to go to a cafe, Mido?"
   text-en="Would you like to go to a cafe, Mido?"
+  text-zh-cn="小美，想不想去咖啡店坐坐？"
   text-ja="カフェに行かない？みど"
 ]
 
 [text name="Midori" voice="voice/002.ogg"
   text="Sure! I'd love some fruitcake."
   text-en="Sure! I'd love some fruitcake."
+  text-zh-cn="好呀！我想吃水果蛋糕呢"
   text-ja="いいね！フルーツケーキが食べたいな"
 ]
 
 [text name="Xiaoling" voice="voice/003.ogg"
   text="Where should we go?"
   text-en="Where should we go?"
+  text-zh-cn="咱们去哪家好呢？"
   text-ja="どこのお店にする？"
 ]
 
@@ -88,13 +91,19 @@
 
 [choose name="result"
   text1="Hoshino Coffee"
-  text1-en="Hoshino Coffee"
-  text1-ja="星野珈琲"
   text2="Starbucks"
-  text2-en="Starbucks"
-  text2-ja="スターバックス"
   text3="Segafredo"
+
+  text1-en="Hoshino Coffee"
+  text2-en="Starbucks"
   text3-en="Segafredo"
+
+  text1-zh-cn="星乃咖啡店"
+  text2-zh-cn="星巴克"
+  text3-zh-cn="世家兰铎"
+
+  text1-ja="星野珈琲"
+  text2-ja="スターバックス"
   text3-ja="セガフレード"
 ]
 
@@ -109,6 +118,7 @@
 [text name="Midori" voice="voice/004.ogg"
   text="Let's go to the station, Xiao!"
   text-en="Let's go to the station, Xiao!"
+  text-zh-cn="玲玲，我们去车站那边那家店吧！"
   text-ja="駅のお店に行こうよ、シャオ！"
 ]
 
@@ -121,6 +131,7 @@
 [text name="Xiaoling" voice="voice/005.ogg"
   text="Okay, I'll grab my bag. Just a moment, Mido."
   text-en="Okay, I'll grab my bag. Just a moment, Mido."
+  text-zh-cn="好的，我去拿个包，等我一下哦，小美"
   text-ja="いいよ、じゃあバッグを取ってくるね。ちょっと待ってて、みど"
 ]
 
