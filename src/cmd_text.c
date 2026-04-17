@@ -300,7 +300,6 @@ static bool frame_sysbtn(void);
 
 /* blit drawing processing */
 static void blit_frame(void);
-static bool blit_pending_message(void);
 static bool is_end_of_msg(void);
 static void blit_msgbox(void);
 static void inline_wait_hook(float wait_time);
@@ -485,6 +484,9 @@ init(
 	/* Apply inline variable references. */
 	s3_evaluate_tag();
 
+	/* Initialize flags */
+	init_flags_and_vars();
+
 	/* If page mode */
 	if (!init_special_action(&exit_special)) {
 		return false;
@@ -492,9 +494,6 @@ init(
 		if (exit_special)
 			return true;
 	}
-
-	/* Initialize flags */
-	init_flags_and_vars();
 
 	/* Initialize if in auto mode */
 	init_auto_mode();
@@ -570,109 +569,94 @@ static bool
 init_special_action(bool *exit)
 {
 	const char *action;
-	const char *msg;
+	const char *space;
 
 	action = s3_get_tag_arg_string("action", true, NULL);
+	space = s3_get_tag_arg_string("space", true, NULL);
 
-	/* Default: continue a normal execution. */
-	*exit = false;
-
-	if (s3_is_page_mode()) {
-		/* If no action specified, or "flush" action is specified. */
-		if (action == NULL || strcmp(action, "flush") == 0) {
-			/* Get the text. */
-			msg = get_localized_text();
-			if (msg == NULL)
-				return false;
-
-			/* Append the message. */
-			if (!s3_append_buffered_message(msg))
-				return false;
-
-			/* Increment the line number. */
-			s3_inc_page_line();
-
-			return true;
+	/* If no action specified. */
+	if (action == NULL) {
+		if (!s3_is_page_top() && !gui_sys_flag) {
+			if (space == NULL) {
+				/* Spacing is not specified, do line feed. */
+				if (!conf_msgbox_font_tategaki) {
+					pen_y += conf_msgbox_margin_line;
+					pen_x = conf_msgbox_margin_left;
+				}
+				else {
+					pen_x -= conf_msgbox_margin_line;
+					pen_y = conf_msgbox_margin_top;
+				}
+			} else {
+				/* Do spacing. */
+				int space_amount = s3_get_string_width(
+					conf_msgbox_font_select,
+					conf_msgbox_font_size,
+					space);
+				if (!conf_msgbox_font_tategaki)
+					pen_x += space_amount;
+				else
+					pen_x -= space_amount;
+			}
 		}
+		s3_inc_page_line();
 
-		/* If "append" action is specified.*/
-		if (strcmp(action, "append") == 0) {
-			/* Get the text. */
-			msg = get_localized_text();
-			if (msg == NULL)
-				return false;
-
-			/* Append the message. */
-			if (!s3_append_buffered_message(msg))
-				return false;
-
-			/* Increment the line number. */
-			s3_inc_page_line();
-
-			/* Exit. */
-			*exit = false;
-			return true;
-		}
-
-		/* If "new-page" action specified. */
-		if (strcmp(action, "new-page") == 0) {
-			/* Clear the message buffer. */
-			s3_clear_buffered_message();
-
-			/* Reset the line number. */
-			s3_reset_page_line();
-
-			/* Clear the message box and the name box. */
-			clear_msgbox();
-			s3_fill_namebox();
-
-			/* Exit. */
-			*exit = true;
-			return true;
-		}
-
+		/* Continue execution. */
 		*exit = false;
-
-		s3_log_tag_error(S3_TR("Unknown action \"%s\" is specified on the page mode."), action);
-
 		return true;
-	} else {
-		if (action != NULL && strcmp(action, "clear") == 0) {
-			/* Clear the message box and the name box. */
-			clear_msgbox();
-			s3_fill_namebox();
-
-			/* Exit. */
-			*exit = true;
-			return true;
-		}
-
-		if (action != NULL && strcmp(action, "hide") == 0) {
-			s3_show_msgbox(false);
-
-			/* Exit. */
-			*exit = true;
-			return true;
-		}
-	
-		if (action != NULL && strcmp(action, "show") == 0) {
-			s3_show_msgbox(false);
-
-			/* Exit. */
-			*exit = true;
-			return true;
-		}
 	}
 
-	/* No action. */
-	return true;
+	if (strcmp(action, "clear") == 0) {
+		/* Clear the message box and the name box. */
+		clear_msgbox();
+		s3_fill_namebox();
+		s3_reset_page_line();
+
+		/* Exit. */
+		*exit = true;
+		return true;
+	}
+
+	if (strcmp(action, "new") == 0) {
+		/* Clear the message box and the name box. */
+		clear_msgbox();
+		s3_fill_namebox();
+		s3_reset_page_line();
+
+		/* Show the message box. */
+		s3_show_msgbox(false);
+
+		/* Exit. */
+		*exit = true;
+		return true;
+	}
+
+	if (strcmp(action, "hide") == 0) {
+		/* Show the message box. */
+		s3_show_msgbox(false);
+
+		/* Exit. */
+		*exit = true;
+		return true;
+	}
+	
+	if (strcmp(action, "show") == 0) {
+		/* Hide the message box. */
+		s3_show_msgbox(false);
+
+		/* Exit. */
+		*exit = true;
+		return true;
+	}
+
+	s3_log_tag_error(S3_TR("Unknown action \"%s\" is specified on the page mode."), action);
+	*exit = true;
+	return false;
 }
 
 static void
 clear_msgbox(void)
 {
-	int msgbox_x, msgbox_y, msgbox_w, msgbox_h;
-
 	/* Clear the message box image. */
 	s3_fill_msgbox();
 
@@ -930,13 +914,7 @@ init_msg_top(void)
 	}
 
 	/* If we are in the page mode. */
-	if (s3_is_page_mode()) {
-		/* Page mode: Use the buffered message. */
-		msg = s3_get_buffered_message();
-	} else {
-		/* Normal mode: Get the argument of this tag. */
-		msg = get_localized_text();
-	}
+	msg = get_localized_text();
 
 	/* Register message history for history screen */
 	if (!register_message_for_history(msg))
@@ -978,45 +956,20 @@ register_message_for_history(
 	assert(msg != NULL);
 	assert(!gui_sys_flag);
 
-	/* Register message history */
-	if (name_top != NULL) {
-		/* Do not play beep sound in history screen */
-		voice = voice_file;
-		if (voice != NULL && voice[0] == '@')
-			voice = NULL;
+	/* Do not play beep sound in history screen */
+	voice = voice_file;
+	if (voice != NULL && voice[0] == '@')
+		voice = NULL;
 
-		if (!is_continue_mode || s3_is_page_mode()) {
-			/* Register serif for history screen */
-			if (!s3_add_history(name_top,
-					    msg,
-					    voice,
-					    body_color,
-					    body_outline_color,
-					    name_color,
-					    name_outline_color))
-				return false;
-		} else {
-			/* Register only the message part of the serif for history screen (append) */
-			if (!s3_append_buffered_message(msg))
-				return false;
-		}
-	} else {
-		if (!is_continue_mode || s3_is_page_mode()) {
-			/* Register message for history screen */
-			if (!s3_add_history(NULL,
-					    msg,
-					    NULL,
-					    body_color,
-					    body_outline_color,
-					    0,
-					    0))
-				return false;
-		} else {
-			/* Register message for history screen (append) */
-			if (!s3_append_buffered_message(msg))
-				return false;
-		}
-	}
+	/* Register serif for history screen */
+	if (!s3_add_history(name_top,
+			    msg,
+			    voice,
+			    body_color,
+			    body_outline_color,
+			    name_color,
+			    name_outline_color))
+		return false;
 
 	/* Success */
 	return true;
@@ -1030,31 +983,15 @@ init_msgbox(void)
 	if (gui_sys_flag)
 		return true;
 
-	/* Get the rectangle of the message box */
-	s3_get_msgbox_rect(&msgbox_x, &msgbox_y, &msgbox_w, &msgbox_h);
-
-	/* If not a continuation line, initialize the message drawing position */
-	if (!is_continue_mode) {
-		if (!conf_msgbox_font_tategaki) {
-			pen_x = conf_msgbox_margin_left;
-			pen_y = conf_msgbox_margin_top;
-		} else {
-			pen_x = msgbox_w - conf_msgbox_margin_right - conf_msgbox_font_size;
-			pen_y = conf_msgbox_margin_top;
-		}
+	/* If not page mode. */
+	if (!s3_is_page_mode()) {
+		/* Fill the msgbox layer by the msgbox image. */
+		clear_msgbox();
 	}
 
 	/* Save the pen position for overlay painting */
 	orig_pen_x = pen_x;
 	orig_pen_y = pen_y;
-
-	/* If not a continuation line, clear the message layer */
-	if (!is_continue_mode) {
-		s3_fill_msgbox();
-	} else {
-		if (!blit_pending_message())
-			return false;
-	}
 
 	/* Make the message layer visible */
 	s3_show_msgbox(true);
@@ -1622,81 +1559,6 @@ blit_frame(void)
 		 */
 		set_click();
 	}
-}
-
-static bool
-blit_pending_message(void)
-{
-	struct s3_drawmsg *context;
-	const char *text;
-	s3_pixel_t save_body_color, save_body_outline_color;
-	int len;
-
-	text = s3_get_buffered_message();
-	if (text == NULL)
-		return true;
-
-	clear_msgbox();
-
-	orig_pen_x = pen_x;
-	orig_pen_y = pen_y;
-
-	save_body_color = body_color;
-	save_body_outline_color = body_outline_color;
-	body_color = s3_make_pixel(0xff,
-				   (uint32_t)conf_msgbox_dim_r,
-				   (uint32_t)conf_msgbox_dim_g,
-				   (uint32_t)conf_msgbox_dim_b);
-	body_outline_color = s3_make_pixel(0xff,
-					   (uint32_t)conf_msgbox_dim_outline_r,
-					   (uint32_t)conf_msgbox_dim_outline_g,
-					   (uint32_t)conf_msgbox_dim_outline_b);
-
-	context = s3_create_drawmsg(
-		s3_get_layer_image(S3_LAYER_MSGBOX),
-		text,
-		conf_msgbox_font_select,
-		conf_msgbox_font_size,
-		conf_msgbox_font_size,
-		conf_msgbox_font_ruby,
-		conf_msgbox_font_outline_width,
-		pen_x,
-		pen_y,
-		msgbox_w,
-		msgbox_h,
-		conf_msgbox_margin_left,
-		conf_msgbox_margin_right,
-		conf_msgbox_margin_top,
-		conf_msgbox_margin_bottom,
-		conf_msgbox_margin_line,
-		conf_msgbox_margin_char,
-		body_color,
-		body_outline_color,
-		0,	/* bg_color */
-		false,	/* fill_bg */
-		conf_msgbox_dim_enable,
-		false,	/* ignore_linefeed */
-		false,	/* ignore_font */
-		false,	/* ignore_outline */
-		false,	/* ignore_color */
-		false,	/* ignore_size */
-		false,	/* ignore_position */
-		false,	/* ignore_ruby */
-		false,	/* ignore_wait */
-		inline_wait_hook,
-		conf_msgbox_font_tategaki);
-	if (context == NULL)
-		return false;
-	len = s3_count_drawmsg_chars(context, NULL);
-	s3_draw_message(context, len);
-	s3_get_drawmsg_pen_position(context, &pen_x, &pen_y);
-	s3_destroy_drawmsg(context);
-
-	body_color = save_body_color;
-	body_outline_color = save_body_outline_color;
-	avoid_dimming = true;
-
-	return true;
 }
 
 /* Whether the main text has finished drawing */
@@ -2485,7 +2347,7 @@ cleanup(void)
 	 * When moving to the next command, set the active message to none
 	 *  - Keep it active when transitioning to system GUI
 	 */
-	if (!need_sysmenu_mode)
+	if (!need_sysmenu_mode&& s3_is_message_active())
 		s3_clear_message_active();
 
 	/* Mark as seen */
@@ -2506,10 +2368,6 @@ cleanup(void)
 			voice_file = NULL;
 		}
 	}
-
-	/* If in page mode */
-	if (s3_is_page_mode())
-		s3_clear_buffered_message();
 
 	/* Move to the next command */
 	if (!need_sysmenu_mode && !need_save_mode && !need_load_mode && !need_history_mode && !need_config_mode) {
