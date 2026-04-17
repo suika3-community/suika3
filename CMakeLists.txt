@@ -469,6 +469,9 @@ else()
   set(CMAKE_OBJC_FLAGS_RELEASE "${CMAKE_OBJC_FLAGS_RELEASE} -O2 -g -DNDEBUG")
 endif()
 
+# Static link of MSVCP140.dll
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
 # ---
 
 #
@@ -747,7 +750,6 @@ target_link_libraries(suika3 PRIVATE
 if(SUIKA_TARGET_WINDOWS)
   if(MSVC)
     target_link_options(suika3 PRIVATE /SUBSYSTEM:WINDOWS)
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
   else()
     target_link_options(suika3 PRIVATE -mwindows -static -Wl,-u,wWinMain -Wl,-u,_wWinMain@16)
   endif()
