@@ -567,7 +567,6 @@ jobs:
           retention-days: 7
 
   zip:
-#    needs: [build-windows-vs2022, build-windows-mingw-w64, build-linux, build-macos, build-wasm, build-ios, build-android, build-openharmony, build-unity, build-mkdocs]
     needs: [build-windows-vs2022, build-windows-mingw-w64, build-linux, build-wasm, build-android, build-openharmony, build-unity, build-mkdocs]
     runs-on: ubuntu-latest
     steps:
@@ -579,11 +578,11 @@ jobs:
           mkdir dist
           mkdir dist/misc
           mkdir dist/misc/windows
-#          mkdir dist/misc/macos
-#          mkdir dist/misc/macos/project
+#         mkdir dist/misc/macos
+#         mkdir dist/misc/macos/project
           mkdir dist/misc/linux
           mkdir dist/misc/wasm
-#          mkdir dist/misc/ios
+#         mkdir dist/misc/ios
           mkdir dist/misc/android
           mkdir dist/misc/openharmony
           mkdir dist/misc/unity
