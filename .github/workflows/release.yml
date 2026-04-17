@@ -578,11 +578,11 @@ jobs:
           mkdir dist
           mkdir dist/misc
           mkdir dist/misc/windows
-#         mkdir dist/misc/macos
-#         mkdir dist/misc/macos/project
+          #mkdir dist/misc/macos
+          #mkdir dist/misc/macos/project
           mkdir dist/misc/linux
           mkdir dist/misc/wasm
-#         mkdir dist/misc/ios
+          #mkdir dist/misc/ios
           mkdir dist/misc/android
           mkdir dist/misc/openharmony
           mkdir dist/misc/unity
