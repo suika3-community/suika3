@@ -762,22 +762,22 @@ experience for the player.
 
 The official recommended binary is the 64-bit version.
 
-| OS      | Version                     | Patch | CPU    | Runtimes                                                | 64-bit Binary | Direct3D |
-|---------|-----------------------------|-------|--------|---------------------------------------------------------|---------------|----------|
-| Windows | 11                          |       | x64    | (None required)                                         | ✅            | 12.0     |
-| Windows | 11                          |       | arm64  | (None required)                                         | ✅            | 12.0     |
-| Windows | 10                          |       | x64    | (None required)                                         | ✅            | 12.0     |
-| Windows | 10                          |       | arm64  | (None required)                                         | ✅            | 12.0     |
-| Windows | 8.1                         |       | x64    | (None required)                                         | ✅            | 11.0     |
-| Windows | 8                           |       | x64    | VC++ Redist 2015                                        | ✅            | 11.0     |
-| Windows | 7                           | SP1   | x64    | VC++ Redist 2015                                        | ✅            | 11.0     |
-| Windows | 7                           |       | x64    | VC++ Redist 2015, UCRT Update (KB2999226)               | ✅            | 11.0     |
-| Windows | Vista                       | SP2   | x64    | VC++ Redist 2015, Platform Update                       | ✅            | 11.0     |
-| Windows | Vista                       | SP1   | x64    | VC++ Redist 2025, DirectX End-User Runtimes (June 2010) | ✅            | 9.0      |
-| Windows | Vista                       |       | x64    | (No UCRT)                                               | ❌            | -        |
-| Windows | XP Professional x64 Edition | SP2   | x64    | (No UCRT)                                               | ❌            | -        |
-| Windows | XP Professional x64 Edition | SP1   | x64    | (No UCRT)                                               | ❌            | -        |
-| Windows | XP Professional x64 Edition |       | x64    | (No UCRT)                                               | ❌            | -        |
+| OS      | Version                     | Patch | CPU    | Runtimes                              | 64-bit Binary | Direct3D |
+|---------|-----------------------------|-------|--------|---------------------------------------|---------------|----------|
+| Windows | 11                          |       | x64    | (None required)                       | ✅            | 12.0     |
+| Windows | 11                          |       | arm64  | (None required)                       | ✅            | 12.0     |
+| Windows | 10                          |       | x64    | (None required)                       | ✅            | 12.0     |
+| Windows | 10                          |       | arm64  | (None required)                       | ✅            | 12.0     |
+| Windows | 8.1                         |       | x64    | (None required)                       | ✅            | 11.0     |
+| Windows | 8                           |       | x64    | (None required)                       | ✅            | 11.0     |
+| Windows | 7                           | SP1   | x64    | (None required)                       | ✅            | 11.0     |
+| Windows | 7                           |       | x64    | UCRT Update (KB2999226)               | ✅            | 11.0     |
+| Windows | Vista                       | SP2   | x64    | Platform Update                       | ✅            | 11.0     |
+| Windows | Vista                       | SP1   | x64    | DirectX End-User Runtimes (June 2010) | ✅            | 9.0      |
+| Windows | Vista                       |       | x64    | DirectX End-User Runtimes (June 2010) | ✅            | 9.0      |
+| Windows | XP Professional x64 Edition | SP2   | x64    | DirectX End-User Runtimes (June 2010) | ✅            | 9.0      |
+| Windows | XP Professional x64 Edition | SP1   | x64    | DirectX End-User Runtimes (June 2010) | ✅            | 9.0      |
+| Windows | XP Professional x64 Edition |       | x64    | DirectX End-User Runtimes (June 2010) | ✅            | 9.0      |
 
 ### 32-bit Windows Compatibility List
 
@@ -795,28 +795,28 @@ supporting legacy systems through older runtimes.
 | Windows | 8.1                         |       | x64    | (None required)                        | ✅            | 11.0                   |
 | Windows | 8                           |       | x86    | (None required)                        | ✅            | 11.0                   |
 | Windows | 8                           |       | x64    | (None required)                        | ✅            | 11.0                   |
-| Windows | 7                           |       | x86    | (None required)                        | ✅            | 11.0                   |
-| Windows | 7                           |       | x64    | (None required)                        | ✅            | 11.0                   |
 | Windows | 7                           | SP1   | x86    | (None required)                        | ✅            | 11.0                   |
+| Windows | 7                           |       | x86    | (None required)                        | ✅            | 11.0                   |
 | Windows | 7                           | SP1   | x64    | (None required)                        | ✅            | 11.0                   |
-| Windows | Vista                       |       | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0                    |
-| Windows | Vista                       |       | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0                    |
-| Windows | Vista                       | SP1   | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0                    |
-| Windows | Vista                       | SP1   | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0                    |
+| Windows | 7                           |       | x64    | (None required)                        | ✅            | 11.0                   |
 | Windows | Vista                       | SP2   | x86    | DirectX 11 Platform Update             | ✅            | 11.0                   |
+| Windows | Vista                       | SP1   | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0                    |
+| Windows | Vista                       |       | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0                    |
 | Windows | Vista                       | SP2   | x64    | DirectX 11 Platform Update             | ✅            | 11.0                   |
-| Windows | XP                          |       | x86    | DirectX 9.0b Runtime                   | ✅            | 9.0                    |
-| Windows | XP                          | SP1   | x86    | DirectX 9.0b Runtime                   | ✅            | 9.0                    |
-| Windows | XP                          | SP2   | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0                    |
+| Windows | Vista                       | SP1   | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0                    |
+| Windows | Vista                       |       | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0                    |
 | Windows | XP                          | SP3   | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0                    |
-| Windows | XP Professional x64 Edition |       | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0                    |
-| Windows | XP Professional x64 Edition | SP1   | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0                    |
+| Windows | XP                          | SP2   | x86    |                                        | -->           | Need VS2008            |
+| Windows | XP                          | SP1   | x86    |                                        | -->           | Need VS2008            |
+| Windows | XP                          |       | x86    | DirectX 9.0b Runtime                   | ✅            | 9.0                    |
 | Windows | XP Professional x64 Edition | SP2   | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0                    |
-| Windows | 2000                        |       | x86    | DirectX End-User Runtimes (Dec 2006)   | ✅            | 9.0                    |
-| Windows | 2000                        | SP1   | x86    | DirectX End-User Runtimes (Dec 2006)   | ✅            | 9.0                    |
-| Windows | 2000                        | SP2   | x86    | DirectX End-User Runtimes (Dec 2006)   | ✅            | 9.0                    |
-| Windows | 2000                        | SP3   | x86    | DirectX End-User Runtimes (Dec 2006)   | ✅            | 9.0                    |
-| Windows | 2000                        | SP4   | x86    | DirectX End-User Runtimes (Dec 2006)   | ✅            | 9.0                    |
+| Windows | XP Professional x64 Edition | SP1   | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0                    |
+| Windows | XP Professional x64 Edition |       | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0                    |
+| Windows | 2000                        | SP4   | x86    | DirectX End-User Runtimes (June 2010)  | -->           | Need VS2008            |
+| Windows | 2000                        | SP3   | x86    | DirectX End-User Runtimes (June 2010)  | -->           | Need VS2008            |
+| Windows | 2000                        | SP2   | x86    | DirectX End-User Runtimes (June 2010)  | -->           | Need VS2008            |
+| Windows | 2000                        | SP1   | x86    | DirectX End-User Runtimes (June 2010)  | -->           | Need VS2008            |
+| Windows | 2000                        |       | x86    | DirectX End-User Runtimes (June 2010)  | -->           | Need VS2008            |
 | Windows | Me                          |       | x86    |                                        | -->           | Need VC++ 6.0          |
 | Windows | 98                          |       | x86    |                                        | -->           | Need VC++ 6.0          |
 | Windows | 95                          |       | x86    |                                        | -->           | Need VC++ 6.0          |
