@@ -217,7 +217,7 @@ struct gui_button {
 	int text_x;
 	int text_y;
 
-	/* TYPE_PREVIEW */
+	/* TYPE_PREVIEW/TYPE_SAVE/TYPE_LOAD */
 	int margin_left;
 	int margin_top;
 	int margin_right;
@@ -2508,10 +2508,10 @@ draw_save_text_item(
 		y,
 		b->width,
 		b->height,
-		x,		/* left_margin */
-		0,		/* right_margin */
-		0,		/* top_margin */
-		0,		/* bottom_margin */
+		x,			/* left_margin */
+		b->margin_right,	/* right_margin */
+		0,			/* top_margin */
+		b->margin_bottom,	/* bottom_margin */
 		multiline ? cfg_margin_line : 0,
 		cfg_margin_char,
 		color,
@@ -2858,11 +2858,11 @@ draw_history_name_item(
 		pen_y,
 		b->width,	/* area_width */
 		b->height,	/* area_height */
-		0,		/* left_margin */
-		0,		/* right_margin */
-		0,		/* top_margin */
-		0,		/* bottom_margin */
-		0,		/* line margin */
+		0,			/* left_margin */
+		b->margin_right,	/* right_margin */
+		0,			/* top_margin */
+		b->margin_bottom,	/* bottom_margin */
+		0,			/* line margin */
 		conf_gui_history_name_margin_char,
 		color,
 		outline_color,
@@ -2949,10 +2949,10 @@ draw_history_text_item(
 		pen_y,
 		b->width,	/* area_width */
 		b->height,	/* area_height */
-		margin_left,	/* left_margin */
-		0,		/* right_margin */
-		margin_top,	/* top_margin */
-		0,		/* bottom_margin */
+		margin_left,		/* left_margin */
+		b->margin_right,	/* right_margin */
+		margin_top,		/* top_margin */
+		b->margin_bottom,	/* bottom_margin */
 		conf_gui_history_text_margin_line,
 		conf_gui_history_text_margin_char,
 		color,
@@ -3481,10 +3481,10 @@ draw_var_value(
 		0,		/* pen_y */
 		b->width,
 		b->height,
-		0,		/* left_margin */
-		0,		/* right_margin */
-		0,		/* top_margin */
-		0,		/* bottom_margin */
+		b->margin_left,		/* left_margin */
+		b->margin_right,	/* right_margin */
+		b->margin_top,		/* top_margin */
+		b->margin_bottom,	/* bottom_margin */
 		0,		/* line_margin */
 		conf_msgbox_margin_char,
 		color,

@@ -36,7 +36,7 @@ ITEM1 {
     type: save;
     index: 0;
     x: 39;
-    y: 99;
+    y: 98;
     image-idle: system/save/save-item-idle.png;
     image-hover: system/save/save-item-hover.png;
 
@@ -50,6 +50,8 @@ ITEM1 {
     chapter-y: 48;
     msg-x: 260;
     msg-y: 96;
+    margin-right: 10;
+    margin-bottom: 10;
 }
 
 ITEM2 {
@@ -57,7 +59,7 @@ ITEM2 {
     type: save;
     index: 1;
     x: 658;
-    y: 99;
+    y: 98;
     image-idle: system/save/save-item-idle.png;
     image-hover: system/save/save-item-hover.png;
 
@@ -71,6 +73,8 @@ ITEM2 {
     chapter-y: 48;
     msg-x: 260;
     msg-y: 96;
+    margin-right: 10;
+    margin-bottom: 10;
 }
 
 ITEM3 {
@@ -92,6 +96,8 @@ ITEM3 {
     chapter-y: 48;
     msg-x: 260;
     msg-y: 96;
+    margin-right: 10;
+    margin-bottom: 10;
 }
 
 ITEM4 {
@@ -113,6 +119,8 @@ ITEM4 {
     chapter-y: 48;
     msg-x: 260;
     msg-y: 96;
+    margin-right: 10;
+    margin-bottom: 10;
 }
 
 PAGE1 {

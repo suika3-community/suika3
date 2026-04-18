@@ -531,6 +531,7 @@ static bool do_word_wrapping(struct s3_drawmsg *context);
 static int get_en_word_width(struct s3_drawmsg *context);
 static uint32_t convert_tategaki_char(uint32_t wc);
 static bool is_tategaki_punctuation(uint32_t wc);
+static bool process_bottom_space(struct s3_drawmsg *context, int glyph_width, int glyph_height);
 static bool process_lf(struct s3_drawmsg *context, uint32_t c, int glyph_width, int glyph_height, uint32_t c_next, int next_glyph_width, int next_glyph_height);
 static bool is_gyomatsu_kinsoku(uint32_t c);
 static bool is_gyoto_kinsoku(uint32_t c);
@@ -836,6 +837,10 @@ s3_draw_message(
 		next_glyph_width = s3_get_glyph_width(context->font, context->font_size, wc_next);
 		next_glyph_height = s3_get_glyph_height(context->font, context->font_size, wc_next);
 
+		/* Check for bottom space. */
+		if (!process_bottom_space(context, glyph_width, glyph_height))
+			return i;
+
 		/* If the right space is not enough, do a line feed. */
 		if (!process_lf(context, wc, glyph_width, glyph_height, wc_next, next_glyph_width, next_glyph_height))
 			return i;
@@ -944,8 +949,35 @@ static int get_en_word_width(struct s3_drawmsg *context)
 	return width;
 }
 
+/* Check for the bottom space. */
+static bool
+process_bottom_space(
+	struct s3_drawmsg *context,
+	int glyph_width,
+	int glyph_height)
+{
+	if (!context->use_tategaki) {
+		/* If the bottom space is not enough. */
+		if (context->pen_y + glyph_height >= context->area_height - context->bottom_margin)
+			return false;
+	} else {
+		/* If the left space is not enough. */
+		if (context->pen_x - glyph_width < context->left_margin)
+			return false;
+	}
+
+	return true;
+}
+
 /* Do line feed if the rigth space is not enough. */
-static bool process_lf(struct s3_drawmsg *context, uint32_t c, int glyph_width, int glyph_height, uint32_t c_next, int next_glyph_width, int next_glyph_height)
+static bool process_lf(
+	struct s3_drawmsg *context,
+	uint32_t c,
+	int glyph_width,
+	int glyph_height,
+	uint32_t c_next,
+	int next_glyph_width,
+	int next_glyph_height)
 {
 	bool line_top, gyoto_second;
 

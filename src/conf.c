@@ -552,7 +552,7 @@ static struct rule {
 	/* Game Info */
 	{'s',	"game.title.en",		&conf_game_title_en,			MUST,		NOSAVE,	GLOBAL},
 	{'s',	"game.title.ja",		&conf_game_title_ja,			MUST,		NOSAVE,	GLOBAL},
-	{'b',	"game.novel",			&conf_game_novel,			MUST,		SAVE,	GLOBAL},
+	{'b',	"game.novel",			&conf_game_novel,			MUST,		SAVE,	LOCAL},
 	{'s',	"game.locale",			&conf_game_locale,			OPTIONAL,	SAVE,	GLOBAL},
 
 	/* Font */
