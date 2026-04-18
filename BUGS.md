@@ -294,3 +294,44 @@ Files modified:
 ### Commits
 
 - 3fa47574eb076724a968b1f35481ecdf8756ada3
+
+---
+
+## Load causes a crash in NVL mode
+
+* Report Details
+    * ID: BUG-20260419-002
+    * Status: Resolved
+    * Component: Suika3
+    * Severity: high
+    * Priority: high
+    * Reproducibility: always
+    * First Found In: 81ddb990151c3b20828598eb06df9aae5d1a04d3
+    * Fixed In: 288e659b1e07a5374a21fdb0bc16ee4cdc229d97
+    * Reported Date: 02:00 19 April 2026
+    * Fixed Date: 04:20 19 April 2026
+    * Detection: found in a testing for NVL
+    * Root Cause Type: Lack of boundary condition
+    * OS: All
+    * CPU: All
+
+### Report
+
+Save in NVL mode, restart Suika3, then load.
+This will cause a crash.
+
+### Analysis
+
+In `s3_append_history()`, `last_history_top` may be `-1` after a restart.
+In this situation, `history[last_history_top]` may be an invalid access.
+
+### Patch
+
+`s3_append_history()` has been fixed.
+
+Files modified:
+- src/history.c
+
+### Commits
+
+- 288e659b1e07a5374a21fdb0bc16ee4cdc229d97
