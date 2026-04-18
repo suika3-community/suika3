@@ -19,6 +19,13 @@ jobs:
       - name: Install flex & bison (Chocolatey)
         run: choco install -y winflexbison3
 
+      - name: Install Windows XP Toolset
+        shell: powershell
+        run: |
+          Start-Process "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" -ArgumentList `
+            "modify", "--installPath", "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise", `
+            "--add", "Microsoft.VisualStudio.Component.WinXP.v141", "--passive", "--norestart" -Wait
+
       - name: Configure (x64)
         run: >
           cmake --preset windows-vs2022-x64
