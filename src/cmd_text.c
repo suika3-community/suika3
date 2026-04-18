@@ -1826,12 +1826,16 @@ set_click(void)
 
 		/* Set display position */
 		if (conf_click_move) {
-			int cur_pen_x, cur_pen_y;
-			s3_set_click_index(0);
-			s3_get_click_rect(&click_x, &click_y, &click_w, &click_h);
-			s3_get_drawmsg_pen_position(msgbox_context, &cur_pen_x, &cur_pen_y);
-			s3_set_click_position(cur_pen_x + conf_msgbox_x,
-					      cur_pen_y + conf_msgbox_y);
+			if (!gui_sys_flag) {
+				int cur_pen_x, cur_pen_y;
+				s3_set_click_index(0);
+				s3_get_click_rect(&click_x, &click_y, &click_w, &click_h);
+				s3_get_drawmsg_pen_position(msgbox_context, &cur_pen_x, &cur_pen_y);
+				s3_set_click_position(cur_pen_x + conf_msgbox_x,
+						      cur_pen_y + conf_msgbox_y);
+			} else {
+				s3_set_click_position(pen_x, pen_y);
+			}
 		} else {
 			s3_set_click_position(conf_click_x, conf_click_y);
 		}
