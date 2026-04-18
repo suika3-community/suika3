@@ -100,13 +100,42 @@ Binary Downloads:
 **macOS:**
 ```
 brew tap awemorris/suika3
-brew install suika3
+0-9brew install suika3
 ```
 
 **FreeBSD:**
 ```
 cd /usr/ports/games/suika3 && make install clean
 ```
+
+### VS Code Integration
+
+There is an awsome VS Code extension by `@lalalll-lalalll` to support
+syntax highlighting for Suika3.
+
+Check it out: [NovelML-Highlighter](https://github.com/lalalll-lalalll/NovelML-Highlighter)
+
+To install this extension, visit the repository and download the
+.vsix file from the [Releases page](https://github.com/lalalll-lalalll/NovelML-Highlighter/releases)
+and install it by the following steps.
+
+**Step 1**:
+
+Open `EXTENSIONS` tab.
+
+<img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/highlighter-1.png" alt="Install highlighter 1" width="320" hspace="20">
+
+**Step 2**:
+
+Click "Install from VSIX..." from the "..." (Views and More Actions) menu, and select the downloaded file.
+
+<img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/highlighter-2.png" alt="Install highlighter 1" width="320" hspace="20">
+
+**What you get**:
+
+Now you have a beautiful development environment!
+
+<img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/highlighter-3.png" alt="Install highlighter 1" width="320" hspace="20">
 
 ---
 
