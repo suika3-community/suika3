@@ -279,7 +279,6 @@ See [Quality Assurance](#quality-assurance) for the details.
 
 **Remaining Tasks:**
 - Website Update
-- Longer Sample Game
 - Document: `SRS: System Requirement Specification`
 - Document: `SDS: System Design Specification`
 
@@ -416,12 +415,13 @@ func render() {
 
 ## Examples
 
-A sample game is planned to be built in the end of March 2026.
+A sample game is included in the release zip.
 
-See the `game/` directory for:
-- Minimal demo project
-- Sample assets and NovelML snippets
-- `Ray` usage patterns
+See the `game/` folder for:
+- Demo project
+- Sample assets
+- NovelML usage
+- Ray usage
 
 ---
 
