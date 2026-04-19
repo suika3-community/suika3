@@ -1,35 +1,46 @@
-ID:File %s: Line %d: %s
-es:Archivo %s: Línea %d: %s
-fr:Fichier %s: Ligne %d: %s
-it:File %s: Linea %d: %s
-de:Datei %s: Zeile %d: %s
-el:Αρχείο %s: Γραμμή %d: %s
-ru:Файл %s: Строка %d: %s
-zh:文件 %s: 第 %d 行: %s
-tw:檔案 %s: 第 %d 行: %s
-ja:ファイル %s: %d 行目: %s
+ID:%s:%d: %s
+es:%s:%d: %s
+fr:%s:%d : %s
+it:%s:%d: %s
+de:%s:%d: %s
+el:%s:%d: %s
+ru:%s:%d: %s
+zh:%s:%d: %s
+tw:%s:%d: %s
+ja:%s:%d: %s
 ---
-ID:File %s: Line %d: Tag %s: 
-es:Archivo %s: Línea %d: Etiqueta %s: 
-fr:Fichier %s: Ligne %d: Balise %s: 
-it:File %s: Linea %d: Tag %s: 
-de:Datei %s: Zeile %d: Tag %s: 
-el:Αρχείο %s: Γραμμή %d: Ετικέτα %s: 
-ru:Файл %s: Строка %d: Тег %s: 
-zh:文件 %s: 第 %d 行: 标签 %s: 
-tw:檔案 %s: 第 %d 行: 標籤 %s: 
-ja:ファイル %s: %d 行目: タグ %s: 
+ID:Error: %s:%d: %s
+es:Error: %s:%d: %s
+fr:Erreur : %s:%d : %s
+it:Errore: %s:%d: %s
+de:Fehler: %s:%d: %s
+el:Σφάλμα: %s:%d: %s
+ru:Ошибка: %s:%d: %s
+zh:错误: %s:%d: %s
+tw:錯誤: %s:%d: %s
+ja:エラー: %s:%d: %s
 ---
-ID:File %s: Line %d: Runtime error.
-es:Archivo %s: Línea %d: Error de ejecución.
-fr:Fichier %s: Ligne %d: Erreur d'exécution.
-it:File %s: Linea %d: Erreur d'esecuzione.
-de:Datei %s: Zeile %d: Laufzeitfehler.
-el:Αρχείο %s: Γραμμή %d: Σφάλμα κατά την εκτέλεση.
-ru:Файл %s: Строка %d: Ошибка времени выполнения.
-zh:文件 %s: 第 %d 行: 运行时错误。
-tw:檔案 %s: 第 %d 行: 執行階段錯誤。
-ja:ファイル %s: %d 行目: 実行時エラー。
+ID:%s:%d: Tag %s: 
+es:%s:%d: Etiqueta %s: 
+fr:%s:%d : Étiquette %s : 
+it:%s:%d: Tag %s: 
+de:%s:%d: Tag %s: 
+el:%s:%d: Ετικέτα %s: 
+ru:%s:%d: Тег %s: 
+zh:%s:%d: 标签 %s: 
+tw:%s:%d: 標籤 %s: 
+ja:%s:%d: タグ %s: 
+---
+ID:%s:%d: Runtime error
+es:%s:%d: Error de ejecución
+fr:%s:%d: Erreur d'exécution
+it:%s:%d: Erreur d'esecuzione
+de:%s:%d: Laufzeitfehler
+el:%s:%d: Σφάλμα κατά την εκτέλεση
+ru:%s:%d: Ошибка времени выполнения
+zh:%s:%d: 运行时错误
+tw:%s:%d: 執行階段錯誤
+ja:%s:%d: 実行時エラー
 ---
 ID:%s:%d: Tag "%s" not found.
 es:%s:%d: No se encontró la etiqueta "%s".

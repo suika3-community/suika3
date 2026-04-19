@@ -5,41 +5,53 @@ const char *s3_get_system_language(void);
 const char *s3_gettext(const char *msg)
 {
     const char *lang_code = s3_get_system_language();
-    if (strcmp(msg, "File %s: Line %d: %s") == 0) {
-        if (strncmp(lang_code, "es", 2) == 0) return "Archivo %s: Línea %d: %s";
-        if (strncmp(lang_code, "fr", 2) == 0) return "Fichier %s: Ligne %d: %s";
-        if (strncmp(lang_code, "it", 2) == 0) return "File %s: Linea %d: %s";
-        if (strncmp(lang_code, "de", 2) == 0) return "Datei %s: Zeile %d: %s";
-        if (strncmp(lang_code, "el", 2) == 0) return "Αρχείο %s: Γραμμή %d: %s";
-        if (strncmp(lang_code, "ru", 2) == 0) return "Файл %s: Строка %d: %s";
-        if (strncmp(lang_code, "zh", 2) == 0) return "文件 %s: 第 %d 行: %s";
-        if (strncmp(lang_code, "tw", 2) == 0) return "檔案 %s: 第 %d 行: %s";
-        if (strncmp(lang_code, "ja", 2) == 0) return "ファイル %s: %d 行目: %s";
-        return "File %s: Line %d: %s";
+    if (strcmp(msg, "%s:%d: %s") == 0) {
+        if (strncmp(lang_code, "es", 2) == 0) return "%s:%d: %s";
+        if (strncmp(lang_code, "fr", 2) == 0) return "%s:%d : %s";
+        if (strncmp(lang_code, "it", 2) == 0) return "%s:%d: %s";
+        if (strncmp(lang_code, "de", 2) == 0) return "%s:%d: %s";
+        if (strncmp(lang_code, "el", 2) == 0) return "%s:%d: %s";
+        if (strncmp(lang_code, "ru", 2) == 0) return "%s:%d: %s";
+        if (strncmp(lang_code, "zh", 2) == 0) return "%s:%d: %s";
+        if (strncmp(lang_code, "tw", 2) == 0) return "%s:%d: %s";
+        if (strncmp(lang_code, "ja", 2) == 0) return "%s:%d: %s";
+        return "%s:%d: %s";
     }
-    if (strcmp(msg, "File %s: Line %d: Tag %s: ") == 0) {
-        if (strncmp(lang_code, "es", 2) == 0) return "Archivo %s: Línea %d: Etiqueta %s: ";
-        if (strncmp(lang_code, "fr", 2) == 0) return "Fichier %s: Ligne %d: Balise %s: ";
-        if (strncmp(lang_code, "it", 2) == 0) return "File %s: Linea %d: Tag %s: ";
-        if (strncmp(lang_code, "de", 2) == 0) return "Datei %s: Zeile %d: Tag %s: ";
-        if (strncmp(lang_code, "el", 2) == 0) return "Αρχείο %s: Γραμμή %d: Ετικέτα %s: ";
-        if (strncmp(lang_code, "ru", 2) == 0) return "Файл %s: Строка %d: Тег %s: ";
-        if (strncmp(lang_code, "zh", 2) == 0) return "文件 %s: 第 %d 行: 标签 %s: ";
-        if (strncmp(lang_code, "tw", 2) == 0) return "檔案 %s: 第 %d 行: 標籤 %s: ";
-        if (strncmp(lang_code, "ja", 2) == 0) return "ファイル %s: %d 行目: タグ %s: ";
-        return "File %s: Line %d: Tag %s: ";
+    if (strcmp(msg, "Error: %s:%d: %s") == 0) {
+        if (strncmp(lang_code, "es", 2) == 0) return "Error: %s:%d: %s";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Erreur : %s:%d : %s";
+        if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s:%d: %s";
+        if (strncmp(lang_code, "de", 2) == 0) return "Fehler: %s:%d: %s";
+        if (strncmp(lang_code, "el", 2) == 0) return "Σφάλμα: %s:%d: %s";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Ошибка: %s:%d: %s";
+        if (strncmp(lang_code, "zh", 2) == 0) return "错误: %s:%d: %s";
+        if (strncmp(lang_code, "tw", 2) == 0) return "錯誤: %s:%d: %s";
+        if (strncmp(lang_code, "ja", 2) == 0) return "エラー: %s:%d: %s";
+        return "Error: %s:%d: %s";
     }
-    if (strcmp(msg, "File %s: Line %d: Runtime error.") == 0) {
-        if (strncmp(lang_code, "es", 2) == 0) return "Archivo %s: Línea %d: Error de ejecución.";
-        if (strncmp(lang_code, "fr", 2) == 0) return "Fichier %s: Ligne %d: Erreur d'exécution.";
-        if (strncmp(lang_code, "it", 2) == 0) return "File %s: Linea %d: Erreur d'esecuzione.";
-        if (strncmp(lang_code, "de", 2) == 0) return "Datei %s: Zeile %d: Laufzeitfehler.";
-        if (strncmp(lang_code, "el", 2) == 0) return "Αρχείο %s: Γραμμή %d: Σφάλμα κατά την εκτέλεση.";
-        if (strncmp(lang_code, "ru", 2) == 0) return "Файл %s: Строка %d: Ошибка времени выполнения.";
-        if (strncmp(lang_code, "zh", 2) == 0) return "文件 %s: 第 %d 行: 运行时错误。";
-        if (strncmp(lang_code, "tw", 2) == 0) return "檔案 %s: 第 %d 行: 執行階段錯誤。";
-        if (strncmp(lang_code, "ja", 2) == 0) return "ファイル %s: %d 行目: 実行時エラー。";
-        return "File %s: Line %d: Runtime error.";
+    if (strcmp(msg, "%s:%d: Tag %s: ") == 0) {
+        if (strncmp(lang_code, "es", 2) == 0) return "%s:%d: Etiqueta %s: ";
+        if (strncmp(lang_code, "fr", 2) == 0) return "%s:%d : Étiquette %s : ";
+        if (strncmp(lang_code, "it", 2) == 0) return "%s:%d: Tag %s: ";
+        if (strncmp(lang_code, "de", 2) == 0) return "%s:%d: Tag %s: ";
+        if (strncmp(lang_code, "el", 2) == 0) return "%s:%d: Ετικέτα %s: ";
+        if (strncmp(lang_code, "ru", 2) == 0) return "%s:%d: Тег %s: ";
+        if (strncmp(lang_code, "zh", 2) == 0) return "%s:%d: 标签 %s: ";
+        if (strncmp(lang_code, "tw", 2) == 0) return "%s:%d: 標籤 %s: ";
+        if (strncmp(lang_code, "ja", 2) == 0) return "%s:%d: タグ %s: ";
+        return "%s:%d: Tag %s: ";
+    }
+    if (strcmp(msg, "%s:%d: Runtime error") == 0) {
+        if (strncmp(lang_code, "es", 2) == 0) return "%s:%d: Error de ejecución";
+        if (strncmp(lang_code, "fr", 2) == 0) return "%s:%d: Erreur d'exécution";
+        if (strncmp(lang_code, "it", 2) == 0) return "%s:%d: Erreur d'esecuzione";
+        if (strncmp(lang_code, "de", 2) == 0) return "%s:%d: Laufzeitfehler";
+        if (strncmp(lang_code, "el", 2) == 0) return "%s:%d: Σφάλμα κατά την εκτέλεση";
+        if (strncmp(lang_code, "ru", 2) == 0) return "%s:%d: Ошибка времени выполнения";
+        if (strncmp(lang_code, "zh", 2) == 0) return "%s:%d: 运行时错误";
+        if (strncmp(lang_code, "tw", 2) == 0) return "%s:%d: 執行階段錯誤";
+        if (strncmp(lang_code, "ja", 2) == 0) return "%s:%d: 実行時エラー";
+        return "%s:%d: Runtime error";
     }
     if (strcmp(msg, "%s:%d: Tag \"%s\" not found.") == 0) {
         if (strncmp(lang_code, "es", 2) == 0) return "%s:%d: No se encontró la etiqueta \"%s\".";

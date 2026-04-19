@@ -1781,13 +1781,12 @@ hal_log_info(
 		memset(wbuf, 0, sizeof(wbuf));
 		MultiByteToWideChar(CP_UTF8, 0, buf, -1, wbuf, sizeof(wbuf) / sizeof(wchar_t));
 		WriteConsoleW(GetStdHandle(STD_OUTPUT_HANDLE), wbuf, lstrlenW(wbuf), &dwWritten, NULL);
-
+		WriteConsoleW(GetStdHandle(STD_OUTPUT_HANDLE), L"\n", 1, &dwWritten, NULL);
 		return true;
 	}
 #else
 	InitLogWindow();
 	AppendLogToEdit(buf);
-
 	if(pLogFile != NULL)
 	{
 		fprintf(pLogFile, "%s\n", buf);
@@ -1796,7 +1795,6 @@ hal_log_info(
 			return false;
 	}
 	printf("%s\n", buf);
-
 	return true;
 #endif
 }
@@ -1829,13 +1827,12 @@ hal_log_warn(
 		memset(wbuf, 0, sizeof(wbuf));
 		MultiByteToWideChar(CP_UTF8, 0, buf, -1, wbuf, sizeof(wbuf) / sizeof(wchar_t));
 		WriteConsoleW(GetStdHandle(STD_OUTPUT_HANDLE), wbuf, lstrlenW(wbuf), &dwWritten, NULL);
-
+		WriteConsoleW(GetStdHandle(STD_OUTPUT_HANDLE), L"\n", 1, &dwWritten, NULL);
 		return true;
 	}
 #else
 	InitLogWindow();
 	AppendLogToEdit(buf);
-
 	if(pLogFile != NULL)
 	{
 		fprintf(pLogFile, "%s\n", buf);
@@ -1844,7 +1841,6 @@ hal_log_warn(
 			return false;
 	}
 	printf("%s\n", buf);
-
 	return true;
 #endif
 }
@@ -1877,13 +1873,12 @@ hal_log_error(
 		memset(wbuf, 0, sizeof(wbuf));
 		MultiByteToWideChar(CP_UTF8, 0, buf, -1, wbuf, sizeof(wbuf) / sizeof(wchar_t));
 		WriteConsoleW(GetStdHandle(STD_OUTPUT_HANDLE), wbuf, lstrlenW(wbuf), &dwWritten, NULL);
-
+		WriteConsoleW(GetStdHandle(STD_OUTPUT_HANDLE), L"\n", 1, &dwWritten, NULL);
 		return true;
 	}
 #else
 	InitLogWindow();
 	AppendLogToEdit(buf);
-
 	if(pLogFile != NULL)
 	{
 		fprintf(pLogFile, "%s\n", buf);
@@ -1892,7 +1887,6 @@ hal_log_error(
 			return false;
 	}
 	printf("%s\n", buf);
-
 	return true;
 #endif
 }

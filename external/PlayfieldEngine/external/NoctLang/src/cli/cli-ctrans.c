@@ -78,7 +78,7 @@ static bool add_file_hook_c(const char *fname)
 
 	/* Do parse, build AST. */
 	if (!ast_build(fname, data)) {
-		wide_printf(N_TR("Error: %s: %d: %s\n"),
+		wide_printf(N_TR("Error: %s:%d: %s\n"),
 			    ast_get_file_name(),
 			    ast_get_error_line(),
 			    ast_get_error_message());
@@ -87,7 +87,7 @@ static bool add_file_hook_c(const char *fname)
 
 	/* Transform AST to HIR. */
 	if (!hir_build()) {
-		wide_printf(N_TR("Error: %s: %d: %s\n"),
+		wide_printf(N_TR("Error: %s:%d: %s\n"),
 			    hir_get_file_name(),
 			    hir_get_error_line(),
 			    hir_get_error_message());
@@ -103,7 +103,7 @@ static bool add_file_hook_c(const char *fname)
 		/* Transform HIR to LIR (bytecode). */
 		hfunc = hir_get_function(j);
 		if (!lir_build(hfunc, &lfunc)) {
-			wide_printf(N_TR("Error: %s: %d: %s\n"),
+			wide_printf(N_TR("Error: %s:%d: %s\n"),
 				    lir_get_file_name(),
 				    lir_get_error_line(),
 				    lir_get_error_message());

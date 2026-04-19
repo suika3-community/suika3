@@ -1,13 +1,24 @@
-ID:Error: %s: %d: %s
-es:Error: %s: %d: %s
-fr:Erreur : %s : %d : %s
-it:Errore: %s: %d: %s
-de:Fehler: %s: %d: %s
-el:Σφάλμα: %s: %d: %s
-ru:Ошибка: %s: %d: %s
-zh:错误: %s: %d: %s
-tw:錯誤: %s: %d: %s
-ja:エラー: %s: %d: %s
+ID:Error: %s:%d: %s
+es:Error: %s:%d: %s
+fr:Erreur : %s:%d : %s
+it:Errore: %s:%d: %s
+de:Fehler: %s:%d: %s
+el:Σφάλμα: %s:%d: %s
+ru:Ошибка: %s:%d: %s
+zh:错误: %s:%d: %s
+tw:錯誤: %s:%d: %s
+ja:エラー: %s:%d: %s
+---
+ID:Error: %s:%d: %s
+es:Error: %s:%d: %s
+fr:Erreur : %s:%d : %s
+it:Errore: %s:%d: %s
+de:Fehler: %s:%d: %s
+el:Σφάλμα: %s:%d: %s
+ru:Ошибка: %s:%d: %s
+zh:错误: %s:%d: %s
+tw:錯誤: %s:%d: %s
+ja:エラー: %s:%d: %s
 ---
 ID:Cannot open file "%s".
 es:No se puede abrir el archivo "%s".
@@ -44,7 +55,7 @@ ja:ファイル "%s" を読み込めません。
 ---
 ID:In tag %s:%d: runtime error.
 es:En la etiqueta %s:%d: error en tiempo de ejecución.
-fr:Dans la balise %s : %d : erreur d'exécution.
+fr:Dans la balise %s:%d: erreur d'exécution.
 it:Nel tag %s:%d: errore di runtime.
 de:In Tag %s:%d: Laufzeitfehler.
 el:Στην ετικέτα %s:%d: σφάλμα χρόνου εκτέλεσης.
@@ -55,7 +66,7 @@ ja:タグ %s:%d: 実行エラー
 ---
 ID:%s:%d: Tag "%s" not found.
 es:%s:%d: No se encontró la etiqueta "%s".
-fr:%s : %d : Balise "%s" introuvable.
+fr:%s:%d: Balise "%s" introuvable.
 it:%s:%d: Tag "%s" non trovato.
 de:%s:%d: Tag "%s" wurde nicht gefunden.
 el:%s:%d: Η ετικέτα "%s" δεν βρέθηκε.
@@ -66,7 +77,7 @@ ja:%s:%d: タグ "%s" がみつかりません。
 ---
 ID:%s:%d: "tag_%s" is not a function.
 es:%s:%d: "tag_%s" no es una función.
-fr:%s : %d : "tag_%s" n'est pas une fonction.
+fr:%s:%d: "tag_%s" n'est pas une fonction.
 it:%s:%d: "tag_%s" non è una funzione.
 de:%s:%d: "tag_%s" ist keine Funktion.
 el:%s:%d: Το "tag_%s" δεν είναι συνάρτηση.
@@ -77,7 +88,7 @@ ja:%s:%d: "tag_%s" が関数ではありません。
 ---
 ID:In tag %s:%d: Tag "%s" execution error.
 es:En la etiqueta %s:%d: Error de ejecución en la etiqueta "%s".
-fr:Dans la balise %s : %d : Erreur d'exécution de la balise "%s".
+fr:Dans la balise %s:%d: Erreur d'exécution de la balise "%s".
 it:Nel tag %s:%d: Errore di esecuzione del tag "%s".
 de:In Tag %s:%d: Ausführungsfehler im Tag "%s".
 el:Στην ετικέτα %s:%d: Σφάλμα εκτέλεσης στην ετικέτα "%s".

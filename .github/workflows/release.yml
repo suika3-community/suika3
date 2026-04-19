@@ -648,6 +648,7 @@ jobs:
           cp -R game/se dist/
           cp -R game/system dist/
           cp -R game/voice dist/
+          cp -R game/.vscode dist/
 
       - name: Download mingw artifacts
         uses: actions/download-artifact@v4

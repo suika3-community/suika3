@@ -378,7 +378,7 @@
  * Message Translation
  */
 #if !defined(S3_TR)
-#if defined(USE_TRANSLATION)
+#if defined(S3_USE_TRANSLATION)
 #define S3_TR(s)	s3_gettext(s)
 const char *s3_gettext(const char *msg);
 #else

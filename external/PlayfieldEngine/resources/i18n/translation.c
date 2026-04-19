@@ -5,17 +5,29 @@ const char *hal_get_system_language(void);
 const char *pf_gettext(const char *msg)
 {
     const char *lang_code = hal_get_system_language();
-    if (strcmp(msg, "Error: %s: %d: %s") == 0) {
-        if (strncmp(lang_code, "es", 2) == 0) return "Error: %s: %d: %s";
-        if (strncmp(lang_code, "fr", 2) == 0) return "Erreur : %s : %d : %s";
-        if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s: %d: %s";
-        if (strncmp(lang_code, "de", 2) == 0) return "Fehler: %s: %d: %s";
-        if (strncmp(lang_code, "el", 2) == 0) return "Σφάλμα: %s: %d: %s";
-        if (strncmp(lang_code, "ru", 2) == 0) return "Ошибка: %s: %d: %s";
-        if (strncmp(lang_code, "zh", 2) == 0) return "错误: %s: %d: %s";
-        if (strncmp(lang_code, "tw", 2) == 0) return "錯誤: %s: %d: %s";
-        if (strncmp(lang_code, "ja", 2) == 0) return "エラー: %s: %d: %s";
-        return "Error: %s: %d: %s";
+    if (strcmp(msg, "Error: %s:%d: %s") == 0) {
+        if (strncmp(lang_code, "es", 2) == 0) return "Error: %s:%d: %s";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Erreur : %s:%d : %s";
+        if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s:%d: %s";
+        if (strncmp(lang_code, "de", 2) == 0) return "Fehler: %s:%d: %s";
+        if (strncmp(lang_code, "el", 2) == 0) return "Σφάλμα: %s:%d: %s";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Ошибка: %s:%d: %s";
+        if (strncmp(lang_code, "zh", 2) == 0) return "错误: %s:%d: %s";
+        if (strncmp(lang_code, "tw", 2) == 0) return "錯誤: %s:%d: %s";
+        if (strncmp(lang_code, "ja", 2) == 0) return "エラー: %s:%d: %s";
+        return "Error: %s:%d: %s";
+    }
+    if (strcmp(msg, "Error: %s:%d: %s") == 0) {
+        if (strncmp(lang_code, "es", 2) == 0) return "Error: %s:%d: %s";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Erreur : %s:%d : %s";
+        if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s:%d: %s";
+        if (strncmp(lang_code, "de", 2) == 0) return "Fehler: %s:%d: %s";
+        if (strncmp(lang_code, "el", 2) == 0) return "Σφάλμα: %s:%d: %s";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Ошибка: %s:%d: %s";
+        if (strncmp(lang_code, "zh", 2) == 0) return "错误: %s:%d: %s";
+        if (strncmp(lang_code, "tw", 2) == 0) return "錯誤: %s:%d: %s";
+        if (strncmp(lang_code, "ja", 2) == 0) return "エラー: %s:%d: %s";
+        return "Error: %s:%d: %s";
     }
     if (strcmp(msg, "Cannot open file \"%s\".") == 0) {
         if (strncmp(lang_code, "es", 2) == 0) return "No se puede abrir el archivo \"%s\".";
@@ -55,7 +67,7 @@ const char *pf_gettext(const char *msg)
     }
     if (strcmp(msg, "In tag %s:%d: runtime error.") == 0) {
         if (strncmp(lang_code, "es", 2) == 0) return "En la etiqueta %s:%d: error en tiempo de ejecución.";
-        if (strncmp(lang_code, "fr", 2) == 0) return "Dans la balise %s : %d : erreur d'exécution.";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Dans la balise %s:%d: erreur d'exécution.";
         if (strncmp(lang_code, "it", 2) == 0) return "Nel tag %s:%d: errore di runtime.";
         if (strncmp(lang_code, "de", 2) == 0) return "In Tag %s:%d: Laufzeitfehler.";
         if (strncmp(lang_code, "el", 2) == 0) return "Στην ετικέτα %s:%d: σφάλμα χρόνου εκτέλεσης.";
@@ -67,7 +79,7 @@ const char *pf_gettext(const char *msg)
     }
     if (strcmp(msg, "%s:%d: Tag \"%s\" not found.") == 0) {
         if (strncmp(lang_code, "es", 2) == 0) return "%s:%d: No se encontró la etiqueta \"%s\".";
-        if (strncmp(lang_code, "fr", 2) == 0) return "%s : %d : Balise \"%s\" introuvable.";
+        if (strncmp(lang_code, "fr", 2) == 0) return "%s:%d: Balise \"%s\" introuvable.";
         if (strncmp(lang_code, "it", 2) == 0) return "%s:%d: Tag \"%s\" non trovato.";
         if (strncmp(lang_code, "de", 2) == 0) return "%s:%d: Tag \"%s\" wurde nicht gefunden.";
         if (strncmp(lang_code, "el", 2) == 0) return "%s:%d: Η ετικέτα \"%s\" δεν βρέθηκε.";
@@ -79,7 +91,7 @@ const char *pf_gettext(const char *msg)
     }
     if (strcmp(msg, "%s:%d: \"tag_%s\" is not a function.") == 0) {
         if (strncmp(lang_code, "es", 2) == 0) return "%s:%d: \"tag_%s\" no es una función.";
-        if (strncmp(lang_code, "fr", 2) == 0) return "%s : %d : \"tag_%s\" n'est pas une fonction.";
+        if (strncmp(lang_code, "fr", 2) == 0) return "%s:%d: \"tag_%s\" n'est pas une fonction.";
         if (strncmp(lang_code, "it", 2) == 0) return "%s:%d: \"tag_%s\" non è una funzione.";
         if (strncmp(lang_code, "de", 2) == 0) return "%s:%d: \"tag_%s\" ist keine Funktion.";
         if (strncmp(lang_code, "el", 2) == 0) return "%s:%d: Το \"tag_%s\" δεν είναι συνάρτηση.";
@@ -91,7 +103,7 @@ const char *pf_gettext(const char *msg)
     }
     if (strcmp(msg, "In tag %s:%d: Tag \"%s\" execution error.") == 0) {
         if (strncmp(lang_code, "es", 2) == 0) return "En la etiqueta %s:%d: Error de ejecución en la etiqueta \"%s\".";
-        if (strncmp(lang_code, "fr", 2) == 0) return "Dans la balise %s : %d : Erreur d'exécution de la balise \"%s\".";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Dans la balise %s:%d: Erreur d'exécution de la balise \"%s\".";
         if (strncmp(lang_code, "it", 2) == 0) return "Nel tag %s:%d: Errore di esecuzione del tag \"%s\".";
         if (strncmp(lang_code, "de", 2) == 0) return "In Tag %s:%d: Ausführungsfehler im Tag \"%s\".";
         if (strncmp(lang_code, "el", 2) == 0) return "Στην ετικέτα %s:%d: Σφάλμα εκτέλεσης στην ετικέτα \"%s\".";

@@ -106,7 +106,7 @@ pfi_create_vm(
 		noct_get_error_file(env, &file);
 		noct_get_error_line(env, &line);
 		noct_get_error_message(env, &msg);
-		hal_log_error(PF_TR("Error: %s: %d: %s"), file, line, msg);
+		hal_log_error(PF_TR("Error: %s:%d: %s"), file, line, msg);
 		return false;
 	}
 
@@ -149,7 +149,7 @@ load_startup_file(void)
 		noct_get_error_file(env, &file);
 		noct_get_error_line(env, &line);
 		noct_get_error_message(env, &msg);
-		hal_log_error(PF_TR("Error: %s: %d: %s"), file, line, msg);
+		hal_log_error(PF_TR("Error: %s:%d: %s"), file, line, msg);
 		return false;
 	}
 
@@ -231,7 +231,7 @@ call_setup(
 		noct_get_error_file(env, &file);
 		noct_get_error_line(env, &line);
 		noct_get_error_message(env, &msg);
-		hal_log_error(PF_TR("Error: %s: %d: %s"), file, line, msg);
+		hal_log_error(PF_TR("Error: %s:%d: %s"), file, line, msg);
 		return false;
 	}
 
@@ -255,7 +255,7 @@ pfi_call_vm_function(
 		noct_get_error_file(env, &file);
 		noct_get_error_line(env, &line);
 		noct_get_error_message(env, &msg);
-		hal_log_error(PF_TR("Error: %s: %d: %s"), file, line, msg);
+		hal_log_error(PF_TR("Error: %s:%d: %s"), file, line, msg);
 		return false;
 	}
 
@@ -469,7 +469,7 @@ static bool import(NoctEnv *env)
 			noct_get_error_file(env, &file);
 			noct_get_error_line(env, &line);
 			noct_get_error_message(env, &msg);
-			hal_log_error(PF_TR("Error: %s: %d: %s"), file, line, msg);
+			hal_log_error(PF_TR("Error: %s:%d: %s"), file, line, msg);
 			return false;
 		}
 	} else {
@@ -480,7 +480,7 @@ static bool import(NoctEnv *env)
 			noct_get_error_file(env, &file);
 			noct_get_error_line(env, &line);
 			noct_get_error_message(env, &msg);
-			hal_log_error(PF_TR("Error: %s: %d: %s"), file, line, msg);
+			hal_log_error(PF_TR("Error: %s:%d: %s"), file, line, msg);
 			return false;
 		}
 	}
