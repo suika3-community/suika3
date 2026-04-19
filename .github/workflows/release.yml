@@ -153,57 +153,57 @@ jobs:
 #          if-no-files-found: error
 #          retention-days: 7
 
-  build-linux:
-    runs-on: ubuntu-24.04
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install deps
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y cmake build-essential libx11-dev libxpm-dev libasound2-dev mesa-common-dev flex bison libfuse2 libwayland-dev wayland-protocols libegl1-mesa-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
-
-      - name: Download appimagetool
-        run: |
-          wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
-          chmod +x appimagetool-x86_64.AppImage
-
-      - name: Add desktop
-        run: |
-          cat > suika3.desktop <<EOF
-          [Desktop Entry]
-          Type=Application
-          Name=Suika3
-          Exec=suika3
-          Icon=suika3
-          Categories=Game;
-          EOF
-
-      - name: Build for x86_64 (X11)
-        run: |
-          cmake --preset linux
-          cmake --build --preset linux
-          mkdir -p AppDir/usr/bin
-          cp build-linux/suika3 AppDir/usr/bin/
-          cp resources/linux/AppRun AppDir/
-          cp suika3.desktop AppDir/
-          cp resources/icon.png AppDir/suika3.png
-          ARCH=x86_64 ./appimagetool-x86_64.AppImage AppDir suika3-x86_64.AppImage
-
-      - name: Build for x86_64 (Wayland, check only)
-        run: |
-          cmake --preset linux-wayland
-          cmake --build --preset linux-wayland
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux-appimage
-          path: |
-            suika3-x86_64.AppImage
-          if-no-files-found: error
-          retention-days: 7
+#  build-linux:
+#    runs-on: ubuntu-24.04
+#
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - name: Install deps
+#        run: |
+#          sudo apt-get update
+#          sudo apt-get install -y cmake build-essential libx11-dev libxpm-dev libasound2-dev mesa-common-dev flex bison libfuse2 libwayland-dev wayland-protocols libegl1-mesa-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
+#
+#      - name: Download appimagetool
+#        run: |
+#          wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+#          chmod +x appimagetool-x86_64.AppImage
+#
+#      - name: Add desktop
+#        run: |
+#          cat > suika3.desktop <<EOF
+#          [Desktop Entry]
+#          Type=Application
+#          Name=Suika3
+#          Exec=suika3
+#          Icon=suika3
+#          Categories=Game;
+#          EOF
+#
+#      - name: Build for x86_64 (X11)
+#        run: |
+#          cmake --preset linux
+#          cmake --build --preset linux
+#          mkdir -p AppDir/usr/bin
+#          cp build-linux/suika3 AppDir/usr/bin/
+#          cp resources/linux/AppRun AppDir/
+#          cp suika3.desktop AppDir/
+#          cp resources/icon.png AppDir/suika3.png
+#          ARCH=x86_64 ./appimagetool-x86_64.AppImage AppDir suika3-x86_64.AppImage
+#
+#      - name: Build for x86_64 (Wayland, check only)
+#        run: |
+#          cmake --preset linux-wayland
+#          cmake --build --preset linux-wayland
+#
+#      - name: Upload artifact
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: linux-appimage
+#          path: |
+#            suika3-x86_64.AppImage
+#          if-no-files-found: error
+#          retention-days: 7
 
   build-flatpak:
     runs-on: ubuntu-24.04
@@ -596,7 +596,7 @@ jobs:
           retention-days: 7
 
   zip:
-    needs: [build-windows-vs2022, build-windows-mingw-w64, build-linux, build-wasm, build-android, build-openharmony, build-unity, build-mkdocs]
+    needs: [build-windows-vs2022, build-windows-mingw-w64, build-flatpak, build-wasm, build-android, build-openharmony, build-unity, build-mkdocs]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -673,21 +673,25 @@ jobs:
 #          cp resources/projects/macos/Game/main.m dist/misc/macos/project/Game/
 #          cp resources/macos/macos.entitlements dist/misc/macos/project/Game/Game.entitlements
 
-      - name: Download Linux artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: linux-appimage
-          path: linux
-
-      - name: Copy for Linux.
-        run: |
-          cp linux/suika3-x86_64.AppImage dist/misc/linux/
+#      - name: Download Linux artifacts
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: linux-appimage
+#          path: linux
+#
+#      - name: Copy for Linux.
+#        run: |
+#          cp linux/suika3-x86_64.AppImage dist/misc/linux/
 
       - name: Download Flatpak artifacts
         uses: actions/download-artifact@v4
         with:
           name: flatpak
           path: flatpak
+
+      - name: Copy for Linux.
+        run: |
+          cp flatpak/Suika3.flatpak dist/misc/linux/
 
       - name: Download wasm artifacts
         uses: actions/download-artifact@v4
