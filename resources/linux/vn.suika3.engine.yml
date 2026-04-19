@@ -22,17 +22,17 @@ modules:
     buildsystem: cmake-ninja
     config-opts:
       - "-DCMAKE_BUILD_TYPE=Release"
-      - "-DSUIKA_ENABLE_GST=ON"
       - "-DSUIKA_TARGET_LINUX=ON"
+      - "-DSUIKA_ENABLE_INSTALL=ON"
+      - "-DSUIKA_ENABLE_FLATPAK=ON"
+      - "-DSUIKA_ENABLE_DIST=ON"
+      - "-DSUIKA_ENABLE_GST=ON"
       - "-DSUIKA_ENABLE_JIT=ON"
       - "-DSUIKA_ENABLE_I18N=ON"
       - "-DSUIKA_ENABLE_PACK=OFF"
       - "-DSUIKA_ENABLE_BYTECOMP=OFF"
       - "-DSUIKA_ENABLE_AOTCOMP=OFF"
       - "-DSUIKA_ENABLE_GST=ON"
-      - "-DSUIKA_ENABLE_INSTALL=ON"
-      - "-DSUIKA_ENABLE_INSTALL_ENGINE_ONLY=ON"
-      - "-DSUIKA_ENABLE_DIST=ON"
 
     sources:
       - type: dir

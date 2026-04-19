@@ -20,8 +20,8 @@
   </p>
   <a href="https://discord.gg/YZsq9u9Mgr"><img src="https://img.shields.io/badge/suika3.vn-Discord-orange"></a>
   <img src="https://img.shields.io/badge/License-ZLib-orange.svg">
-  <img src="https://img.shields.io/github/stars/suika3-community/suika3.svg?style=flat&logo=github&colorB=orange&label=stars">
-  <img src="https://img.shields.io/github/forks/suika3-community/suika3.svg">
+  <img src="https://img.shields.io/github/stars/awemorris/suika3.svg?style=flat&logo=github&colorB=orange&label=stars">
+  <img src="https://img.shields.io/github/forks/awemorris/suika3.svg">
 </div>
 
 ---
@@ -48,7 +48,7 @@
 <div align="center">
   <a href="https://noctvm.io/test/">
     Click to play on the browser!<br>
-    <img src="https://github.com/suika3-community/suika3/blob/main/docs/img/screenshot-20260406.webp" alt="Suika3 Screenshot"><br>
+    <img src="https://github.com/awemorris/suika3/blob/main/docs/img/screenshot-20260406.webp" alt="Suika3 Screenshot"><br>
   </a>
 </div>
 
@@ -564,16 +564,16 @@ instant startup, and tight integration with the engine.
 The built-in JIT compiler supports a wide range of CPU architectures
 to cover most gaming consoles and smartphones, including:
 
-- ✅ Intel x86 (Xbox) [jit-x86.c](https://github.com/suika3-community/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-x86.c)
-- ✅ AMD64/x86_64 (PS4/PS5/Xbox One/Xbox series X|S) [jit-x86_64.c](https://github.com/suika3-community/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-x86_64.c)
-- ✅ ARMv5-ARMv7 (Nintendo DS/PS Vita) [jit-arm32.c](https://github.com/suika3-community/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-arm32.c)
-- ✅ Arm64 (Switch/Switch2) [jit-arm64.c](https://github.com/suika3-community/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-arm64.c)
-- ✅ PowerPC 32 (Wii/GameCube) [jit-ppc32.c](https://github.com/suika3-community/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-ppc32.c)
-- ✅ PowerPC 64 (PS3/Xbox 360) [jit-ppc64.c](https://github.com/suika3-community/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-ppc64.c)
-- ✅ MIPS32 (PS1/PSP) [jit-mips32.c](https://github.com/suika3-community/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-mips32.c)
-- ✅ MIPS64 (N64/PS2) [jit-mips64.c](https://github.com/suika3-community/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-mips64.c)
-- ✅ RISC-V 32 (for future devices) [jit-riscv32.c](https://github.com/suika3-community/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-riscv32.c)
-- ✅ RISC-V 64 (for future devices) [jit-riscv64.c](https://github.com/suika3-community/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-riscv64.c)
+- ✅ Intel x86 (Xbox) [jit-x86.c](https://github.com/awemorris/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-x86.c)
+- ✅ AMD64/x86_64 (PS4/PS5/Xbox One/Xbox series X|S) [jit-x86_64.c](https://github.com/awemorris/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-x86_64.c)
+- ✅ ARMv5-ARMv7 (Nintendo DS/PS Vita) [jit-arm32.c](https://github.com/awemorris/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-arm32.c)
+- ✅ Arm64 (Switch/Switch2) [jit-arm64.c](https://github.com/awemorris/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-arm64.c)
+- ✅ PowerPC 32 (Wii/GameCube) [jit-ppc32.c](https://github.com/awemorris/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-ppc32.c)
+- ✅ PowerPC 64 (PS3/Xbox 360) [jit-ppc64.c](https://github.com/awemorris/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-ppc64.c)
+- ✅ MIPS32 (PS1/PSP) [jit-mips32.c](https://github.com/awemorris/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-mips32.c)
+- ✅ MIPS64 (N64/PS2) [jit-mips64.c](https://github.com/awemorris/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-mips64.c)
+- ✅ RISC-V 32 (for future devices) [jit-riscv32.c](https://github.com/awemorris/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-riscv32.c)
+- ✅ RISC-V 64 (for future devices) [jit-riscv64.c](https://github.com/awemorris/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-riscv64.c)
 
 These architectures are well-supported, we can say at least they all pass [the test suite](external/PlayfieldEngine/external/NoctLang/tests/run-syntax.sh).
 
@@ -1335,7 +1335,7 @@ released under the permissive `ZLib License`.
 
 ```
 Suika3
-Copyright (c) 2026 The Suika3 Community
+Copyright (c) 2026 Awe Morris / SCHOLA SUIKAE
 ```
 
 The full license is available at [LICENSE](LICENSE) and [NOTICE](NOTICE).
@@ -1370,23 +1370,28 @@ success in a high-stakes production environment.
 
 **Not looking for a formal contract? No problem.** If you are an indie
 developer or hobbyist and prefer to keep things casual, just ping us
-on Discord with any questions. We're always happy to chat, and we'll
-do our best to respond or push a fix as soon as possible! ;-)
+on GitHub Issue or Discord with any questions. We're always happy to
+chat, and we'll do our best to respond or push a fix as soon as
+possible! ;-)
 
 ---
 
 ## Community
 
+### Discord
+
 [Discord Server](https://discord.gg/YZsq9u9Mgr)
+
+Our server does not tolerate any form of discrimination. It is an
+inclusive space that embraces all human differences, including, but
+not limited to, race, gender, skill levels, and neurodiversity.
 
 ### Recruiting
 
 We are currently looking for contributors in the following areas:
 
 * Documentation editors
-* Testing engineers
-* iOS engineers
-* Android engineers
+* Software Engineer in Testing
 * HarmonyOS NEXT testers
 
 ### Our Commitment to Inclusivity
@@ -1422,13 +1427,8 @@ Creating your own rebranded version is a natural and fully supported
 use of the project.
 
 Because of this philosophy, Suika3 does not employ a formal governance
-structure. Instead, the project is guided by its lead maintainers in
-close collaboration with the community.
-
-### Maintainers
-
-- Awe Morris (Systems Engineer)
-- Aitsuki (Security Engineer)
+structure. Instead, the project is guided by its lead maintainer in
+close collaboration with community users.
 
 ---
 
@@ -1586,7 +1586,7 @@ Now preparing...
 - [Doesn't "over 25 years of maturity" contradict "zero operational use"?](#doesnt-over-25-years-of-maturity-contradict-zero-operational-use)
 - [Oh it's bus factor 1, isn't it?](#oh-its-bus-factor-1-isnt-it)
 - [Can companies maintain their own forks?](#can-companies-maintain-their-own-forks)
-- [It says community-led, but who makes the decisions?](#it-says-community-led-but-who-makes-the-decisions)
+- [Who makes the decisions?](#who-makes-the-decisions)
 - [Is Suika3 open source software? Can it be used commercially?](#is-suika3-open-source-software-can-it-be-used-commercially)
 - [What about the license for third-party libraries?](#what-about-the-license-for-third-party-libraries)
 - [JIT is disabled on iOS/console, so what should I do?](#jit-is-disabled-on-iosconsole-so-what-should-i-do)
@@ -1652,16 +1652,32 @@ maintenance. Furthermore, "professional/enterprise support" is
 available, enabling the transfer of necessary know-how to the adopting
 organization.
 
-### It says community-led, but who makes the decisions?
+### Who makes the decisions?
 
-The community handles maintenance, while lead members take the
-lead. We do not implement formal governance.
+The lead developers make the decisions. We do not maintain a formal
+governance structure for the community.
 
 ### Is Suika3 open source software? Can it be used commercially?
 
-Yes, it is OSS and can be used commercially. Since it is a permissive
-license, there is no requirement to disclose the source code when
-modifying it.
+Suika3 is released under the zlib license and qualifies as Open Source
+Software (OSS) under the FOSS definition. It can be used freely in
+commercial projects.
+
+However, its positioning differs slightly from many projects typically
+found on GitHub. While many OSS projects thrive by building upon large
+existing ecosystems, Suika3 is designed around core components
+developed almost entirely from scratch, with external dependencies
+kept to an absolute minimum.
+
+While we have deep respect for the philosophy of GNU/Linux and the
+broader open-source community, our goal has always been to deliver
+"commercial-grade quality" that meets our own rigorous
+standards. Because of this strong independence, Suika3 may feel closer
+to "commercial software provided as OSS" than to a typical
+community-driven OSS project.
+
+Accordingly, we actively welcome closed-source forks and downstream
+commercial products built on top of this project.
 
 ### What about the license for third-party libraries?
 

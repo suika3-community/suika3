@@ -58,10 +58,10 @@ option(SUIKA_ENABLE_DIST "Build for OS package" OFF)
 option(SUIKA_ENABLE_INSTALL "Enable installation" OFF)
 
 #
-# [SUIKA_ENABLE_INSTALL_ENGINE_ONLY]
+# [SUIKA_ENABLE_FLATPAK]
 #  - Install engine binary only
 #
-option(SUIKA_ENABLE_INSTALL_ENGINE_ONLY "Install engine binary only" OFF)
+option(SUIKA_ENABLE_FLATPAK "Enable installation for flatpak-build" OFF)
 
 #
 # [SUIKA_ENABLE_STATIC]
@@ -987,7 +987,7 @@ if(SUIKA_ENABLE_INSTALL)
   # "suika3" command. 
   install(TARGETS suika3       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
-  if(NOT SUIKA_ENABLE_INSTALL_ENGINE_ONLY)
+  if(NOT SUIKA_ENABLE_FLATPAK)
     # "suika3-pack" command.
     if(SUIKA_ENABLE_PACK)
       install(TARGETS suika3-pack  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
@@ -1004,11 +1004,18 @@ if(SUIKA_ENABLE_INSTALL)
     endif()
   endif()
 
+  if(SUIKA_ENABLE_FLATPAK)
+    install(
+      FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/linux/suika3-run.sh"
+      DESTINATION ${CMAKE_INSTALL_BINDIR}/suika3-run.sh
+    )
+  endif()
+
   #
   # Install manpages. (mdoc for *BSD, roff for others)
   #
 
-  if(NOT SUIKA_ENABLE_INSTALL_ENGINE_ONLY)
+  if(NOT SUIKA_ENABLE_FLATPAK)
     if(   SUIKA_TARGET_FREEBSD
        OR SUIKA_TARGET_FREEBSD_WAYLAND
        OR SUIKA_TARGET_FREEBSD_X11SOFT
@@ -1053,7 +1060,7 @@ if(SUIKA_ENABLE_INSTALL)
   # Install documents.
   # 
 
-  if(NOT SUIKA_ENABLE_INSTALL_ENGINE_ONLY)
+  if(NOT SUIKA_ENABLE_FLATPAK)
     install(
       DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/docs/mkdocs-en/docs"
       DESTINATION ${CMAKE_INSTALL_PREFIX}/${SUIKA_DIR_DOCS}
@@ -1064,7 +1071,7 @@ if(SUIKA_ENABLE_INSTALL)
   # Install the sample game.
   #
 
-  if(NOT SUIKA_ENABLE_INSTALL_ENGINE_ONLY)
+  if(NOT SUIKA_ENABLE_FLATPAK)
     # Install ZLIB-licensed contents.
     if(SUIKA_ENABLE_DIST)
       # Exclude the font when packaging.
