@@ -205,6 +205,35 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
+  build-flatpak:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak-builder
+
+      - name: Build flatpak
+        run: |
+          flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          flatpak install flathub org.freedesktop.Sdk//25.08
+          flatpak install flathub org.freedesktop.Platform//25.08
+          flatpak install flathub org.freedesktop.Platform.GStreamer.openmpt//25.08
+          flatpak-builder --repo=myrepo --force-clean build-dir ./resources/linux/vn.suika3.engine.yml
+          flatpak build-bundle myrepo Suika3.flatpak vn.suika3.engine --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: flatpak
+          path: |
+            Suika3.flatpak
+          if-no-files-found: error
+          retention-days: 7
+
   build-wasm:
     runs-on: ubuntu-24.04
 
