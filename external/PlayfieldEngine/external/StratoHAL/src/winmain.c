@@ -1809,8 +1809,19 @@ hal_log_warn(
 	vsnprintf(buf, sizeof(buf), s, ap);
 	va_end(ap);
 
-	//MessageBoxW(hWndMain, win32_utf8_to_utf16(buf), wszTitle, MB_OK | MB_ICONWARNING);
+#ifdef HAL_USE_CONSOLE
+	{
+		static wchar_t wbuf[4096];
+		DWORD dwWritten;
 
+		/* Use WriteConsoleW(). (Otherwise we can't write CJK.) */
+		memset(wbuf, 0, sizeof(wbuf));
+		MultiByteToWideChar(CP_UTF8, 0, buf, -1, wbuf, sizeof(wbuf) / sizeof(wchar_t));
+		WriteConsoleW(GetStdHandle(STD_OUTPUT_HANDLE), wbuf, lstrlenW(wbuf), &dwWritten, NULL);
+
+		return true;
+	}
+#else
 	InitLogWindow();
 	AppendLogToEdit(buf);
 
@@ -1824,6 +1835,7 @@ hal_log_warn(
 	printf("%s\n", buf);
 
 	return true;
+#endif
 }
 
 /*
@@ -1843,8 +1855,19 @@ hal_log_error(
 	vsnprintf(buf, sizeof(buf), s, ap);
 	va_end(ap);
 
-	//MessageBoxW(hWndMain, win32_utf8_to_utf16(buf), wszTitle, MB_OK | MB_ICONERROR);
+#ifdef HAL_USE_CONSOLE
+	{
+		static wchar_t wbuf[4096];
+		DWORD dwWritten;
 
+		/* Use WriteConsoleW(). (Otherwise we can't write CJK.) */
+		memset(wbuf, 0, sizeof(wbuf));
+		MultiByteToWideChar(CP_UTF8, 0, buf, -1, wbuf, sizeof(wbuf) / sizeof(wchar_t));
+		WriteConsoleW(GetStdHandle(STD_OUTPUT_HANDLE), wbuf, lstrlenW(wbuf), &dwWritten, NULL);
+
+		return true;
+	}
+#else
 	InitLogWindow();
 	AppendLogToEdit(buf);
 
@@ -1858,6 +1881,7 @@ hal_log_error(
 	printf("%s\n", buf);
 
 	return true;
+#endif
 }
 
 /*
