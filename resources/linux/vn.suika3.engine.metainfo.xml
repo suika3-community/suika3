@@ -2,9 +2,14 @@
 <component type="desktop-application">
   <id>vn.suika3.engine</id>
   <metadata_license>CC0-1.0</metadata_license>
-  <project_license>zlib</project_license>
+  <project_license>Zlib</project_license>
+
   <name>Suika3</name>
   <summary>A portable 2D game engine with a DSL for visual novels</summary>
+
+  <launchable type="desktop-id">vn.suika3.engine.desktop</launchable>
+
+  <developer_name>Awe Morris / SCHOLA SUIKAE</developer_name>
 
   <description>
     <p>
@@ -23,8 +28,6 @@
       <li>Broad Platforms: Desktop, mobile, and game consoles</li>
     </ul>
   </description>
-
-  <launchable type="desktop-id">vn.suika3.engine.desktop</launchable>
 
   <screenshots>
     <screenshot type="default">
@@ -45,4 +48,5 @@
       </description>
     </release>
   </releases>
+
 </component>
