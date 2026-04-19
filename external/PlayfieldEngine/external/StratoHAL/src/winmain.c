@@ -222,11 +222,13 @@ static void OnCommand(WPARAM wParam, LPARAM lParam);
 static void OnSizing(int edge, LPRECT lpRect);
 static void OnSize(void);
 static void UpdateScreenOffsetAndScale(int nClientWidth, int nClientHeight);
+#ifndef HAL_USE_CONSOLE
 static VOID InitLogWindow(void);
 static VOID AppendLogToEdit(const char *text);
 static LRESULT CALLBACK LogWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 static BOOL OpenLogFile(void);
 static void ShowLogFile(void);
+#endif
 static BOOL PlayVideo(const char *pszFileName);
 static VOID StopVideo(VOID);
 static BOOL IsVideoPlaying(VOID);
@@ -290,7 +292,9 @@ int WINAPI WinMain(
 	/* Do the lower layer cleanup. */
 	CleanupApp();
 
+#ifndef HAL_USE_CONSOLE
 	ShowLogFile();
+#endif
 
 	return nRet;
 }
@@ -1449,6 +1453,7 @@ UpdateScreenOffsetAndScale(
 	D3DResizeWindow(nClientWidth, nClientHeight, nViewportOffsetX, nViewportOffsetY, nViewportWidth, nViewportHeight, fMouseScale);
 }
 
+#ifndef HAL_USE_CONSOLE
 /* Initialize the log window. */
 static VOID
 InitLogWindow(VOID)
@@ -1585,6 +1590,8 @@ ShowLogFile(void)
         NULL,               // Working directory.
         SW_SHOWNORMAL);		// ShowWindow() status.
 }
+#endif
+
 
 /* Play a video. */
 static BOOL
@@ -1757,7 +1764,9 @@ hal_log_info(
 	char buf[LOG_BUF_SIZE];
 	va_list ap;
 
+#ifndef HAL_USE_CONSOLE
 	OpenLogFile();
+#endif
 
 	va_start(ap, s);
 	vsnprintf(buf, sizeof(buf), s, ap);
@@ -1803,7 +1812,9 @@ hal_log_warn(
 	char buf[LOG_BUF_SIZE];
 	va_list ap;
 
+#ifndef HAL_USE_CONSOLE
 	OpenLogFile();
+#endif
 
 	va_start(ap, s);
 	vsnprintf(buf, sizeof(buf), s, ap);
@@ -1849,7 +1860,9 @@ hal_log_error(
 	char buf[LOG_BUF_SIZE];
 	va_list ap;
 
+#ifndef HAL_USE_CONSOLE
 	OpenLogFile();
+#endif
 
 	va_start(ap, s);
 	vsnprintf(buf, sizeof(buf), s, ap);

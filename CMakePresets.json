@@ -468,6 +468,24 @@
             }
         },
         {
+            "name":           "windows-mingw-x86_64-console",
+            "displayName":    "MinGW x86_64",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-mingw-x86_64-console",
+            "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/mingw-x86_64.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":                         "Release",
+                "SUIKA_TARGET_WINDOWS":                     "ON",
+                "SUIKA_ENABLE_JIT":                         "ON",
+                "SUIKA_ENABLE_I18N":                        "ON",
+                "SUIKA_ENABLE_PACK":                        "ON",
+                "SUIKA_ENABLE_BYTECOMP":                    "ON",
+                "SUIKA_ENABLE_AOTCOMP":                     "ON",
+                "SUIKA_ENABLE_WEBSERVER":                   "ON",
+                "SUIKA_ENABLE_CONSOLE":                     "ON"
+            }
+        },
+        {
             "name":           "windows-mingw-win95",
             "displayName":    "MinGW Windows 95",
             "generator":      "Ninja",
@@ -1132,6 +1150,10 @@
             "configurePreset": "windows-vs2022-arm64"
         },
         {
+            "name": "windows-vs2022-x64-console",
+            "configurePreset": "windows-vs2026-x64-console"
+        },
+        {
             "name": "windows-vs2022-gdk-desktop",
             "configurePreset": "windows-vs2022-gdk-desktop"
         },
@@ -1164,6 +1186,10 @@
             "configurePreset": "windows-vs2026-arm64-debug"
         },
         {
+            "name": "windows-vs2026-x64-console",
+            "configurePreset": "windows-vs2026-x64-console"
+        },
+        {
             "name": "windows-vs2026-gdk-desktop",
             "configurePreset": "windows-vs2026-gdk-desktop"
         },
@@ -1178,6 +1204,10 @@
         {
             "name": "windows-mingw-x86_64",
             "configurePreset": "windows-mingw-x86_64"
+        },
+        {
+            "name": "windows-mingw-x86_64-console",
+            "configurePreset": "windows-mingw-x86_64-console"
         },
         {
             "name": "windows-mingw-arm64",

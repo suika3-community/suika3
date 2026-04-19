@@ -916,7 +916,11 @@ if(   STRATO_TARGET_WINDOWS
   )
 
   if(MINGW)
-    target_link_options(strato PUBLIC -mwindows)
+    if(NOT STRATO_ENABLE_CONSOLE)
+      target_link_options(strato PUBLIC -mwindows)
+    else()
+      target_link_options(strato PUBLIC -mconsole)
+    endif()
   endif()
 
   if(MINGW AND STRATO_TARGET_WINDOWS)

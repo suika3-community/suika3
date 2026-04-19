@@ -437,7 +437,7 @@ endif()
 
 # Console for debug output on Windows.
 if(SUIKA_ENABLE_CONSOLE)
-  set(PLAYFIELD_ENABLE_CONSOLE)
+  set(PLAYFIELD_ENABLE_CONSOLE ON)
 endif()
   
 # Build libstratopack for suika3-pack
