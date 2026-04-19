@@ -683,6 +683,12 @@ jobs:
         run: |
           cp linux/suika3-x86_64.AppImage dist/misc/linux/
 
+      - name: Download Flatpak artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: flatpak
+          path: flatpak
+
       - name: Download wasm artifacts
         uses: actions/download-artifact@v4
         with:
@@ -887,6 +893,7 @@ jobs:
             dist/misc/windows/suika3-32.exe
             #macos/build-macos/Suika3.dmg
             linux/suika3-x86_64.AppImage
+            flatpak/Suika3.flatpak
             android-apk/*.apk
             #ios-engine/*.ipa
           body: |
