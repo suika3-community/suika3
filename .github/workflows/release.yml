@@ -218,11 +218,11 @@ jobs:
 
       - name: Build flatpak
         run: |
-          flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-          flatpak install flathub org.freedesktop.Sdk//25.08
-          flatpak install flathub org.freedesktop.Platform//25.08
-          flatpak install flathub org.freedesktop.Platform.GStreamer.openmpt//25.08
-          flatpak-builder --repo=myrepo --force-clean build-dir ./resources/linux/vn.suika3.engine.yml
+          flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          flatpak install --user  flathub org.freedesktop.Sdk//25.08
+          flatpak install --user  flathub org.freedesktop.Platform//25.08
+          flatpak install --user  flathub org.freedesktop.Platform.GStreamer.openmpt//25.08
+          flatpak-builder --user  --repo=myrepo --force-clean build-dir ./resources/linux/vn.suika3.engine.yml
           flatpak build-bundle myrepo Suika3.flatpak vn.suika3.engine --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo
 
       - name: Upload artifact
