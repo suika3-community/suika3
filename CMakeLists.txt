@@ -58,6 +58,12 @@ option(SUIKA_ENABLE_DIST "Build for OS package" OFF)
 option(SUIKA_ENABLE_INSTALL "Enable installation" OFF)
 
 #
+# [SUIKA_ENABLE_INSTALL_ENGINE_ONLY]
+#  - Install engine binary only
+#
+option(SUIKA_ENABLE_INSTALL_ENGINE_ONLY "Install engine binary only" OFF)
+
+#
 # [SUIKA_ENABLE_STATIC]
 #  - Build a static library for use with project templates for IDEs.
 #  - Currenly used by the "macos-lib", "ios-*", "openharmony-*", and "unity-*"
@@ -217,7 +223,7 @@ else()
     set(SUIKA_ENABLE_BYTECOMP           ON)
     set(SUIKA_ENABLE_AOTCOMP            ON)
     set(SUIKA_ENABLE_INSTALL            ON)
-    set(SUIKA_TARGET_GST                ON)   # Use Gstreamer
+    set(SUIKA_ENABLE_GST                ON)   # Use Gstreamer
 
   elseif(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
     # FreeBSD is detected.
@@ -228,7 +234,7 @@ else()
     set(SUIKA_ENABLE_BYTECOMP           ON)
     set(SUIKA_ENABLE_AOTCOMP            ON)
     set(SUIKA_ENABLE_INSTALL            ON)
-    set(SUIKA_TARGET_GST                ON)   # Use Gstreamer
+    set(SUIKA_ENABLE_GST                ON)   # Use Gstreamer
 
   elseif(CMAKE_SYSTEM_NAME STREQUAL "NetBSD")
     # NetBSD is detected.
@@ -981,96 +987,103 @@ if(SUIKA_ENABLE_INSTALL)
   # "suika3" command. 
   install(TARGETS suika3       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
-  # "suika3-pack" command.
-  if(SUIKA_ENABLE_PACK)
-    install(TARGETS suika3-pack  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-  endif()
+  if(NOT SUIKA_ENABLE_INSTALL_ENGINE_ONLY)
+    # "suika3-pack" command.
+    if(SUIKA_ENABLE_PACK)
+      install(TARGETS suika3-pack  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    endif()
 
-  # "suika3-bcc" command. (bytecode compiler)
-  if(SUIKA_ENABLE_BYTECOMP)
-    install(TARGETS suika3-bcc   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-  endif()
+    # "suika3-bcc" command. (bytecode compiler)
+    if(SUIKA_ENABLE_BYTECOMP)
+      install(TARGETS suika3-bcc   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    endif()
 
-  # "suika3-aotc" command. (AOT compiler)
-  if(SUIKA_ENABLE_AOTCOMP)
-    install(TARGETS suika3-aotc  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    # "suika3-aotc" command. (AOT compiler)
+    if(SUIKA_ENABLE_AOTCOMP)
+      install(TARGETS suika3-aotc  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    endif()
   endif()
 
   #
   # Install manpages. (mdoc for *BSD, roff for others)
   #
 
-  if(   SUIKA_TARGET_FREEBSD
-     OR SUIKA_TARGET_FREEBSD_WAYLAND
-     OR SUIKA_TARGET_FREEBSD_X11SOFT
-     OR SUIKA_TARGET_NETBSD
-     OR SUIKA_TARGET_NETBSD_X11SOFT
-     OR SUIKA_TARGET_OPENBSD
-     OR SUIKA_TARGET_OPENBSD_X11SOFT)
-    # BSD mdoc
-    install(
-      FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3.1.mdoc"
-      DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
-      RENAME      "suika3.1"
-    )
-    install(
-      FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-pack.1.mdoc"
-      DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
-      RENAME      "suika3-pack.1"
-    )
-    install(
-      FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-bcc.1.mdoc"
-      DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
-      RENAME      "suika3-bcc.1"
-    )
-    install(
-      FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-aotc.1.mdoc"
-      DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
-      RENAME      "suika3-aotc.1"
-    )
-  else()
-    # roff
-    install(
-      FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3.1"
-                  "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-pack.1"
-                  "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-bcc.1"
-                  "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-aotc.1"
-      DESTINATION "${CMAKE_INSTALL_MANDIR}/man1"
-    )
+  if(NOT SUIKA_ENABLE_INSTALL_ENGINE_ONLY)
+    if(   SUIKA_TARGET_FREEBSD
+       OR SUIKA_TARGET_FREEBSD_WAYLAND
+       OR SUIKA_TARGET_FREEBSD_X11SOFT
+       OR SUIKA_TARGET_NETBSD
+       OR SUIKA_TARGET_NETBSD_X11SOFT
+       OR SUIKA_TARGET_OPENBSD
+       OR SUIKA_TARGET_OPENBSD_X11SOFT)
+      # BSD mdoc
+      install(
+        FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3.1.mdoc"
+        DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
+        RENAME      "suika3.1"
+      )
+      install(
+        FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-pack.1.mdoc"
+        DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
+        RENAME      "suika3-pack.1"
+      )
+      install(
+        FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-bcc.1.mdoc"
+        DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
+        RENAME      "suika3-bcc.1"
+      )
+      install(
+        FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-aotc.1.mdoc"
+        DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
+        RENAME      "suika3-aotc.1"
+      )
+    else()
+      # roff
+      install(
+        FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3.1"
+                    "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-pack.1"
+                    "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-bcc.1"
+                    "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-aotc.1"
+        DESTINATION "${CMAKE_INSTALL_MANDIR}/man1"
+      )
+    endif()
   endif()
 
   #
   # Install documents.
   # 
 
-  install(
-    DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/docs/mkdocs-en/docs"
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/${SUIKA_DIR_DOCS}
-  )
+  if(NOT SUIKA_ENABLE_INSTALL_ENGINE_ONLY)
+    install(
+      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/docs/mkdocs-en/docs"
+      DESTINATION ${CMAKE_INSTALL_PREFIX}/${SUIKA_DIR_DOCS}
+    )
+  endif()
 
   #
   # Install the sample game.
   #
 
-  # Install ZLIB-licensed contents.
-  if(SUIKA_ENABLE_DIST)
-    # Exclude the font when packaging.
-    # (A symlink to a system font should be created by packaging process.)
-    install(
-      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/game"
-      DESTINATION "${CMAKE_INSTALL_PREFIX}/${SUIKA_DIR_GAME}"
-      FILES_MATCHING
-      PATTERN "*"
-      PATTERN "bgm2" EXCLUDE
-      PATTERN "system/font/LICENSE" EXCLUDE
-      PATTERN "system/font/rounded-l-mplus-1c-bold.ttf" EXCLUDE
-    )
-  else()
-    # Include the font.
-    install(
-      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/game"
-      DESTINATION "${CMAKE_INSTALL_PREFIX}/${SUIKA_DIR_GAME}"
-    )
+  if(NOT SUIKA_ENABLE_INSTALL_ENGINE_ONLY)
+    # Install ZLIB-licensed contents.
+    if(SUIKA_ENABLE_DIST)
+      # Exclude the font when packaging.
+      # (A symlink to a system font should be created by packaging process.)
+      install(
+        DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/game"
+        DESTINATION "${CMAKE_INSTALL_PREFIX}/${SUIKA_DIR_GAME}"
+        FILES_MATCHING
+        PATTERN "*"
+        PATTERN "bgm2" EXCLUDE
+        PATTERN "system/font/LICENSE" EXCLUDE
+        PATTERN "system/font/rounded-l-mplus-1c-bold.ttf" EXCLUDE
+      )
+    else()
+      # Include the font.
+      install(
+        DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/game"
+        DESTINATION "${CMAKE_INSTALL_PREFIX}/${SUIKA_DIR_GAME}"
+      )
+    endif()
   endif()
-
 endif()
