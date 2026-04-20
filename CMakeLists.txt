@@ -58,17 +58,16 @@ option(SUIKA_ENABLE_DIST "Build for OS package" OFF)
 option(SUIKA_ENABLE_INSTALL "Enable installation" OFF)
 
 #
-# [SUIKA_ENABLE_NO_MANPAGES]
-# [SUIKA_ENABLE_NO_EXAMPLES]
-# [SUIKA_ENABLE_NO_DOCS]
-# [SUIKA_ENABLE_NO_DESKTOP]
-# [SUIKA_ENABLE_FLATPAK]
+# [SUIKA_ENABLE_FREEDESKTOP]
+#  - Install FreeDesktop files.
 #
-option(SUIKA_ENABLE_NO_MANPAGES "No man pages"          OFF)
-option(SUIKA_ENABLE_NO_EXAMPLES "No examples"           OFF)
-option(SUIKA_ENABLE_NO_DOCS     "No docs"               OFF)
-option(SUIKA_ENABLE_NO_DESKTOP  "No desktop files"      OFF)
-option(SUIKA_ENABLE_FLATPAK     "Install suika3-run.sh" OFF)
+option(SUIKA_ENABLE_FREEDESKTOP "Install desktop files" OFF)
+
+#
+# [SUIKA_ENABLE_FLATPAK]
+#  - No documents and samples.
+#
+option(SUIKA_ENABLE_FLATPAK "Optimize for Flatpak packaging" OFF)
 
 #
 # [SUIKA_ENABLE_STATIC]
@@ -235,8 +234,9 @@ else()
     set(SUIKA_ENABLE_PACK               ON)
     set(SUIKA_ENABLE_BYTECOMP           ON)
     set(SUIKA_ENABLE_AOTCOMP            ON)
-    set(SUIKA_ENABLE_INSTALL            ON)
     set(SUIKA_ENABLE_GST                ON)   # Use Gstreamer
+    set(SUIKA_ENABLE_INSTALL            ON)
+    set(SUIKA_ENABLE_FREEDESKTOP        ON)
 
   elseif(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
     # FreeBSD is detected.
@@ -246,8 +246,9 @@ else()
     set(SUIKA_ENABLE_PACK               ON)
     set(SUIKA_ENABLE_BYTECOMP           ON)
     set(SUIKA_ENABLE_AOTCOMP            ON)
-    set(SUIKA_ENABLE_INSTALL            ON)
     set(SUIKA_ENABLE_GST                ON)   # Use Gstreamer
+    set(SUIKA_ENABLE_INSTALL            ON)
+    set(SUIKA_ENABLE_FREEDESKTOP        ON)
 
   elseif(CMAKE_SYSTEM_NAME STREQUAL "NetBSD")
     # NetBSD is detected.
@@ -257,8 +258,9 @@ else()
     set(SUIKA_ENABLE_PACK               ON)
     set(SUIKA_ENABLE_BYTECOMP           ON)
     set(SUIKA_ENABLE_AOTCOMP            ON)
-    set(SUIKA_ENABLE_INSTALL            ON)
     set(SUIKA_ENABLE_GST                OFF)  # For older computers.
+    set(SUIKA_ENABLE_INSTALL            ON)
+    set(SUIKA_ENABLE_FREEDESKTOP        ON)
 
   elseif(CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")
     # OpenBSD is detected.
@@ -268,8 +270,9 @@ else()
     set(SUIKA_ENABLE_PACK               ON)
     set(SUIKA_ENABLE_BYTECOMP           ON)
     set(SUIKA_ENABLE_AOTCOMP            ON)
-    set(SUIKA_ENABLE_INSTALL            ON)
     set(SUIKA_ENABLE_GST                OFF)  # Maybe?
+    set(SUIKA_ENABLE_FREEDESKTOP        ON)
+    set(SUIKA_ENABLE_INSTALL            ON)
 
   elseif(CMAKE_SYSTEM_NAME STREQUAL "SunOS" AND CMAKE_SYSTEM_VERSION VERSION_GREATER_EQUAL "5.11")
     # Solaris 11 is detected.
@@ -280,6 +283,7 @@ else()
     set(SUIKA_ENABLE_BYTECOMP           ON)
     set(SUIKA_ENABLE_AOTCOMP            ON)
     set(SUIKA_ENABLE_INSTALL            ON)
+    set(SUIKA_ENABLE_FREEDESKTOP        ON)
 
   elseif(CMAKE_SYSTEM_NAME STREQUAL "SunOS" AND CMAKE_SYSTEM_VERSION VERSION_EQUAL "5.10")
     # Solaris 10 is detected.
@@ -290,6 +294,7 @@ else()
     set(SUIKA_ENABLE_BYTECOMP           ON)
     set(SUIKA_ENABLE_AOTCOMP            ON)
     set(SUIKA_ENABLE_INSTALL            ON)
+    set(SUIKA_ENABLE_FREEDESKTOP        ON)
 
   elseif(CMAKE_SYSTEM_NAME STREQUAL "Haiku")
     # Haiku is detected.
@@ -1021,9 +1026,9 @@ if(SUIKA_ENABLE_INSTALL)
   endif()
 
   # suika3-run.sh
-  if(SUIKA_ENABLE_FLATPAK)
+  if(SUIKA_ENABLE_FREEDESKTOP)
     install(
-      PROGRAMS    "${CMAKE_CURRENT_SOURCE_DIR}/resources/linux/suika3-run.sh"
+      PROGRAMS    "${CMAKE_CURRENT_SOURCE_DIR}/resources/freedesktop/suika3-run.sh"
       DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
   endif()
@@ -1032,68 +1037,71 @@ if(SUIKA_ENABLE_INSTALL)
   # Install manpages. (mdoc for *BSD, roff for others)
   #
 
-  if(NOT SUIKA_ENABLE_NO_MANPAGES)
-    if(   SUIKA_TARGET_FREEBSD
-       OR SUIKA_TARGET_FREEBSD_WAYLAND
-       OR SUIKA_TARGET_FREEBSD_X11SOFT
-       OR SUIKA_TARGET_NETBSD
-       OR SUIKA_TARGET_NETBSD_X11SOFT
-       OR SUIKA_TARGET_OPENBSD
-       OR SUIKA_TARGET_OPENBSD_X11SOFT)
-      # BSD mdoc
-      install(
-        FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3.1.mdoc"
-        DESTINATION share/man/man1
-        RENAME      "suika3.1"
-      )
-      install(
-        FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-pack.1.mdoc"
-        DESTINATION share/man/man1
-        RENAME      "suika3-pack.1"
-      )
-      install(
-        FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-bcc.1.mdoc"
-        DESTINATION share/man/man1
-        RENAME      "suika3-bcc.1"
-      )
-      install(
-        FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-aotc.1.mdoc"
-        DESTINATION share/man/man1
-        RENAME      "suika3-aotc.1"
-      )
-    else()
-      # roff
-      install(
-        FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3.1"
-                    "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-pack.1"
-                    "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-bcc.1"
-                    "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-aotc.1"
-        DESTINATION share/man/man1
-      )
-    endif()
+  if(   SUIKA_TARGET_FREEBSD
+     OR SUIKA_TARGET_FREEBSD_WAYLAND
+     OR SUIKA_TARGET_FREEBSD_X11SOFT
+     OR SUIKA_TARGET_NETBSD
+     OR SUIKA_TARGET_NETBSD_X11SOFT
+     OR SUIKA_TARGET_OPENBSD
+     OR SUIKA_TARGET_OPENBSD_X11SOFT)
+    # BSD mdoc
+    install(
+      FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3.1.mdoc"
+      DESTINATION share/man/man1
+      RENAME      "suika3.1"
+    )
+    install(
+       FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-pack.1.mdoc"
+       DESTINATION share/man/man1
+       RENAME      "suika3-pack.1"
+    )
+    install(
+      FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-bcc.1.mdoc"
+      DESTINATION share/man/man1
+      RENAME      "suika3-bcc.1"
+    )
+    install(
+      FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-aotc.1.mdoc"
+      DESTINATION share/man/man1
+      RENAME      "suika3-aotc.1"
+    )
+  elseif(NOT SUIKA_ENABLE_FLATPAK
+         OR
+	 NOT SUIKA_ENABLE_LINUX)
+    # roff
+    install(
+      FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3.1"
+                  "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-pack.1"
+                  "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-bcc.1"
+                  "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-aotc.1"
+      DESTINATION share/man/man1
+    )
   endif()
 
   #
   # Insatll desktop-related files.
   #
 
-  if(NOT SUIKA_ENABLE_NO_DESKTOP)
+  if(SUIKA_ENABLE_FREEDESKTOP)
     install(
-      FILES resources/linux/vn.suika3.engine.xml
+      FILES resources/freedesktop/vn.suika3.engine.xml
       DESTINATION share/mime/packages
       RENAME vn.suika3.engine.mime.xml
     )
     install(
-      FILES resources/linux/vn.suika3.engine.desktop
+      FILES resources/freedesktop/vn.suika3.engine.desktop
       DESTINATION share/applications
     )
     install(
-      FILES resources/linux/vn.suika3.engine.metainfo.xml
-      DESTINATION share/metainfo
-    )
-    install(
-      FILES resources/linux/vn.suika3.engine.png
+      FILES resources/freedesktop/vn.suika3.engine.png
       DESTINATION share/icons/hicolor/512x512/apps
+    )
+  endif()
+
+  if(SUIKA_ENABLE_FLATPAK)
+    install(
+      FILES resources/flatpak/vn.suika3.engine.metainfo.xml
+      DESTINATION share/metainfo
     )
   endif()
 
@@ -1101,7 +1109,7 @@ if(SUIKA_ENABLE_INSTALL)
   # Install documents.
   # 
 
-  if(NOT SUIKA_ENABLE_NO_DOCS)
+  if(NOT SUIKA_ENABLE_FLATPAK)
     install(
       DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/docs/mkdocs-en/docs"
       DESTINATION ${SUIKA_DIR_DOCS}
@@ -1112,7 +1120,7 @@ if(SUIKA_ENABLE_INSTALL)
   # Install the sample game.
   #
 
-  if(NOT SUIKA_ENABLE_NO_EXAMPLES)
+  if(NOT SUIKA_ENABLE_FLATPAK)
     # Install ZLIB-licensed contents.
     if(SUIKA_ENABLE_DIST)
       # Exclude the font when packaging.
@@ -1122,9 +1130,7 @@ if(SUIKA_ENABLE_INSTALL)
         DESTINATION "${SUIKA_DIR_GAME}"
         FILES_MATCHING
         PATTERN "*"
-        PATTERN "bgm2" EXCLUDE
-        PATTERN "system/font/LICENSE" EXCLUDE
-        PATTERN "system/font/rounded-l-mplus-1c-bold.ttf" EXCLUDE
+        PATTERN "system/font/*" EXCLUDE
       )
     else()
       # Include the font.

@@ -179,7 +179,7 @@ jobs:
           flatpak install --user -y flathub org.freedesktop.Sdk//25.08
           flatpak install --user -y flathub org.freedesktop.Platform//25.08
           flatpak install --user -y flathub org.freedesktop.Platform.GStreamer.openmpt//25.08
-          flatpak-builder --user -y --repo=myrepo --force-clean build-dir ./resources/linux/vn.suika3.engine.yml
+          flatpak-builder --user -y --repo=myrepo --force-clean build-dir ./resources/flatpak/vn.suika3.engine.yml
           flatpak build-bundle myrepo Suika3.flatpak vn.suika3.engine --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo
 
       - name: Upload artifact

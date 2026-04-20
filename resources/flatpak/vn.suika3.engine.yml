@@ -24,6 +24,7 @@ modules:
       - "-DCMAKE_BUILD_TYPE=Release"
       - "-DSUIKA_TARGET_LINUX=ON"
       - "-DSUIKA_ENABLE_INSTALL=ON"
+      - "-DSUIKA_ENABLE_FREEDESKTOP=ON"
       - "-DSUIKA_ENABLE_FLATPAK=ON"
       - "-DSUIKA_ENABLE_DIST=ON"
       - "-DSUIKA_ENABLE_GST=ON"
@@ -32,10 +33,6 @@ modules:
       - "-DSUIKA_ENABLE_PACK=ON"
       - "-DSUIKA_ENABLE_BYTECOMP=ON"
       - "-DSUIKA_ENABLE_AOTCOMP=ON"
-      - "-DSUIKA_ENABLE_GST=ON"
     sources:
       - type: dir
         path: ../..
-    post-install:
-      - update-mime-database /app/share/mime
-      - update-desktop-database /app/share/applications
