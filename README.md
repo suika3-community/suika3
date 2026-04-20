@@ -89,13 +89,10 @@ Please refer to [build.md](docs/mkdocs-en/docs/build.md) for platform-specific i
 
 ### Binary Installation
 
-Binary Downloads:
+**Binary Downloads:**
 | OS               | Link                                                                                    |
 |------------------|-----------------------------------------------------------------------------------------|
-| Full             | [Full](https://github.com/awemorris/suika3/releases/latest/download/Suika3.zip)         |
-| Windows          | [EXE](https://github.com/awemorris/suika3/releases/latest/download/suika3.exe)          |
-| macOS            | [DMG](https://github.com/awemorris/suika3/releases/latest/download/Suika3.dmg)          |
-| Linux (x86_64)   | [Flatpak](https://github.com/awemorris/suika3/releases/latest/download/Suika3.flatpak)  |
+| Full             | [Full](https://github.com/awemorris/suika3/releases/latest/download/Suika3-full.zip)    |
 
 **macOS:**
 ```
@@ -152,7 +149,9 @@ Now you have a beautiful development environment!
 
 ## VS Code Integration
 
-Open the game folder by Visual Studio Code.
+### Desktop Execution
+
+Open the extracted folder by `Visual Studio Code`.
 
 **Click `Terminal --> Run Build Task` (or press Ctrl-Shift-B):**
 
@@ -165,6 +164,13 @@ Open the game folder by Visual Studio Code.
 **Errors will be shown in PROBLEMS:**
 
 <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/vscode-3.webp" alt="VSCode 3" width="640" hspace="20">
+
+### Android Execution
+
+Clicking "Suika3: Build Android APK" will generate an APK file and automatically install it on your Android device.
+Theres no need to install the JDK or Android SDK manually, as they will be downloaded automatically.
+
+A similar workflow is planned for iOS as well.
 
 ---
 
