@@ -3,11 +3,11 @@ with open("message.txt") as f:
 
     print("#include <string.h>")
     print("")
-    print("const char *s3_get_system_language(void);")
+    print("const char *pf_get_system_language(void);")
     print("")
     print("const char *s3_gettext(const char *msg)")
     print("{")
-    print("    const char *lang_code = s3_get_system_language();")
+    print("    const char *lang_code = pf_get_system_language();")
 
     last = ""
     for line in lines:

@@ -1,10 +1,10 @@
 #include <string.h>
 
-const char *s3_get_system_language(void);
+const char *pf_get_system_language(void);
 
 const char *s3_gettext(const char *msg)
 {
-    const char *lang_code = s3_get_system_language();
+    const char *lang_code = pf_get_system_language();
     if (strcmp(msg, "%s:%d: %s") == 0) {
         if (strncmp(lang_code, "es", 2) == 0) return "%s:%d: %s";
         if (strncmp(lang_code, "fr", 2) == 0) return "%s:%d : %s";
@@ -736,6 +736,17 @@ const char *s3_gettext(const char *msg)
         if (strncmp(lang_code, "tw", 2) == 0) return "檔案 \"%s\" 第 %d 行設定無効。";
         if (strncmp(lang_code, "ja", 2) == 0) return "ファイル \"%s\" の %d 行目の設定が不正です。";
         return "Invalid config line at file \"%s\" line %d.";
+    }
+    if (strcmp(msg, "No matching localized text.") == 0) {
+        if (strncmp(lang_code, "es", 2) == 0) return "No se encontro un texto localizado coincidente.";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Aucun texte localisé correspondant n'a été trouvé.";
+        if (strncmp(lang_code, "it", 2) == 0) return "Nessun testo localizzato corrispondente trovato.";
+        if (strncmp(lang_code, "de", 2) == 0) return "Kein passender lokalisierter Text gefunden.";
+        if (strncmp(lang_code, "el", 2) == 0) return "Δεν βρέθηκε αντίστοιχο τοπικό κείμενο.";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Соответствующий локализованный текст не найден.";
+        if (strncmp(lang_code, "zh", 2) == 0) return "未找到匹配的本地化文本。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "テキストのローカライズ版がマッチしませんでした。";
+        return "No matching localized text.";
     }
     return msg;
 }
