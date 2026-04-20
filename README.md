@@ -90,17 +90,23 @@ Please refer to [build.md](docs/mkdocs-en/docs/build.md) for platform-specific i
 ### Binary Installation
 
 Binary Downloads:
-| OS               | Link                                                                                                    |
-|------------------|---------------------------------------------------------------------------------------------------------|
-| Full             | [Full](https://github.com/awemorris/suika3/releases/latest/download/Suika3.zip)                         |
-| Windows          | [EXE](https://github.com/awemorris/suika3/releases/latest/download/suika3.exe)                          |
-| macOS            | [DMG](https://github.com/awemorris/suika3/releases/latest/download/Suika3.dmg)                          |
-| Linux amd64      | [AppImage x86_64](https://github.com/awemorris/suika3/releases/latest/download/suika3-x86_64.AppImage)  |
+| OS               | Link                                                                                    |
+|------------------|-----------------------------------------------------------------------------------------|
+| Full             | [Full](https://github.com/awemorris/suika3/releases/latest/download/Suika3.zip)         |
+| Windows          | [EXE](https://github.com/awemorris/suika3/releases/latest/download/suika3.exe)          |
+| macOS            | [DMG](https://github.com/awemorris/suika3/releases/latest/download/Suika3.dmg)          |
+| Linux (x86_64)   | [Flatpak](https://github.com/awemorris/suika3/releases/latest/download/Suika3.flatpak)  |
 
 **macOS:**
 ```
 brew tap awemorris/suika3
-0-9brew install suika3
+brew install suika3
+```
+
+**Linux:**
+```
+wget https://github.com/awemorris/suika3/releases/latest/download/Suika3.flatpak
+flatpak install --user Suika3.flatpak
 ```
 
 **FreeBSD:**
@@ -108,15 +114,18 @@ brew tap awemorris/suika3
 cd /usr/ports/games/suika3 && make install clean
 ```
 
-### VS Code Integration
+--
+
+## VS Code Syntax Highlighting
 
 There is an awesome VS Code extension by `@lalalll-lalalll` to support
 syntax highlighting for Suika3.
 
 Check it out: [NovelML-Highlighter](https://github.com/lalalll-lalalll/NovelML-Highlighter)
 
-To install this extension, visit the repository and download the
-.vsix file from the [Releases page](https://github.com/lalalll-lalalll/NovelML-Highlighter/releases)
+To install this extension, visit the repository and download the .vsix
+file from the
+[Releases page](https://github.com/lalalll-lalalll/NovelML-Highlighter/releases)
 and install it by the following steps.
 
 **Step 1**:
@@ -158,6 +167,21 @@ If you write the following in `tasks.json`, you can run Suika3 from VS Code:
     ]
 }
 ```
+
+---
+
+## VS Code Integration
+
+Open the game folder by Visual Studio Code.
+
+**Click `Terminal --> Run Build Task` (or press Ctrl-Shift-B):**
+<img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/vscode-1.webp" alt="VSCode 1" width="640" hspace="20">
+
+**Suika3 will be executed:**
+<img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/vscode-2.webp" alt="VSCode 2" width="640" hspace="20">
+
+**Errors will be shown:**
+<img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/vscode-3.webp" alt="VSCode 3" width="640" hspace="20">
 
 ---
 
