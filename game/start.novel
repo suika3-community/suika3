@@ -143,14 +143,29 @@
 [callmacro name="nvl-mode"]
 
 [text action="clear"]
-[text text="Hello, this is NVL mode test."]
-[text text="NVL mode has a fullscreen-styled message box."]
-[text text="By default, each text tag will do a line feed."]
-[text text="To continue a paragraph,"]
-[text text="specify the space parameter." space=" "]
+[text text="""
+    Hello, this is NVL mode test. 
+    NVL mode has a fullscreen-styled message box. 
+    By default, each text tag will do a line feed.
+"""]
+[text text="""
+    \nAlice was beginning to get very tired of sitting by her sister 
+    on the bank, and of having nothing to do: once or twice she had peeped 
+    into the book her sister was reading, but it had no pictures or 
+    conversations in it, “and what is the use of a book,” thought Alice 
+    “without pictures or conversations?”
+"""]
+
+[text action="continue" text="\nYou can divide a long text "]
+[text action="continue" text="into short texts "]
+[text action="continue" text="like this."]
+[text action="finish"]
 
 [text action="clear"]
-[text text="Please clear the message box explicitly."]
+[text text="""
+    You have to clear the message box explicitly. 
+    This is why NVL is called \"Page Mode\" in Suika3.
+"""]
 
 [callmacro name="adv-mode"]
 [text text="You can go back to ADV mode."]

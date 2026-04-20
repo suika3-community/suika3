@@ -1034,7 +1034,8 @@ s3_append_last_message(
 	len = 0;
 	if (last_message != NULL)
 		len += strlen(last_message);
-	len += strlen(msg);
+	if (msg != NULL)
+		len += strlen(msg);
 
 	s = malloc(len + 1);
 	if (s == NULL) {
@@ -1045,7 +1046,8 @@ s3_append_last_message(
 	strcpy(s, "");
 	if (last_message != NULL)
 		strcat(s, last_message);
-	strcat(s, msg);
+	if (msg != NULL)
+		strcat(s, msg);
 
 	last_message = s;
 

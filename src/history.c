@@ -203,8 +203,10 @@ s3_append_history(
 	len = 0;
 	if (h->text != NULL)
 		len += strlen(h->text);
-	len += strlen(spacing);
-	len += strlen(text);
+	if (spacing != NULL)
+		len += strlen(spacing);
+	if (text != NULL)
+		len += strlen(text);
 
 	s = malloc(len + 1);
 	if (s == NULL) {
@@ -215,10 +217,13 @@ s3_append_history(
 	strcpy(s, "");
 	if (h->text != NULL)
 		strcat(s, h->text);
-	strcat(s, spacing);
-	strcat(s, text);
+	if (spacing != NULL)
+		strcat(s, spacing);
+	if (text != NULL)
+		strcat(s, text);
 
-	free(h->text);
+	if (h->text != NULL)
+		free(h->text);
 
 	h->text = s;
 

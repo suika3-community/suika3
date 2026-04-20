@@ -1359,9 +1359,22 @@ bool s3_is_escape_sequence_char(char c)
 /* Process all the heading escape sequence. */
 static void process_escape_sequence(struct s3_drawmsg *context)
 {
+	char c;
+	int adjust;
+
 	/* Continue while the top is an escape sequence. */
-	while (*context->msg == '\\') {
-		switch (*(context->msg + 1)) {
+	adjust = 0;
+	while (*context->msg == '\\' || *context->msg == '\n') {
+		/* Emulate '\n' by "\\n" */
+		if (*context->msg == '\n') {
+			c = 'n';
+			adjust = -1;
+		} else {
+			c = *(context->msg + 1);
+			adjust = 0;
+		}
+
+		switch (c) {
 		/*
 		 * One character escape sequences.
 		 */
@@ -1445,6 +1458,9 @@ static void process_escape_sequence(struct s3_drawmsg *context)
 		default:
 			return; /* Invalid */
 		}
+
+		/* For '\n'. */
+		context->msg += adjust;
 	}
 }
 

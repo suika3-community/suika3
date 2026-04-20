@@ -911,6 +911,9 @@ parse_tag_document(
 	char *prop_name_tbl[PROP_MAX];
 	char *prop_val_tbl[PROP_MAX];
 	int i;
+	bool first_value;
+	bool multiline;
+	bool line_top;
 
 	for (i = 0; i < PROP_MAX; i++) {
 		prop_name_tbl[i] = &prop_name[i][0];
@@ -922,6 +925,9 @@ parse_tag_document(
 	line = 1;
 	len = 0;
 	prop_count = 0;
+	first_value = false;
+	multiline = false;
+	line_top = false;
 	while (*top != '\0') {
 		c = *top++;
 		switch (state) {
@@ -1031,6 +1037,17 @@ parse_tag_document(
 			if (c == '\"') {
 				state = ST_PROPVALUE_BODY;
 				len = 0;
+				if (*top != '\0' && *(top + 1) != '\0' &&
+				    *top == '\"' && *(top + 1) == '\"') {
+					top += 2;
+					first_value = true;
+					multiline = true;
+					line_top = true;
+				} else {
+					first_value = false;
+					multiline = false;
+					line_top = false;
+				}
 				continue;
 			}
 			continue;
@@ -1041,25 +1058,75 @@ parse_tag_document(
 					prop_val[prop_count][len] = '\"';
 					len++;
 					top++;
+					first_value = false;
+					line_top = false;
 					continue;
 				case 'n':
 					prop_val[prop_count][len] = '\n';
 					len++;
 					top++;
+					first_value = false;
+					line_top = false;
 					continue;
 				case '\\':
 					prop_val[prop_count][len] = '\\';
 					len++;
 					top++;
+					first_value = false;
+					line_top = false;
+					continue;
+				case 's':
+					prop_val[prop_count][len] = ' ';
+					len++;
+					top++;
+					first_value = false;
+					line_top = false;
 					continue;
 				default:
 					prop_val[prop_count][len] = '\\';
 					len++;
+					first_value = false;
+					line_top = false;
 					continue;
 				}
 			}
+			if (c == '\n') {
+				if (multiline && first_value) {
+					/* Truncate the heading LF. */
+					first_value = false;
+					continue;
+				}
+				if (multiline) {
+					/* Ignore a physical LF. */
+					line_top = true;
+					continue;
+				}
+			}
+			if ((c == ' ' || c == '\t') && multiline && line_top) {
+				/* Ignore line top spaces. */
+				continue;
+			}
 			if (c == '\"') {
-				prop_val[prop_count][len] = '\0';
+				if (multiline) {
+					if (*top != '\0' && *(top + 1) != '\0' &&
+					    *top == '\"' && *(top + 1) == '\"') {
+						/* EOF */
+						top += 2;
+					} else {
+						prop_val[prop_count][len++] = c;
+						first_value = false;
+						line_top = false;
+						continue;
+					}
+				}
+
+				if (multiline && len > 0 && prop_val[prop_count][len - 1] == '\n') {
+					/* Truncate the last LF. */
+					prop_val[prop_count][len - 1] = '\0';
+				} else {
+					/* Otherwise just terminate. */
+					prop_val[prop_count][len] = '\0';
+				}
 				prop_count++;
 
 				state = ST_PROPNAME;
@@ -1072,6 +1139,8 @@ parse_tag_document(
 				return false;
 			}
 			prop_val[prop_count][len++] = c;
+			first_value = false;
+			line_top = false;
 			continue;
 		case ST_COMMENT:
 			if (c == '\n') {
