@@ -116,7 +116,7 @@ Click the `start.novel` file to start Suika3 on Linux GUI.
 cd /usr/ports/games/suika3 && make install clean
 ```
 
---
+---
 
 ## VS Code Syntax Highlighting
 
@@ -148,28 +148,6 @@ Now you have a beautiful development environment!
 
 <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/syntax-highlighter-3.png" alt="Install highlighter 1" width="320" hspace="20">
 
-If you write the following in `tasks.json`, you can run Suika3 from VS Code:
-```
-{
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "Suika3 Execution",
-            "type": "shell",
-            "command": "C:\\tools\\suika3\\suika3.exe", 
-            "args": [],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
-        }
-    ]
-}
-```
-
 ---
 
 ## VS Code Integration
@@ -177,12 +155,15 @@ If you write the following in `tasks.json`, you can run Suika3 from VS Code:
 Open the game folder by Visual Studio Code.
 
 **Click `Terminal --> Run Build Task` (or press Ctrl-Shift-B):**
+
 <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/vscode-1.webp" alt="VSCode 1" width="640" hspace="20">
 
 **Suika3 will be executed:**
+
 <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/vscode-2.webp" alt="VSCode 2" width="640" hspace="20">
 
-**Errors will be shown:**
+**Errors will be shown in PROBLEMS:**
+
 <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/vscode-3.webp" alt="VSCode 3" width="640" hspace="20">
 
 ---
