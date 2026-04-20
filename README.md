@@ -69,46 +69,49 @@
 
 ---
 
-## Build and Install
+## Build and Installation
+
+### Full SDK Download (Prebuilt Binary)
+
+Please refer to [Getting Started](docs/mkdocs-en/docs/getting-started.md).
+
+[https://github.com/awemorris/suika3/releases/latest/download/Suika3-full.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-full.zip)
 
 ### Source Build
 
-In general, the following works:
+Please refer to [build.md](docs/mkdocs-en/docs/build.md) for platform-specific instructions.
+
 ```
+# Clone the repo.
 git clone https://github.com/awemorris/suika3.git
 cd suika3
+
+# Make a build directory.
 mkdir build && cd build
-cmake ..
-cmake --build . --parallel
-sudo cmake --install .
+
+# Build and install.
+cmake .. && cmake --build . --parallel && sudo cmake --install .
+
+# Run the sample.
 cd ../game
 suika3
 ```
 
-Please refer to [build.md](docs/mkdocs-en/docs/build.md) for platform-specific instructions.
+### Package Managers
 
-### Binary Installation
-
-**Binary Downloads:**
-| OS               | Link                                                                                    |
-|------------------|-----------------------------------------------------------------------------------------|
-| Full             | [Full](https://github.com/awemorris/suika3/releases/latest/download/Suika3-full.zip)    |
-
-**macOS:**
+Homebrew:
 ```
 brew tap awemorris/suika3
 brew install suika3
 ```
 
-**Linux:**
+Flatpak:
 ```
 wget https://github.com/awemorris/suika3/releases/latest/download/Suika3.flatpak
 flatpak install --user Suika3.flatpak
 ```
 
-Click the `start.novel` file to start Suika3 on Linux GUI.
-
-**FreeBSD:**
+FreeBSD Ports:
 ```
 cd /usr/ports/games/suika3 && make install clean
 ```
@@ -167,10 +170,12 @@ Open the extracted folder by `Visual Studio Code`.
 
 ### Android Execution
 
-Clicking "Suika3: Build Android APK" will generate an APK file and automatically install it on your Android device.
-Theres no need to install the JDK or Android SDK manually, as they will be downloaded automatically.
+Clicking the "Suika3: Build Android APK" task will automatically
+generate an APK file and install it on your Android device. There is
+no need to install the JDK or Android SDK manually, as they will be
+downloaded automatically in the build process!
 
-A similar workflow is planned for iOS as well.
+A similar workflow is planned for iOS as well. (Mac is required)
 
 ---
 
