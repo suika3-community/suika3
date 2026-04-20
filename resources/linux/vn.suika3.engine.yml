@@ -29,9 +29,9 @@ modules:
       - "-DSUIKA_ENABLE_GST=ON"
       - "-DSUIKA_ENABLE_JIT=ON"
       - "-DSUIKA_ENABLE_I18N=ON"
-      - "-DSUIKA_ENABLE_PACK=OFF"
-      - "-DSUIKA_ENABLE_BYTECOMP=OFF"
-      - "-DSUIKA_ENABLE_AOTCOMP=OFF"
+      - "-DSUIKA_ENABLE_PACK=ON"
+      - "-DSUIKA_ENABLE_BYTECOMP=ON"
+      - "-DSUIKA_ENABLE_AOTCOMP=ON"
       - "-DSUIKA_ENABLE_GST=ON"
     sources:
       - type: dir
