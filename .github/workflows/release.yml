@@ -376,23 +376,23 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-x86
-          path: |
-            build-android-x86/libsuika3.so
-          if-no-files-found: error
-          retention-days: 7
+#      - name: Upload artifact
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: android-x86
+#          path: |
+#            build-android-x86/libsuika3.so
+#          if-no-files-found: error
+#          retention-days: 7
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-riscv64
-          path: |
-            build-android-riscv64/libsuika3.so
-          if-no-files-found: error
-          retention-days: 7
+#      - name: Upload artifact
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: android-riscv64
+#          path: |
+#            build-android-riscv64/libsuika3.so
+#          if-no-files-found: error
+#          retention-days: 7
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
