@@ -1637,9 +1637,9 @@ It is ideal for opening cinematics, transitional cutscenes, or high-impact visua
 
 ```
 # Play an opening movie (cannot be skipped)
-[video file="opening.mp4" skippable="false"]
+[video file="opening.mp4"]
 
-# Play a short cutscene that the player can skip with a click if not the first time
+# Play a short cutscene that the player can skip with a click.
 [video file="cutscene01.mp4" skippable="true"]
 ```
 
