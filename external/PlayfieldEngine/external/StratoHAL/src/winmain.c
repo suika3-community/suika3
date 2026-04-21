@@ -669,8 +669,8 @@ RunFrame(void)
 			return FALSE;
 
 		/* Do a frame callback. */
-//		if(!hal_callback_on_event_frame())
-//			return FALSE;
+		if(!hal_callback_on_event_frame())
+			return FALSE;
 
 		return TRUE;
 	}

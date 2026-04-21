@@ -277,6 +277,8 @@ s3i_on_game_update(void)
 
 	mouse_pos_x = pf_mouse_pos_x;
 	mouse_pos_y = pf_mouse_pos_y;
+	is_mouse_left_pressed = pf_is_mouse_left_pressed;
+	is_mouse_right_pressed = pf_is_mouse_right_pressed;
 	is_mouse_left_clicked = pf_is_mouse_left_clicked;
 	is_mouse_right_clicked = pf_is_mouse_right_clicked;
 	is_mouse_dragging = pf_is_mouse_dragging;

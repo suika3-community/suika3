@@ -98,6 +98,7 @@ update(void)
 	     (s3_is_control_key_pressed() ||
 	      s3_is_return_key_pressed() ||
 	      s3_is_mouse_left_clicked() ||
+	      s3_is_mouse_right_clicked() ||
 	      s3_is_down_key_pressed())) {
 		/* Stop the video. */
 		s3_stop_video();
