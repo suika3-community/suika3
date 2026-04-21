@@ -99,68 +99,71 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-#  build-macos:
-#    runs-on: macos-latest
-#    steps:
-#      - name: Checkout repository
-#        uses: actions/checkout@v4
-# 
-#      - name: Set up dependencies
-#        run: |
-#          brew update
-#          brew install bison flex
-#          echo "/opt/homebrew/opt/bison/bin" >> $GITHUB_PATH
-#          echo "/opt/homebrew/opt/flex/bin" >> $GITHUB_PATH
-# 
-#      - name: Verify versions
-#        run: |
-#          which bison
-#          bison --version
-#          which flex
-#          flex --version
-# 
-#      - name: Setup for macOS
-#        uses: apple-actions/import-codesign-certs@v3
-#        with:
-#          p12-file-base64: ${{ secrets.CERTIFICATE_FILE_BASE64 }}
-#          p12-password: ${{ secrets.CERTIFICATE_PASSWORD }}
-#
-#      - name: Build for macOS
-#        shell: bash
-#        env:
-#          APPLE_ID: ${{ secrets.APPLE_ID }}
-#          TEAM_ID: ${{ secrets.TEAM_ID }}
-#          APP_SECRET: ${{ secrets.APP_PASSWORD }}
-#        run: |
-#          cmake --preset macos
-#          cmake --build --preset macos
-#          cd build-macos
-#          codesign --timestamp --options runtime --entitlements ../resources/macos/macos.entitlements --deep --force --sign "Developer ID Application" Suika3.app
-#          ditto -c -k --sequesterRsrc --keepParent Suika3.app Suika3.zip
-#          xcrun notarytool submit Suika3.zip --apple-id "$APPLE_ID" --team-id "$TEAM_ID" --password "$APP_SECRET" --wait
-#          xcrun stapler staple Suika3.app
-#          mkdir tmp
-#          cp -Rv Suika3.app tmp/Suika3.app
-#          hdiutil create -fs HFS+ -format UDBZ -srcfolder tmp -volname Suika3 Suika3.dmg
-#          codesign --sign "Developer ID Application" Suika3.dmg
-#          cd ..
-#          cmake --preset macos-lib
-#          cmake --build --preset macos-lib
-#          xcodebuild -create-xcframework -library build-macos-lib/libsuika3.a -headers include -output Suika3.xcframework
-#          tar czf Suika3.xcframework.tar.gz Suika3.xcframework
-#
-#      - name: Upload macOS
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: macos
-#          path: |
-#            build-macos/Suika3.dmg
-#            build-macos/suika3-pack
-#            build-macos/suika3-bytecomp
-#            build-macos/suika3-aotcomp
-#            Suika3.xcframework.tar.gz
-#          if-no-files-found: error
-#          retention-days: 7
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+ 
+      - name: Set up dependencies
+        run: |
+          brew update
+          brew install bison flex
+          echo "/opt/homebrew/opt/bison/bin" >> $GITHUB_PATH
+          echo "/opt/homebrew/opt/flex/bin" >> $GITHUB_PATH
+ 
+      - name: Verify versions
+        run: |
+          which bison
+          bison --version
+          which flex
+          flex --version
+ 
+      - name: Setup for macOS
+        uses: apple-actions/import-codesign-certs@v3
+        with:
+          p12-file-base64: ${{ secrets.CERTIFICATE_FILE_BASE64 }}
+          p12-password: ${{ secrets.CERTIFICATE_PASSWORD }}
+
+      - name: Build for macOS
+        shell: bash
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          TEAM_ID: ${{ secrets.TEAM_ID }}
+          APP_SECRET: ${{ secrets.APP_PASSWORD }}
+        run: |
+          cmake --preset macos
+          cmake --build --preset macos
+          cd build-macos
+          codesign --timestamp --options runtime --entitlements ../resources/macos/macos.entitlements --deep --force --sign "Developer ID Application" Suika3.app
+          ditto -c -k --sequesterRsrc --keepParent Suika3.app Suika3.zip
+          xcrun notarytool submit Suika3.zip --apple-id "$APPLE_ID" --team-id "$TEAM_ID" --password "$APP_SECRET" --wait
+          xcrun stapler staple Suika3.app
+          mkdir tmp
+          cp -Rv Suika3.app tmp/Suika3.app
+          hdiutil create -fs HFS+ -format UDBZ -srcfolder tmp -volname Suika3 Suika3.dmg
+          codesign --sign "Developer ID Application" Suika3.dmg
+          cd ..
+          cmake --preset macos-lib
+          cmake --build --preset macos-lib
+          xcodebuild -create-xcframework -library build-macos-lib/libsuika3.a -headers include -output Suika3.xcframework
+          tar czf Suika3.xcframework.tar.gz Suika3.xcframework
+          cmake --preset macos-cli
+          cmake --build --preset macos-cli
+
+      - name: Upload macOS
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: |
+            build-macos/Suika3.dmg
+            Suika3.xcframework.tar.gz
+            build-macos-cli/suika3
+            build-macos-cli/suika3-pack
+            build-macos-cli/suika3-bcc
+            build-macos-cli/suika3-aotc
+          if-no-files-found: error
+          retention-days: 7
 
   build-flatpak:
     runs-on: ubuntu-24.04
@@ -216,81 +219,81 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-# build-ios:
-#   runs-on: macos-latest
-#   steps:
-#     - name: Checkout repository
-#       uses: actions/checkout@v4
-#
-#     - name: Set up dependencies
-#       run: |
-#         brew update
-#         brew install bison flex
-#         echo "/opt/homebrew/opt/bison/bin" >> $GITHUB_PATH
-#         echo "/opt/homebrew/opt/flex/bin" >> $GITHUB_PATH
-#
-#     - name: Verify versions
-#       run: |
-#         which bison
-#         bison --version
-#         which flex
-#         flex --version
-#
-#     - name: Setup for iOS
-#       uses: apple-actions/import-codesign-certs@v3
-#       with:
-#         p12-file-base64: ${{ secrets.CERTIFICATE_FILE_BASE64 }}
-#         p12-password: ${{ secrets.CERTIFICATE_PASSWORD }}
-#
-#     - name: Build for iOS
-#       run: |
-#         cmake --preset ios-device
-#         cmake --build --preset ios-device
-#         cmake --preset ios-simulator
-#         cmake --build --preset ios-simulator
-#         xcodebuild -create-xcframework -library build-ios-device/libsuika3.a -headers include -library build-ios-simulator/libsuika3.a -headers include -output Suika3.xcframework
-#         tar czf Suika3.xcframework.tar.gz Suika3.xcframework
-#
-#         mkdir ios
-#         mkdir ios/Resources
-#         cp resources/assets.arc ios/Resources/
-#         mkdir ios/Resources/video
-#         mkdir ios/ios.xcodeproj
-#         cp resources/projects/ios/ios.xcodeproj/project.pbxproj ios/ios.xcodeproj/
-#         mkdir ios/ios
-#         cp -R Suika3.xcframework ios/ios/
-#         cp -R resources/projects/ios/ios/Assets.xcassets ios/ios/
-#         cp resources/projects/ios/ios/entry.c ios/ios/
-#         cp resources/projects/ios/ios/Info.plist ios/ios/
-#         cp resources/projects/ios/ios/ios.entitlements ios/ios/
-#         cp resources/projects/ios/ios/LaunchScreen.storyboard ios/ios/
-#
-#         cd ios
-#         xcodebuild archive -scheme ios -archivePath app.xcarchive CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
-#         #xcodebuild -exportArchive -archivePath app.xcarchive -exportPath ./output -exportOptionsPlist ../resources/ios/ExportOptions.plist CODE_SIGNING_ALLOWED=NO
-#         ls -R .
-#         mkdir Payload
-#         cp -Ra app.xcarchive/Products/Applications/ios.app Payload/Suika3.app
-#         zip -r suika3-ios-build-check.ipa Payload/Suika3.app
-#         cd ..
-#
-#     - name: Upload iOS
-#       uses: actions/upload-artifact@v4
-#       with:
-#         name: ios
-#         path: |
-#           Suika3.xcframework.tar.gz
-#         if-no-files-found: error
-#         retention-days: 7
-#
-#     - name: Upload iOS
-#       uses: actions/upload-artifact@v4
-#       with:
-#         name: ios-engine
-#         path: |
-#           ios/suika3-ios-build-check.ipa
-#         if-no-files-found: error
-#         retention-days: 7
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+ 
+      - name: Set up dependencies
+        run: |
+          brew update
+          brew install bison flex
+          echo "/opt/homebrew/opt/bison/bin" >> $GITHUB_PATH
+          echo "/opt/homebrew/opt/flex/bin" >> $GITHUB_PATH
+ 
+      - name: Verify versions
+        run: |
+          which bison
+          bison --version
+          which flex
+          flex --version
+ 
+      - name: Setup for iOS
+        uses: apple-actions/import-codesign-certs@v3
+        with:
+          p12-file-base64: ${{ secrets.CERTIFICATE_FILE_BASE64 }}
+          p12-password: ${{ secrets.CERTIFICATE_PASSWORD }}
+ 
+      - name: Build for iOS
+        run: |
+          cmake --preset ios-device
+          cmake --build --preset ios-device
+          cmake --preset ios-simulator
+          cmake --build --preset ios-simulator
+          xcodebuild -create-xcframework -library build-ios-device/libsuika3.a -headers include -library build-ios-simulator/libsuika3.a -headers include -output Suika3.xcframework
+          tar czf Suika3.xcframework.tar.gz Suika3.xcframework
+ 
+          mkdir ios
+          mkdir ios/Resources
+          cp resources/assets.arc ios/Resources/
+          mkdir ios/Resources/video
+          mkdir ios/ios.xcodeproj
+          cp resources/projects/ios/ios.xcodeproj/project.pbxproj ios/ios.xcodeproj/
+          mkdir ios/ios
+          cp -R Suika3.xcframework ios/ios/
+          cp -R resources/projects/ios/ios/Assets.xcassets ios/ios/
+          cp resources/projects/ios/ios/entry.c ios/ios/
+          cp resources/projects/ios/ios/Info.plist ios/ios/
+          cp resources/projects/ios/ios/ios.entitlements ios/ios/
+          cp resources/projects/ios/ios/LaunchScreen.storyboard ios/ios/
+ 
+          cd ios
+          xcodebuild archive -scheme ios -archivePath app.xcarchive CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
+           xcodebuild -exportArchive -archivePath app.xcarchive -exportPath ./output -exportOptionsPlist ../resources/ios/ExportOptions.plist CODE_SIGNING_ALLOWED=NO
+          ls -R .
+          mkdir Payload
+          cp -Ra app.xcarchive/Products/Applications/ios.app Payload/Suika3.app
+          zip -r suika3-ios-build-check.ipa Payload/Suika3.app
+          cd ..
+ 
+      - name: Upload iOS
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios
+          path: |
+            Suika3.xcframework.tar.gz
+          if-no-files-found: error
+          retention-days: 7
+ 
+      - name: Upload iOS
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-engine
+          path: |
+            ios/suika3-ios-build-check.ipa
+          if-no-files-found: error
+          retention-days: 7
 
   build-android:
     runs-on: ubuntu-latest
@@ -564,11 +567,11 @@ jobs:
           mkdir dist
           mkdir dist/misc
           mkdir dist/misc/windows
-          #mkdir dist/misc/macos
-          #mkdir dist/misc/macos/project
+          mkdir dist/misc/macos
+          mkdir dist/misc/macos/project
           mkdir dist/misc/linux
           mkdir dist/misc/wasm
-          #mkdir dist/misc/ios
+          mkdir dist/misc/ios
           mkdir dist/misc/android
           mkdir dist/misc/openharmony
           mkdir dist/misc/unity
@@ -608,39 +611,32 @@ jobs:
         run: |
           cp mingw/suika3.exe dist/misc/windows/suika3-32.exe
 
-#      - name: Download macOS artifacts
-#        uses: actions/download-artifact@v4
-#        with:
-#          name: macos
-#          path: macos
-#
-#      - name: Copy for macOS.
-#        run: |
-#          cp macos/build-macos/Suika3.dmg dist/misc/macos/
-#          cp macos/build-macos/suika3-pack dist/misc/macos/
-#
-#      - name: Copy for macOS project.
-#        run: |
-#          mkdir dist/misc/macos/project/Resources/
-#          cp resources/assets.arc dist/misc/macos/project/Resources/
-#          mkdir dist/misc/macos/project/Resources/video
-#          mkdir dist/misc/macos/project/Game.xcodeproj
-#          cp resources/projects/macos/Game.xcodeproj/project.pbxproj dist/misc/macos/project/Game.xcodeproj/
-#          mkdir dist/misc/macos/project/Game
-#          tar xfz macos/Suika3.xcframework.tar.gz -C dist/misc/macos/project/Game/
-#          cp -R resources/projects/macos/Game/Assets.xcassets dist/misc/macos/project/Game/
-#          cp resources/projects/macos/Game/main.m dist/misc/macos/project/Game/
-#          cp resources/macos/macos.entitlements dist/misc/macos/project/Game/Game.entitlements
+      - name: Download macOS artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: macos
+          path: macos
 
-#      - name: Download Linux artifacts
-#        uses: actions/download-artifact@v4
-#        with:
-#          name: linux-appimage
-#          path: linux
-#
-#      - name: Copy for Linux.
-#        run: |
-#          cp linux/suika3-x86_64.AppImage dist/misc/linux/
+      - name: Copy for macOS.
+        run: |
+          cp macos/build-macos/Suika3.dmg dist/misc/macos/
+          cp macos/build-macos-cli/suika3 dist/misc/macos/
+          cp macos/build-macos-cli/suika3-pack dist/misc/macos/
+          cp macos/build-macos-cli/suika3-aotc dist/misc/macos/
+          cp macos/build-macos-cli/suika3-bcc dist/misc/macos/
+
+      - name: Copy for macOS project.
+        run: |
+          mkdir dist/misc/macos/project/Resources/
+          cp resources/assets.arc dist/misc/macos/project/Resources/
+          mkdir dist/misc/macos/project/Resources/video
+          mkdir dist/misc/macos/project/Game.xcodeproj
+          cp resources/projects/macos/Game.xcodeproj/project.pbxproj dist/misc/macos/project/Game.xcodeproj/
+          mkdir dist/misc/macos/project/Game
+          tar xfz macos/Suika3.xcframework.tar.gz -C dist/misc/macos/project/Game/
+          cp -R resources/projects/macos/Game/Assets.xcassets dist/misc/macos/project/Game/
+          cp resources/projects/macos/Game/main.m dist/misc/macos/project/Game/
+          cp resources/macos/macos.entitlements dist/misc/macos/project/Game/Game.entitlements
 
       - name: Download Flatpak artifacts
         uses: actions/download-artifact@v4
@@ -648,7 +644,7 @@ jobs:
           name: flatpak
           path: flatpak
 
-      - name: Copy for Linux.
+      - name: Copy for Flatpak.
         run: |
           cp flatpak/Suika3.flatpak dist/misc/linux/
 
@@ -663,32 +659,32 @@ jobs:
           cp wasm/index.html dist/misc/wasm/
           cp resources/assets.arc dist/misc/wasm/
 
-#     - name: Download iOS artifacts
-#       uses: actions/download-artifact@v4
-#       with:
-#         name: ios
-#         path: ios
-#
-#      - name: Download iOS ipa artifacts
-#        uses: actions/download-artifact@v4
-#        with:
-#          name: ios-engine
-#          path: ios-engine
-#
-#      - name: Copy for iOS.
-#        run: |
-#          mkdir dist/misc/ios/Resources/
-#          cp resources/assets.arc dist/misc/ios/Resources/
-#          mkdir dist/misc/ios/Resources/video
-#          mkdir dist/misc/ios/ios.xcodeproj
-#          cp resources/projects/ios/ios.xcodeproj/project.pbxproj dist/misc/ios/ios.xcodeproj/
-#          mkdir dist/misc/ios/ios
-#          tar xfz ios/Suika3.xcframework.tar.gz -C dist/misc/ios/ios/
-#          cp -R resources/projects/ios/ios/Assets.xcassets dist/misc/ios/ios/
-#          cp resources/projects/ios/ios/entry.c dist/misc/ios/ios/
-#          cp resources/projects/ios/ios/Info.plist dist/misc/ios/ios/
-#          cp resources/projects/ios/ios/ios.entitlements dist/misc/ios/ios/
-#          cp resources/projects/ios/ios/LaunchScreen.storyboard dist/misc/ios/ios/
+      - name: Download iOS artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ios
+          path: ios
+ 
+       - name: Download iOS ipa artifacts
+         uses: actions/download-artifact@v4
+         with:
+           name: ios-engine
+           path: ios-engine
+ 
+       - name: Copy for iOS.
+         run: |
+           mkdir dist/misc/ios/Resources/
+           cp resources/assets.arc dist/misc/ios/Resources/
+           mkdir dist/misc/ios/Resources/video
+           mkdir dist/misc/ios/ios.xcodeproj
+           cp resources/projects/ios/ios.xcodeproj/project.pbxproj dist/misc/ios/ios.xcodeproj/
+           mkdir dist/misc/ios/ios
+           tar xfz ios/Suika3.xcframework.tar.gz -C dist/misc/ios/ios/
+           cp -R resources/projects/ios/ios/Assets.xcassets dist/misc/ios/ios/
+           cp resources/projects/ios/ios/entry.c dist/misc/ios/ios/
+           cp resources/projects/ios/ios/Info.plist dist/misc/ios/ios/
+           cp resources/projects/ios/ios/ios.entitlements dist/misc/ios/ios/
+           cp resources/projects/ios/ios/LaunchScreen.storyboard dist/misc/ios/ios/
 
       - name: Download Android arm64 artifacts
         uses: actions/download-artifact@v4
