@@ -534,7 +534,7 @@
                 "CMAKE_OSX_DEPLOYMENT_TARGET": "10.11",
                 "SUIKA_TARGET_MACOS":          "ON",
                 "SUIKA_ENABLE_JIT":            "ON",
-                "SUIKA_ENABLE_I18N":           "ON",
+                "SUIKA_ENABLE_I18N":           "ON"
             }
         },
         {
