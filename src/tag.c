@@ -914,6 +914,7 @@ parse_tag_document(
 	bool first_value;
 	bool multiline;
 	bool line_top;
+	bool last_is_escape;
 
 	for (i = 0; i < PROP_MAX; i++) {
 		prop_name_tbl[i] = &prop_name[i][0];
@@ -1043,10 +1044,12 @@ parse_tag_document(
 					first_value = true;
 					multiline = true;
 					line_top = true;
+					last_is_escape = false;
 				} else {
 					first_value = false;
 					multiline = false;
 					line_top = false;
+					last_is_escape = false;
 				}
 				continue;
 			}
@@ -1060,6 +1063,7 @@ parse_tag_document(
 					top++;
 					first_value = false;
 					line_top = false;
+					last_is_escape = false;
 					continue;
 				case 'n':
 					prop_val[prop_count][len] = '\n';
@@ -1067,6 +1071,7 @@ parse_tag_document(
 					top++;
 					first_value = false;
 					line_top = false;
+					last_is_escape = false;
 					continue;
 				case '\\':
 					prop_val[prop_count][len] = '\\';
@@ -1074,6 +1079,7 @@ parse_tag_document(
 					top++;
 					first_value = false;
 					line_top = false;
+					last_is_escape = false;
 					continue;
 				case 's':
 					prop_val[prop_count][len] = ' ';
@@ -1081,29 +1087,53 @@ parse_tag_document(
 					top++;
 					first_value = false;
 					line_top = false;
+					last_is_escape = false;
+					continue;
+				case '\n':
+					/* Escape for LF: Ignore \\LF */
+					top++;
+					first_value = false;
+					line_top = true;
+					last_is_escape = true;
 					continue;
 				default:
 					prop_val[prop_count][len] = '\\';
 					len++;
 					first_value = false;
 					line_top = false;
+					last_is_escape = false;
 					continue;
 				}
 			}
 			if (c == '\n') {
+				/* Truncate the first byte LF. """\n */
 				if (multiline && first_value) {
-					/* Truncate the heading LF. */
 					first_value = false;
-					continue;
-				}
-				if (multiline) {
-					/* Ignore a physical LF. */
 					line_top = true;
+					last_is_escape = false;
 					continue;
 				}
+
+				/* Escape LF \\\n */
+				if (multiline && last_is_escape) {
+					first_value = false;
+					line_top = true;
+					last_is_escape = false;
+					continue;
+				}
+
+				prop_val[prop_count][len] = '\n';
+				len++;
+				first_value = false;
+				line_top = true;
+				last_is_escape = false;
+				continue;
 			}
 			if ((c == ' ' || c == '\t') && multiline && line_top) {
 				/* Ignore line top spaces. */
+				first_value = false;
+				line_top = true;
+				last_is_escape = false;
 				continue;
 			}
 			if (c == '\"') {
@@ -1113,15 +1143,17 @@ parse_tag_document(
 						/* EOF */
 						top += 2;
 					} else {
+						/* Normal " */
 						prop_val[prop_count][len++] = c;
 						first_value = false;
 						line_top = false;
+						last_is_escape = false;
 						continue;
 					}
 				}
 
 				if (multiline && len > 0 && prop_val[prop_count][len - 1] == '\n') {
-					/* Truncate the last LF. */
+					/* Truncate the last LF if multi-line. */
 					prop_val[prop_count][len - 1] = '\0';
 				} else {
 					/* Otherwise just terminate. */
@@ -1138,9 +1170,11 @@ parse_tag_document(
 				*error_line = line;
 				return false;
 			}
-			prop_val[prop_count][len++] = c;
+			prop_val[prop_count][len] = c;
+			len++;
 			first_value = false;
 			line_top = false;
+			last_is_escape = false;
 			continue;
 		case ST_COMMENT:
 			if (c == '\n') {

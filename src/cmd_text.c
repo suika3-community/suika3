@@ -1064,9 +1064,23 @@ register_message_for_history(
 static bool
 init_msgbox(void)
 {
+	bool concat;
+
 	/* If returning from system GUI */
 	if (gui_sys_flag && !load_flag)
 		return true;
+
+	/* Do LF for page mode if concat is not specified. */
+	concat = s3_get_tag_arg_bool("concat", true, false);
+	if (s3_is_page_mode() & !is_page_top && !concat) {
+		if (!conf_msgbox_font_tategaki) {
+			pen_x = conf_msgbox_margin_left;
+			pen_y += conf_msgbox_margin_line;
+		} else {
+			pen_x -= conf_msgbox_margin_line;
+			pen_y = conf_msgbox_margin_top;
+		}
+	}
 
 	/* Save the pen position for overlay painting */
 	orig_pen_x = pen_x;
