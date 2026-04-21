@@ -20,11 +20,11 @@
  * freely, subject to the following restrictions:
  *
  * 1. The origin of this software must not be misrepresented; you must not
- *      claim that you wrote the original software. If you use this software
- *      in a product, an acknowledgment in the product documentation would be
- *      appreciated but is not required.
+ *	claim that you wrote the original software. If you use this software
+ *	in a product, an acknowledgment in the product documentation would be
+ *	appreciated but is not required.
  * 2. Altered source versions must be plainly marked as such, and must not be
- *      misrepresented as being the original software.
+ *	misrepresented as being the original software.
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
@@ -200,6 +200,7 @@ static void set_close_button(void);
 static void close_display(void);
 static bool setup_window(void);
 static bool create_icon_image(void);
+static bool set_icon(void);
 static void cleanup_hal(void);
 static void destroy_window(void);
 static void destroy_icon_image(void);
@@ -324,6 +325,9 @@ static bool init_hal(int argc, char *argv[])
 		hal_log_error("Can't create icon.\n");
 		return false;
 	}
+
+	/* Set the icon. */
+	set_icon();
 
 	/* Initialize the gamepad. */
 	init_evgamepad();
@@ -492,15 +496,34 @@ static bool
 set_window_title(void)
 {
 	XTextProperty tp;
+	Atom net_wm_name;
+	Atom utf8_string;
 	int ret;
 
-	ret = XmbTextListToTextProperty(display, &window_title, 1, XCompoundTextStyle, &tp);
+	/* ICCCM: set legacy WM_NAME too. */
+	ret = XmbTextListToTextProperty(display,
+					&window_title,
+					1,
+					XCompoundTextStyle,
+					&tp);
 	if (ret == XNoMemory || ret == XLocaleNotSupported) {
 		hal_log_error("XmbTextListToTextProperty() failed.");
 		return false;
 	}
 	XSetWMName(display, window, &tp);
 	XFree(tp.value);
+
+	/* EWMH: KDE/modern WMs prefer _NET_WM_NAME. */
+	net_wm_name = XInternAtom(display, "_NET_WM_NAME", False);
+	utf8_string = XInternAtom(display, "UTF8_STRING", False);
+	XChangeProperty(display,
+			window,
+			net_wm_name,
+			utf8_string,
+			8,
+			PropModeReplace,
+			(const unsigned char *)window_title,
+			(int)strlen(window_title));
 
 	return true;
 }
@@ -566,7 +589,7 @@ static void
 set_close_button(void)
 {
 	delete_message = XInternAtom(display, "WM_DELETE_WINDOW", True);
-	if (delete_message != None && delete_message != BadAlloc && delete_message != BadValue)
+	if (delete_message != None)
 		XSetWMProtocols(display, window, &delete_message, 1);
 }
 
@@ -574,7 +597,6 @@ set_close_button(void)
 static bool
 create_icon_image(void)
 {
-	XWMHints *win_hints;
 	XpmAttributes attr;
 	Colormap cm;
 	int ret;
@@ -598,24 +620,110 @@ create_icon_image(void)
 		XFreeColormap(display, cm);
 		return false;
 	}
+	XFreeColormap(display,cm);
 
-	/* Allocate for a WMHints. */
+	return true;
+}
+
+/* Set _NET_WM_ICON from pixmap/mask. */
+static bool
+set_icon(void)
+{
+	XWMHints *win_hints;
+	XWindowAttributes wa;
+	Atom net_wm_icon;
+	Atom cardinal;
+	XImage *img;
+	XImage *mask_img;
+	unsigned long *data;
+	int x, y;
+	unsigned int width, height;
+	unsigned int border_width, depth;
+	Window root;
+
+	/* Set the classic icon. */
 	win_hints = XAllocWMHints();
-	if (!win_hints) {
-		XFreeColormap(display, cm);
+	if (win_hints) {
+		win_hints->flags = IconPixmapHint | IconMaskHint;
+		win_hints->icon_pixmap = icon;
+		win_hints->icon_mask = icon_mask;
+		XSetWMHints(display, window, win_hints);
+		XFree(win_hints);
+	}
+
+	/* Get the window attributs. */
+	if (!XGetWindowAttributes(display, window, &wa)) {
+		hal_log_info("XGetWindowAttributes() failed.");
 		return false;
 	}
 
-	/* Set the icon. */
-	win_hints->flags = IconPixmapHint | IconMaskHint;
-	win_hints->icon_pixmap = icon;
-	win_hints->icon_mask = icon_mask;
-	XSetWMHints(display, window, win_hints);
+	/* Get the icon size. */
+	if (!XGetGeometry(display, icon, &root, &x, &y, &width, &height,
+			  &border_width, &depth)) {
+		hal_log_info("XGetGeometry() failed.");
+		return false;
+	}
 
-	/* Free the temporary objects. */
-	XFree(win_hints);
-	XFreeColormap(display,cm);
-	return true;
+	/* Create an image. */
+        img = XGetImage(display, icon, 0, 0,
+			(unsigned int)width, (unsigned int)height,
+                        AllPlanes, ZPixmap);
+	mask_img = XGetImage(display, icon_mask, 0, 0,
+                             (unsigned int)width, (unsigned int)height,
+                             1, ZPixmap);
+	if (!img || !mask_img) {
+                if (img)
+                        XDestroyImage(img);
+                if (mask_img)
+                        XDestroyImage(mask_img);
+                hal_log_info("XGetImage() failed.");
+                return false;
+        }
+
+	/* Create image data. */
+        data = (unsigned long *)malloc(sizeof(unsigned long) * (2 + width * height));
+        if (!data) {
+                XDestroyImage(img);
+                XDestroyImage(mask_img);
+                hal_log_out_of_memory();
+                return false;
+        }
+        data[0] = (unsigned long)width;
+        data[1] = (unsigned long)height;
+        for (y = 0; y < height; y++) {
+                for (x = 0; x < width; x++) {
+                        unsigned long p;
+                        unsigned long m;
+                        unsigned long r, g, b, a;
+                        size_t i;
+                        p = XGetPixel(img, x, y);
+                        m = XGetPixel(mask_img, x, y);
+                        r = ((p & wa.visual->red_mask)   * 255UL) / wa.visual->red_mask;
+                        g = ((p & wa.visual->green_mask) * 255UL) / wa.visual->green_mask;
+                        b = ((p & wa.visual->blue_mask)  * 255UL) / wa.visual->blue_mask;
+                        a = m ? 255UL : 0UL;
+                        i = 2 + (size_t)y * (size_t)width + (size_t)x;
+                        data[i] = (a << 24) | (r << 16) | (g << 8) | b;
+                }
+        }
+
+        net_wm_icon = XInternAtom(display, "_NET_WM_ICON", False);
+        cardinal = XInternAtom(display, "CARDINAL", False);
+
+        XChangeProperty(display,
+			window,
+                        net_wm_icon,
+			cardinal,
+			32,
+                        PropModeReplace,
+                        (unsigned char *)data,
+                        2 + width * height);
+
+        free(data);
+        XDestroyImage(img);
+        XDestroyImage(mask_img);
+
+        return true;
 }
 
 /* Cleanup the subsystems. */
