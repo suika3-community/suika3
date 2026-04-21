@@ -33,51 +33,87 @@
 # Let Xiaoling enter and say.
 #
 
-[ch time="1.0" fade="normal"
-  left="ch/xiaoling/xiaoling-smile.png"
-  left-scale-x="1.2"
-  left-scale-y="1.2"
-]
+# Show Xiaoling at left.
+[ch time="1.0" fade="normal" left="ch/xiaoling/xiaoling-normal.png"]
 
-[text name="Xiaoling" text="......"]
+# Say.
+[text name="Xiaoling" text="(......)"]
 
-[ch time="1.0" fade="normal"
-  left="ch/xiaoling/xiaoling-normal.png"
-]
-
-[text name="Xiaoling"
-  text="......"
-]
+# Say. (the same thing by the different notation.)
+[text name="Xiaoling" text="""
+  (......)
+"""]
 
 #
 # Let Midori enter.
 #
 
-[ch right="ch/midori/midori-normal.png" time="0.5" fade="normal"]
+# Show Midori at right. (multiple-line is allowed)
+[ch
+  time="0.5"
+  fade="normal"
+  right="ch/midori/midori-normal.png"
+]
 
 #
 # Dialogue.
 #
 
 [text name="Xiaoling" voice="voice/001.ogg"
-  text="Would you like to go to a cafe, Mido?"
-  text-en="Would you like to go to a cafe, Mido?"
-  text-zh-cn="小美，想不想去咖啡店坐坐？"
-  text-ja="カフェに行かない？みど"
+  text=
+    """
+    Would you like to go to a cafe, Mido?
+    """
+  text-en=
+    """
+    Would you like to go to a cafe, Mido?
+    """
+  text-zh-cn=
+    """
+    小美，想不想去咖啡店坐坐？
+    """
+  text-ja=
+    """
+    カフェに行かない？みど
+    """
 ]
 
 [text name="Midori" voice="voice/002.ogg"
-  text="Sure! I'd love some fruitcake."
-  text-en="Sure! I'd love some fruitcake."
-  text-zh-cn="好呀！我想吃水果蛋糕呢"
-  text-ja="いいね！フルーツケーキが食べたいな"
+  text=
+    """
+    Sure! I'd love some fruitcake.
+    """
+  text-en=
+    """
+    Sure! I'd love some fruitcake.
+    """
+  text-zh-cn=
+    """
+    好呀！我想吃水果蛋糕呢
+    """
+  text-ja=
+    """
+    いいね！フルーツケーキが食べたいな
+    """
 ]
 
 [text name="Xiaoling" voice="voice/003.ogg"
-  text="Where should we go?"
-  text-en="Where should we go?"
-  text-zh-cn="咱们去哪家好呢？"
-  text-ja="どこのお店にする？"
+  text=
+    """
+    Where should we go?
+    """
+  text-en=
+    """
+    Where should we go?
+    """
+  text-zh-cn=
+    """
+    咱们去哪家好呢？
+    """
+  text-ja=
+    """
+    どこのお店にする？
+    """
 ]
 
 #
@@ -111,10 +147,22 @@
 [move time="1.0" right-x="r-250" accel="deaccel"]
 
 [text name="Midori" voice="voice/004.ogg"
-  text="Let's go to the station, Xiao!"
-  text-en="Let's go to the station, Xiao!"
-  text-zh-cn="玲玲，我们去车站那边那家店吧！"
-  text-ja="駅のお店に行こうよ、シャオ！"
+  text=
+    """
+    Let's go to the station, Xiao!
+    """
+  text-en=
+    """
+    Let's go to the station, Xiao!
+    """
+  text-zh-cn=
+    """
+    玲玲，我们去车站那边那家店吧！
+    """
+  text-ja=
+    """
+    駅のお店に行こうよ、シャオ！
+    """
 ]
 
 #
@@ -124,10 +172,22 @@
 [ch left="ch/xiaoling/xiaoling-smile.png" time="1.0" fade="normal"]
 
 [text name="Xiaoling" voice="voice/005.ogg"
-  text="Okay, I'll grab my bag. Just a moment, Mido."
-  text-en="Okay, I'll grab my bag. Just a moment, Mido."
-  text-zh-cn="好的，我去拿个包，等我一下哦，小美"
-  text-ja="いいよ、じゃあバッグを取ってくるね。ちょっと待ってて、みど"
+  text=
+    """
+    Okay, I'll grab my bag. Just a moment, Mido.
+    """
+  text-en=
+    """
+    Okay, I'll grab my bag. Just a moment, Mido.
+    """
+  text-zh-cn=
+    """
+    好的，我去拿个包，等我一下哦，小美
+    """
+  text-ja=
+    """
+    いいよ、じゃあバッグを取ってくるね。ちょっと待ってて、みど
+    """
 ]
 
 #
@@ -143,18 +203,20 @@
 [callmacro name="nvl-mode"]
 
 [text action="clear"]
-[text text="""
-    Hello, this is NVL mode test. 
-    NVL mode has a fullscreen-styled message box. 
-    By default, each text tag will do a line feed.
-"""]
-[text text="""
-    \nAlice was beginning to get very tired of sitting by her sister 
-    on the bank, and of having nothing to do: once or twice she had peeped 
-    into the book her sister was reading, but it had no pictures or 
-    conversations in it, “and what is the use of a book,” thought Alice 
-    “without pictures or conversations?”
-"""]
+[text text=
+  """
+  Hello, this is NVL mode test. 
+  NVL mode has a fullscreen-styled message box. 
+  By default, each text tag will do a line feed.
+  """]
+[text text=
+  """
+  \nAlice was beginning to get very tired of sitting by her sister 
+  on the bank, and of having nothing to do: once or twice she had peeped 
+  into the book her sister was reading, but it had no pictures or 
+  conversations in it, “and what is the use of a book,” thought Alice 
+  “without pictures or conversations?”
+  """]
 
 [text action="continue" text="\nYou can divide a long text "]
 [text action="continue" text="into short texts "]
@@ -162,10 +224,11 @@
 [text action="finish"]
 
 [text action="clear"]
-[text text="""
-    You have to clear the message box explicitly. 
-    This is why NVL is called \"Page Mode\" in Suika3.
-"""]
+[text text=
+  """
+  You have to clear the message box explicitly. 
+  This is why NVL is called \"Page Mode\" in Suika3.
+  """]
 
 [callmacro name="adv-mode"]
 [text text="You can go back to ADV mode."]
@@ -179,7 +242,11 @@
   hidenamebox="true"
 ]
 
-# Finish.
+# Finish. The app will be closed.
+
+#
+# ---
+#
 
 #
 # Macro to start NVL mode.
