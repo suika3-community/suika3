@@ -23,8 +23,8 @@ else
 fi
 
 if [ -z "$RUN_OK" ]; then
-    DEFAULT_FILE="$HOME";
-    for base in /usr /usr/local /usr/pkg /opt; do
+    DEFAULT_FILE="";
+    for base in /usr /usr/local /usr/pkg /opt /app; do
         for sub in "share/suika3/game" \
                    "share/examples/suika3/game" \
                    "share/docs/suika3/examples/game"; do
