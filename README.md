@@ -99,21 +99,21 @@ suika3
 
 ### Package Managers
 
-Homebrew:
+Linux (Flatpak):
+```
+wget https://github.com/awemorris/suika3/releases/latest/download/Suika3-$(uname -m).flatpak
+flatpak install --user Suika3-$(uname -m).flatpak
+```
+
+macOS (Homebrew):
 ```
 brew tap awemorris/suika3
 brew install suika3
 ```
 
-Flatpak:
+FreeBSD Ports (latest):
 ```
-wget https://github.com/awemorris/suika3/releases/latest/download/Suika3-x86_64.flatpak
-flatpak install --user Suika3-x86_64.flatpak
-```
-
-FreeBSD Ports:
-```
-cd /usr/ports/games/suika3 && make install clean
+pkg install suika3
 ```
 
 ---
