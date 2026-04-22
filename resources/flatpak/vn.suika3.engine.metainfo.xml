@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
   <id>vn.suika3.engine</id>
-  <metadata_license>Zlib</metadata_license>
+  <metadata_license>CC0-1.0</metadata_license>
   <project_license>Zlib</project_license>
 
   <name>Suika3</name>

@@ -183,7 +183,7 @@ It is compatible with KDE, but has problems with showing windows on GNOME.
 
 On Debian or Ubuntu:
 ```
-sudo apt-get install git cmake ninja-build build-essential libwayland-dev wayland-protocols libegl1-mesa-dev libasound2-dev
+sudo apt-get install git cmake ninja-build build-essential libasound2-dev libwayland-dev wayland-protocols libegl1-mesa-dev libegl-dev libgles-dev libwayland-client0 libwayland-egl1
 ```
 
 On RedHat, Rocky Linux, Fedora, etc.:

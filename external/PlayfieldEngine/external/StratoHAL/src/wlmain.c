@@ -1387,8 +1387,6 @@ static void pointer_enter(void *data, struct wl_pointer *pointer, uint32_t seria
 	UNUSED_PARAMETER(pointer);
 	UNUSED_PARAMETER(serial);
 	UNUSED_PARAMETER(surface);
-
-	printf("Pointer enter at %.2f, %.2f\n", wl_fixed_to_double(sx), wl_fixed_to_double(sy));
 }
 
 static void pointer_leave(void *data, struct wl_pointer *pointer, uint32_t serial, struct wl_surface *surface)
