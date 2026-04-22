@@ -165,7 +165,7 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-  build-flatpak:
+  build-flatpak-x86_64:
     runs-on: ubuntu-24.04
 
     steps:
@@ -174,7 +174,7 @@ jobs:
       - name: Install deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y flatpak-builder
+          sudo apt-get install -y flatpak-builder qemu-user-static
 
       - name: Build flatpak
         run: |
@@ -182,15 +182,44 @@ jobs:
           flatpak install --user -y flathub org.freedesktop.Sdk//25.08
           flatpak install --user -y flathub org.freedesktop.Platform//25.08
           flatpak install --user -y flathub org.freedesktop.Platform.GStreamer.openmpt//25.08
-          flatpak-builder --user -y --repo=myrepo --force-clean build-dir ./resources/flatpak/vn.suika3.engine.yml
-          flatpak build-bundle myrepo Suika3.flatpak vn.suika3.engine --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo
+          flatpak-builder --user -y --repo=myrepo --force-clean build-dir-x86_64 ./resources/flatpak/vn.suika3.engine.yml
+          flatpak build-bundle myrepo Suika3-x86_64.flatpak vn.suika3.engine --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: flatpak
+          name: flatpak-x86_64
           path: |
-            Suika3.flatpak
+            Suika3-x86_64.flatpak
+          if-no-files-found: error
+          retention-days: 7
+
+  build-flatpak-arm64:
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak-builder qemu-user-static
+
+      - name: Build flatpak
+        run: |
+          yes | flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          flatpak install --user -y flathub org.freedesktop.Sdk//25.08
+          flatpak install --user -y flathub org.freedesktop.Platform//25.08
+          flatpak install --user -y flathub org.freedesktop.Platform.GStreamer.openmpt//25.08
+          flatpak-builder --user -y --repo=myrepo --force-clean build-dir-x86_64 ./resources/flatpak/vn.suika3.engine.yml
+          flatpak build-bundle myrepo Suika3-arm64.flatpak vn.suika3.engine --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: flatpak-arm64
+          path: |
+            Suika3-arm64.flatpak
           if-no-files-found: error
           retention-days: 7
 
@@ -313,13 +342,6 @@ jobs:
           #mkdir -p android/app/src/main/jniLibs/riscv64
           #cp build-android-riscv64/libsuika3.so android/app/src/main/jniLibs/riscv64/libplayfield.so
 
-      - name: Build Android Studio Project
-        run: |
-          cd android
-          ./gradlew assembleDebug
-          cd ..
-          cp android/app/build/outputs/apk/debug/app-debug.apk suika3.apk
-
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -355,7 +377,7 @@ jobs:
 #            build-android-x86/libsuika3.so
 #          if-no-files-found: error
 #          retention-days: 7
-
+#
 #      - name: Upload artifact
 #        uses: actions/upload-artifact@v4
 #        with:
@@ -365,14 +387,21 @@ jobs:
 #          if-no-files-found: error
 #          retention-days: 7
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-apk
-          path: |
-            suika3.apk
-          if-no-files-found: error
-          retention-days: 7
+#      - name: Build Android Studio Project
+#        run: |
+#          cd android
+#          ./gradlew assembleDebug
+#          cd ..
+#          cp android/app/build/outputs/apk/debug/app-debug.apk suika3.apk
+#
+#      - name: Upload artifact
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: android-apk
+#          path: |
+#            suika3.apk
+#          if-no-files-found: error
+#          retention-days: 7
 
   build-openharmony:
     runs-on: ubuntu-latest
@@ -524,7 +553,7 @@ jobs:
           retention-days: 7
 
   zip:
-    needs: [build-windows-vs2022, build-windows-mingw-w64, build-macos, build-flatpak, build-wasm, build-ios, build-android, build-openharmony, build-unity, build-mkdocs]
+    needs: [build-windows-vs2022, build-windows-mingw-w64, build-macos, build-flatpak-x86_64, build-flatpak-arm64, build-wasm, build-ios, build-android, build-openharmony, build-unity, build-mkdocs]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -606,15 +635,22 @@ jobs:
           cp resources/projects/macos/Game/main.m dist/misc/macos/project/Game/
           cp resources/macos/macos.entitlements dist/misc/macos/project/Game/Game.entitlements
 
-      - name: Download Flatpak artifacts
+      - name: Download Flatpak x86_64 artifacts
         uses: actions/download-artifact@v4
         with:
-          name: flatpak
-          path: flatpak
+          name: flatpak-x86_64
+          path: flatpak-x86_64
+
+      - name: Download Flatpak arm64 artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: flatpak-arm64
+          path: flatpak-arm64
 
       - name: Copy for Flatpak.
         run: |
-          cp flatpak/Suika3.flatpak dist/misc/linux/
+          cp flatpak-x86_64/Suika3-x86_64.flatpak dist/misc/linux/
+          cp flatpak-arm64/Suika3-arm64.flatpak dist/misc/linux/
 
       - name: Download wasm artifacts
         uses: actions/download-artifact@v4
@@ -677,12 +713,6 @@ jobs:
 #        with:
 #          name: android-riscv64
 #          path: android-riscv64
-
-      - name: Download Android APK artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: android-apk
-          path: android-apk
 
       - name: Copy for Android
         run: |
@@ -813,15 +843,14 @@ jobs:
             windows/build/windows-vs2022-x64/Release/suika3.exe
             Suika3/misc/windows/suika3-32.exe
             macos/build-macos/Suika3.dmg
-            flatpak/Suika3.flatpak
-            android-apk/*.apk
+            flatpak/Suika3-x86_64.flatpak
+            flatpak/Suika3-arm64.flatpak
           body: |
             - This is an automated build from CI and is not an official release.
             - The ZIP archive contains: 
-                - Windows standalone engine (64-bit)
-                - Windows standalone engine (32-bit)
+                - Windows standalone engine (64-bit and 32-bit)
                 - macOS standalone engine
-                - Linux standalone engine
+                - Linux standalone engine (Flatpak)
                 - iOS export kit (Xcode project)
                 - Android export kit (Android Studio project)
                 - HarmonyOS NEXT export kit (DevEco Studio project)
