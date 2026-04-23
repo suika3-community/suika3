@@ -3,6 +3,36 @@ NVL Mode Reference
 
 Suika3 support the full screen novel style, so called NVL mode.
 
+## Overview
+
+```
+# New page.
+[text action="clear"]
+
+# Block style 1. (this is not highlighted by the VS Code extension for now)
+[text text=
+  """
+  Hello, this is NVL mode test.
+  NVL mode has a fullscreen-styled message box.
+  By default, each text tag will do a line feed.
+  """]
+
+# Block style 2. (this is highlighted by the VS Code extension)
+[text text="""
+  Hello, this is NVL mode test.
+  NVL mode has a fullscreen-styled message box.
+  By default, each text tag will do a line feed.
+"""]
+
+# Inline paragraph continuation.
+[text action="inline" text=" To continue a paragraph, use the inline action."]
+
+# New page.
+[text action="clear"]
+[text text="Please clear the message box explicitly."]
+[text text="This is why NVL is called Page Mode in Suika3!"]
+```
+
 ## Switch
 
 Add two macros at the end of your `start.novel`:
@@ -71,20 +101,4 @@ Then call the `nvl-mode` macro to switch to NVL mode.
 If you want to switch back to ADV mode (normal message mode), call the `adv-mode` macro:
 ```
 [callmacro name="adv-mode"]
-```
-
-## Paging
-
-```
-# New page.
-[text action="clear"]
-[text text="Hello, this is NVL mode test."]
-[text text="NVL mode has a fullscreen-styled message box."]
-[text text="By default, each text tag will do a line feed."]
-[text text="To continue a paragraph,"]
-[text text="specify the space parameter." space=" "]
-
-# New page.
-[text action="clear"]
-[text text="Please clear the message box explicitly."]
 ```
