@@ -660,14 +660,7 @@ static void update_viewport_size(int width, int height)
 	viewport_width = (int)use_width;
 	viewport_height = (int)use_height;
 
-	printf("!orig_x = %d\n", orig_x);
-	printf("!orig_y = %d\n", orig_x);
-	printf("!vp_w = %d\n", viewport_width);
-	printf("!vp_h = %d\n", viewport_height);
-	printf("!mouse_scale = %f\n", mouse_scale);
-
 	/* Update the screen offset and scale for drawing subsystem. */
-	printf("RESIZE(%d,%d,%d,%d)\n", orig_x, orig_y, viewport_width, viewport_height);
 	opengl_set_screen(orig_x, orig_y, viewport_width, viewport_height);
 }
 
@@ -1421,9 +1414,6 @@ handle_configure(
 			hal_enter_full_screen_mode();
 		else if (is_full_screen && !is_now_fullscreen)
 			hal_leave_full_screen_mode();
-		if (is_maximized) {
-			printf("MAX\n");
-		}
 	}
 
 	if (!libdecor_configuration_get_content_size(configuration, frame, &width, &height)) {
