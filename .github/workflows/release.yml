@@ -624,6 +624,7 @@ jobs:
 
       - name: Copy for macOS project.
         run: |
+          cp resources/macos/suika3-wrapper.sh dist/misc/macos/
           mkdir dist/misc/macos/project/Resources/
           cp resources/assets.arc dist/misc/macos/project/Resources/
           mkdir dist/misc/macos/project/Resources/video
@@ -683,6 +684,8 @@ jobs:
           cp resources/projects/ios/ios/Info.plist dist/misc/ios/ios/
           cp resources/projects/ios/ios/ios.entitlements dist/misc/ios/ios/
           cp resources/projects/ios/ios/LaunchScreen.storyboard dist/misc/ios/ios/
+          cp resources/ios/ExportOptions.plist dist/misc/ios/
+          cp resources/ios/build.sh dist/misc/ios/
 
       - name: Download Android arm64 artifacts
         uses: actions/download-artifact@v4
@@ -841,7 +844,6 @@ jobs:
           files: |
             Suika3-full.zip
             windows/build/windows-vs2022-x64/Release/suika3.exe
-            Suika3/misc/windows/suika3-32.exe
             macos/build-macos/Suika3.dmg
             flatpak-x86_64/Suika3-x86_64.flatpak
             flatpak-aarch64/Suika3-aarch64.flatpak
