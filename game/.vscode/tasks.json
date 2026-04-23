@@ -21,6 +21,9 @@
       "windows": {
         "command": "misc/windows/suika3-debug.exe"
       },
+      "osx": {
+        "command": "sh misc/macos/suika3-wrapper.sh suika3"
+      },
       "linux": {
         "command": "flatpak",
         "args": [
@@ -45,16 +48,15 @@
     {
       "label": "Suika3: Create a package file",
       "type": "shell",
-      "command": "suika3-pack",
-      "args": [
-        "`ls -A | grep -vE '^(misc|suika3.exe|.vscode)$'`"
-      ],
       "windows": {
         "command": "powershell",
         "args": [
           "-Command",
           "& { $files = Get-ChildItem -Path . -Exclude 'misc', '.vscode', 'suika3.exe', 'save', 'assets.arc' | Select-Object -ExpandProperty Name; misc/windows/suika3-pack.exe $files }"
         ]
+      },
+      "osx": {
+        "command": "sh misc/macos/suika3-wrapper.sh suika3-pack"
       },
       "linux": {
         "command": "flatpak",
@@ -90,7 +92,9 @@
       "osx": {
         "command": "sh ${workspaceFolder}/misc/android/build.sh"
       },
-      "options": {
+    },
+    "options": {
+        "command": "sh ${workspaceFolder}/misc/android/build.sh"
         "cwd": "${workspaceFolder}/misc/android"
       },
       "group": {
@@ -103,4 +107,4 @@
       }
     }
   ]
-}
+}y
