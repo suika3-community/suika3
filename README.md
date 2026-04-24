@@ -174,10 +174,14 @@ With Suika3, it's that simple.
       task, Suika3 will automatically build the app and install it
       onto your USB-connected smartphone.
 - For Android:
-    - No manual setup required!
-    - The JDK and Android SDK will be downloaded automatically during the build process.
+    - No manual setup required
+    - No Android Studio required
+    - No paid license required
+    - JDK and Android SDK will be downloaded automatically during the build process
 - For iOS:
-    - Requires Xcode 15+ and an active enrollment in the `Apple Developer Program`.
+    - Xcode 15+ required
+    - No paid license required for testing on iPhone simulators
+    - `Apple Developer Program` required for testing on iPhone/iPad ($99/year)
 
 We truly believe Suika3 is one of the most streamlined tools in the
 world for creating and publishing iPhone, iPad, and Android apps to
