@@ -45,11 +45,9 @@ if [ -z "$RUN_OK" ]; then
                   --file-filter="All files | *");
     if [ -z "$FILE" ]; then
         if [ ! -z "$DEFAULT_FILE" ]; then
-            zenity --question \
-                   --title "Suika3 Engine" \
-                   --text "Do you want to run the sample game?");
-            RES=$?;
-            if $RES; then
+            if zenity --question \
+                      --title "Suika3 Engine" \
+                      --text "Do you want to run the sample game?"; then
                 FILE="$DEFAULT_FILE";
             else
                 exit 1;
