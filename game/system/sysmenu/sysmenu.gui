@@ -36,6 +36,7 @@ SAVE {
     y:           25;
     image-idle:  system/sysmenu/save-idle.png;
     image-hover: system/sysmenu/save-hover.png;
+    image-press: system/sysmenu/save-press.png;
     anime-idle:  system/sysmenu/item-idle.anime;
     anime-hover: system/sysmenu/item-hover.anime;
 }
@@ -48,6 +49,7 @@ LOAD {
     y:           25;
     image-idle:  system/sysmenu/load-idle.png;
     image-hover: system/sysmenu/load-hover.png;
+    image-press: system/sysmenu/load-press.png;
     anime-idle:  system/sysmenu/item-idle.anime;
     anime-hover: system/sysmenu/item-hover.anime;
 }
@@ -59,6 +61,7 @@ AUTO {
     y:           25;
     image-idle:  system/sysmenu/auto-idle.png;
     image-hover: system/sysmenu/auto-hover.png;
+    image-press: system/sysmenu/auto-press.png;
     anime-idle:  system/sysmenu/item-idle.anime;
     anime-hover: system/sysmenu/item-hover.anime;
 }
@@ -70,6 +73,7 @@ SKIP {
     y:           25;
     image-idle:  system/sysmenu/skip-idle.png;
     image-hover: system/sysmenu/skip-hover.png;
+    image-press: system/sysmenu/skip-press.png;
     anime-idle:  system/sysmenu/item-idle.anime;
     anime-hover: system/sysmenu/item-hover.anime;
 }
@@ -82,6 +86,7 @@ LOG {
     y:           25;
     image-idle:  system/sysmenu/log-idle.png;
     image-hover: system/sysmenu/log-hover.png;
+    image-press: system/sysmenu/log-press.png;
     anime-idle:  system/sysmenu/item-idle.anime;
     anime-hover: system/sysmenu/item-hover.anime;
 }
@@ -94,6 +99,7 @@ CONFIG {
     y:           25;
     image-idle:  system/sysmenu/config-idle.png;
     image-hover: system/sysmenu/config-hover.png;
+    image-press: system/sysmenu/config-press.png;
     anime-idle:  system/sysmenu/item-idle.anime;
     anime-hover: system/sysmenu/item-hover.anime;
 }

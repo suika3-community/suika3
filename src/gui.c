@@ -205,6 +205,7 @@ struct gui_button {
 	/* Anime */
 	char *anime_idle;
 	char *anime_hover;
+	char *anime_press;
 	char *anime_active;
 
 	/* TYPE_SAVE, TYPE_LOAD */
@@ -245,12 +246,16 @@ struct gui_button {
 		/* Is dragging? */
 		bool is_dragging;
 
+		/* Is pressed? */
+		bool is_pressed;
+
 		/* Slider value. */
 		float slider;
 
 		/* Images. */
 		struct s3_image *img_idle;
 		struct s3_image *img_hover;
+		struct s3_image *img_press;
 		struct s3_image *img_active;
 		struct s3_image *img_disable;
 		struct s3_image *img_canvas_idle;
@@ -1212,11 +1217,13 @@ update_runtime_props(bool is_first_time)
 			else
 				button[i].rt.is_disabled = true;
 			break;
-//		case TYPE_HISTORYSCROLL:
-//		case TYPE_HISTORYSCROLL_HORIZONTAL:
-//			button[i].rt.slider = adjust_history_slider_value(transient_history_slider);
-//			process_history_scroll_at(button[i].rt.slider, false);
-//			break;
+#if 0
+		case TYPE_HISTORYSCROLL:
+		case TYPE_HISTORYSCROLL_HORIZONTAL:
+			button[i].rt.slider = adjust_history_slider_value(transient_history_slider);
+			process_history_scroll_at(button[i].rt.slider, false);
+			break;
+#endif
 		case TYPE_LANGUAGE:
 			button[i].rt.is_disabled = is_current_language(button[i].lang);
 			break;
@@ -1604,7 +1611,7 @@ process_button_drag(int index)
 		dragging_index = index;
 		b->rt.is_dragging = true;
 		b->rt.slider = calc_slider_value(index);
-		last_drag_tick = cur_tick;
+		last_drag_tick = cur_tick - DRAG_TICK_INTERVAL;
 
 		switch (b->type) {
 		case TYPE_MASTERVOL:
@@ -1667,7 +1674,7 @@ process_button_drag(int index)
 			}
 
 			/* Update other buttons in case there are multiple buttons of the same type. */
-			update_runtime_props(true);
+			update_runtime_props(false);
 		}
 	}
 
@@ -1774,6 +1781,17 @@ process_button_click(
 	struct gui_button *b;
 
 	b = &button[index];
+
+	/* Run a press anime. */
+	if (index == pointed_index &&
+	    (s3_is_mouse_left_pressed() ||
+	     s3_is_return_key_pressed())) {
+		b->rt.is_pressed = true;
+		if (b->anime_press != NULL)
+			start_button_anime(index, b->anime_press);
+	} else {
+		b->rt.is_pressed = false;
+	}
 
 	/* If the button cannot be clicked. */
 	if (b->type == TYPE_NOACTION ||
@@ -1972,9 +1990,28 @@ process_button_render_slider(
 	}
 
 	/* If the button is pointed, draw the bar part with the hover image. */
-	if (index == pointed_index && !is_fading_in && !is_fading_out) {
+	if (index == pointed_index && !b->rt.is_pressed && !is_fading_in && !is_fading_out) {
 		struct s3_image *img;
 		img = b->rt.img_hover != NULL ? b->rt.img_hover : b->rt.img_idle;
+		if (img != NULL) {
+			s3_render_image(b->x,
+					b->y,
+					b->width,
+					b->height,
+					img,
+					0,
+					0,
+					b->width,
+					b->height,
+					cur_alpha,
+					S3_BLEND_ALPHA);
+		}
+	}
+
+	/* If the button is pressed, draw the bar part with the press image. */
+	if (index == pointed_index && b->rt.is_pressed && !is_fading_in && !is_fading_out) {
+		struct s3_image *img;
+		img = b->rt.img_press != NULL ? b->rt.img_press : b->rt.img_idle;
 		if (img != NULL) {
 			s3_render_image(b->x,
 					b->y,
@@ -2044,9 +2081,28 @@ process_button_render_slider_vertical(
 	}
 
 	/* If the button is pointed, draw the bar part with the hover image. */
-	if (index == pointed_index && !is_fading_in && !is_fading_out) {
+	if (index == pointed_index && !b->rt.is_pressed && !is_fading_in && !is_fading_out) {
 		struct s3_image *img;
 		img = b->rt.img_hover != NULL ? b->rt.img_hover : b->rt.img_idle;
+		if (img != NULL) {
+			s3_render_image(b->x,
+					b->y,
+					b->width,
+					b->height,
+					img,
+					0,
+					0,
+					b->width,
+					b->height,
+					cur_alpha,
+					S3_BLEND_ALPHA);
+		}
+	}
+
+	/* If the button is pressed, draw the bar part with the hover image. */
+	if (index == pointed_index && b->rt.is_pressed && !is_fading_in && !is_fading_out) {
+		struct s3_image *img;
+		img = b->rt.img_press != NULL ? b->rt.img_press : b->rt.img_idle;
 		if (img != NULL) {
 			s3_render_image(b->x,
 					b->y,
@@ -2114,9 +2170,18 @@ process_button_render_generic(
 	if (index != pointed_index) {
 		if (b->rt.img_idle != NULL)
 			render_image_helper(b->rt.img_idle, b->bid);
+	} else if (b->rt.is_pressed) {
+		if (b->rt.img_press != NULL)
+			render_image_helper(b->rt.img_press, b->bid);
+		else if (b->rt.img_hover != NULL)
+			render_image_helper(b->rt.img_hover, b->bid);
+		else if (b->rt.img_idle != NULL)
+			render_image_helper(b->rt.img_idle, b->bid);
 	} else {
 		if (b->rt.img_hover != NULL)
 			render_image_helper(b->rt.img_hover, b->bid);
+		else if (b->rt.img_idle != NULL)
+			render_image_helper(b->rt.img_idle, b->bid);
 	}
 }
 
@@ -2137,12 +2202,25 @@ process_button_render_language(
 			if (b->rt.img_idle != NULL)
 				render_image_helper(b->rt.img_idle, b->bid);
 		} else {
-			if (b->rt.img_hover != NULL)
-				render_image_helper(b->rt.img_hover, b->bid);
+			if (b->rt.is_pressed) {
+				if (b->rt.img_press != NULL)
+					render_image_helper(b->rt.img_press, b->bid);
+				else if (b->rt.img_hover != NULL)
+					render_image_helper(b->rt.img_hover, b->bid);
+				else if (b->rt.img_idle != NULL)
+					render_image_helper(b->rt.img_idle, b->bid);
+			} else {
+				if (b->rt.img_hover != NULL)
+					render_image_helper(b->rt.img_hover, b->bid);
+				else if (b->rt.img_idle != NULL)
+					render_image_helper(b->rt.img_idle, b->bid);
+			}
 		}
 	} else {
 		if (b->rt.img_active != NULL)
 			render_image_helper(b->rt.img_active, b->bid);
+		else if (b->rt.img_idle != NULL)
+			render_image_helper(b->rt.img_idle, b->bid);
 	}
 }
 
@@ -2159,11 +2237,24 @@ process_button_render_page(
 		return;
 
 	if (index == pointed_index) {
-		if (b->rt.img_hover != NULL)
-			render_image_helper(b->rt.img_hover, b->bid);
+		if (b->rt.is_pressed) {
+			if (b->rt.img_press != NULL)
+				render_image_helper(b->rt.img_press, b->bid);
+			else if (b->rt.img_hover != NULL)
+				render_image_helper(b->rt.img_hover, b->bid);
+			else if (b->rt.img_idle != NULL)
+				render_image_helper(b->rt.img_idle, b->bid);
+		} else {
+			if (b->rt.img_hover != NULL)
+				render_image_helper(b->rt.img_hover, b->bid);
+			else if (b->rt.img_idle != NULL)
+				render_image_helper(b->rt.img_idle, b->bid);
+		}
 	} else if (!b->rt.is_disabled) {
 		if (b->rt.img_active != NULL)
 			render_image_helper(b->rt.img_active, b->bid);
+		else if (b->rt.img_idle != NULL)
+			render_image_helper(b->rt.img_idle, b->bid);
 	} else {
 		if (b->rt.img_idle != NULL)
 			render_image_helper(b->rt.img_idle, b->bid);
@@ -2652,6 +2743,8 @@ process_button_render_save(
 	} else {
 		if (b->rt.img_canvas_hover != NULL)
 			render_image_helper(b->rt.img_canvas_hover, b->bid);
+		else if (b->rt.img_canvas_idle != NULL)
+			render_image_helper(b->rt.img_canvas_idle, b->bid);
 	}
 
 	/* Render the NEW image. */
@@ -2751,6 +2844,8 @@ process_button_render_history(
 	if (!b->rt.is_disabled && index == pointed_index) {
 		if (b->rt.img_canvas_hover != NULL)
 			render_image_helper(b->rt.img_canvas_hover, b->bid);
+		else if (b->rt.img_canvas_idle != NULL)
+			render_image_helper(b->rt.img_canvas_idle, b->bid);
 	} else {
 		if (b->rt.img_canvas_idle != NULL)
 			render_image_helper(b->rt.img_canvas_idle, b->bid);
@@ -4337,6 +4432,20 @@ set_button_key_value(
 		return true;
 	}
 
+	/* image-press */
+	if (strcmp("image-press", key) == 0) {
+		if (b->rt.img_press != NULL)
+			s3_destroy_image(b->rt.img_press);
+		b->rt.img_press = s3_create_image_from_file(val);
+		if (b->rt.img_press == NULL)
+			return false;
+		if (b->width == 0 || b->height == 0) {
+			b->width = s3_get_image_width(b->rt.img_press);
+			b->height = s3_get_image_height(b->rt.img_press);
+		}
+		return true;
+	}
+
 	/* image-disable */
 	if (strcmp("image-active", key) == 0) {
 		if (b->rt.img_active != NULL)
@@ -4714,6 +4823,16 @@ set_button_key_value(
 	if (strcmp("anime-hover", key) == 0) {
 		b->anime_hover = strdup(val);
 		if (b->anime_hover == NULL) {
+			s3_log_out_of_memory();
+			return false;
+		}
+		return true;
+	}
+
+	/* anime-press */
+	if (strcmp("anime-press", key) == 0) {
+		b->anime_press = strdup(val);
+		if (b->anime_press == NULL) {
 			s3_log_out_of_memory();
 			return false;
 		}
