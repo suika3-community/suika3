@@ -415,3 +415,49 @@ Files modified:
 ### Commits
 
 - f67d849e208413660f27201c6697ed261ca46c51
+
+---
+
+## Cannot clear the background by file="none"
+
+* Report Details
+    * ID: BUG-20260426-001
+    * Status: Resolved
+    * Component: Suika3
+    * Severity: high
+    * Priority: high
+    * Reproducibility: always
+    * First Found In: 1b7e3881fc5d466226ff53a0d5f81a3a3c8e63b5
+    * Fixed In: ad6347dfc1ba47a78bee2b12fa4b789ad23d8da0
+    * Reported Date: 03:00 26 April 2026
+    * Fixed Date: 03:15 26 April 2026
+    * Detection: developer testing (@lalalll-lalalll GitHub #21)
+    * Root Cause Type: missing implementation
+    * OS: iOS, Wasm
+    * CPU: All
+
+### Report
+
+When attempting to clear the current background using the following command, the engine throws an error.
+```
+[bg file="none"]
+```
+
+### Analysis
+
+Analysis:
+- The logic to detect a special file name "none" was missing.
+- So the engine tried to open "none" as an image file.
+- But "none" doesn't have an extension such as ".png"
+- Therefore the engine did output an errror "Cannot determine the file type for "%s".
+
+### Patch
+
+`s3i_tag_bg()` was patched.
+
+Files modified:
+- src/cmd_bg.c
+
+### Commits
+
+- ad6347dfc1ba47a78bee2b12fa4b789ad23d8da0
