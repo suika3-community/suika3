@@ -29,6 +29,6 @@ START {
     image-idle: gui/title/start-idle.png;
     image-hover: gui/title/start-hover.png;
     image-press: gui/title/start-press.png;
-    x: 1100;
-    y: 540;
+    x: 1110;
+    y: 480;
 }

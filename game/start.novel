@@ -19,11 +19,17 @@
 # Title Screen
 #
 
+# Play a BGM.
+[volume track="bgm" vol="0.5"]
+[bgm file="bgm/start.ogg"]
+
 # Show a GUI.
 [gui file="gui/title/title.gui"]
 
 # Will be jumped to here.
 [label name="start"]
+[volume track="bgm" vol="0.0" span="1.0"]
+[wait time="2.0"]
 
 #
 # Set the chapter name.
@@ -41,8 +47,8 @@
 # Play a BGM.
 #
 
-#[volume track="bgm" vol="0.5"]
-#[bgm file="bgm/afternoon2.ogg"]
+[volume track="bgm" vol="0.5"]
+[bgm file="bgm/afternoon2.ogg"]
 
 #
 # Let Xiaoling enter and say.
