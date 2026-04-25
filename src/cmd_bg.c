@@ -117,12 +117,15 @@ init(void)
 		 * 				     conf_game_height,
 		 * 				     &fname[1]);
 		 */
+	} else if (strcmp(fname, "none") == 0) {
+		fname = NULL;
+		img = NULL;
 	} else {
 		/* Load an image. */
 		img = s3_create_image_from_file(fname);
+		if (img == NULL)
+			return false;
 	}
-	if (img == NULL)
-		return false;
 
 	/* Remove the speaking character. */
 	s3_set_ch_talking(-1);
