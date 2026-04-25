@@ -592,6 +592,7 @@ jobs:
           cp -R game/bg dist/
           cp -R game/bgm dist/
           cp -R game/ch dist/
+          cp -R game/gui dist/
           cp -R game/rule dist/
           cp -R game/se dist/
           cp -R game/system dist/
