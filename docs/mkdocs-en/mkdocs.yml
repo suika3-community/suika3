@@ -4,7 +4,7 @@ use_directory_urls: false
 
 nav:
   - Home: index.md
-  - Tags: tag.md
+  - Tags: novelml-tags.md
   - Build: build.md
 
 theme:
