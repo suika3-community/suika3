@@ -79,8 +79,8 @@ jobs:
 
       - name: Download mingw-w64-11.0
         run: |
-          echo "Downloaing mingw-w64-11.0 with a MSVCRT/XP configuration."
-          wget -q https://noctvm.io/ci/mingw-w64-11.0.tar.bz2
+          echo "Downloading mingw-w64-11.0 with a MSVCRT/XP configuration."
+          wget https://noctvm.io/ci/mingw-w64-11.0.tar.bz2
           tar xJf mingw-w64-11.0.tar.bz2
           echo "$PWD/mingw-w64-11.0/bin" >> $GITHUB_PATH
 
@@ -419,7 +419,7 @@ jobs:
 
       - name: Download OpenHarmony SDK
         run: |
-          echo "Downloaing openharmony-native.tar.gz"
+          echo "Downloading openharmony-native.tar.gz"
           wget -q https://noctvm.io/ci/openharmony-native.tar.gz
           tar xzf openharmony-native.tar.gz
 
