@@ -1652,6 +1652,7 @@ s3i_blit_load_message(void)
 	const char *text_c;
 	char *text;
 	s3_pixel_t save_body_color, save_body_outline_color;
+	size_t text_len;
 	int len;
 
 	/* Get the message to draw. */
@@ -1665,9 +1666,9 @@ s3i_blit_load_message(void)
 	}
 
 	/* Remove the trailing LF. */
-	len = strlen(text);
-	if (text[len - 1] == '\n')
-		text[len - 1] = '\0';
+	text_len = strlen(text);
+	if (text[text_len - 1] == '\n')
+		text[text_len - 1] = '\0';
 
 	/* Clear the message box. */
 	clear_msgbox();
