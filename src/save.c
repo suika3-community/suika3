@@ -444,6 +444,8 @@ s3_execute_save_local(
 				break;
 			if (!write_string(s3_get_last_message()))
 				break;
+			if (!write_string(s3_get_last_append_message()))
+				break;
 		} else {
 			/*
 			 * Put the entire last message because
@@ -452,6 +454,8 @@ s3_execute_save_local(
 			if (!write_string(s3_get_last_message()))
 				break;
 			if (!write_string(s3_get_last_message()))
+				break;
+			if (!write_string(s3_get_last_append_message()))
 				break;
 		}
 
@@ -702,6 +706,10 @@ s3_execute_load_local(
 		if (!read_string(sbuf, sizeof(sbuf)))	/* last */
 			break;
 		if (!s3_set_last_message(sbuf))
+			break;
+		if (!read_string(sbuf, sizeof(sbuf)))	/* last append */
+			break;
+		if (!s3_set_last_append_message(sbuf))
 			break;
 
 		/* Read the page line. */
@@ -1086,11 +1094,13 @@ load_basic_save_info(
 		}
 
 		/* Skip the last message. */
-		if (!read_string(sbuf, sizeof(sbuf)))
+		if (!read_string(sbuf, sizeof(sbuf))) /* name */
 			break;
-		if (!read_string(sbuf, sizeof(sbuf)))
+		if (!read_string(sbuf, sizeof(sbuf))) /* prev last */
 			break;
-		if (!read_string(sbuf, sizeof(sbuf)))
+		if (!read_string(sbuf, sizeof(sbuf))) /* last */
+			break;
+		if (!read_string(sbuf, sizeof(sbuf))) /* last append */
 			break;
 		save_message[index] = strdup(sbuf);
 		if (save_message[index] == NULL) {

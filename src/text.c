@@ -837,6 +837,8 @@ s3_draw_message(
 			context->runtime_is_inline_wait = false;
 			return i;
 		}
+		if (*context->msg == '\0')
+			break;
 
 		/* Do word wrapping. */
 		if (!do_word_wrapping(context))

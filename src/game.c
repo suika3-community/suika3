@@ -138,6 +138,9 @@ static char *last_name;
 /* Previous last message. (last_message minus the latest continued message) */
 static char *prev_last_message;
 
+/* Last append message. */
+static char *last_append_message;
+
 /* Speed of showing text. */
 static float msg_text_speed;
 
@@ -239,6 +242,7 @@ s3i_on_game_start(void)
 	FREE(chapter_name);
 	FREE(last_message);
 	FREE(prev_last_message);
+	FREE(last_append_message);
 	for (i = 0; i < S3_CALL_ARGS; i++)
 		FREE(call_arg[i]);
 
@@ -1014,6 +1018,7 @@ s3_set_last_message(
 	const char *msg)
 {
 	FREE(prev_last_message);
+	FREE(last_append_message);
 	prev_last_message = last_message;
 	STRDUP(last_message, msg);
 
@@ -1029,6 +1034,10 @@ s3_append_last_message(
 {
 	char *s;
 	size_t len;
+
+	FREE(last_append_message);
+	if (msg != NULL)
+		STRDUP(last_append_message, msg);
 
 	FREE(prev_last_message);
 	prev_last_message = last_message;
@@ -1076,6 +1085,33 @@ s3_get_prev_last_message(void)
 	if (prev_last_message == NULL)
 		return "";
 	return prev_last_message;
+}
+
+/*
+ * Get the last append message.
+ */
+const char *
+s3_get_last_append_message(void)
+{
+	if (last_append_message == NULL) {
+		if (last_message == NULL)
+			return "";
+		else
+			return last_message;
+	}
+	return last_append_message;
+}
+
+/*
+ * Set the last append message.
+ */
+bool
+s3_set_last_append_message(
+	const char *msg)
+{
+	FREE(last_append_message);
+	STRDUP(last_append_message, msg);
+	return true;
 }
 
 /*

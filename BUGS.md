@@ -461,3 +461,46 @@ Files modified:
 ### Commits
 
 - ad6347dfc1ba47a78bee2b12fa4b789ad23d8da0
+
+---
+
+## Thumbnail image pixel shift in save data preview
+
+* Report Details
+    * ID: BUG-20260426-002
+    * Status: Resolved
+    * Component: Suika3
+    * Severity: high
+    * Priority: high
+    * Reproducibility: always
+    * First Found In: 982432d12b2352bcbe0543e5b19633f59add8e3b
+    * Fixed In: b531a17f11948875afea4b7a60252af8722630f2
+    * Reported Date: 22:00 26 April 2026
+    * Fixed Date: 05:15 27 April 2026
+    * Detection: developer testing (@lalalll-lalalll GitHub #25)
+    * Root Cause Type: Lack of horizontal rollout of corrections
+    * OS: All
+    * CPU: All
+
+### Report
+
+There is a visible rendering artifact in the save
+thumbnails. Specifically, the rightmost vertical column of pixels is
+incorrectly shifted and appears on the far left side of the image.
+
+### Analysis
+
+Analysis:
+- In `load_basic_save_info()`, before reading the thumbnail, reading `u32: page line` was missing.
+- Therefore, image pixels were 4 bytes shifted left.
+
+### Patch
+
+`load_basic_save_info()` was patched.
+
+Files modified:
+- src/save.c
+
+### Commits
+
+- b531a17f11948875afea4b7a60252af8722630f2

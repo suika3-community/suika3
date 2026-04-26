@@ -179,8 +179,7 @@ s3_add_history(
  */
 bool
 s3_append_history(
-	const char *text,
-	const char *spacing)
+	const char *text)
 {
 	struct history *h;
 	char *s;
@@ -203,8 +202,6 @@ s3_append_history(
 	len = 0;
 	if (h->text != NULL)
 		len += strlen(h->text);
-	if (spacing != NULL)
-		len += strlen(spacing);
 	if (text != NULL)
 		len += strlen(text);
 
@@ -217,8 +214,6 @@ s3_append_history(
 	strcpy(s, "");
 	if (h->text != NULL)
 		strcat(s, h->text);
-	if (spacing != NULL)
-		strcat(s, spacing);
 	if (text != NULL)
 		strcat(s, text);
 

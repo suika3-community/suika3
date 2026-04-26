@@ -2930,7 +2930,7 @@ draw_history_button(
 	if (b->rt.history_offset != -1) {
 		const char *name = s3_get_history_name(b->rt.history_offset);
 		const char *text = s3_get_history_text(b->rt.history_offset);
-		if (name != NULL)
+		if (name != NULL && !conf_game_novel)
 			draw_history_name_item(target, index, name);
 		if (text != NULL)
 			draw_history_text_item(target, index, text, name != NULL);

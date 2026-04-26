@@ -257,9 +257,6 @@ static bool need_dimming;
 /* Page top flag. */
 static bool is_page_top;
 
-/* Line spacing. */
-static const char *line_spacing;
-
 /* Whether to keep in history but not display */
 static bool no_show;
 
@@ -955,8 +952,9 @@ init_msg_top(void)
 			if (!s3_set_last_message(msg))
 				return false;
 		} else {
-			if (!s3_append_last_message(line_spacing))
-				return false;
+			if (!is_inline)
+				if (!s3_append_last_message("\n"))
+					return false;
 			if (!s3_append_last_message(msg))
 				return false;
 		}
@@ -1007,8 +1005,10 @@ register_message_for_history(
 				    name_outline_color))
 			return false;
 	} else {
-		if (!s3_append_history(msg,
-				       line_spacing))
+		if (!is_inline)
+			if (!s3_append_history("\n"))
+				return false;
+		if (!s3_append_history(msg))
 			return false;
 	}
 
@@ -1649,14 +1649,27 @@ bool
 s3i_blit_load_message(void)
 {
 	struct s3_drawmsg *context;
-	const char *text;
+	const char *text_c;
+	char *text;
 	s3_pixel_t save_body_color, save_body_outline_color;
 	int len;
 
-	text = s3_get_prev_last_message();
-	if (text == NULL || strcmp(text, "") == 0)
+	/* Get the message to draw. */
+	text_c = s3_get_prev_last_message();
+	if (text_c == NULL || strcmp(text_c, "") == 0)
 		return true;
+	text = strdup(text_c);
+	if (text == NULL) {
+		s3_log_out_of_memory();
+		return false;
+	}
 
+	/* Remove the trailing LF. */
+	len = strlen(text);
+	if (text[len - 1] == '\n')
+		text[len - 1] = '\0';
+
+	/* Clear the message box. */
 	clear_msgbox();
 
 	orig_pen_x = pen_x;
@@ -1730,6 +1743,8 @@ s3i_blit_load_message(void)
 	avoid_dimming = true;
 
 	s3_set_pen_position(pen_x, pen_y);
+
+	free(text);
 
 	return true;
 }

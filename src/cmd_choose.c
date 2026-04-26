@@ -195,7 +195,7 @@ init(void)
 				conf_msgbox_font_size,
 				conf_msgbox_margin_top);
 		}
-		s3_append_history("", "");
+		s3_append_history("");
 		s3_append_last_message("");
 		s3i_blit_load_message();
 		s3i_blit_load_name();

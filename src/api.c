@@ -8557,10 +8557,8 @@ Suika_appendHistory(
 		/* Get the arguments. */
 		if (!pf_get_call_arg_string("message", &message))
 			break;
-		if (!pf_get_call_arg_string("spacing", &spacing))
-			break;
 
-		if (!s3_append_history(message, spacing))
+		if (!s3_append_history(message))
 			break;
 
 		/* Set the return value. */

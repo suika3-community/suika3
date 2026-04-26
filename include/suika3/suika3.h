@@ -929,6 +929,19 @@ const char *
 s3_get_last_message(void);
 
 /*
+ * Get the last append message.
+ */
+const char *
+s3_get_last_append_message(void);
+
+/*
+ * Set the last append message.
+ */
+bool
+s3_set_last_append_message(
+	const char *msg);
+
+/*
  * Get the previous last message.
  */
 const char *
@@ -2553,8 +2566,7 @@ s3_add_history(
  */
 bool
 s3_append_history(
-	const char *text,
-	const char *spacing);
+	const char *text);
 
 /*
  * Get the number of the history.
