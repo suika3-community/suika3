@@ -234,6 +234,8 @@ scale_samples(uint32_t *buf, int frames, float vol)
 
 	__sync_synchronize();
 
+	scale = vol;
+
 	/* Scale samples. */
 	for (i = 0; i < frames; i++) {
 		frame = buf[i];
@@ -273,6 +275,7 @@ hal_play_sound(
 		wave[stream] = w;
 		pre_finish[stream] = false;
 		post_finish[stream] = false;
+		(*bq_player_buffer_queue[stream])->Clear(bq_player_buffer_queue[stream]);
 		enqueue(stream);
 	}
 	pthread_mutex_unlock(&sound_mutex[stream]);
