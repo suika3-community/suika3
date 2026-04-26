@@ -2245,6 +2245,8 @@ s3_draw_stage_to_thumb(void)
 	float x1, y1, x2, y2, x3, y3, x4, y4, cx, cy, rad;
 	int i;
 
+	s3_fill_image_rect(thumb_image, 0, 0, thumb_image->width, thumb_image->height, 0);
+
 	root_scale_x = (float)conf_save_thumb_width / (float)conf_game_width;
 	root_scale_y = (float)conf_save_thumb_height / (float)conf_game_height;
 

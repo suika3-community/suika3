@@ -30,6 +30,7 @@
 #include <suika3/suika3.h>
 #include "save.h"
 #include "conf.h"
+#include "image.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1054,7 +1055,7 @@ static bool
 load_basic_save_info(
 	int index)
 {
-	uint32_t ver;
+	uint32_t ver, u;
 	bool success;
 
 	success = false;
@@ -1096,6 +1097,10 @@ load_basic_save_info(
 			s3_log_out_of_memory();
 			break;
 		}
+
+		/* Read the page line. */
+		if (!read_u32(&u))
+			break;
 
 		/* Read the thumbnail. */
 		if (!read_data(s3_get_image_pixels(save_thumb[index]),

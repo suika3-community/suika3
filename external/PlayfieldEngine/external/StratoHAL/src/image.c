@@ -1048,7 +1048,7 @@ scanline_edge(
 
 		if (x1 < x2) {
 			if (x1 < scbuf[iy].sc_min_x) {
-				scbuf[iy].sc_min_x  = (int)ceilf(x1);
+				scbuf[iy].sc_min_x  = (int)floorf(x1);
 				scbuf[iy].sc_min_tx = tx1;
 				scbuf[iy].sc_min_ty = ty1;
 			}
@@ -1059,7 +1059,7 @@ scanline_edge(
 			}
 		} else {
 			if (x2 < scbuf[iy].sc_min_x) {
-				scbuf[iy].sc_min_x  = (int)ceilf(x2);
+				scbuf[iy].sc_min_x  = (int)floorf(x2);
 				scbuf[iy].sc_min_tx = tx2;
 				scbuf[iy].sc_min_ty = ty2;
 			}
