@@ -167,6 +167,7 @@ option(SUIKA_ENABLE_CONSOLE "Enable console debug output" OFF)
 
 set(SUIKA_DIR_DOCS "share/suika3" CACHE STRING "Document installation destination")
 set(SUIKA_DIR_GAME "share/suika3" CACHE STRING "Example installation destination")
+set(SUIKA_DIR_ELISP "share/suika3" CACHE STRING "Example installation destination")
 
 # ---
 
@@ -1105,10 +1106,9 @@ if(SUIKA_ENABLE_INSTALL)
   endif()
 
   #
-  # Install the sample game.
+  # Install the sample files.
   #
 
-  # Install ZLIB-licensed contents.
   if(SUIKA_ENABLE_DIST AND NOT SUIKA_ENABLE_FLATPAK)
     # Exclude the font when packaging.
     # (A symlink to a system font should be created by packaging process.)
@@ -1119,11 +1119,19 @@ if(SUIKA_ENABLE_INSTALL)
       PATTERN "*"
       PATTERN "system/font/*" EXCLUDE
     )
+    install(
+      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/resources/elisp"
+      DESTINATION "${SUIKA_DIR_ELISP}"
+    )
   else()
     # Include the font.
     install(
       DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/game"
       DESTINATION "${SUIKA_DIR_GAME}"
+    )
+    install(
+      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/resources/elisp"
+      DESTINATION "${SUIKA_DIR_ELISP}"
     )
   endif()
 
