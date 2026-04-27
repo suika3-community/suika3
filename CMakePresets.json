@@ -269,6 +269,33 @@
             }
         },
         {
+            "name":           "windows-vs2026-x64-pdb",
+            "displayName":    "VS2026 x64 Release",
+            "generator":      "Visual Studio 18 2026",
+            "architecture":   "x64",
+            "toolset":        "v145",
+            "binaryDir":      "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_CONFIGURATION_TYPES":    "Release",
+                "CMAKE_BUILD_TYPE":             "Release",
+                "CMAKE_MSVC_RUNTIME_LIBRARY":   "MultiThreaded$<$<CONFIG:Debug>:Debug>",
+                "SUIKA_TARGET_WINDOWS":         "ON",
+                "SUIKA_ENABLE_JIT":             "ON",
+                "SUIKA_ENABLE_I18N":            "ON",
+                "SUIKA_ENABLE_PACK":            "ON",
+                "CMAKE_MSVC_DEBUG_INFORMATION_FORMAT": "ProgramDatabase",
+                "CMAKE_C_FLAGS_RELEASE": "/O2 /Zi",
+                "CMAKE_CXX_FLAGS_RELEASE": "/O2 /Zi",
+                "CMAKE_EXE_LINKER_FLAGS_RELEASE": "/DEBUG",
+                "CMAKE_SHARED_LINKER_FLAGS_RELEASE": "/DEBUG"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
             "name":           "windows-vs2026-x64-debug",
             "displayName":    "VS2026 x64 Debug",
             "generator":      "Visual Studio 18 2026",
