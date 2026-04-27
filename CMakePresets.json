@@ -1241,6 +1241,10 @@
             "configurePreset": "windows-vs2026-x64"
         },
         {
+            "name": "windows-vs2026-x64-pdb",
+            "configurePreset": "windows-vs2026-x64-pdb"
+        },
+        {
             "name": "windows-vs2026-x64-debug",
             "configurePreset": "windows-vs2026-x64-debug"
         },
