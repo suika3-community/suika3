@@ -517,11 +517,11 @@ Files modified:
     * Priority: high
     * Reproducibility: frequently
     * First Found In: 88649ac3a04b1982f8867ac89184a3c6e196414b
-    * Fixed In: 1e5361f86da3b3320e455f7e5aae793888dd2da3
+    * Fixed In: bc985e94be84b2e827f10e68a859e3ff95c530a3
     * Reported Date: 09:00 27 April 2026
-    * Fixed Date: 09:45 27 April 2026
+    * Fixed Date: 14:40 27 April 2026
     * Detection: Author's exploratory testing
-    * Root Cause Type: Multiple causes; insufficient testing on newly introduced D3D12 code.
+    * Root Cause Type: Multiple and complex causes; insufficient testing on newly introduced D3D12 code.
     * OS: Windows 10/11
     * CPU: x86/x86_64/arm64
 
@@ -549,6 +549,15 @@ Analysis:
     - `D3D12NotifyImageFree()` must ignore textures created in older contexts.
     - However, the previous implementation did not store a context ID in `TextureBundle`,
       so it had no way to distinguish stale texture pointers from valid ones.
+- Cause 4: Timing of freeing
+    - In the previous implementation, the texture COM objects were freed automatically
+      with `delete` operator to `TextureBundle` objects.
+    - However, to release the textures, a living D3D device is required, but it was already
+      released at the timing of `delete`.
+    - The texture COM objects should be freed manually by `Reset()` before destroying D3D device.
+    - In addition, freeing `TextureBundle` instances should be deferred to the next
+      `UploadTextureIfNeeded()` call because the refereces from `hal_image::tex` to
+      `TextureBundle` should be alive until that. (We don't have a list of `hal_image`)
 
 ### Patch
 
@@ -559,4 +568,4 @@ Files modified:
 
 ### Commits
 
-- 1e5361f86da3b3320e455f7e5aae793888dd2da3
+- bc985e94be84b2e827f10e68a859e3ff95c530a3
