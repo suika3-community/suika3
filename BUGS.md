@@ -550,14 +550,17 @@ Analysis:
     - However, the previous implementation did not store a context ID in `TextureBundle`,
       so it had no way to distinguish stale texture pointers from valid ones.
 - Cause 4: Timing of freeing
-    - In the previous implementation, the texture COM objects were freed automatically
-      with `delete` operator to `TextureBundle` objects.
-    - However, to release the textures, a living D3D device is required, but it was already
-      released at the timing of `delete`.
-    - The texture COM objects should be freed manually by `Reset()` before destroying D3D device.
-    - In addition, freeing `TextureBundle` instances should be deferred to the next
-      `UploadTextureIfNeeded()` call because the refereces from `hal_image::tex` to
-      `TextureBundle` should be alive until that. (We don't have a list of `hal_image`)
+    - In the previous implementation, texture COM objects were released automatically
+      by the destructor of `TextureBundle`, called from `delete`.
+    - However, releasing D3D12 resources requires the D3D device to still be alive,
+      but the device had already been released by the time `TextureBundle` objects
+      were deleted.
+    - Therefore, texture COM objects must be released explicitly with `Reset()`
+      before destroying the D3D device.
+    - In addition, freeing `TextureBundle` instances must be deferred until the next
+      `UploadTextureIfNeeded()` call, because references from `hal_image::tex` to
+      `TextureBundle` must remain valid until then. The HAL currently does not keep
+      a global list of `hal_image` instances.
 
 ### Patch
 
