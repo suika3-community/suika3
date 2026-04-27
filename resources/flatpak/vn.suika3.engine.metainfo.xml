@@ -31,19 +31,20 @@
 
   <screenshots>
     <screenshot type="default">
+      <image>https://raw.githubusercontent.com/awemorris/suika3/main/docs/img/screenshot-20260406.webp</image>
       <caption>The Suika3 engine running a sample script</caption>
-      <image>https://github.com/awemorris/suika3/blob/main/docs/img/screenshot-20260406.webp</image>
     </screenshot>
   </screenshots>
 
   <url type="homepage">https://suika3.vn/</url>
   <url type="bugtracker">https://github.com/awemorris/suika3/issues</url>
+  <url type="vcs-browser">https://github.com/awemorris/suika3</url>
 
   <content_rating type="oars-1.1" />
-  <mimetypes>
-    <mimetype>application/x-novelml</mimetype>
-    <mimetype>application/x-rayscript</mimetype>
-  </mimetypes>
+  <provide>
+    <mediatype>application/x-novelml</mediatype>
+    <mediatype>application/x-rayscript</mediatype>
+  </provide>
 
   <releases>
     <release version="26.04.20" date="2026-04-25">
