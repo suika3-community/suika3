@@ -521,7 +521,7 @@ Files modified:
     * Reported Date: 09:00 27 April 2026
     * Fixed Date: 09:45 27 April 2026
     * Detection: Author's exploratory testing
-    * Root Cause Type: Lack of horizontal rollout of corrections
+    * Root Cause Type: Mistakes on STL usage and resource reinitialization
     * OS: Windows 10/11
     * CPU: x86/x86_64/arm64
 
