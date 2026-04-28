@@ -3,7 +3,7 @@
   <h1 align="center" style="border-bottom: none">
     <a href="https://suika3.vn">Suika3</a>:
     A Modern, Ultra-Portable Full-Stack<br>
-    2D Game Engine with a Visual Novel DSL
+    2D Game Runtime with a Visual Novel DSL
   </h1>
   <p>
     We've brought Suika3 to life<br>
@@ -69,7 +69,7 @@
 
 ## Build and Installation
 
-### Full SDK Download (Prebuilt Binary)
+### Downloading Full SDK
 
 Please refer to [Getting Started](docs/mkdocs-en/docs/getting-started.md).
 
@@ -77,10 +77,10 @@ Please refer to [Getting Started](docs/mkdocs-en/docs/getting-started.md).
 
 ### Package Managers
 
-Linux (Flatpak):
+Linux (Flathub):
 ```
-wget https://github.com/awemorris/suika3/releases/latest/download/Suika3-$(uname -m).flatpak
-flatpak install --user Suika3-$(uname -m).flatpak
+flatpak install --user flathub vn.suika3.engine
+flatpak run vn.suika3.engine
 ```
 
 macOS (Homebrew):
@@ -89,12 +89,12 @@ brew tap awemorris/suika3
 brew install suika3
 ```
 
-FreeBSD Ports (latest):
+FreeBSD Ports:
 ```
 pkg install suika3
 ```
 
-### Source Build
+### Building from Source
 
 Please refer to [build.md](docs/mkdocs-en/docs/build.md) for platform-specific instructions.
 
@@ -119,14 +119,13 @@ suika3
 ## Syntax Highlighting on Visual Studio Code
 
 There is an awesome VS Code extension by `@lalalll-lalalll` to support
-syntax highlighting for Suika3.
+syntax highlighting for Suika3, including `NovelML`, `Ray`, `GUI`, and `Anime` files.
 
 Check it out: [NovelML-Helper](https://github.com/lalalll-lalalll/NovelML-Helper)
 
-To install this extension, visit the repository and download the .vsix
-file from the
-[Releases page](https://github.com/lalalll-lalalll/NovelML-Highlighter/releases)
-and install it by the following steps.
+To install this extension, visit the repository and download the .vsix file from the
+[Releases page](https://github.com/lalalll-lalalll/NovelML-Highlighter/releases),
+then install it on VS Code.
 
 <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/syntax-highlighter-3.png" alt="Install highlighter 1" width="320" hspace="20">
 
@@ -233,6 +232,11 @@ Suika3 is engineered with modern techniques, and delivers:
 - **Extensible**: NovelML can be seamlessly extended using the Ray
   language. Developers can implement custom tags simply by writing a
   Ray function named `Tag_*()`.
+
+- **Sophisticated**: Our `Story-View-Logic Architecture` streamlines
+  game development. `NovelML` manages the timeline and flow of the
+  game, `GUI` and `Anime` drive the UI/UX, and `Ray` encapsulates
+  complex implementation details.
 
 - **Reliable**: We follow a structured `Quality Assurance` process
   to deliver reliable software.
