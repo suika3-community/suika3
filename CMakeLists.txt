@@ -1041,8 +1041,7 @@ if(SUIKA_ENABLE_INSTALL)
   # suika3-launcher and suika3-portal
   if(SUIKA_ENABLE_FREEDESKTOP)
     install(
-      PROGRAMS    "${CMAKE_CURRENT_SOURCE_DIR}/resources/freedesktop/suika3-portal"
-                  "${CMAKE_CURRENT_SOURCE_DIR}/resources/freedesktop/suika3-launcher"
+      PROGRAMS    "${CMAKE_CURRENT_SOURCE_DIR}/resources/freedesktop/suika3-launcher"
       DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
   endif()
