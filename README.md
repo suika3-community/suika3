@@ -48,10 +48,10 @@
 <div align="center">
   <a href="https://noctvm.io/test/">
     Click to play on the browser!<br>
-    <img src="https://github.com/awemorris/suika3/blob/main/docs/img/screenshot-20260406.webp" alt="Suika3 Screenshot"><br>
+    <img src="https://github.com/awemorris/suika3/blob/main/docs/img/screenshot-20260406.webp" alt="Suika3 Sample Game Screenshot"><br>
   </a>
-  ↓↓Now we have a nice launcher↓↓
-  <img src="https://github.com/awemorris/suika3/blob/main/docs/img/screenshot-20260428.webp" alt="Suika3 Screenshot"><br>
+  Suika3 now has a nice launcher written in and self-hosted by Suika3!<br>
+  <img src="https://github.com/awemorris/suika3/blob/main/docs/img/screenshot-20260428.webp" alt="Suika3 Launcher Screenshot"><br>
 </div>
 
 ---
