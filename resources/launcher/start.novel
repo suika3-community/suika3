@@ -26,8 +26,8 @@
                 waitForFinish="0"]
         [else]
             [runCommand
-                command="suika3-run"
-                workDir="."
+                command="suika3-portal"
+                workDir=""
                 waitForFinish="0"]
         [endif]
         [goto name="end"]

@@ -223,9 +223,12 @@ cfunc_System_runCommand(
 			int i;
 			
 			/* Set the working directory. */
-			if (chdir(work_dir) != 0) {
-				printf("chdir() failed.\n");
-				_exit(EXIT_FAILURE);
+			if (strcmp(work_dir, "") != 0) {
+				if (chdir(work_dir) != 0) {
+					printf("chdir() failed.\n");
+					_exit(EXIT_FAILURE);
+				}
+
 			}
 
 			/* Parse the command line arguments. TODO: support quotation */
@@ -241,7 +244,7 @@ cfunc_System_runCommand(
 			/* Run. */
 			execvp(argv[0], argv);
 
-			printf("execvp() failed.\n");
+			printf("execvp() failed for %s.\n", argv[0]);
 			free(cmd_copy);
 			_exit(EXIT_FAILURE);
 		} else {

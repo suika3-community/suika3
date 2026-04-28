@@ -3,8 +3,9 @@
 LAUNCHER_DIR="";
 for base in /usr /usr/local /usr/pkg /opt /app; do
     for sub in "share/suika3/launcher" \
-               "share/doc/suika3/launcher"; do
+               "share/doc/suika3/launcher" \
                "share/docs/suika3/launcher"; do
+        target="$base/$sub";
         if [ -d "$target" ]; then
             LAUNCHER_DIR="$target";
             break 2;
@@ -12,11 +13,9 @@ for base in /usr /usr/local /usr/pkg /opt /app; do
     done
 done
 
-if cd "$LAUNCHER_DIR"; then
-    suika3;
-else
+if [ -z "$LAUNCHER_DIR" ]; then
     echo "No launcher directory found.";
     exit 1;
 fi
 
-exit 0;
+cd "$LAUNCHER_DIR" && suika3

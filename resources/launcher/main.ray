@@ -77,7 +77,8 @@ func Tag_getSampleDir(params) {
         "/usr/share/suika3/game",                   // prefix="/usr"
         "/usr/local/share/suika3/game",             // prefix="/usr/local"
         "/usr/share/doc/suika3/examples/game",      // Debian
-        "/usr/local/share/examples/suika3/game"     // FreeBSD
+        "/usr/local/share/examples/suika3/game",    // FreeBSD
+        "/app/share/suika3/game"                    // Flatpak
     ];
 
     // Search the sample direcotry that really exists.

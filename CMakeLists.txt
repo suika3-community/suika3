@@ -1127,7 +1127,7 @@ if(SUIKA_ENABLE_INSTALL)
     # (A symlink to a system font should be created by packaging process.)
     install(
       DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/game"
-      DESTINATION "${SUIKA_DIR_GAME}"
+      DESTINATION "${SUIKA_DIR_SAMPLE}"
       FILES_MATCHING
       PATTERN "*"
       PATTERN "system/font/*" EXCLUDE
@@ -1140,7 +1140,7 @@ if(SUIKA_ENABLE_INSTALL)
     # Include the font.
     install(
       DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/game"
-      DESTINATION "${SUIKA_DIR_GAME}"
+      DESTINATION "${SUIKA_DIR_SAMPLE}"
     )
     install(
       DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/resources/elisp"
