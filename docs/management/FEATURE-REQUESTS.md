@@ -44,4 +44,37 @@ Concerns:
 * d0aaa Add file extension association
 
 ---
-Add here
+## Separating Screenshot Size from Display Size
+
+| Item          | Details                                                                 |
+|---------------|-------------------------------------------------------------------------|
+| ID            |                                                                         |
+| Priority      | <High / Mid / Low>                                                      |
+| Status        | <**Proposed** / Discussing / Accepted / WaitForImpl / Testing / Done>   |
+| Target LTS    | 27.07 LTS                                                               |
+| Refereneces   | [GitHub Issue #26]([https://...)](https://github.com/awemorris/suika3/issues/26)                                        |
+| Created       | 28 April 2026                                                           |
+| Updated       | 28 April 2026                                                           |
+| Requested By  | <List of the origins>                                                   |
+
+### Description
+
+Data Layer: Continue using save.thumb.width / save.thumb.height to control the actual screenshot resolution.
+Display Layer: Allow explicit declaration of width and height within the Save Button (or UI component).
+Rendering Logic: The engine should automatically scale (stretch/shrink) the "Original Thumbnail" to fit the declared "Display Size".
+
+### Outline of The Discussion
+
+Background:
+
+
+Concerns:
+- None
+
+### Notes on Progress
+
+- 2026-04-28: Agreed to implement in the next feature-add window for 27.07 LTS.
+
+### Related Commits
+
+* d0aaa Add file extension association
