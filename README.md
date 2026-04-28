@@ -1,14 +1,10 @@
-<h1 align="center" style="border-bottom: none">
-  <b>
-    <a href="https://suika3.vn">Suika3</a><br>
-  </b>
-  A Modern, Ultra-Portable Full-Stack<br>
-  2D Game Engine <br>
-  with a Built-in Visual Novel DSL
-</h1>
-
 <div align="center">
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/logo-mid.png" alt="Suika3 Logo" width="480" hspace="20">
+  <h1 align="center" style="border-bottom: none">
+    <a href="https://suika3.vn">Suika3</a>:
+    A Modern, Ultra-Portable Full-Stack<br>
+    2D Game Engine with a Visual Novel DSL
+  </h1>
   <p>
     We've brought Suika3 to life<br>
     with a deep love for mobile devices —<br>
