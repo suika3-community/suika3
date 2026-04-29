@@ -31,13 +31,11 @@
 #ifndef STRATOHAL_GSTPLAY_H
 #define STRATOHAL_GSTPLAY_H
 
-#include <X11/Xlib.h>
-
 void
 gstplay_init (int argc, char *argv[]);
 
 void
-gstplay_play (const char *fname, Window window);
+gstplay_play (const char *fname);
 
 void
 gstplay_stop (void);
@@ -45,7 +43,7 @@ gstplay_stop (void);
 int
 gstplay_is_playing (void);
 
-void
+struct hal_image *
 gstplay_loop_iteration (void);
 
 #endif

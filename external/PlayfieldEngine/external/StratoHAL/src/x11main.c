@@ -206,6 +206,7 @@ static void destroy_window(void);
 static void destroy_icon_image(void);
 static void run_game_loop(void);
 static bool run_frame(void);
+static void render_video_frame(void);
 static bool wait_for_next_frame(void);
 static bool next_event(void);
 static void event_key_press(XEvent *event);
@@ -813,15 +814,6 @@ run_game_loop(void)
 
 	/* Main Loop */
 	while (true) {
-		/* Process video playback. */
-		if (is_gst_playing) {
-			gstplay_loop_iteration();
-			if (!gstplay_is_playing()) {
-				gstplay_stop();
-				is_gst_playing = false;
-			}
-		}
-
 		/* Run a frame. */
 		if (!run_frame())
 			break;
@@ -844,20 +836,73 @@ run_frame(void)
 	/* Read the gamepad. */
 	update_evgamepad();
 
-	/* Start rendering. */
-	if (!is_gst_playing)
+	if (!is_gst_playing) {
+		/* Start rendering. */
 		opengl_start_rendering();
 
-	/* Call a frame event. */
-	cont = hal_callback_on_event_frame();
+		/* Call a frame event. */
+		cont = hal_callback_on_event_frame();
 
-	/* End rendering. */
-	if (!is_gst_playing) {
+		/* End rendering. */
 		opengl_end_rendering();
 		glXSwapBuffers(display, glx_window);
+	} else {
+		/* Render. */
+		render_video_frame();
+
+		/* Call a frame event. */
+		cont = hal_callback_on_event_frame();
+
+		/* If the playback is finished. */
+		if (!gstplay_is_playing()) {
+			gstplay_stop();
+			is_gst_playing = false;
+		}
 	}
 
 	return cont;
+}
+
+/* Render a video frame. */
+static void
+render_video_frame(void)
+{
+	struct hal_image *image;
+	int dst_width, dst_height, dst_x, dst_y;
+
+	/* Update the playback stauts. */
+	image = gstplay_loop_iteration();
+	if (image == NULL) {
+		/* Rendering is not required for this game frame. */
+		return;
+	}
+
+        /* Fit while preserving aspect ratio. */
+        if (screen_width * image->height <= screen_height * image->width) {
+                dst_width = screen_width;
+                dst_height = screen_width * image->height / image->width;
+        } else {
+                dst_height = screen_height;
+                dst_width = screen_height * image->width / image->height;
+        }
+        dst_x = (screen_width - dst_width) / 2;
+        dst_y = (screen_height - dst_height) / 2;
+
+	/* Render. */
+	opengl_start_rendering();
+        opengl_render_image_normal(
+                dst_x,
+                dst_y,
+                dst_width,
+                dst_height,
+                image,
+                0,
+                0,
+                image->width,
+                image->height,
+                255);
+	opengl_end_rendering();
+	glXSwapBuffers(display, glx_window);
 }
 
 /* Wait for the next frame timing. */

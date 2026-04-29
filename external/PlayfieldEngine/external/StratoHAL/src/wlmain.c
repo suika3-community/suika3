@@ -66,10 +66,8 @@
 #include <assert.h>
 #include <locale.h>
 
-#if 0
 /* Gstreamer Video HAL */
 #include "gstplay.h"
-#endif
 
 /* Color Format */
 #define DEPTH		(24)
@@ -127,13 +125,11 @@ const char *playfield_lang_code;
 /* Close window flag. */
 static bool is_close_requested;
 
-#if 0
 /* Flag to indicate whether we are playing a video or not */
 static bool is_gst_playing;
 
 /* Flag to indicate whether a video is skippable or not */
 static bool is_gst_skippable;
-#endif
 
 /* forward declaration */
 static void init_locale(void);
@@ -148,6 +144,7 @@ static void destroy_window(void);
 static void destroy_icon_image(void);
 static void run_game_loop(void);
 static bool run_frame(void);
+static void render_video_frame(void);
 static void flip(void);
 static bool wait_for_next_frame(void);
 static bool next_event(void);
@@ -313,10 +310,8 @@ static bool init_hal(int argc, char *argv[])
 	/* Initialize the gamepad. */
 	init_evgamepad();
 
-#if 0
 	/* Initialize the viddeo HAL. */
 	gstplay_init(argc, argv);
-#endif
 
 	return true;
 }
@@ -529,17 +524,6 @@ static void run_game_loop(void)
 
 	/* Main Loop */
 	while (true) {
-#if 0
-		/* Process video playback. */
-		if (is_gst_playing) {
-			gstplay_loop_iteration();
-			if (!gstplay_is_playing()) {
-				gstplay_stop();
-				is_gst_playing = false;
-			}
-		}
-#endif
-
 		/* Run a frame. */
 		if (!run_frame())
 			break;
@@ -561,38 +545,87 @@ static bool run_frame(void)
 	/* Read the gamepad. */
 	update_evgamepad();
 
-	/* Start rendering. */
-#if 0
-	if (!is_gst_playing)
-		opengl_start_rendering();
-#endif
-
-	if (decor != NULL) {
-		if (libdecor_dispatch(decor, 0) < 0)
-			return false;
-	}
-	wl_display_flush(wl_dpy);
-	if (is_close_requested)
-		return false;
-
-	opengl_start_rendering();
-
-	/* Call a frame event. */
-	cont = hal_callback_on_event_frame();
-
-	/* End rendering. */
-#if 0
 	if (!is_gst_playing) {
-		opengl_end_rendering();
-		eglSwapBuffers(dpy, esurf);
+		/* Start rendering. */
+		opengl_start_rendering();
+
+		/* Sync the decorator. */
+		if (decor != NULL) {
+			if (libdecor_dispatch(decor, 0) < 0)
+				return false;
+		}
 		wl_display_flush(wl_dpy);
+		if (is_close_requested)
+			return false;
+
+		/* Start rendering. */
+		opengl_start_rendering();
+
+		/* Call a frame event. */
+		cont = hal_callback_on_event_frame();
+
+		/* End rendering. */
+		opengl_end_rendering();
+		eglSwapBuffers(wl_dpy, wl_surface);
+		wl_display_flush(wl_dpy);
+	} else {
+		/* Render. */
+		render_video_frame();
+
+		/* Call a frame event. */
+		cont = hal_callback_on_event_frame();
+
+		/* If the playback is finished. */
+		if (!gstplay_is_playing()) {
+			gstplay_stop();
+			is_gst_playing = false;
+		}
 	}
-#endif
-	opengl_end_rendering();
-	eglSwapBuffers(egl_dpy, egl_surf);
-	wl_display_flush(wl_dpy);
 
 	return cont;
+}
+
+/* Render a video frame. */
+static void
+render_video_frame(void)
+{
+	struct hal_image *image;
+	int dst_width, dst_height, dst_x, dst_y;
+
+	/* Update the playback stauts. */
+	image = gstplay_loop_iteration();
+	if (image == NULL) {
+		/* Rendering is not required for this game frame. */
+		return;
+	}
+
+        /* Fit while preserving aspect ratio. */
+        if (screen_width * image->height <= screen_height * image->width) {
+                dst_width = screen_width;
+                dst_height = screen_width * image->height / image->width;
+        } else {
+                dst_height = screen_height;
+                dst_width = screen_height * image->width / image->height;
+        }
+        dst_x = (screen_width - dst_width) / 2;
+        dst_y = (screen_height - dst_height) / 2;
+
+	/* Render. */
+	opengl_start_rendering();
+        opengl_render_image_normal(
+                dst_x,
+                dst_y,
+                dst_width,
+                dst_height,
+                image,
+                0,
+                0,
+                image->width,
+                image->height,
+                255);
+	opengl_end_rendering();
+	eglSwapBuffers(wl_dpy, wl_surface);
+	wl_display_flush(wl_dpy);
 }
 
 /* Wait for the next frame timing. */
@@ -1188,18 +1221,16 @@ hal_play_video(
 	const char *fname,
 	bool is_skippable)
 {
-#if 0
 	char *path;
 
-	path = make_real_path(fname);
+	path = hal_make_real_path(fname);
 
 	is_gst_playing = true;
 	is_gst_skippable = is_skippable;
 
-	gstplay_play(path, window);
+	gstplay_play(path);
 
 	free(path);
-#endif
 
 	return true;
 }
@@ -1210,11 +1241,9 @@ hal_play_video(
 void
 hal_stop_video(void)
 {
-#if 0
 	gstplay_stop();
 
 	is_gst_playing = false;
-#endif
 }
 
 /*
@@ -1223,10 +1252,7 @@ hal_stop_video(void)
 bool
 hal_is_video_playing(void)
 {
-#if 0
 	return is_gst_playing;
-#endif
-	return false;
 }
 
 /*

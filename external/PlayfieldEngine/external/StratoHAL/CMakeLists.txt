@@ -264,7 +264,7 @@ endif()
 # Gstreamer
 if(STRATO_ENABLE_GST)
   find_package(PkgConfig REQUIRED)
-  pkg_check_modules(GST REQUIRED IMPORTED_TARGET gstreamer-1.0 gstreamer-video-1.0)
+  pkg_check_modules(GST REQUIRED IMPORTED_TARGET gstreamer-1.0 gstreamer-video-1.0 gstreamer-app-1.0)
 endif()
 
 # ALSA
@@ -431,6 +431,7 @@ if(   STRATO_TARGET_LINUX_WAYLAND
       src/glrender.c
       src/asound.c
       src/evgamepad.c
+      src/gstplay.c
     )
 endif()
 
