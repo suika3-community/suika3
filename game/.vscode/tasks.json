@@ -19,19 +19,13 @@
       },
       "command": "suika3",
       "windows": {
-        "command": "misc/windows/suika3-debug.exe"
+        "command": "SDK/windows/suika3-debug.exe"
       },
       "osx": {
-        "command": "sh misc/macos/suika3-wrapper.sh suika3"
+        "command": "sh SDK/macos/suika3-wrapper.sh suika3"
       },
       "linux": {
-        "command": "flatpak",
-        "args": [
-          "run",
-          "--filesystem=${workspaceFolder}",
-          "--command=suika3",
-          "vn.suika3.engine"
-        ]
+        "command": "sh SDK/linux/suika3-wrapper.sh suika3"
       },
       "options": {
         "cwd": "${workspaceFolder}"
@@ -52,21 +46,14 @@
         "command": "powershell",
         "args": [
           "-Command",
-          "& { $files = Get-ChildItem -Path . -Exclude 'misc', '.vscode', 'suika3.exe', 'save', 'assets.arc' | Select-Object -ExpandProperty Name; misc/windows/suika3-pack.exe $files }"
+          "& { $files = Get-ChildItem -Path . -Exclude 'SDK', '.vscode', 'suika3.exe', 'save', 'assets.arc' | Select-Object -ExpandProperty Name; SDK/windows/suika3-pack.exe $files }"
         ]
       },
       "osx": {
-        "command": "sh misc/macos/suika3-wrapper.sh suika3-pack"
+        "command": "sh SDK/macos/suika3-wrapper.sh suika3-pack"
       },
       "linux": {
-        "command": "flatpak",
-        "args": [
-          "run",
-          "--filesystem=${workspaceFolder}",
-          "--command=suika3-pack",
-          "vn.suika3.engine",
-          "`ls -A | grep -vE '^(misc|suika3.exe|.vscode)$'`"
-        ]
+        "command": "sh SDK/linux/suika3-wrapper.sh suika3-pack"
       },
       "options": {
         "cwd": "${workspaceFolder}"
@@ -90,7 +77,7 @@
         "command": "echo Not supported on Linux."
       },
       "osx": {
-        "command": "sh ${workspaceFolder}/misc/ios/build.sh"
+        "command": "sh ${workspaceFolder}/SDK/ios/build.sh"
       },
       "options": {
         "cwd": "${workspaceFolder}"
@@ -105,8 +92,8 @@
       }
     },
     "options": {
-        "command": "sh ${workspaceFolder}/misc/android/build.sh"
-        "cwd": "${workspaceFolder}/misc/ios"
+        "command": "sh ${workspaceFolder}/SDK/android/build.sh"
+        "cwd": "${workspaceFolder}/SDK/ios"
       },
       "group": {
         "kind": "build",
@@ -120,16 +107,16 @@
       "label": "Suika3: Build Android APK",
       "type": "shell",
       "windows": {
-        "command": "${workspaceFolder}/misc/android/build.bat"
+        "command": "${workspaceFolder}/SDK/android/build.bat"
       },
       "linux": {
-        "command": "sh ${workspaceFolder}/misc/android/build.sh"
+        "command": "sh ${workspaceFolder}/SDK/android/build.sh"
       },
       "osx": {
-        "command": "sh ${workspaceFolder}/misc/android/build.sh"
+        "command": "sh ${workspaceFolder}/SDK/android/build.sh"
       },
       "options": {
-        "cwd": "${workspaceFolder}/misc/android"
+        "cwd": "${workspaceFolder}/SDK/android"
       },
       "group": {
         "kind": "build",

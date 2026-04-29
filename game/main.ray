@@ -4,7 +4,7 @@ func setup() {
     return {
         width:      1280,
         height:     720,
-        title:      "My First Game",
+        title:      "Little Sample",
         fullscreen: false
     };
 }
@@ -25,4 +25,13 @@ func update() {
 func render() {
     // Do not delete the following line.
     Suika.render();
+}
+
+// You can define a custom tag.
+// Use this tag by `[custom1]` in NovelML.
+func Tag_custom1(params) {
+    print("Hello");
+
+    Suika.moveToNextTag();
+    return true;
 }

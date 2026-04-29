@@ -21,10 +21,10 @@
 
 # Play a BGM.
 [volume track="bgm" vol="0.5"]
-[bgm file="bgm/start.ogg"]
+[bgm file="sound/bgm/start.ogg"]
 
 # Show a GUI.
-[gui file="gui/title/title.gui"]
+[gui file="system/title/title.gui"]
 
 # Will be jumped to here.
 [label name="start"]
@@ -41,21 +41,21 @@
 # Show a background image.
 #
 
-[bg file="bg/school.png" time="0.5"]
+[bg file="images/bg/school.png" time="0.5"]
 
 #
 # Play a BGM.
 #
 
 [volume track="bgm" vol="0.5"]
-[bgm file="bgm/afternoon2.ogg"]
+[bgm file="sound/bgm/afternoon2.ogg"]
 
 #
 # Let Xiaoling enter and say.
 #
 
 # Show Xiaoling at left.
-[ch time="1.0" fade="normal" left="ch/xiaoling/xiaoling-normal.png"]
+[ch time="1.0" fade="normal" left="images/ch/xiaoling/xiaoling-normal.png"]
 
 # Say.
 [text name="Xiaoling" text="......"]
@@ -73,14 +73,14 @@
 [ch
   time="0.5"
   fade="normal"
-  right="ch/midori/midori-normal.png"
+  right="images/ch/midori/midori-normal.png"
 ]
 
 #
 # Dialogue.
 #
 
-[text name="Xiaoling" voice="voice/001.ogg"
+[text name="Xiaoling" voice="sound/voice/001.ogg"
   text=
     """
     Would you like to go to a cafe, Mido?
@@ -99,7 +99,7 @@
     """
 ]
 
-[text name="Midori" voice="voice/002.ogg"
+[text name="Midori" voice="sound/voice/002.ogg"
   text=
     """
     Sure! I'd love some fruitcake.
@@ -118,7 +118,7 @@
     """
 ]
 
-[text name="Xiaoling" voice="voice/003.ogg"
+[text name="Xiaoling" voice="sound/voice/003.ogg"
   text=
     """
     Where should we go?
@@ -163,11 +163,11 @@
 # Let Midori smile, move, and say.
 #
 
-[ch right="ch/midori/midori-happy.png" time="0.5" fade="normal"]
+[ch right="images/ch/midori/midori-happy.png" time="0.5" fade="normal"]
 
 [move time="1.0" right-x="r-250" accel="deaccel"]
 
-[text name="Midori" voice="voice/004.ogg"
+[text name="Midori" voice="sound/voice/004.ogg"
   text=
     """
     Let's go to the station, Xiao!
@@ -190,9 +190,9 @@
 # Let Xiaoling smile and say.
 #
 
-[ch left="ch/xiaoling/xiaoling-smile.png" time="1.0" fade="normal"]
+[ch left="images/ch/xiaoling/xiaoling-smile.png" time="1.0" fade="normal"]
 
-[text name="Xiaoling" voice="voice/005.ogg"
+[text name="Xiaoling" voice="sound/voice/005.ogg"
   text=
     """
     Okay, I'll grab my bag. Just a moment, Mido.

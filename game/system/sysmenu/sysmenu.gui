@@ -17,7 +17,7 @@ global {
     escapecancel: yes;
 
     # Sound effect on cancel.
-    cancelse: se/click.ogg;
+    cancelse: sound/se/click.ogg;
 }
 
 BASE {
