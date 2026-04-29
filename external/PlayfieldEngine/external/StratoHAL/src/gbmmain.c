@@ -29,7 +29,7 @@
  */
 
 /* HAL */
-#include "stratohal/platform.h"	/* Public Interface */
+#include "stratohal/platform.h"		/* Public Interface */
 #include "stdfile.h"			/* Standard C File Implementation */
 #if defined(HAL_TARGET_LINUX)
 #include "asound.h"			/* ALSA Sound Implemenatation */
@@ -65,10 +65,8 @@
 #include <assert.h>
 #include <locale.h>
 
-#if 0
 /* Gstreamer Video HAL */
 #include "gstplay.h"
-#endif
 
 /* Color Format */
 #define DEPTH		(24)
@@ -122,13 +120,11 @@ static FILE *log_fp;
 /* Locale */
 const char *playfield_lang_code;
 
-#if 0
 /* Flag to indicate whether we are playing a video or not */
 static bool is_gst_playing;
 
 /* Flag to indicate whether a video is skippable or not */
 static bool is_gst_skippable;
-#endif
 
 /* forward declaration */
 static void init_locale(void);
@@ -144,6 +140,7 @@ static void destroy_window(void);
 static void destroy_icon_image(void);
 static void run_game_loop(void);
 static bool run_frame(void);
+static void render_video_frame(void);
 static void flip(void);
 static bool wait_for_next_frame(void);
 static bool next_event(void);
@@ -235,18 +232,18 @@ init_hal(
 	/* Initialize the sound HAL. */
 	if (!init_sound()) {
 		/* Ignore a failure. */
-		log_warn("Can't initialize sound.");
+		hal_log_warn("Can't initialize sound.");
 	}
 
 	/* Open a display. */
 	if (!open_display()) {
-		log_error("Can't open display.");
+		hal_log_error("Can't open display.");
 		return false;
 	}
 
 	/* Initizalize OpenGL. */
 	if (!init_opengl(screen_width, screen_height)) {
-		log_error("Can't initialize OpenGL.");
+		hal_log_error("Can't initialize OpenGL.");
 	}
 #if !defined(USE_ROT90)
 	update_viewport_size(display_width, display_height);
@@ -337,7 +334,6 @@ open_display(void)
 		return false;
 	}
 
-	// EGL display
 	eglGetPlatformDisplayEXT = (void*)eglGetProcAddress("eglGetPlatformDisplayEXT");
 	if (eglGetPlatformDisplayEXT == NULL) {
 		fprintf(stderr, "eglGetPlatformDisplayEXT not found (check EGL_EXT_platform_base / EGL_KHR_platform_gbm)\n");
@@ -377,7 +373,7 @@ open_display(void)
 		return false;
 	}
 
-	// XRGB first.
+	/* XRGB first. */
 	for (int i = 0; i < ncfg; ++i) {
 		EGLint id = 0, a = 0, rsz=0, gsz=0, bsz=0;
 		eglGetConfigAttrib(dpy, cfgs[i], EGL_NATIVE_VISUAL_ID, &id);
@@ -385,13 +381,13 @@ open_display(void)
 		eglGetConfigAttrib(dpy, cfgs[i], EGL_RED_SIZE, &rsz);
 		eglGetConfigAttrib(dpy, cfgs[i], EGL_GREEN_SIZE, &gsz);
 		eglGetConfigAttrib(dpy, cfgs[i], EGL_BLUE_SIZE, &bsz);
-		if ((uint32_t)id == GBM_FORMAT_XRGB8888 && a == 0 && rsz==8 && gsz==8 && bsz==8) {
+		if ((uint32_t)id == GBM_FORMAT_XRGB8888 && a == 0 && rsz == 8 && gsz == 8 && bsz == 8) {
 			cfg = cfgs[i];
 			break;
 		}
 	}
 
-	// ARGB fallback.
+	/* ARGB fallback. */
 	if (!cfg) {
 		for (int i = 0; i < ncfg; ++i) {
 			EGLint id = 0;
@@ -440,13 +436,13 @@ open_display(void)
 		return false;
 	}
 
-	// Draw 1 frame to lock the front buffer.
+	/* Draw 1 frame to lock the front buffer. */
 	glViewport(0, 0, display_width, display_height);
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	eglSwapBuffers(dpy, esurf);
 
-	// Make a BO for the first scan out, then set to CRTC.
+	/* Make a BO for the first scan out, then set to CRTC. */
 	bo = gbm_surface_lock_front_buffer(gsurf);
 	if (!bo) {
 		fprintf(stderr, "gbm_surface_lock_front_buffer failed\n");
@@ -568,29 +564,79 @@ run_frame(void)
 	/* Read the gamepad. */
 	update_evgamepad();
 
-	/* Start rendering. */
-#if 0
-	if (!is_gst_playing)
-		opengl_start_rendering();
-#endif
-	opengl_start_rendering();
-
-	/* Call a frame event. */
-	cont = on_event_frame();
-
-	/* End rendering. */
-#if 0
 	if (!is_gst_playing) {
+		/* Start rendering. */
+		opengl_start_rendering();
+
+		/* Call a frame event. */
+		cont = hal_callback_on_event_frame();
+
+		/* End rendering. */
 		opengl_end_rendering();
+
+		/* Swap buffers. */
 		eglSwapBuffers(dpy, esurf);
 		flip();
+	} else {
+		/* Render. */
+		render_video_frame();
+
+		/* Call a frame event. */
+		cont = hal_callback_on_event_frame();
+
+		/* If the playback is finished. */
+		if (!gstplay_is_playing()) {
+			gstplay_stop();
+			is_gst_playing = false;
+		}
 	}
-#endif
-	opengl_end_rendering();
-	eglSwapBuffers(dpy, esurf);
-	flip();
 
 	return cont;
+}
+
+/* Render a video frame. */
+static void
+render_video_frame(void)
+{
+	struct hal_image *image;
+	int dst_width, dst_height, dst_x, dst_y;
+
+	/* Update the playback stauts. */
+	image = gstplay_loop_iteration();
+	if (image == NULL) {
+		/* Rendering is not required for this game frame. */
+		return;
+	}
+
+        /* Fit while preserving aspect ratio. */
+        if (screen_width * image->height <= screen_height * image->width) {
+                dst_width = screen_width;
+                dst_height = screen_width * image->height / image->width;
+        } else {
+                dst_height = screen_height;
+                dst_width = screen_height * image->width / image->height;
+        }
+        dst_x = (screen_width - dst_width) / 2;
+        dst_y = (screen_height - dst_height) / 2;
+
+	/* Render. */
+	opengl_start_rendering();
+        opengl_render_image_normal(
+                dst_x,
+                dst_y,
+                dst_width,
+                dst_height,
+                image,
+                0,
+                0,
+                image->width,
+                image->height,
+                255);
+	opengl_end_rendering();
+
+	/* Swap buffers. */
+	eglSwapBuffers(dpy, esurf);
+	flip();
 }
 
 /* Flip buffers. */
@@ -603,21 +649,21 @@ flip(void)
 	uint32_t nfb;
 	fd_set fds;
 
-	// Get the new front fb and flip.
+	/* Get the new front fb and flip. */
 	nbo = gbm_surface_lock_front_buffer(gsurf);
 	nh = gbm_bo_get_handle(nbo).u32;
 	ns = gbm_bo_get_stride(nbo);
 	drmModeAddFB(fd, mode.hdisplay, mode.vdisplay, 24, 32, ns, nh, &nfb);
 	drmModePageFlip(fd, crtc_id, nfb, DRM_MODE_PAGE_FLIP_EVENT, NULL);
 
-	// Wait for an event.
+	/* Wait for an event. */
 	FD_ZERO(&fds);
 	FD_SET(fd, &fds);
 	select(fd + 1, &fds, NULL, NULL, NULL);
 	drmEventContext ev = { .version = DRM_EVENT_CONTEXT_VERSION, .page_flip_handler = NULL };
 	drmHandleEvent(fd, &ev);
 
-	// Free the old fb.
+	/* Free the old fb. */
 	drmModeRmFB(fd, fb);
 	gbm_surface_release_buffer(gsurf, bo);
 	fb = nfb;
@@ -790,7 +836,7 @@ hal_log_error(
 bool
 hal_log_out_of_memory(void)
 {
-	log_error(S_TR("Out of memory."));
+	hal_log_error(HAL_TR("Out of memory."));
 	return true;
 }
 
@@ -836,7 +882,7 @@ hal_make_real_path(
 	len = strlen(fname) + 1;
 	buf = malloc(len);
 	if (buf == NULL) {
-		log_out_of_memory();
+		hal_log_out_of_memory();
 		return NULL;
 	}
 
@@ -882,7 +928,7 @@ hal_get_lap_timer_millisec(
  */
 void
 hal_notify_image_update(
-	struct image *img)
+	struct hal_image *img)
 {
 	opengl_notify_image_update(img);
 }
@@ -892,7 +938,7 @@ hal_notify_image_update(
  */
 void
 hal_notify_image_free(
-	struct image *img)
+	struct hal_image *img)
 {
 	opengl_notify_image_free(img);
 }
@@ -936,7 +982,37 @@ hal_render_image_add(
 	int dst_top,
 	int dst_width,
 	int dst_height,
-	struct image *src_image,
+	struct hal_image *src_image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	opengl_render_image_add(
+		dst_left,
+		dst_top,
+		dst_width,
+		dst_height,
+		src_image,
+		src_left,
+		src_top,
+		src_width,
+		src_height,
+		alpha
+	);
+}
+
+/*
+ * Render an image. (sub blend)
+ */
+void
+hal_render_image_sub(
+	int dst_left,
+	int dst_top,
+	int dst_width,
+	int dst_height,
+	struct hal_image *src_image,
 	int src_left,
 	int src_top,
 	int src_width,
@@ -966,7 +1042,7 @@ hal_render_image_dim(
 	int dst_top,
 	int dst_width,
 	int dst_height,
-	struct image *src_image,
+	struct hal_image *src_image,
 	int src_left,
 	int src_top,
 	int src_width,
@@ -992,8 +1068,8 @@ hal_render_image_dim(
  */
 void
 hal_render_image_rule(
-	struct image *src_img,
-	struct image *rule_img,
+	struct hal_image *src_img,
+	struct hal_image *rule_img,
 	int threshold)
 {
 	opengl_render_image_rule(src_img, rule_img, threshold);
@@ -1004,11 +1080,33 @@ hal_render_image_rule(
  */
 void
 hal_render_image_melt(
-	struct image *src_img,
-	struct image *rule_img,
+	struct hal_image *src_img,
+	struct hal_image *rule_img,
 	int progress)
 {
 	opengl_render_image_melt(src_img, rule_img, progress);
+}
+
+/*
+ * Render two images for a cross fading.
+ */
+void
+hal_render_image_cross(
+	struct hal_image *src1_img,
+	struct hal_image *src2_img,
+	float src1_left,
+	float src1_top,
+	float src2_left,
+	float src2_top,
+	int alpha)
+{
+	opengl_render_image_cross(src1_img,
+				  src2_img,
+				  src1_left,
+				  src1_top,
+				  src2_left,
+				  src2_top,
+				  alpha);
 }
 
 /*
@@ -1024,7 +1122,7 @@ hal_render_image_3d_normal(
 	float y3,
 	float x4,
 	float y4,
-	struct image *src_image,
+	struct hal_image *src_image,
 	int src_left,
 	int src_top,
 	int src_width,
@@ -1038,7 +1136,7 @@ hal_render_image_3d_normal(
 }
 
 /*
- * Render an image. (3d transform, alpha blending)
+ * Render an image. (3d transform, add blending)
  */
 void
 hal_render_image_3d_add(
@@ -1050,7 +1148,7 @@ hal_render_image_3d_add(
 	float y3,
 	float x4,
 	float y4,
-	struct image *src_image,
+	struct hal_image *src_image,
 	int src_left,
 	int src_top,
 	int src_width,
@@ -1061,6 +1159,104 @@ hal_render_image_3d_add(
 		x1, y1, x2, y2, x3, y3, x4, y4,
 		src_image, src_left, src_top, src_width, src_height,
 		alpha);
+}
+
+/*
+ * Render an image. (3d transform, sub blending)
+ */
+void
+hal_render_image_3d_sub(
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	struct hal_image *src_image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	opengl_render_image_3d_sub(
+		x1, y1, x2, y2, x3, y3, x4, y4,
+		src_image, src_left, src_top, src_width, src_height,
+		alpha);
+}
+
+/*
+ * Render an image. (3d transform, dim blending)
+ */
+void
+hal_render_image_3d_dim(
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	struct hal_image *src_image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	opengl_render_image_3d_dim(
+		x1, y1, x2, y2, x3, y3, x4, y4,
+		src_image, src_left, src_top, src_width, src_height,
+		alpha);
+}
+
+/*
+ * Render two images for a cross fading.
+ */
+void
+hal_render_image_3d_cross(
+	struct hal_image *src1_img,
+	struct hal_image *src2_img,
+	float src1_x1,
+	float src1_y1,
+	float src1_x2,
+	float src1_y2,
+	float src1_x3,
+	float src1_y3,
+	float src1_x4,
+	float src1_y4,
+	float src2_x1,
+	float src2_y1,
+	float src2_x2,
+	float src2_y2,
+	float src2_x3,
+	float src2_y3,
+	float src2_x4,
+	float src2_y4,
+	int alpha)
+{
+	opengl_render_image_cross_3d(src1_img,
+				     src2_img,
+				     src1_x1,
+				     src1_y1,
+				     src1_x2,
+				     src1_y2,
+				     src1_x3,
+				     src1_y3,
+				     src1_x4,
+				     src1_y4,
+				     src2_x1,
+				     src2_y1,
+				     src2_x2,
+				     src2_y2,
+				     src2_x3,
+				     src2_y3,
+				     src2_x4,
+				     src2_y4,
+				     alpha);
 }
 
 /*

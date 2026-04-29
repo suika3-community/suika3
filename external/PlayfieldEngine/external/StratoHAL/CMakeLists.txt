@@ -486,6 +486,7 @@ if(STRATO_TARGET_LINUX_GBM)
       src/glrender.c
       src/asound.c
       src/evgamepad.c
+      src/gstplay.c
     )
 endif()
 
