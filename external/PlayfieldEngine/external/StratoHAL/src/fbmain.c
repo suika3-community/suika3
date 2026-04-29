@@ -346,7 +346,7 @@ static void process_event(int index)
 		return;
 	}
 
-	//printf("Event: type=%d, code=%d, value=%d\n", e.type, e.code, e.value);
+	/* printf("Event: type=%d, code=%d, value=%d\n", e.type, e.code, e.value); */
 
 	/* Process by a type. */
 	if (e.type == EV_REL) {

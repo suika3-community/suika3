@@ -49,6 +49,10 @@
 #include <xf86drm.h>
 #include <xf86drmMode.h>
 
+/* Linux */
+#include <linux/fb.h>
+#include <linux/input.h>
+
 /* POSIX */
 #define _GNU_SOURCE
 #include <sys/types.h>
@@ -56,6 +60,7 @@
 #include <sys/time.h>	/* gettimeofday() */
 #include <fcntl.h>
 #include <unistd.h>	/* usleep(), access() */
+#include <poll.h>
 
 /* Standard C */
 #include <stdio.h>
@@ -126,6 +131,14 @@ static bool is_gst_playing;
 /* Flag to indicate whether a video is skippable or not */
 static bool is_gst_skippable;
 
+/* Input Info */
+#define EV_DEV_MAX	16
+static int ev_fd[EV_DEV_MAX];
+static int ev_count;
+static struct pollfd ev_fds[EV_DEV_MAX];
+static int mouse_x;
+static int mouse_y;
+
 /* forward declaration */
 static void init_locale(void);
 static bool init_hal(int argc, char *argv[]);
@@ -145,6 +158,10 @@ static void flip(void);
 static bool wait_for_next_frame(void);
 static bool next_event(void);
 static void update_viewport_size(int width, int height);
+static bool init_input(void);
+static void cleanup_input(void);
+static void process_input(void);
+static void process_event(int index);
 
 /*
  * Main
@@ -250,6 +267,9 @@ init_hal(
 #else
 	update_viewport_size(display_height, display_width);
 #endif
+
+	/* Initialize the input. */
+	init_input();
 
 	/* Initialize the gamepad. */
 	init_evgamepad();
@@ -727,6 +747,106 @@ update_viewport_size(
 
 	/* Update the screen offset and scale for drawing subsystem. */
 	opengl_set_screen(orig_x, orig_y, viewport_width, viewport_height);
+}
+
+static bool
+init_input(void)
+{
+	int i;
+
+	for (i = 0; i < EV_DEV_MAX; i++) {
+		char device[32];
+		int fd;
+
+		snprintf(&device[0], sizeof(device), "/dev/input/event%d", i);
+		fd = open(device, O_RDONLY | O_NONBLOCK);
+		if (fd > 0) {
+			ev_fd[ev_count] = fd;
+			ev_fds[ev_count].fd = fd;
+			ev_fds[ev_count].events = POLLIN;
+			ev_count++;
+		}
+	}
+
+	return true;
+}
+
+static void
+cleanup_input(void)
+{
+	int i;
+
+	for (i = 0; i < EV_DEV_MAX; i++) {
+		if (ev_fd[i] > 0) {
+			close(ev_fd[i]);
+			ev_fd[i] = 0;
+		}
+	}
+}
+
+static void
+process_input(void)
+{
+	int i;
+	bool processed;
+
+	do {
+		processed = false;
+
+		if (poll(ev_fds, (nfds_t)ev_count, 0) == -1) {
+			printf("poll() failed.\n");
+			return;
+		}
+
+		for (i = 0; i < ev_count; i++) {
+			if (ev_fds[i].revents & POLLIN) {
+				processed = true;
+				process_event(i);
+			}
+		}
+	} while (processed);
+}
+
+static void
+process_event(
+	int index)
+{
+	struct input_event e;
+
+	/* Read an event. */
+	if (read(ev_fd[index], &e, sizeof(e)) != sizeof(e)) {
+		printf("Wrror: no input.\n");
+		return;
+	}
+
+	/* printf("Event: type=%d, code=%d, value=%d\n", e.type, e.code, e.value); */
+
+	/* Process by a type. */
+	if (e.type == EV_REL) {
+		/* Calculate the mouse coordinates and notify. */
+		if (e.code == 0)
+			mouse_x += e.value;
+		if (e.code == 1)
+			mouse_y += e.value;
+		mouse_x = mouse_x < 0 ? 0 : mouse_x;
+		mouse_y = mouse_y < 0 ? 0 : mouse_y;
+		mouse_x = mouse_x > screen_width ? screen_width : mouse_x;
+		mouse_y = mouse_y > screen_height ? screen_height : mouse_y;
+		hal_callback_on_event_mouse_move(mouse_x, mouse_y);
+	} else if (e.type == EV_KEY) {
+		/* XXX: currently only mouse buttons are supported. */
+		if (e.code == 272) {
+			if (e.value == 1)
+				hal_callback_on_event_mouse_press(HAL_MOUSE_LEFT, mouse_x, mouse_y);
+			else
+				hal_callback_on_event_mouse_release(HAL_MOUSE_LEFT, mouse_x, mouse_y);
+		} else if (e.code ==273) {
+			if (e.value == 1)
+				hal_callback_on_event_mouse_press(HAL_MOUSE_RIGHT, mouse_x, mouse_y);
+			else
+				hal_callback_on_event_mouse_release(HAL_MOUSE_RIGHT, mouse_x, mouse_y);
+		}
+	}
 }
 
 /*
