@@ -571,6 +571,9 @@ run_frame(void)
 	/* Read the gamepad. */
 	update_evgamepad();
 
+	/* Read the input. */
+	process_input();
+
 	if (!is_gst_playing) {
 		/* Start rendering. */
 		opengl_start_rendering();
