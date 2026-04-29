@@ -28,6 +28,7 @@ modules:
       - "-DSUIKA_ENABLE_BYTECOMP=ON"
       - "-DSUIKA_ENABLE_AOTCOMP=ON"
       - "-DSUIKA_ENABLE_UNSAFE=ON"
+      - "-DSUIKA_ENABLE_PORTAL=ON"
     sources:
       - type: dir
         path: ../..

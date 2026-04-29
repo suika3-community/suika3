@@ -47,6 +47,7 @@ option(STRATO_ENABLE_ROT90            "Rotate screen"                           
 option(STRATO_ENABLE_GST              "Enable Gstreamer support"                OFF)
 option(STRATO_ENABLE_MAIN2            "Enable macOS main2()"                    OFF)
 option(STRATO_ENABLE_CONSOLE          "Enable console debug output"             OFF)
+option(STRATO_ENABLE_PORTAL           "Enable XDG Portal"                       OFF)
 
 #
 # Automatic Target Detection
@@ -271,6 +272,12 @@ if(STRATO_ENABLE_GST)
   pkg_check_modules(GST REQUIRED IMPORTED_TARGET gstreamer-1.0 gstreamer-video-1.0 gstreamer-app-1.0)
 endif()
 
+# dbus
+if(STRATO_ENABLE_PORTAL)
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(GIO REQUIRED IMPORTED_TARGET gio-2.0)
+endif()
+
 # ALSA
 if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_LINUX_X11
@@ -382,7 +389,12 @@ if(STRATO_TARGET_MACOS)
   )
 endif()
 
-# X11/Wayland Dual
+# XDG Portal
+if(STRATO_ENABLE_PORTAL)
+  set(STRATO_PORTAL_SOURCES src/portal.c)
+endif()
+
+# X11/Wayland Dual, OpenGL ES 2.0
 if(STRATO_TARGET_LINUX)
   set(STRATO_SOURCES
       src/image.c
@@ -397,10 +409,11 @@ if(STRATO_TARGET_LINUX)
       src/wlmain.c
       src/x11main.c
       src/icon.c
+      ${STRATO_PORTAL_SOURCES}
     )
 endif()
 
-# X11 OpenGL
+# X11-only, OpenGL 3.2
 if(   STRATO_TARGET_LINUX_X11
    OR STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_NETBSD
@@ -418,10 +431,11 @@ if(   STRATO_TARGET_LINUX_X11
       src/nosound.c
       src/evgamepad.c
       src/gstplay.c
+      ${STRATO_PORTAL_SOURCES}
     )
 endif()
 
-# X11 Soft3D
+# X11-only, Soft3D
 if(   STRATO_TARGET_LINUX_X11SOFT
    OR STRATO_TARGET_FREEBSD_X11SOFT
    OR STRATO_TARGET_NETBSD_X11SOFT
@@ -440,10 +454,11 @@ if(   STRATO_TARGET_LINUX_X11SOFT
       src/x11softmain.c
       src/icon.c
       src/gstplay.c
+      ${STRATO_PORTAL_SOURCES}
     )
 endif()
 
-# Wayland
+# Wayland-only, OpenGL ES 2.0
 if(   STRATO_TARGET_LINUX_WAYLAND
    OR STRATO_TARGET_FREEBSD_WAYLAND)
   set(STRATO_SOURCES
@@ -456,10 +471,11 @@ if(   STRATO_TARGET_LINUX_WAYLAND
       src/asound.c
       src/evgamepad.c
       src/gstplay.c
+      ${STRATO_PORTAL_SOURCES}
     )
 endif()
 
-# GBM
+# GBM, OpenGL ES 2.0
 if(STRATO_TARGET_LINUX_GBM)
   set(STRATO_SOURCES
       src/image.c
@@ -473,7 +489,7 @@ if(STRATO_TARGET_LINUX_GBM)
     )
 endif()
 
-# Fbdev
+# fbdev, Soft3D
 if(STRATO_TARGET_LINUX_FBDEV)
   set(STRATO_SOURCES
       src/image.c
@@ -486,7 +502,7 @@ if(STRATO_TARGET_LINUX_FBDEV)
     )
 endif()
 
-#  Emscripten
+# Emscripten
 if(STRATO_TARGET_WASM)
   set(STRATO_SOURCES
     src/image.c
@@ -727,6 +743,11 @@ if(STRATO_TARGET_MACOS)
     /usr/local/include
   )
   endif()
+endif()
+
+# Linux XDG Portal
+if(STRATO_ENABLE_PORTAL)
+  target_compile_definitions(strato PRIVATE HAL_USE_PORTAL)
 endif()
 
 # Linux X11-only
@@ -1025,6 +1046,11 @@ endif()
 # GStreamer
 if(STRATO_ENABLE_GST)
   target_link_libraries(strato PUBLIC PkgConfig::GST)
+endif()
+
+# XDG Portal
+if(STRATO_ENABLE_PORTAL)
+  target_link_libraries(strato PUBLIC PkgConfig::GIO)
 endif()
 
 # Wayland

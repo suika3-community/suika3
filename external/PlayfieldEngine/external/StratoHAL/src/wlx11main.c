@@ -34,6 +34,7 @@
 /* Standard C */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdarg.h>
 
 #include <unistd.h>
@@ -125,22 +126,30 @@ int main(int argc, char *argv[])
 	bool prefer_x11 = is_wslg();
 	bool wl_tried = false;
 
+#if defined(HAL_USE_PORTAL)
+	if (argc >= 2 && strcmp(argv[1], "--open") == 0) {
+		int open_portal_and_set_work_dir(int argc, char *argv[]);
+		if (!open_portal_and_set_work_dir(argc, argv))
+			return 1;
+	}
+#endif
+
 	if (!prefer_x11 && getenv("WAYLAND_DISPLAY") != NULL) {
 		mode = MODE_WAYLAND;
 		if (!main_init_wl(argc, argv)) {
-			printf("Failed to initialize Wayland.\n");
+			printf("Failed to initialize.\n");
 			return 1;
 		}
 	} else if (getenv("DISPLAY") != NULL) {
 		mode = MODE_X11;
 		if (!main_init_x11(argc, argv)) {
-			printf("Failed to initialize X11.\n");
+			printf("Failed to initialize.\n");
 			return 1;
 		}
 	} else if (getenv("WAYLAND_DISPLAY") != NULL) {
 		mode = MODE_WAYLAND;
 		if (!main_init_wl(argc, argv)) {
-			printf("Failed to initialize Wayland.\n");
+			printf("Failed to initialize.\n");
 			return 1;
 		}
 	} else {

@@ -697,6 +697,7 @@
                 "SUIKA_ENABLE_BYTECOMP":       "ON",
                 "SUIKA_ENABLE_AOTCOMP":        "ON",
                 "SUIKA_ENABLE_GST":            "ON",
+                "SUIKA_ENABLE_PORTAL":         "ON",
                 "SUIKA_ENABLE_UNSAFE":         "ON"
             }
         },
@@ -716,6 +717,7 @@
                 "SUIKA_ENABLE_BYTECOMP":       "ON",
                 "SUIKA_ENABLE_AOTCOMP":        "ON",
                 "SUIKA_ENABLE_GST":            "ON",
+                "SUIKA_ENABLE_PORTAL":         "ON",
                 "SUIKA_ENABLE_UNSAFE":         "ON"
             }
         },

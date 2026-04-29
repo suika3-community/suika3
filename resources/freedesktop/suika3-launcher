@@ -1,13 +1,9 @@
 #!/bin/sh
 
 if [ -z "$1" ]; then
-    # If no option is specified, search the launcher directory,
-    # and then run the suika3 command. The launcher is implemented
-    # using Suika3 VM.
-
-    # Try searching for each prefix and for each subdirectory.
+    # If no option is specified, search for the launcher directory.
     LAUNCHER_DIR="";
-    for base in /usr /usr/local /usr/pkg /opt /app; do
+    for base in /app /opt /usr/local /usr/pkg /usr; do
         for sub in "share/suika3/launcher" \
                    "share/doc/suika3/launcher" \
                    "share/docs/suika3/launcher"; do
@@ -22,68 +18,30 @@ if [ -z "$1" ]; then
         echo "No launcher directory found.";
         exit 1;
     fi;
-
-    # Run the launcher by running Suika3 VM.
     cd "$LAUNCHER_DIR";
     exec suika3;
 else
-    # If there is an option, try opening the directory.
-    # When we don't have access rights to the directory,
-    # we assume we are in a Flatpak sandbox and
-    # try getting a portal.
+    # If an option is specified.
 
-    # Get the directory.
+    # If a directory is specified and can be accessed.
     DIR="$1";
-    if [ "$DIR" = "--open" ]; then
-        DIR="";
+    if [ -d "$DIR" ]; then
+        cd "$DIR";
+        exec suika3;
     fi;
 
-    # If a file is specified, get the parent directory.
+    # If a file is specified and can be accessed.
     if [ -f "$DIR" ]; then
+        # Get the directory.
         DIR=$(dirname "$DIR");
-    fi;
 
-    # If the assets are not accessible, use the file choose.
-    if [ ! -d "$DIR" ] || [ ! -r "$DIR/start.novel" ] || [ ! -r "$DIR/main.ray" ]; then
-        # Prepare a default directory for the file chooser for convinience.
-        DEFAULT_PATH="";
-        if [ -z "$DIR" ]; then
-            DEFAULT_PATH="";
-        else
-            DEFAULT_PATH="$DIR/";
-        fi;
-
-        # Call the file chooser to get a portal for a directory.
-        export GTK_USE_PORTAL=1;
-        DIR=$(zenity --title "Open a game folder containing main.ray" \
-                     --file-selection \
-                     --directory \
-                     --filename="$DEFAULT_PATH");
-        if [ -z "$DIR" ]; then
-            exit 1;
+        # If the directory can be accessed.
+        if [ -d "$DIR" ]; then
+            cd "$DIR";
+            exec suika3;
         fi;
     fi;
 
-    # Run the suika3 command.
-    if cd "$DIR"; then
-        # Remove a log if exists.
-        rm -f log.txt;
-
-        # Run.
-        suika3;
-
-        # Show a log if generated.
-        if [ -f log.txt ]; then
-            zenity --error \
-                   --title="Suika3 Engine" \
-                   --text="$(printf 'Error\n%s' "$(cat log.txt)")";
-            exit 1;
-        fi;
-    else
-        # Could not access the directory
-        zenity --error \
-               --title="Suika3 Engine" \
-               --text="Failed to access the directory:\n$DIR\n\nPlease check your Flatpak permission settings."
-        exit 1
-    fi;
+    # Otherwise, use portal to access files/directories.
+    exec suika3 --open;
 fi

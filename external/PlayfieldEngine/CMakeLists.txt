@@ -54,6 +54,7 @@ option(PLAYFIELD_ENABLE_GST              "Enable Gstreamer support"             
 option(PLAYFIELD_ENABLE_MAIN2            "Enable macOS main2()"                       OFF)
 option(PLAYFIELD_ENABLE_CONSOLE          "Enable console debug output on Windows"     OFF)
 option(PLAYFIELD_ENABLE_UNSAFE           "Enable unsafe APIs for launchers"           OFF)
+option(PLAYFIELD_ENABLE_PORTAL           "Enable XDG Portal"                          OFF)
 
 # For derived projects
 option(PLAYFIELD_ENABLE_INITHOOK         "Enable the inithook function"               OFF)
@@ -357,6 +358,10 @@ endif()
 # libstratopack
 if(PLAYFIELD_ENABLE_PACK)
   set(STRATO_ENABLE_PACK ON)
+endif()
+
+if(PLAYFIELD_ENABLE_PORTAL)
+  set(STRATO_ENABLE_PORTAL ON)
 endif()
 
 # ---

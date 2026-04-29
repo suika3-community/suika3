@@ -166,6 +166,12 @@ option(SUIKA_ENABLE_CONSOLE "Enable console debug output" OFF)
 #
 option(SUIKA_ENABLE_UNSAFE "Enable unsafe APIs for launchers" OFF)
 
+#
+# [SUIKA_ENABLE_PORTAL]
+#  - Enable XDG Portal
+#
+option(SUIKA_ENABLE_PORTAL "Enable XDG Portal" OFF)
+
 # --
 
 #
@@ -472,6 +478,11 @@ endif()
 # Unsafe (for launchers)
 if(SUIKA_ENABLE_UNSAFE)
   set(PLAYFIELD_ENABLE_UNSAFE ON)
+endif()
+
+# Portal
+if(SUIKA_ENABLE_PORTAL)
+  set(PLAYFIELD_ENABLE_PORTAL ON)
 endif()
 
 # ---
