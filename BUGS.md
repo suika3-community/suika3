@@ -614,3 +614,64 @@ Files modified:
 
 - 40d579a6a38ab761c9612a353205a7c2cba261be
 
+---
+
+## Alpha channel is filled by 255 when a save slot is empty
+
+* Report Details
+    * ID: BUG-20260428-002
+    * Status: Resolved
+    * Component: Suika3
+    * Severity: mid
+    * Priority: high
+    * Reproducibility: always
+    * First Found In: f1390063b7bbcf8daeb172f09f0998aac708de45
+    * Fixed In: 72f38ca840ee7093b60430990fcc2ea21ad7cfe3
+    * Reported Date: 01:00 29 April 2026
+    * Fixed Date: 10:35 29 April 2026
+    * Detection: GitHub Issues
+    * Root Cause Type: Lack of testing variations
+    * OS: Windows 10/11
+    * CPU: x86/x86_64/arm64
+
+### Report
+
+> Description:
+> When a Save Button uses a semi-transparent image (with Alpha
+> channel), and the save slot is empty (no preview thumbnail
+> generated), the transparent areas of the button incorrectly display
+> as a solid color block (often black or white). This prevents the
+> background image/layer underneath from being visible through the
+> button.
+>
+> Actual Behavior:
+> The transparent area of the button is filled with a solid color
+> block, obscuring the background layer.
+>
+> Expected Behavior:
+>
+> For empty slots, the Save Button should respect the Alpha channel and
+> allow the background image to show through. The preview image should
+> only cover the button when data exists, rather than being replaced by
+> a solid color placeholder.
+
+### Analysis
+
+In `draw_save_button()` in `gui.c`, save thumbnails were drawn even if
+the corresponding save slots are empty. If a save slot is empty, the
+thumbnail for the slot is cleared by `RGBA=(0, 0, 0, 0)`. However,
+drawing the thumbnail image to the save slot image causes letting
+alpha channel be `255` due to the characteristic of the drawing
+routine, `hal_draw_image()`.
+
+### Patch
+
+`gui.c` was patched to avoid drawing a thumbnail if a save slot is
+empty.
+
+Files modified:
+- src/gui.c
+
+### Commits
+
+- 40d579a6a38ab761c9612a353205a7c2cba261be72f38ca840ee7093b60430990fcc2ea21ad7cfe3
