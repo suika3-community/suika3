@@ -463,12 +463,12 @@ draw_video_frame(void)
 	}
 
 	/* Fit while preserving aspect ratio. */
-	if (screen_width * image->height <= screen_height * image->width) {
+	if (screen_width * video_image->height <= screen_height * video_image->width) {
 		dst_width = screen_width;
-		dst_height = screen_width * image->height / image->width;
+		dst_height = screen_width * video_image->height / video_image->width;
 	} else {
 		dst_height = screen_height;
-		dst_width = screen_height * image->width / image->height;
+		dst_width = screen_height * video_image->width / video_image->height;
 	}
 	dst_x = (screen_width - dst_width) / 2;
 	dst_y = (screen_height - dst_height) / 2;

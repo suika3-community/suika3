@@ -147,6 +147,7 @@ static void destroy_window(void);
 static void destroy_icon_image(void);
 static void run_game_loop(void);
 static bool run_frame(void);
+static bool draw_video_frame(void);
 static bool wait_for_next_frame(void);
 static bool next_event(void);
 static void event_key_press(XEvent *event);
@@ -835,15 +836,6 @@ run_game_loop(void)
 
 	/* Main Loop */
 	while (true) {
-		/* Process video playback. */
-		if (is_gst_playing) {
-			gstplay_loop_iteration();
-			if (!gstplay_is_playing()) {
-				gstplay_stop();
-				is_gst_playing = false;
-			}
-		}
-
 		/* Run a frame. */
 		if (!run_frame())
 			break;
@@ -863,6 +855,7 @@ run_frame(void)
 {
 	GC gc;
 	bool cont;
+	bool flip;
 
 	/* Read the gamepad. */
 	update_evgamepad();
@@ -870,69 +863,133 @@ run_frame(void)
 	/* Clear the back image. */
 	hal_clear_image(back_image, hal_make_pixel(0xff, 0, 0, 0));
 
-	/* Call a frame event. */
-	cont = hal_callback_on_event_frame();
+	if (!is_gst_playing) {
+		flip = true;
 
-	/* Quantize the back image if bpp != 32. */
-	if (bpp == 16) {
-		int x, y;
-		hal_pixel_t *src = (hal_pixel_t *)back_image->pixels;
-		for (y = 0; y < screen_height; y++) {
-			uint16_t *dst_row = (uint16_t *)(low_bpp_pixels + y * ximage->bytes_per_line);
-			hal_pixel_t *src_row = src + y * screen_width;
-			for (x = 0; x < screen_width; x++) {
-				uint8_t r = (uint8_t)hal_get_pixel_r(src_row[x]);
-				uint8_t g = (uint8_t)hal_get_pixel_g(src_row[x]);
-				uint8_t b = (uint8_t)hal_get_pixel_b(src_row[x]);
-				dst_row[x] = (uint16_t)(((uint16_t)(r & 0xf8) << 8) |	/* RGB565 */
-							((uint16_t)(g & 0xfc) << 3) |
-							((uint16_t)(b & 0xf8) >> 3));
-			}
-		}
-	} else if (bpp == 8) {
-		int x, y;
-		hal_pixel_t *src = (hal_pixel_t *)back_image->pixels;
-		for (y = 0; y < screen_height; y++) {
-			uint8_t *dst_row = low_bpp_pixels + y * ximage->bytes_per_line;
-			hal_pixel_t *src_row = src + y * screen_width;
-			for (x = 0; x < screen_width; x++) {
-				uint8_t r = (uint8_t)hal_get_pixel_r(src_row[x]);
-				uint8_t g = (uint8_t)hal_get_pixel_g(src_row[x]);
-				uint8_t b = (uint8_t)hal_get_pixel_b(src_row[x]);
-				dst_row[x] = (uint8_t)((r & 0xe0) | ((g & 0xe0) >> 3) | ((b & 0xc0) >> 6));
-			}
-		}
-	} else if (bpp == 1) {
-		int x, y;
-		int stride = ximage->bytes_per_line;
-		hal_pixel_t *src = (hal_pixel_t *)back_image->pixels;
-		memset(low_bpp_pixels, 0, (size_t)stride * (size_t)screen_height);
-		for (y = 0; y < screen_height; y++) {
-			uint8_t *dst_row = low_bpp_pixels + y * stride;
-			hal_pixel_t *src_row = src + y * screen_width;
+		/* Call a frame event. */
+		cont = hal_callback_on_event_frame();
+	} else {
+		/* Process a video frame. */
+		flip = draw_video_frame();
 
-			for (x = 0; x < screen_width; x++) {
-				uint8_t r = (uint8_t)hal_get_pixel_r(src_row[x]);
-				uint8_t g = (uint8_t)hal_get_pixel_g(src_row[x]);
-				uint8_t b = (uint8_t)hal_get_pixel_b(src_row[x]);
-				int lum = (r * 77 + g * 150 + b * 29) >> 8;
-				if (lum >= 128) {
-					if (ximage->bitmap_bit_order == MSBFirst)
-						dst_row[x >> 3] |= (uint8_t)(0x80 >> (x & 7));
-					else
-						dst_row[x >> 3] |= (uint8_t)(1u << (x & 7));
+		/* Check if the playback is finished. */
+		if (!gstplay_is_playing()) {
+			gstplay_stop();
+			is_gst_playing = false;
+		}
+
+		/* Call a frame event. */
+		cont = hal_callback_on_event_frame();
+	}
+
+	/* Flip. */
+	if (flip) {
+		/* Quantize the back image if bpp != 32. */
+		if (bpp == 16) {
+			int x, y;
+			hal_pixel_t *src = (hal_pixel_t *)back_image->pixels;
+			for (y = 0; y < screen_height; y++) {
+				uint16_t *dst_row = (uint16_t *)(low_bpp_pixels + y * ximage->bytes_per_line);
+				hal_pixel_t *src_row = src + y * screen_width;
+				for (x = 0; x < screen_width; x++) {
+					uint8_t r = (uint8_t)hal_get_pixel_r(src_row[x]);
+					uint8_t g = (uint8_t)hal_get_pixel_g(src_row[x]);
+					uint8_t b = (uint8_t)hal_get_pixel_b(src_row[x]);
+					dst_row[x] = (uint16_t)(((uint16_t)(r & 0xf8) << 8) |	/* RGB565 */
+								((uint16_t)(g & 0xfc) << 3) |
+								((uint16_t)(b & 0xf8) >> 3));
+				}
+			}
+		} else if (bpp == 8) {
+			int x, y;
+			hal_pixel_t *src = (hal_pixel_t *)back_image->pixels;
+			for (y = 0; y < screen_height; y++) {
+				uint8_t *dst_row = low_bpp_pixels + y * ximage->bytes_per_line;
+				hal_pixel_t *src_row = src + y * screen_width;
+				for (x = 0; x < screen_width; x++) {
+					uint8_t r = (uint8_t)hal_get_pixel_r(src_row[x]);
+					uint8_t g = (uint8_t)hal_get_pixel_g(src_row[x]);
+					uint8_t b = (uint8_t)hal_get_pixel_b(src_row[x]);
+					dst_row[x] = (uint8_t)((r & 0xe0) | ((g & 0xe0) >> 3) | ((b & 0xc0) >> 6));
+				}
+			}
+		} else if (bpp == 1) {
+			int x, y;
+			int stride = ximage->bytes_per_line;
+			hal_pixel_t *src = (hal_pixel_t *)back_image->pixels;
+			memset(low_bpp_pixels, 0, (size_t)stride * (size_t)screen_height);
+			for (y = 0; y < screen_height; y++) {
+				uint8_t *dst_row = low_bpp_pixels + y * stride;
+				hal_pixel_t *src_row = src + y * screen_width;
+
+				for (x = 0; x < screen_width; x++) {
+					uint8_t r = (uint8_t)hal_get_pixel_r(src_row[x]);
+					uint8_t g = (uint8_t)hal_get_pixel_g(src_row[x]);
+					uint8_t b = (uint8_t)hal_get_pixel_b(src_row[x]);
+					int lum = (r * 77 + g * 150 + b * 29) >> 8;
+					if (lum >= 128) {
+						if (ximage->bitmap_bit_order == MSBFirst)
+							dst_row[x >> 3] |= (uint8_t)(0x80 >> (x & 7));
+						else
+							dst_row[x >> 3] |= (uint8_t)(1u << (x & 7));
+					}
 				}
 			}
 		}
-	}
 
-	/* Transfer the bit block. */
-	gc = XCreateGC(display, window, 0, 0);
-	XPutImage(display, window, gc, ximage, 0, 0, 0, 0, (unsigned int)screen_width, (unsigned int)screen_height);
-	XFreeGC(display, gc);
+		/* Transfer the bit block. */
+		gc = XCreateGC(display, window, 0, 0);
+		XPutImage(display, window, gc, ximage, 0, 0, 0, 0, (unsigned int)screen_width, (unsigned int)screen_height);
+		XFreeGC(display, gc);
+	}
 
 	return cont;
 }
+
+static bool
+draw_video_frame(void)
+{
+	struct hal_image *video_image;
+	int dst_width, dst_height, dst_x, dst_y;
+
+	/* Update the playback stauts. */
+	video_image = gstplay_loop_iteration();
+	if (video_image == NULL) {
+		/* Rendering is not required for this game frame. */
+		return false;
+	}
+
+	/* Fit while preserving aspect ratio. */
+	if (screen_width * video_image->height <= screen_height * video_image->width) {
+		dst_width = screen_width;
+		dst_height = screen_width * video_image->height / video_image->width;
+	} else {
+		dst_height = screen_height;
+		dst_width = screen_height * video_image->width / video_image->height;
+	}
+	dst_x = (screen_width - dst_width) / 2;
+	dst_y = (screen_height - dst_height) / 2;
+
+	/* Draw. */
+	hal_draw_image_3d_alpha(back_image,
+				dst_x,
+				dst_y,
+				dst_x + dst_width,
+				dst_y,
+				dst_x,
+				dst_y + dst_height,
+				dst_x + dst_width,
+				dst_y + dst_height,
+				video_image,
+				0,
+				0,
+				video_image->width,
+				video_image->height,
+				255);
+
+	return true;
+}
+
 
 /* Wait for the next frame timing. */
 static bool
@@ -1977,7 +2034,7 @@ hal_play_video(
 	is_gst_playing = true;
 	is_gst_skippable = is_skippable;
 
-	gstplay_play(path, window);
+	gstplay_play(path);
 
 	free(path);
 
