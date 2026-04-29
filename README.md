@@ -47,7 +47,7 @@
     <img src="https://github.com/awemorris/suika3/blob/main/docs/img/screenshot-20260406.webp" alt="Suika3 Sample Game Screenshot"><br>
   </a>
   Suika3 now has a nice launcher written in and self-hosted by Suika3!<br>
-  <img src="https://github.com/awemorris/suika3/blob/main/docs/img/screenshot-20260428.webp" alt="Suika3 Launcher Screenshot"><br>
+  <img src="https://github.com/awemorris/suika3/blob/main/docs/img/screenshot-20260429.webp" alt="Suika3 Launcher Screenshot"><br>
 </div>
 
 ---
