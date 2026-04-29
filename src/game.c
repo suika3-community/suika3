@@ -376,6 +376,7 @@ s3i_on_game_update(void)
 	/* Reset input states to avoid keyboard repeat. */
 	pf_is_return_key_pressed = false;
 	pf_is_escape_key_pressed = false;
+	pf_is_space_key_pressed = false;
 	pf_is_up_key_pressed = false;
 	pf_is_down_key_pressed = false;
 	pf_is_left_key_pressed = false;

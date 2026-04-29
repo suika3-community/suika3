@@ -500,6 +500,7 @@ if(STRATO_TARGET_LINUX_FBDEV)
       src/fbmain.c
       src/asound.c
       src/evgamepad.c
+      src/gstplay.c
     )
 endif()
 

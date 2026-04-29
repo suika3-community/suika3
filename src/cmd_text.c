@@ -1526,14 +1526,16 @@ frame_sysbtn(void)
 
 	/* Accept key operations */
 	if (!is_hidden) {
-		if (s3_is_mouse_right_clicked()) {
+		if (s3_is_mouse_right_clicked() ||
+		    s3_is_space_key_pressed()) {
 			action_toggle_hide();
 			s3_clear_input_state();
 			return true;
 		}
 	} else {
 		if (s3_is_mouse_left_clicked() ||
-		    s3_is_mouse_right_clicked()) {
+		    s3_is_mouse_right_clicked() ||
+		    s3_is_space_key_pressed()) {
 			action_toggle_hide();
 			s3_clear_input_state();
 			return true;

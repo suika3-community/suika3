@@ -55,6 +55,9 @@
 #include <locale.h>
 #include <assert.h>
 
+/* Gstreamer Video HAL */
+#include "gstplay.h"
+
 /* Log File */
 #define LOG_FILE	"log.txt"
 
@@ -88,6 +91,12 @@ static FILE *log_fp;
 /* Locale */
 static const char *lang_code;
 
+/* Flag to indicate whether we are playing a video or not */
+static bool is_gst_playing;
+
+/* Flag to indicate whether a video is skippable or not */
+static bool is_gst_skippable;
+
 /* Forward Declaration */
 static void init_locale(void);
 static bool init_fb(void);
@@ -97,6 +106,7 @@ static void cleanup_input(void);
 static void process_input(void);
 static void process_event(int index);
 static bool open_log_file(void);
+static void draw_video_frame(void);
 
 int
 main(
@@ -131,6 +141,18 @@ main(
 		process_input();
 
 		hal_clear_image(image, 0);
+
+		if (is_gst_playing) {
+			/* Process a frame. */
+			draw_video_frame();
+
+			/* If the playback is finished. */
+			if (!gstplay_is_playing()) {
+				gstplay_stop();
+				is_gst_playing = false;
+			}
+		}
+
 		if (!hal_callback_on_event_frame())
 			break;
 
@@ -144,6 +166,48 @@ main(
 
 	return 0;
 
+}
+
+static void
+draw_video_frame(void)
+{
+	struct hal_image *video_image;
+	int dst_width, dst_height, dst_x, dst_y;
+
+	/* Update the playback stauts. */
+	video_image = gstplay_loop_iteration();
+	if (video_image == NULL) {
+		/* Rendering is not required for this game frame. */
+		return;
+	}
+
+	/* Fit while preserving aspect ratio. */
+	if (screen_width * image->height <= screen_height * image->width) {
+		dst_width = screen_width;
+		dst_height = screen_width * image->height / image->width;
+	} else {
+		dst_height = screen_height;
+		dst_width = screen_height * image->width / image->height;
+	}
+	dst_x = (screen_width - dst_width) / 2;
+	dst_y = (screen_height - dst_height) / 2;
+
+	/* Draw. */
+	hal_draw_image_3d_alpha(image,
+				dst_x,
+				dst_y,
+				dst_x + dst_width,
+				dst_y,
+				dst_x,
+				dst_y + dst_height,
+				dst_x + dst_width,
+				dst_y + dst_height,
+				video_image,
+				0,
+				0,
+				video_image->width,
+				video_image->height,
+				255);
 }
 
 /* Initialize the locale. */
@@ -336,7 +400,9 @@ static void process_input(void)
 	} while (processed);
 }
 
-static void process_event(int index)
+static void
+process_event(
+	int index)
 {
 	struct input_event e;
 
@@ -361,17 +427,56 @@ static void process_event(int index)
 		mouse_y = mouse_y > screen_height ? screen_height : mouse_y;
 		hal_callback_on_event_mouse_move(mouse_x, mouse_y);
 	} else if (e.type == EV_KEY) {
-		/* XXX: currently only mouse buttons are supported. */
 		if (e.code == 272) {
 			if (e.value == 1)
 				hal_callback_on_event_mouse_press(HAL_MOUSE_LEFT, mouse_x, mouse_y);
 			else
 				hal_callback_on_event_mouse_release(HAL_MOUSE_LEFT, mouse_x, mouse_y);
-		} else if (e.code ==273) {
+		} else if (e.code == 273) {
 			if (e.value == 1)
 				hal_callback_on_event_mouse_press(HAL_MOUSE_RIGHT, mouse_x, mouse_y);
 			else
 				hal_callback_on_event_mouse_release(HAL_MOUSE_RIGHT, mouse_x, mouse_y);
+		} else if (e.code == KEY_ENTER || e.code == KEY_KPENTER) {
+			if (e.value != 0)
+				hal_callback_on_event_key_press(HAL_KEY_RETURN);
+			else
+				hal_callback_on_event_key_release(HAL_KEY_RETURN);
+		} else if (e.code == KEY_LEFT) {
+			if (e.value != 0)
+				hal_callback_on_event_key_press(HAL_KEY_LEFT);
+			else
+				hal_callback_on_event_key_release(HAL_KEY_LEFT);
+		} else if (e.code == KEY_RIGHT) {
+			if (e.value != 0)
+				hal_callback_on_event_key_press(HAL_KEY_RIGHT);
+			else
+				hal_callback_on_event_key_release(HAL_KEY_RIGHT);
+		} else if (e.code == KEY_UP) {
+			if (e.value != 0)
+				hal_callback_on_event_key_press(HAL_KEY_UP);
+			else
+				hal_callback_on_event_key_release(HAL_KEY_UP);
+		} else if (e.code == KEY_DOWN) {
+			if (e.value != 0)
+				hal_callback_on_event_key_press(HAL_KEY_DOWN);
+			else
+				hal_callback_on_event_key_release(HAL_KEY_DOWN);
+		} else if (e.code == KEY_LEFTCTRL || e.code == KEY_RIGHTCTRL) {
+			if (e.value != 0)
+				hal_callback_on_event_key_press(HAL_KEY_CONTROL);
+			else
+				hal_callback_on_event_key_release(HAL_KEY_CONTROL);
+		} else if (e.code == KEY_ESC) {
+			if (e.value != 0)
+				hal_callback_on_event_key_press(HAL_KEY_ESCAPE);
+			else
+				hal_callback_on_event_key_release(HAL_KEY_ESCAPE);
+		} else if (e.code == KEY_SPACE) {
+			if (e.value != 0)
+				hal_callback_on_event_key_press(HAL_KEY_SPACE);
+			else
+				hal_callback_on_event_key_release(HAL_KEY_SPACE);
 		}
 	}
 }

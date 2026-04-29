@@ -837,17 +837,56 @@ process_event(
 		mouse_y = mouse_y > screen_height ? screen_height : mouse_y;
 		hal_callback_on_event_mouse_move(mouse_x, mouse_y);
 	} else if (e.type == EV_KEY) {
-		/* XXX: currently only mouse buttons are supported. */
 		if (e.code == 272) {
 			if (e.value == 1)
 				hal_callback_on_event_mouse_press(HAL_MOUSE_LEFT, mouse_x, mouse_y);
 			else
 				hal_callback_on_event_mouse_release(HAL_MOUSE_LEFT, mouse_x, mouse_y);
-		} else if (e.code ==273) {
+		} else if (e.code == 273) {
 			if (e.value == 1)
 				hal_callback_on_event_mouse_press(HAL_MOUSE_RIGHT, mouse_x, mouse_y);
 			else
 				hal_callback_on_event_mouse_release(HAL_MOUSE_RIGHT, mouse_x, mouse_y);
+		} else if (e.code == KEY_ENTER || e.code == KEY_KPENTER) {
+			if (e.value != 0)
+				hal_callback_on_event_key_press(HAL_KEY_RETURN);
+			else
+				hal_callback_on_event_key_release(HAL_KEY_RETURN);
+		} else if (e.code == KEY_LEFT) {
+			if (e.value != 0)
+				hal_callback_on_event_key_press(HAL_KEY_LEFT);
+			else
+				hal_callback_on_event_key_release(HAL_KEY_LEFT);
+		} else if (e.code == KEY_RIGHT) {
+			if (e.value != 0)
+				hal_callback_on_event_key_press(HAL_KEY_RIGHT);
+			else
+				hal_callback_on_event_key_release(HAL_KEY_RIGHT);
+		} else if (e.code == KEY_UP) {
+			if (e.value != 0)
+				hal_callback_on_event_key_press(HAL_KEY_UP);
+			else
+				hal_callback_on_event_key_release(HAL_KEY_UP);
+		} else if (e.code == KEY_DOWN) {
+			if (e.value != 0)
+				hal_callback_on_event_key_press(HAL_KEY_DOWN);
+			else
+				hal_callback_on_event_key_release(HAL_KEY_DOWN);
+		} else if (e.code == KEY_LEFTCTRL || e.code == KEY_RIGHTCTRL) {
+			if (e.value != 0)
+				hal_callback_on_event_key_press(HAL_KEY_CONTROL);
+			else
+				hal_callback_on_event_key_release(HAL_KEY_CONTROL);
+		} else if (e.code == KEY_ESC) {
+			if (e.value != 0)
+				hal_callback_on_event_key_press(HAL_KEY_ESCAPE);
+			else
+				hal_callback_on_event_key_release(HAL_KEY_ESCAPE);
+		} else if (e.code == KEY_SPACE) {
+			if (e.value != 0)
+				hal_callback_on_event_key_press(HAL_KEY_SPACE);
+			else
+				hal_callback_on_event_key_release(HAL_KEY_SPACE);
 		}
 	}
 }
