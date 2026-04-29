@@ -122,21 +122,30 @@ void hal_set_continuous_swipe_enabled_x11(bool is_enabled);
 
 int main(int argc, char *argv[])
 {
-	if (!is_wslg()) {
+	bool prefer_x11 = is_wslg();
+	bool wl_tried = false;
+
+	if (!prefer_x11 && getenv("WAYLAND_DISPLAY") != NULL) {
 		mode = MODE_WAYLAND;
 		if (!main_init_wl(argc, argv)) {
-			mode = MODE_X11;
-			if (!main_init_x11(argc, argv)) {
-				printf("Failed to initialize.\n");
-				return 1;
-			}
-		}
-	} else {
-		mode = MODE_X11;
-		if (!main_init_x11(argc, argv)) {
-			printf("Failed to initialize.\n");
+			printf("Failed to initialize Wayland.\n");
 			return 1;
 		}
+	} else if (getenv("DISPLAY") != NULL) {
+		mode = MODE_X11;
+		if (!main_init_x11(argc, argv)) {
+			printf("Failed to initialize X11.\n");
+			return 1;
+		}
+	} else if (getenv("WAYLAND_DISPLAY") != NULL) {
+		mode = MODE_WAYLAND;
+		if (!main_init_wl(argc, argv)) {
+			printf("Failed to initialize Wayland.\n");
+			return 1;
+		}
+	} else {
+		printf("Failed to initialize.\n");
+		return 1;
 	}
 
 	if (mode == MODE_WAYLAND) {
