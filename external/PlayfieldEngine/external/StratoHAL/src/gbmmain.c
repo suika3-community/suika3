@@ -1267,18 +1267,16 @@ hal_play_video(
 	const char *fname,
 	bool is_skippable)
 {
-#if 0
 	char *path;
 
-	path = make_real_path(fname);
+	path = hal_make_real_path(fname);
 
 	is_gst_playing = true;
 	is_gst_skippable = is_skippable;
 
-	gstplay_play(path, window);
+	gstplay_play(path);
 
 	free(path);
-#endif
 
 	return true;
 }
@@ -1289,11 +1287,9 @@ hal_play_video(
 void
 hal_stop_video(void)
 {
-#if 0
 	gstplay_stop();
 
 	is_gst_playing = false;
-#endif
 }
 
 /*
@@ -1302,10 +1298,7 @@ hal_stop_video(void)
 bool
 hal_is_video_playing(void)
 {
-#if 0
 	return is_gst_playing;
-#endif
-	return false;
 }
 
 /*
