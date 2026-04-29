@@ -837,12 +837,12 @@ process_event(
 		mouse_y = mouse_y > screen_height ? screen_height : mouse_y;
 		hal_callback_on_event_mouse_move(mouse_x, mouse_y);
 	} else if (e.type == EV_KEY) {
-		if (e.code == 272) {
+		if (e.code == BTN_LEFT) {
 			if (e.value == 1)
 				hal_callback_on_event_mouse_press(HAL_MOUSE_LEFT, mouse_x, mouse_y);
 			else
 				hal_callback_on_event_mouse_release(HAL_MOUSE_LEFT, mouse_x, mouse_y);
-		} else if (e.code == 273) {
+		} else if (e.code == BTN)RIGHT) {
 			if (e.value == 1)
 				hal_callback_on_event_mouse_press(HAL_MOUSE_RIGHT, mouse_x, mouse_y);
 			else

@@ -1015,16 +1015,10 @@ static void process_input(void)
 
 	/* Process scrolling by mouse wheel, up/down keys, or swipe. */
 	if (s3_is_down_key_pressed()) {
-		if (s3_is_swiped())
-			process_history_scroll_up();
-		else
-			process_history_scroll_down();
+		process_history_scroll_down();
 		update_runtime_props(false);
 	} else if (s3_is_up_key_pressed()) {
-		if (s3_is_swiped())
-			process_history_scroll_down();
-		else
-			process_history_scroll_up();
+		process_history_scroll_up();
 		update_runtime_props(false);
 	}
 
@@ -1224,13 +1218,10 @@ update_runtime_props(bool is_first_time)
 			else
 				button[i].rt.is_disabled = true;
 			break;
-#if 0
 		case TYPE_HISTORYSCROLL:
 		case TYPE_HISTORYSCROLL_HORIZONTAL:
-			button[i].rt.slider = adjust_history_slider_value(transient_history_slider);
-			process_history_scroll_at(button[i].rt.slider, false);
+			button[i].rt.slider = transient_history_slider;
 			break;
-#endif
 		case TYPE_LANGUAGE:
 			button[i].rt.is_disabled = is_current_language(button[i].lang);
 			break;
@@ -1522,6 +1513,10 @@ process_button_point(int index, bool key)
 
 	/* If the button is TYPE_HISTORY and the button is inactive, it cannot be pointed at. */
 	if (b->type == TYPE_HISTORY && b->rt.is_disabled)
+		return false;
+
+	/* If the button is TYPE_HISTORYSCROLL/TYPE_HISTORYSCROLL_HORIZONTAL, it cannot be pointed at. */
+	if (b->type == TYPE_HISTORYSCROLL || b->type == TYPE_HISTORYSCROLL_HORIZONTAL)
 		return false;
 
 	/* If the button is TYPE_PREVIEW, it cannot be pointed at. */
@@ -3251,7 +3246,8 @@ process_history_scroll_up(void)
 		history_top = history_count - 1;
 
 	/* Calculate the scroll position. */
-	pos = 1.0f - (float)(history_top - (history_slots - 1)) / (float)((history_count - 1) - (history_slots - 1));
+	pos = 1.0f - (float)(history_top - (history_slots - 1)) / (float)(history_count - 1 - (history_slots - 1));
+	printf("up pos=%f\n", pos);
 	if (pos < 0)
 		pos = 0;
 	if (pos > 1.0f)
@@ -3276,18 +3272,20 @@ static void process_history_scroll_down(void)
 	/* Calculate the top of the history. */
 	history_count = s3_get_history_count();
 	history_top--;
-	if (history_top < 0)
-		history_top = 0;
+	printf("top=%d\n", history_top);
+	if (history_top < history_slots - 1)
+		history_top = history_slots - 1;
 
 	/* Calculate the scroll position. */
-	pos = 1.0f - (float)(history_top - (history_slots - 1)) / (float)((history_count - 1) - (history_slots - 1));
+	pos = 1.0f - (float)(history_top - (history_slots - 1)) / (float)(history_count - 1 - (history_slots - 1));
+	printf("down pos=%f\n", pos);
 	if (pos < 0)
 		pos = 0;
 	if (pos > 1.0f)
 		pos = 1.0f;
 
 	/* Adjust the slider position. */
-	transient_history_slider = adjust_history_slider_value(pos);
+	transient_history_slider = pos;
 
 	/* If a redraw is necessary. */
 	if (history_top != old_history_top)
