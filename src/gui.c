@@ -2414,7 +2414,7 @@ draw_save_button(
 		b->thumb_height = s3_get_image_height(thumb);
 
 	/* Draw the thumbnail. */
-	if (thumb != NULL) {
+	if (thumb != NULL && save_time != 0) {
 		if (b->rt.img_canvas_idle != NULL) {
 			s3_draw_image_3d(
 				b->rt.img_canvas_idle,
@@ -2502,7 +2502,7 @@ draw_save_button(
 	}
 
 	/* Draw the date. */
-	if (s3_get_save_timestamp(save_index) == 0) {
+	if (save_time == 0) {
 		snprintf(text, sizeof(text), "---");
 	} else {
 		timeptr = localtime(&save_time);
