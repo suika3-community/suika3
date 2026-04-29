@@ -2492,6 +2492,14 @@ draw_save_button(
 				    text,
 				    SAVE_TEXT_INDEX);
 	}
+	if (b->rt.img_canvas_press != NULL) {
+		draw_save_text_item(b->rt.img_canvas_press,
+				    button_index,
+				    b->index_x,
+				    b->index_y,
+				    text,
+				    SAVE_TEXT_INDEX);
+	}
 
 	/* Draw the date. */
 	if (s3_get_save_timestamp(save_index) == 0) {

@@ -5,7 +5,7 @@
   <project_license>Zlib</project_license>
 
   <name>Suika3</name>
-  <summary>A portable 2D game engine with a DSL for visual novels</summary>
+  <summary>2D game engine for visual novels</summary>
 
   <launchable type="desktop-id">vn.suika3.engine.desktop</launchable>
 
@@ -42,8 +42,13 @@
 
   <content_rating type="oars-1.1" />
 
+  <branding>
+    <color type="primary" appearance="light">#e67575</color>
+    <color type="primary" appearance="dark">#e67575</color>
+  </branding>
+
   <releases>
-    <release version="26.04.20" date="2026-04-25">
+    <release version="26.04.24" date="2026-04-28">
       <description>
         <p>26.04 is the first public version.</p>
       </description>
