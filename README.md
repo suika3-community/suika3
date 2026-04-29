@@ -67,13 +67,13 @@
 
 ---
 
-## Build and Installation
+## Installation
 
 ### Downloading Full SDK
 
-Please refer to [Getting Started](docs/mkdocs-en/docs/getting-started.md).
+[Download Suika3-full.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-full.zip)
 
-[https://github.com/awemorris/suika3/releases/latest/download/Suika3-full.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-full.zip)
+Please refer to [Getting Started](docs/mkdocs-en/docs/getting-started.md).
 
 ### Package Managers
 
@@ -89,7 +89,7 @@ brew tap awemorris/suika3
 brew install suika3
 ```
 
-FreeBSD Ports:
+FreeBSD (Ports):
 ```
 pkg install suika3
 ```
