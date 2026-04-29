@@ -40,13 +40,13 @@
 
   <branding>
     <color type="primary" appearance="light">#e67575</color>
-    <color type="primary" appearance="dark">#e67575</color>
+    <color type="secondary" appearance="dark">#e67575</color>
   </branding>
 
   <releases>
     <release version="26.04.25" date="2026-04-29">
       <description>
-        <p>Some bug fixes.</p>
+        <p>Moved to Wayland.</p>
       </description>
     </release>
     <release version="26.04.24" date="2026-04-28">
