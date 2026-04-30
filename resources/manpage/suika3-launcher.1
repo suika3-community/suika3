@@ -1,9 +1,9 @@
 .\" suika3-run.1 - Suika3 manpage
 .TH SUIKA3 1 "April 2026" "Suika3 1.0" "User Commands"
 .SH NAME
-suika3-run \- Run Suika3 from GUI
+suika3-launcher \- Run Suika3 from GUI
 .SH SYNOPSIS
-.B suika3-run
+.B suika3-launcher
 
 .SH DESCRIPTION
 The
@@ -11,8 +11,11 @@ The
 is a cross-platform scripting VM for 2D games and visual novels.
 
 When invoked,
-.B suika3-run
-shows a file picker to choose a game script.
+.B suika3-launcher
+starts the Suika3 launcer.
+
+If a file or a directory is specified as a command line argument,
+it starts the game in the specified place.
 
 .SH SEE ALSO
 .BR suika3 (1)

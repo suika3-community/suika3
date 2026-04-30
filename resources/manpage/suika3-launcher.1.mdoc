@@ -3,7 +3,7 @@
 .Dt SUIKA3 1
 .Os Suika3 1.0
 .Sh NAME
-.Nm suika3-run
+.Nm suika3-launcher
 .Nd Cross-platform scripting VM for visual novels
 .Sh SYNOPSIS
 .Nm
@@ -14,7 +14,10 @@ is a cross-platform scripting VM for visual novels.
 .Pp
 When invoked,
 .Nm
-shows a file picker to choose a game script.
+starts the Suika3 launcer.
+.Pp
+If a file or a directory is specified as a command line argument,
+it starts the game in the specified place.
 .Sh SEE ALSO
 .Xr suika3 (1),
 .Xr suika3-bcc (1),
