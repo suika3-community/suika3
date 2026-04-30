@@ -11,7 +11,7 @@
           "${workspaceFolder}"
         ],
         "pattern": {
-          "regexp": "^(.+):(\\d+):\\s*(.+)$",
+          "regexp": "^.+: (.+):(\\d+):\\s*(.+)$",
           "file": 1,
           "line": 2,
           "message": 3
@@ -91,18 +91,6 @@
         "panel": "dedicated"
       }
     },
-    "options": {
-        "command": "sh ${workspaceFolder}/SDK/android/build.sh"
-        "cwd": "${workspaceFolder}/SDK/ios"
-      },
-      "group": {
-        "kind": "build",
-        "isDefault": false
-      },
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated"
-      },
     {
       "label": "Suika3: Build Android APK",
       "type": "shell",
@@ -128,4 +116,4 @@
       }
     }
   ]
-}y
+}
