@@ -9,16 +9,17 @@ if [ "$1" = "suika3" ]; then
         exec suika3;
     fi;
     if flatpak info "vn.suika3.engine" > /dev/null 2>&1; then
+        flatpak override --user --filesystem=host vn.suika3.engine;
         exec flatpak run vn.suika3.engine .;
     else
         echo -n "Do you want to install Suika3 via Flathub? <y/N>";
         read s;
         if [ "$s" = "y" ]; then
             flatpak install --user -y SDK/linux/Suika3-x86_64.flatpak;
-            flatpak override --user --filesystem=host vn.suika3.engine;
         else
             exit 1;
         fi;
+        flatpak override --user --filesystem=host vn.suika3.engine;
         exec flatpak run vn.suika3.engine .;
     fi;
 fi
