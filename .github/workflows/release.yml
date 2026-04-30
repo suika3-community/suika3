@@ -644,7 +644,7 @@ jobs:
 
       - name: Copy for Linux.
         run: |
-          cp flatpak-x86_64/Suika-x86_64.flatpak dist/SDK/linux/
+          cp flatpak-x86_64/Suika3-x86_64.flatpak dist/SDK/linux/
           cp resources/linux/suika3-wrapper.sh dist/SDK/linux/
 
       - name: Download wasm artifacts
