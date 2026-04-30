@@ -726,7 +726,7 @@ jobs:
           cp -R game/* dist/SDK/android/app/src/main/assets/
           cp resources/launcher/system/font/NotoSans-Medium.ttf dist/SDK/android/app/src/main/assets/system/font/NotoSansCJK-Medium.ttc
           mkdir -p dist/SDK/android/app/src/main/java/io/noctvm/playfield/engineandroid
-          cp external/PlayfieldEngine/external/StratoHAL/src/MainActivity.java dist/SDK/SDK/android/app/src/main/java/io/noctvm/playfield/engineandroid/
+          cp external/PlayfieldEngine/external/StratoHAL/src/MainActivity.java dist/SDK/android/app/src/main/java/io/noctvm/playfield/engineandroid/
           mkdir -p dist/SDK/android/app/src/main/jniLibs/arm64-v8a
           cp android-arm64/libsuika3.so dist/SDK/android/app/src/main/jniLibs/arm64-v8a/libplayfield.so
           mkdir -p dist/SDK/android/app/src/main/jniLibs/armeabi-v7a
