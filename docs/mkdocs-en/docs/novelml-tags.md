@@ -255,7 +255,7 @@ Specify a filename to load an image onto a layer. Set to `none` to unload (hide)
 | Argument       | Description                               |
 |----------------|-------------------------------------------|
 | `bg`           | Background layer.                         |
-| `back          | Back-Center character.                    |
+| `back`          | Back-Center character.                    |
 | `left`         | Left character.                           |
 | `left-center`  | Left-Center character.                    |
 | `center`       | Center character.                         |
@@ -1472,6 +1472,7 @@ It is perfect for creating sliding effects, zooming in on characters, or rotatin
 ### Arguments
 
 **Common:**
+
 | Argument         | Omissible     | Description                               | Notes                                      |
 |------------------|---------------|-------------------------------------------|--------------------------------------------|
 | `name`           | No            | The target layer to animate.              | See the "Moveable Layers" table below.     |
@@ -1481,11 +1482,12 @@ It is perfect for creating sliding effects, zooming in on characters, or rotatin
 | (layer)-(suffix) | Yes           |                                           |                                            |
 
 **(layer):**
+
 | Argument       | Description                               |
 |----------------|-------------------------------------------|
 | `bg`           | Background layer.                         |
 | `bg2`          | Background 2.                             |
-| `back          | Back-Center character.                    |
+| `back`          | Back-Center character.                    |
 | `left`         | Left character.                           |
 | `right`        | Right character.                          |
 | `center`       | Center character.                         |
@@ -1494,6 +1496,7 @@ It is perfect for creating sliding effects, zooming in on characters, or rotatin
 | `face`         | Face character.                           |
 
 **(suffix):**
+
 | Suffix      | Omissible     | Description                | Notes                                                         |
 |-------------|---------------|----------------------------|---------------------------------------------------------------|
 | `-x`        | Yes (`0`)     | X position.                | Supports absolute (e.g., `100`) or relative (e.g., `r50`).    |
