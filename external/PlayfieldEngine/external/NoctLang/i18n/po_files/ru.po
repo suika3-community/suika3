@@ -1,0 +1,248 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "syntax error"
+msgstr "Синтаксическая ошибка."
+
+msgid "%s: Out of memory while parsing."
+msgstr "%s: Недостаточно памяти при разборе."
+
+msgid "Too many functions."
+msgstr "Слишком много функций."
+
+msgid "continue appeared outside loop."
+msgstr "Оператор continue использован вне цикла."
+
+msgid "LHS is not a term or an array element."
+msgstr "Левая часть не является ни выражением, ни элементом массива."
+
+msgid "var is specified without a single symbol."
+msgstr "var указан без единственного символа."
+
+msgid "else-if block appeared without if block."
+msgstr "Блок else-if появился без блока if."
+
+msgid "else-if appeared after else."
+msgstr "else-if появился после else."
+
+msgid "else appeared after else."
+msgstr "else использовано после else."
+
+msgid "Exceeded the maximum argument count."
+msgstr "Превышено максимальное количество аргументов."
+
+msgid "Too many anonymous functions."
+msgstr "Слишком много анонимных функций."
+
+msgid "Too many local variables."
+msgstr "Слишком много локальных переменных."
+
+msgid "Too many jumps."
+msgstr "Слишком много переходов."
+
+msgid "LIR: Out of memory error."
+msgstr "LIR: Недостаточно памяти."
+
+msgid "Failed to load bytecode data."
+msgstr "Не удалось загрузить данные байткода."
+
+msgid "Memory mapping failed."
+msgstr "Ошибка отображения памяти."
+
+msgid "Code too big."
+msgstr "Код слишком большой."
+
+msgid "Branch target not found."
+msgstr "Цель перехода не найдена."
+
+msgid "Failed to load bytecode."
+msgstr "Не удалось загрузить байт-код."
+
+msgid "Cannot find function %s."
+msgstr "Функция %s не найдена."
+
+msgid "Not an array."
+msgstr "Это не массив."
+
+msgid "Array index %d is out-of-range."
+msgstr "Индекс массива %d находится вне допустимого диапазона."
+
+msgid "Dictionary index %d is out-of-range."
+msgstr "Индекс словаря %d вне диапазона."
+
+msgid "Dictionary key \"%s\" not found."
+msgstr "Ключ \"%s\" не найден в словаре."
+
+msgid "Local variable \"%s\" not found."
+msgstr "Локальная переменная \"%s\" не найдена."
+
+msgid "Global variable \"%s\" not found."
+msgstr "Глобальная переменная \"%s\" не найдена."
+
+msgid "Value is not a number."
+msgstr "Значение не является числом."
+
+msgid "Value is not an integer."
+msgstr "Значение не является целым числом."
+
+msgid "Value is not a string."
+msgstr "Значение не является строкой."
+
+msgid "Value is not a number or a string."
+msgstr "Значение не является ни числом, ни строкой."
+
+msgid "Division by zero."
+msgstr "Деление на ноль."
+
+msgid "Subscript not an integer."
+msgstr "Индекс не является целым числом."
+
+msgid "Not an array or a dictionary."
+msgstr "Это не массив и не словарь."
+
+msgid "Subscript not a string."
+msgstr "Индекс не является строкой."
+
+msgid "Value is not a string, an array, or a dictionary."
+msgstr "Значение не является ни строкой, ни массивом, ни словарем."
+
+msgid "Not a dictionary."
+msgstr "Это не словарь."
+
+msgid "Dictionary index out-of-range."
+msgstr "Индекс словаря вне допустимого диапазона."
+
+msgid "Symbol \"%s\" not found."
+msgstr "Символ \"%s\" не найден."
+
+msgid "%s(): Function arguments not match."
+msgstr "%s(): Аргументы функции не совпадают."
+
+msgid "Element %d is not an integer."
+msgstr "Элемент %d не является целым числом."
+
+msgid "Element %d is not a float."
+msgstr "Элемент %d не является числом с плавающей точкой."
+
+msgid "Element %d is not a string."
+msgstr "Элемент %d не является строкой."
+
+msgid "Element %d is not an array."
+msgstr "Элемент %d не является массивом."
+
+msgid "Element %d is not a dictionary."
+msgstr "Элемент %d не является словарем."
+
+msgid "Element %d is not a function."
+msgstr "Элемент %d не является функцией."
+
+msgid "Value for key %s is not an integer."
+msgstr "Значение для ключа %s не является целым числом."
+
+msgid "Value for key %s is not a float."
+msgstr "Значение для ключа %s не является числом с плавающей точкой."
+
+msgid "Value for key %s is not a string."
+msgstr "Значение для ключа %s не является строкой."
+
+msgid "Value for key %s is not an array."
+msgstr "Значение для ключа %s не является массивом."
+
+msgid "Value for key %s is not a dictionary."
+msgstr "Значение для ключа %s не является словарем."
+
+msgid "Value for key %s is not a function."
+msgstr "Значение для ключа %s не является функцией."
+
+msgid "Argument (%d: %s) not an integer."
+msgstr "Аргумент (%d: %s) не является целым числом."
+
+msgid "Argument (%d: %s) not a float."
+msgstr "Аргумент (%d: %s) не является числом с плавающей точкой."
+
+msgid "Argument (%d: %s) not a string."
+msgstr "Аргумент (%d: %s) не является строкой."
+
+msgid "Argument (%d: %s) is not an array."
+msgstr "Аргумент (%d: %s) не является массивом."
+
+msgid "Argument (%d: %s) is not a dictionary."
+msgstr "Аргумент (%d: %s) не является словарем."
+
+msgid "Not a function."
+msgstr "Это не функция."
+
+msgid "Empty array."
+msgstr "Пустой массив."
+
+msgid "Out of memory."
+msgstr "Недостаточно памяти."
+
+msgid "Too many pinned global variables."
+msgstr "Слишком много закрепленных глобальных переменных."
+
+msgid "Too many pinned local variables."
+msgstr "Слишком много закрепленных локальных переменных."
+
+msgid "Cannot open file %s.\n"
+msgstr "Не удаётся открыть файл %s.\n"
+
+msgid "Cannot read file %s.\n"
+msgstr "Не удалось прочитать файл %s.\n"
+
+msgid "Error: %s: %d: %s\n"
+msgstr "Ошибка: %s: %d: %s\n"
+
+msgid "Adding file %s\n"
+msgstr "Добавление файла %s\n"
+
+msgid "Cannot find %s.\n"
+msgstr "Не удалось найти %s.\n"
+
+msgid "Searching directory %s.\n"
+msgstr "Поиск в каталоге %s.\n"
+
+msgid "Skipping empty directory %s.\n"
+msgstr "Пропуск пустого каталога %s.\n"
+
+msgid "Unknown option %s.\n"
+msgstr "Неизвестная опция %s.\n"
+
+msgid "Specify a file.\n"
+msgstr "Укажите файл.\n"
+
+msgid "%s:%d: Error: %s\n"
+msgstr "%s:%d: Ошибка: %s\n"
+
+msgid "Out of memory.\n"
+msgstr "Недостаточно памяти.\n"
+
+msgid "Noct Programming Language"
+msgstr "Язык программирования Noct"
+
+msgid "Version %s\n"
+msgstr "Версия %s\n"
+
+msgid "JIT compilation is enabled. Starting the fast VM...\n"
+msgstr "JIT-компиляция включена. Запуск быстрой виртуальной машины...\n"
+
+msgid "Entering REPL mode.\n"
+msgstr "Переход в режим REPL.\n"
+
+msgid "Usage\n"
+msgstr "Использование\n"
+
+msgid "noct <file>                        ... run a program\n"
+msgstr "noct <file>                        ... запуск программы\n"
+
+msgid "noct --compile <files>             ... convert to bytecode files\n"
+msgstr "noct --compile <files>             ... преобразовать в байткод-файлы\n"
+
+msgid "noct --ansic <out file> <in files> ... convert to a C source file\n"
+msgstr "noct --ansic <out file> <in files> ... преобразовать в исходный файл C\n"
+
+msgid "noct --elisp <out file> <in files> ... convert to an Emacs Lisp source file\n"
+msgstr "noct --elisp <out file> <in files> ... преобразовать в исходный файл Emacs Lisp\n"
+
