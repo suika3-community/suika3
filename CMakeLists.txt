@@ -536,7 +536,7 @@ if(NOT PLAYFIELD_ENABLE_DIST)
 endif()
 
 # Use stub hook for library-only platforms
-if(NOT PLAYFIELD_ENABLE_HOOK)
+if(PLAYFIELD_ENABLE_HOOK)
   set(PLAYFIELD_HOOK src/hook.c)
 endif()
 
