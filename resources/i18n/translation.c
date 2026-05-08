@@ -6,6 +6,7 @@ const char *pf_gettext(const char *msg)
 {
     const char *lang_code = hal_get_system_language();
     if (strcmp(msg, "Error: %s: %d: %s") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Error: %s: %d: %s";
         if (strncmp(lang_code, "es", 2) == 0) return "Error: %s: %d: %s";
         if (strncmp(lang_code, "fr", 2) == 0) return "Erreur : %s : %d : %s";
         if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s: %d: %s";
@@ -18,6 +19,7 @@ const char *pf_gettext(const char *msg)
         return "Error: %s: %d: %s";
     }
     if (strcmp(msg, "Cannot open file \"%s\".") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Cannot open file \"%s\".";
         if (strncmp(lang_code, "es", 2) == 0) return "No se puede abrir el archivo \"%s\".";
         if (strncmp(lang_code, "fr", 2) == 0) return "Impossible d'ouvrir le fichier \"%s\".";
         if (strncmp(lang_code, "it", 2) == 0) return "Impossibile aprire il file \"%s\".";
@@ -30,6 +32,7 @@ const char *pf_gettext(const char *msg)
         return "Cannot open file \"%s\".";
     }
     if (strcmp(msg, "Cannot get the size of file \"%s\".") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Cannot get the size of file \"%s\".";
         if (strncmp(lang_code, "es", 2) == 0) return "No se puede obtener el tamaño del archivo \"%s\".";
         if (strncmp(lang_code, "fr", 2) == 0) return "Impossible d'obtenir la taille du fichier \"%s\".";
         if (strncmp(lang_code, "it", 2) == 0) return "Impossibile ottenere la dimensione del file \"%s\".";
@@ -42,6 +45,7 @@ const char *pf_gettext(const char *msg)
         return "Cannot get the size of file \"%s\".";
     }
     if (strcmp(msg, "Cannot read file \"%s\".") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Cannot read file \"%s\".";
         if (strncmp(lang_code, "es", 2) == 0) return "No se puede leer el archivo \"%s\".";
         if (strncmp(lang_code, "fr", 2) == 0) return "Impossible de lire le fichier \"%s\".";
         if (strncmp(lang_code, "it", 2) == 0) return "Impossibile leggere il file \"%s\".";
@@ -54,6 +58,7 @@ const char *pf_gettext(const char *msg)
         return "Cannot read file \"%s\".";
     }
     if (strcmp(msg, "In tag %s:%d: runtime error.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "In tag %s:%d: runtime error.";
         if (strncmp(lang_code, "es", 2) == 0) return "En la etiqueta %s:%d: error en tiempo de ejecución.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Dans la balise %s : %d : erreur d'exécution.";
         if (strncmp(lang_code, "it", 2) == 0) return "Nel tag %s:%d: errore di runtime.";
@@ -66,6 +71,7 @@ const char *pf_gettext(const char *msg)
         return "In tag %s:%d: runtime error.";
     }
     if (strcmp(msg, "%s:%d: Tag \"%s\" not found.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "%s:%d: Tag \"%s\" not found.";
         if (strncmp(lang_code, "es", 2) == 0) return "%s:%d: No se encontró la etiqueta \"%s\".";
         if (strncmp(lang_code, "fr", 2) == 0) return "%s : %d : Balise \"%s\" introuvable.";
         if (strncmp(lang_code, "it", 2) == 0) return "%s:%d: Tag \"%s\" non trovato.";
@@ -78,6 +84,7 @@ const char *pf_gettext(const char *msg)
         return "%s:%d: Tag \"%s\" not found.";
     }
     if (strcmp(msg, "%s:%d: \"tag_%s\" is not a function.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "%s:%d: \"tag_%s\" is not a function.";
         if (strncmp(lang_code, "es", 2) == 0) return "%s:%d: \"tag_%s\" no es una función.";
         if (strncmp(lang_code, "fr", 2) == 0) return "%s : %d : \"tag_%s\" n'est pas une fonction.";
         if (strncmp(lang_code, "it", 2) == 0) return "%s:%d: \"tag_%s\" non è una funzione.";
@@ -90,6 +97,7 @@ const char *pf_gettext(const char *msg)
         return "%s:%d: \"tag_%s\" is not a function.";
     }
     if (strcmp(msg, "In tag %s:%d: Tag \"%s\" execution error.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "In tag %s:%d: Tag \"%s\" execution error.";
         if (strncmp(lang_code, "es", 2) == 0) return "En la etiqueta %s:%d: Error de ejecución en la etiqueta \"%s\".";
         if (strncmp(lang_code, "fr", 2) == 0) return "Dans la balise %s : %d : Erreur d'exécution de la balise \"%s\".";
         if (strncmp(lang_code, "it", 2) == 0) return "Nel tag %s:%d: Errore di esecuzione del tag \"%s\".";
@@ -102,6 +110,7 @@ const char *pf_gettext(const char *msg)
         return "In tag %s:%d: Tag \"%s\" execution error.";
     }
     if (strcmp(msg, "Cannot determine the file type for \"%s\".") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Cannot determine the file type for \"%s\".";
         if (strncmp(lang_code, "es", 2) == 0) return "No se puede determinar el tipo de archivo de \"%s\".";
         if (strncmp(lang_code, "fr", 2) == 0) return "Impossible de déterminer le type du fichier  \"%s\".";
         if (strncmp(lang_code, "it", 2) == 0) return "Impossibile determinare il tipo di file per \"%s\".";
@@ -114,6 +123,7 @@ const char *pf_gettext(const char *msg)
         return "Cannot determine the file type for \"%s\".";
     }
     if (strcmp(msg, "Cannot load an image \"%s\".") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Cannot load an image \"%s\".";
         if (strncmp(lang_code, "es", 2) == 0) return "No se puede cargar la imagen \"%s\".";
         if (strncmp(lang_code, "fr", 2) == 0) return "Impossible de charger l'image \"%s\".";
         if (strncmp(lang_code, "it", 2) == 0) return "Impossibile caricare l'immagine \"%s\".";
@@ -126,6 +136,7 @@ const char *pf_gettext(const char *msg)
         return "Cannot load an image \"%s\".";
     }
     if (strcmp(msg, "Too many textures.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Too many textures.";
         if (strncmp(lang_code, "es", 2) == 0) return "Demasiadas texturas.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Trop de textures.";
         if (strncmp(lang_code, "it", 2) == 0) return "Troppe texture.";
@@ -138,6 +149,7 @@ const char *pf_gettext(const char *msg)
         return "Too many textures.";
     }
     if (strcmp(msg, "Invalid font slot index.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Invalid font slot index.";
         if (strncmp(lang_code, "es", 2) == 0) return "Índice de ranura de fuente no válido.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Indice d'emplacement de police non valide.";
         if (strncmp(lang_code, "it", 2) == 0) return "Indice di slot del font non valido.";
@@ -150,6 +162,7 @@ const char *pf_gettext(const char *msg)
         return "Invalid font slot index.";
     }
     if (strcmp(msg, "Invalid sound stream index.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Invalid sound stream index.";
         if (strncmp(lang_code, "es", 2) == 0) return "Índice de flujo de sonido no válido.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Indice de flux sonore non valide.";
         if (strncmp(lang_code, "it", 2) == 0) return "Indice di stream audio non valido.";
@@ -162,6 +175,7 @@ const char *pf_gettext(const char *msg)
         return "Invalid sound stream index.";
     }
     if (strcmp(msg, "Cannot make the save directory.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Cannot make the save directory.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se puede crear el directorio de guardado.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Impossible de créer le répertoire de sauvegarde.";
         if (strncmp(lang_code, "it", 2) == 0) return "Impossibile creare la directory di salvataggio.";
@@ -174,6 +188,7 @@ const char *pf_gettext(const char *msg)
         return "Cannot make the save directory.";
     }
     if (strcmp(msg, "Save data key too long.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Save data key too long.";
         if (strncmp(lang_code, "es", 2) == 0) return "La clave de los datos guardados es demasiado larga.";
         if (strncmp(lang_code, "fr", 2) == 0) return "La clé des données de sauvegarde est trop longue.";
         if (strncmp(lang_code, "it", 2) == 0) return "La chiave dei dati di salvataggio è troppo lunga.";
@@ -186,6 +201,7 @@ const char *pf_gettext(const char *msg)
         return "Save data key too long.";
     }
     if (strcmp(msg, "Cannot open a save file.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Cannot open a save file.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se puede abrir un archivo de guardado.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Impossible d'ouvrir un fichier de sauvegarde.";
         if (strncmp(lang_code, "it", 2) == 0) return "Impossibile aprire un file di salvataggio.";
@@ -198,6 +214,7 @@ const char *pf_gettext(const char *msg)
         return "Cannot open a save file.";
     }
     if (strcmp(msg, "Cannot write to a save file.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Cannot write to a save file.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se puede escribir en un archivo de guardado.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Impossible d'écrire dans un fichier de sauvegarde.";
         if (strncmp(lang_code, "it", 2) == 0) return "Impossibile scrivere in un file di salvataggio.";
@@ -210,6 +227,7 @@ const char *pf_gettext(const char *msg)
         return "Cannot write to a save file.";
     }
     if (strcmp(msg, "Cannot get the size of a save file.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Cannot get the size of a save file.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se puede obtener el tamaño de un archivo de guardado.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Impossible d'obtenir la taille d'un fichier de sauvegarde.";
         if (strncmp(lang_code, "it", 2) == 0) return "Impossibile ottenere la dimensione di un file di salvataggio.";
@@ -222,6 +240,7 @@ const char *pf_gettext(const char *msg)
         return "Cannot get the size of a save file.";
     }
     if (strcmp(msg, "Save file too large.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Save file too large.";
         if (strncmp(lang_code, "es", 2) == 0) return "El archivo de guardado es demasiado grande.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Le fichier de sauvegarde est trop volumineux.";
         if (strncmp(lang_code, "it", 2) == 0) return "Il file di salvataggio è troppo grande.";
@@ -234,6 +253,7 @@ const char *pf_gettext(const char *msg)
         return "Save file too large.";
     }
     if (strcmp(msg, "Cannot read a save file.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Cannot read a save file.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se puede leer un archivo de guardado.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Impossible de lire un fichier de sauvegarde.";
         if (strncmp(lang_code, "it", 2) == 0) return "Impossibile leggere un file di salvataggio.";
@@ -246,6 +266,7 @@ const char *pf_gettext(const char *msg)
         return "Cannot read a save file.";
     }
     if (strcmp(msg, "String too long.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "String too long.";
         if (strncmp(lang_code, "es", 2) == 0) return "Cadena demasiado larga.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Chaîne trop longue.";
         if (strncmp(lang_code, "it", 2) == 0) return "Stringa troppo lunga.";
@@ -258,6 +279,7 @@ const char *pf_gettext(const char *msg)
         return "String too long.";
     }
     if (strcmp(msg, "Invalid save data.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Invalid save data.";
         if (strncmp(lang_code, "es", 2) == 0) return "Datos de guardado no validos.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Données de sauvegarde non valides.";
         if (strncmp(lang_code, "it", 2) == 0) return "Dati di salvataggio non validi.";
@@ -270,6 +292,7 @@ const char *pf_gettext(const char *msg)
         return "Invalid save data.";
     }
     if (strcmp(msg, "Searching directory \"%s\".") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Searching directory \"%s\".";
         if (strncmp(lang_code, "es", 2) == 0) return "Buscando en el directorio \"%s\".";
         if (strncmp(lang_code, "fr", 2) == 0) return "Recherche dans le répertoire \"%s\".";
         if (strncmp(lang_code, "it", 2) == 0) return "Ricerca nella directory \"%s\".";
@@ -282,6 +305,7 @@ const char *pf_gettext(const char *msg)
         return "Searching directory \"%s\".";
     }
     if (strcmp(msg, "Skipping empty directory \"%s\".") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Skipping empty directory \"%s\".";
         if (strncmp(lang_code, "es", 2) == 0) return "Omitiendo el directorio vacío \"%s\".";
         if (strncmp(lang_code, "fr", 2) == 0) return "Ignorer le répertoire vide \"%s\".";
         if (strncmp(lang_code, "it", 2) == 0) return "Salto della directory vuota \"%s\".";
@@ -294,6 +318,7 @@ const char *pf_gettext(const char *msg)
         return "Skipping empty directory \"%s\".";
     }
     if (strcmp(msg, "Adding file \"%s\".") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Adding file \"%s\".";
         if (strncmp(lang_code, "es", 2) == 0) return "Añadiendo archivo \"%s\".";
         if (strncmp(lang_code, "fr", 2) == 0) return "Ajout du fichier \"%s\".";
         if (strncmp(lang_code, "it", 2) == 0) return "Aggiunta del file \"%s\".";
@@ -306,6 +331,7 @@ const char *pf_gettext(const char *msg)
         return "Adding file \"%s\".";
     }
     if (strcmp(msg, "Parameter is not set.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Parameter is not set.";
         if (strncmp(lang_code, "es", 2) == 0) return "El parámetro no está configurado.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Le paramètre n'est pas défini.";
         if (strncmp(lang_code, "it", 2) == 0) return "Il parametro non è impostato.";
@@ -318,6 +344,7 @@ const char *pf_gettext(const char *msg)
         return "Parameter is not set.";
     }
     if (strcmp(msg, "Unexpected parameter value for \"%s\".") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Unexpected parameter value for \"%s\".";
         if (strncmp(lang_code, "es", 2) == 0) return "Valor de parámetro inesperado para \"%s\".";
         if (strncmp(lang_code, "fr", 2) == 0) return "Valeur de paramètre inattendue pour \"%s\".";
         if (strncmp(lang_code, "it", 2) == 0) return "Valore del parametro imprevisto per \"%s\".";
@@ -330,6 +357,7 @@ const char *pf_gettext(const char *msg)
         return "Unexpected parameter value for \"%s\".";
     }
     if (strcmp(msg, "Parameter \"%s\" doesn't have the key \"%s\".") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Parameter \"%s\" doesn't have the key \"%s\".";
         if (strncmp(lang_code, "es", 2) == 0) return "El parámetro \"%s\" no tiene la clave \"%s\".";
         if (strncmp(lang_code, "fr", 2) == 0) return "Le paramètre \"%s\" n'a pas la clé \"%s\".";
         if (strncmp(lang_code, "it", 2) == 0) return "Il parametro \"%s\" non ha la chiave \"%s\".";
@@ -342,6 +370,7 @@ const char *pf_gettext(const char *msg)
         return "Parameter \"%s\" doesn't have the key \"%s\".";
     }
     if (strcmp(msg, "Unexpected parameter value for \"%s.%s\".") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Unexpected parameter value for \"%s.%s\".";
         if (strncmp(lang_code, "es", 2) == 0) return "Valor de parámetro  inesperado para \"%s.%s\".";
         if (strncmp(lang_code, "fr", 2) == 0) return "Valeur de paramètre inattendue pour \"%s.%s\".";
         if (strncmp(lang_code, "it", 2) == 0) return "Valore del parametro imprevisto per \"%s.%s\".";
@@ -354,6 +383,7 @@ const char *pf_gettext(const char *msg)
         return "Unexpected parameter value for \"%s.%s\".";
     }
     if (strcmp(msg, "Cannot deserialize function.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Cannot deserialize function.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se puede deserializar la función.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Impossible de désérialiser la fonction.";
         if (strncmp(lang_code, "it", 2) == 0) return "Impossibile deserializzare la funzione.";

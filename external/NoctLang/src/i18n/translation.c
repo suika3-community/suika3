@@ -1,3 +1,10 @@
+/* -*- coding: utf-8; tab-width: 8; indent-tabs-mode: t; -*- */
+
+/*
+ * Noct Programming Language
+ * Copyright (c) 2025, 2026, Awe Morris
+ */
+
 #include <string.h>
 
 const char *noct_get_system_language(void);
@@ -16,10 +23,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "语法错误。";
         if (strncmp(lang_code, "tw", 2) == 0) return "語法錯誤。";
         if (strncmp(lang_code, "ja", 2) == 0) return "文法エラーです。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "Error de sintaxi.";
         return "syntax error";
     }
     if (strcmp(msg, "%s: Out of memory while parsing.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "%s: Out of memory while parsing.";
         if (strncmp(lang_code, "es", 2) == 0) return "%s: No hay suficiente memoria.";
         if (strncmp(lang_code, "fr", 2) == 0) return "%s: Mémoire insuffisante lors de l'analyse.";
         if (strncmp(lang_code, "de", 2) == 0) return "%s: Nicht genügend Speicher beim Parsen.";
@@ -29,10 +36,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "%s：解析时内存不足。";
         if (strncmp(lang_code, "tw", 2) == 0) return "%s: 解析時記憶體不足。";
         if (strncmp(lang_code, "ja", 2) == 0) return "%s: メモリが足りません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "%s: No hi ha prou memòria.";
         return "%s: Out of memory while parsing.";
     }
     if (strcmp(msg, "Too many functions.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Too many functions.";
         if (strncmp(lang_code, "es", 2) == 0) return "Hay demasiadas funciones.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Trop de fonctions.";
         if (strncmp(lang_code, "de", 2) == 0) return "Zu viele Funktionen.";
@@ -42,10 +49,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "函数过多。";
         if (strncmp(lang_code, "tw", 2) == 0) return "函式過多。";
         if (strncmp(lang_code, "ja", 2) == 0) return "関数が多すぎます。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "Hi ha massa funcions.";
         return "Too many functions.";
     }
     if (strcmp(msg, "continue appeared outside loop.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "continue appeared outside loop.";
         if (strncmp(lang_code, "es", 2) == 0) return "continue es utilizado fuera de un bucle.";
         if (strncmp(lang_code, "fr", 2) == 0) return "L'instruction continue est apparue en dehors d'une boucle.";
         if (strncmp(lang_code, "de", 2) == 0) return "continue wurde außerhalb einer Schleife verwendet.";
@@ -55,10 +62,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "continue 语句出现在循环外部。";
         if (strncmp(lang_code, "tw", 2) == 0) return "continue 敘述出現在迴圈外部。";
         if (strncmp(lang_code, "ja", 2) == 0) return "continue文がループの外で使用されました。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "continue és utilitzat fora d'un bucle.";
         return "continue appeared outside loop.";
     }
     if (strcmp(msg, "LHS is not a term or an array element.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "LHS is not a term or an array element.";
         if (strncmp(lang_code, "es", 2) == 0) return "LHS no es un término ni un elemento de un array.";
         if (strncmp(lang_code, "fr", 2) == 0) return "La partie gauche n'est ni un terme ni un élément de tableau.";
         if (strncmp(lang_code, "de", 2) == 0) return "LHS ist weder ein Term noch ein Array-Element.";
@@ -68,10 +75,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "左侧不是项或数组元素。";
         if (strncmp(lang_code, "tw", 2) == 0) return "左側不是項或陣列元素。";
         if (strncmp(lang_code, "ja", 2) == 0) return "左辺が項か配列要素ではありません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "LHS no és un terme ni un element d'array.";
         return "LHS is not a term or an array element.";
     }
     if (strcmp(msg, "var is specified without a single symbol.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "var is specified without a single symbol.";
         if (strncmp(lang_code, "es", 2) == 0) return "var es especificado sin un solo símbolo.";
         if (strncmp(lang_code, "fr", 2) == 0) return "var est spécifié sans symbole unique.";
         if (strncmp(lang_code, "de", 2) == 0) return "var wird ohne ein einzelnes Symbol angegeben.";
@@ -81,10 +88,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "var 未指定单个符号。";
         if (strncmp(lang_code, "tw", 2) == 0) return "var 未指定單一符號。";
         if (strncmp(lang_code, "ja", 2) == 0) return "varが変数名以外に指定されました。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "var és especificat sense un sol símbol.";
         return "var is specified without a single symbol.";
     }
     if (strcmp(msg, "else-if block appeared without if block.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "else-if block appeared without if block.";
         if (strncmp(lang_code, "es", 2) == 0) return "bloque else-if utilizado sin un bloque if.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Un bloc else-if est apparu sans bloc if.";
         if (strncmp(lang_code, "de", 2) == 0) return "else-if-Block wurde ohne zugehörigen if-Block verwendet.";
@@ -94,10 +101,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "出现了没有 if 块的 else-if 块。";
         if (strncmp(lang_code, "tw", 2) == 0) return "出現了沒有 if 區塊的 else-if 區塊。";
         if (strncmp(lang_code, "ja", 2) == 0) return "else if文がifブロックの後ろ以外で使用されました。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "bloc else-if és utilitzat fora el bloc if.";
         return "else-if block appeared without if block.";
     }
     if (strcmp(msg, "else-if appeared after else.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "else-if appeared after else.";
         if (strncmp(lang_code, "es", 2) == 0) return "else-if utilizado después de else.";
         if (strncmp(lang_code, "fr", 2) == 0) return "else-if est apparu après else.";
         if (strncmp(lang_code, "de", 2) == 0) return "else-if wurde nach else verwendet.";
@@ -107,18 +114,23 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "else 之后出现了 else-if。";
         if (strncmp(lang_code, "tw", 2) == 0) return "else 之後出現了 else-if。";
         if (strncmp(lang_code, "ja", 2) == 0) return "else if文がelse文の後ろで使用されました。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "else-if és utilitzat després d'else.";
         return "else-if appeared after else.";
     }
     if (strcmp(msg, "else appeared after else.") == 0) {
-        if (strncmp(lang_code, "ja", 2) == 0) return "else文がelse文の後ろで使用されました。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "else és utilitzat després d'else.";
+        if (strncmp(lang_code, "en", 2) == 0) return "else appeared after else.";
         if (strncmp(lang_code, "es", 2) == 0) return "else utilizado después de else.";
+        if (strncmp(lang_code, "fr", 2) == 0) return "else apparaît après else.";
         if (strncmp(lang_code, "de", 2) == 0) return "else wurde nach else verwendet.";
         if (strncmp(lang_code, "it", 2) == 0) return "else è stato utilizzato dopo else.";
+        if (strncmp(lang_code, "el", 2) == 0) return "το else χρησιμοποιήθηκε μετά από το else.";
+        if (strncmp(lang_code, "ru", 2) == 0) return "else использовано после else.";
+        if (strncmp(lang_code, "zh", 2) == 0) return "else 出现在 else 之后。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "else 出現在 else 之後。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "else文がelse文の後ろで使用されました。";
         return "else appeared after else.";
     }
     if (strcmp(msg, "Exceeded the maximum argument count.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Exceeded the maximum argument count.";
         if (strncmp(lang_code, "es", 2) == 0) return "Se ha superado el número máximo de argumentos.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Nombre maximal d'arguments dépassé.";
         if (strncmp(lang_code, "de", 2) == 0) return "Die maximale Anzahl von Argumenten wurde überschritten.";
@@ -128,10 +140,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "超过了最大参数数量。";
         if (strncmp(lang_code, "tw", 2) == 0) return "超過了最大參數數量。";
         if (strncmp(lang_code, "ja", 2) == 0) return "引数が多すぎます。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "S'ha superat el nombre màxim d'arguments.";
         return "Exceeded the maximum argument count.";
     }
     if (strcmp(msg, "Too many anonymous functions.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Too many anonymous functions.";
         if (strncmp(lang_code, "es", 2) == 0) return "Hay demasiadas funciones anónimas.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Trop de fonctions anonymes.";
         if (strncmp(lang_code, "de", 2) == 0) return "Zu viele anonyme Funktionen.";
@@ -141,10 +153,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "匿名函数过多。";
         if (strncmp(lang_code, "tw", 2) == 0) return "匿名函式過多。";
         if (strncmp(lang_code, "ja", 2) == 0) return "無名関数が多すぎます。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "Hi ha massa funcions anònimes.";
         return "Too many anonymous functions.";
     }
     if (strcmp(msg, "Too many local variables.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Too many local variables.";
         if (strncmp(lang_code, "es", 2) == 0) return "Hay demasiadas variables locales.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Trop de variables locales.";
         if (strncmp(lang_code, "de", 2) == 0) return "Zu viele lokale Variablen.";
@@ -158,6 +170,7 @@ const char *noct_gettext(const char *msg)
         return "Too many local variables.";
     }
     if (strcmp(msg, "Too many jumps.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Too many jumps.";
         if (strncmp(lang_code, "es", 2) == 0) return "Hay demasiados saltos.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Trop de sauts.";
         if (strncmp(lang_code, "de", 2) == 0) return "Zu viele Sprünge.";
@@ -171,6 +184,7 @@ const char *noct_gettext(const char *msg)
         return "Too many jumps.";
     }
     if (strcmp(msg, "LIR: Out of memory error.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "LIR: Out of memory error.";
         if (strncmp(lang_code, "es", 2) == 0) return "LIR: No hay suficiente memoria.";
         if (strncmp(lang_code, "fr", 2) == 0) return "LIR: Memoria insuficiente.";
         if (strncmp(lang_code, "de", 2) == 0) return "LIR: Nicht genügend Speicher.";
@@ -180,10 +194,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "LIR: 内存不足。";
         if (strncmp(lang_code, "tw", 2) == 0) return "LIR: 記憶體不足。";
         if (strncmp(lang_code, "ja", 2) == 0) return "LIR: メモリが足りません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "LIR: No hi ha prou memòria.";
         return "LIR: Out of memory error.";
     }
     if (strcmp(msg, "Failed to load bytecode data.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Failed to load bytecode data.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se pudo cargar los datos de bytecode.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Échec du chargement des données de bytecode.";
         if (strncmp(lang_code, "de", 2) == 0) return "Bytecode-Daten konnten nicht geladen werden.";
@@ -193,10 +207,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "加载字节码数据失败。";
         if (strncmp(lang_code, "tw", 2) == 0) return "無法載入位元碼資料。";
         if (strncmp(lang_code, "ja", 2) == 0) return "バイトコードの読み込みに失敗しました。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "No s'han pogut carregar les dades del bytecode.";
         return "Failed to load bytecode data.";
     }
     if (strcmp(msg, "Memory mapping failed.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Memory mapping failed.";
         if (strncmp(lang_code, "es", 2) == 0) return "El mapeo de la memoria ha fallado.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Échec de l'association mémoire.";
         if (strncmp(lang_code, "de", 2) == 0) return "Speicherabbildung fehlgeschlagen.";
@@ -206,10 +220,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "内存映射失败。";
         if (strncmp(lang_code, "tw", 2) == 0) return "記憶體映射失敗。";
         if (strncmp(lang_code, "ja", 2) == 0) return "メモリマップに失敗しました。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "El mapatge de la memòria ha fallat.";
         return "Memory mapping failed.";
     }
     if (strcmp(msg, "Code too big.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Code too big.";
         if (strncmp(lang_code, "es", 2) == 0) return "El código es demasiado grande.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Le code est trop volumineux.";
         if (strncmp(lang_code, "de", 2) == 0) return "Der Code ist zu groß.";
@@ -223,6 +237,7 @@ const char *noct_gettext(const char *msg)
         return "Code too big.";
     }
     if (strcmp(msg, "Branch target not found.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Branch target not found.";
         if (strncmp(lang_code, "es", 2) == 0) return "El destino de la rama no se ha encontrado.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Cible de branchement introuvable.";
         if (strncmp(lang_code, "de", 2) == 0) return "Sprungziel nicht gefunden.";
@@ -232,18 +247,23 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "未找到分支目标。";
         if (strncmp(lang_code, "tw", 2) == 0) return "未找到分支目標。";
         if (strncmp(lang_code, "ja", 2) == 0) return "分岐先がみつかりません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "El destí de la branca no s'ha trobat.";
         return "Branch target not found.";
     }
     if (strcmp(msg, "Failed to load bytecode.") == 0) {
-        if (strncmp(lang_code, "ja", 2) == 0) return "バイトコードの読み込みに失敗しました。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "No s'ha pogut carregar el bytecode.";
+        if (strncmp(lang_code, "en", 2) == 0) return "Failed to load bytecode.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se ha podido cargar el bytecode.";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Échec du chargement du bytecode.";
         if (strncmp(lang_code, "de", 2) == 0) return "Bytecode konnte nicht geladen werden.";
         if (strncmp(lang_code, "it", 2) == 0) return "Impossibile caricare il bytecode.";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Не удалось загрузить байт-код.";
+        if (strncmp(lang_code, "el", 2) == 0) return "Αποτυχία φόρτωσης του bytecode.";
+        if (strncmp(lang_code, "zh", 2) == 0) return "字节码加载失败。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "位元組碼載入失敗。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "バイトコードの読み込みに失敗しました。";
         return "Failed to load bytecode.";
     }
     if (strcmp(msg, "Cannot find function %s.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Cannot find function %s.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se ha encontrado la función %s.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Impossible de trouver la fonction %s.";
         if (strncmp(lang_code, "de", 2) == 0) return "Funktion %s nicht gefunden.";
@@ -253,10 +273,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "无法找到函数 %s。";
         if (strncmp(lang_code, "tw", 2) == 0) return "無法找到函式 %s。";
         if (strncmp(lang_code, "ja", 2) == 0) return "関数%sがみつかりません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "No s'ha trobat la funció %s.";
         return "Cannot find function %s.";
     }
     if (strcmp(msg, "Not an array.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Not an array.";
         if (strncmp(lang_code, "es", 2) == 0) return "No es un array.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Ce n'est pas un tableau.";
         if (strncmp(lang_code, "de", 2) == 0) return "Kein Array.";
@@ -266,10 +286,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "不是数组。";
         if (strncmp(lang_code, "tw", 2) == 0) return "不是陣列。";
         if (strncmp(lang_code, "ja", 2) == 0) return "配列ではありません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "No és un array.";
         return "Not an array.";
     }
     if (strcmp(msg, "Array index %d is out-of-range.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Array index %d is out-of-range.";
         if (strncmp(lang_code, "es", 2) == 0) return "El índice %d del array se encuentra fuera de rango.";
         if (strncmp(lang_code, "fr", 2) == 0) return "L'index de tableau %d est hors de portée.";
         if (strncmp(lang_code, "de", 2) == 0) return "Array-Index %d ist außerhalb des gültigen Bereichs.";
@@ -279,13 +299,23 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "数组索引 %d 超出范围。";
         if (strncmp(lang_code, "tw", 2) == 0) return "陣列索引 %d 超出範圍。";
         if (strncmp(lang_code, "ja", 2) == 0) return "配列の添字 %d は範囲外です。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "L'índex %d de l'array es troba fora del rang.";
         return "Array index %d is out-of-range.";
     }
     if (strcmp(msg, "Dictionary index %d is out-of-range.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Dictionary index %d is out-of-range.";
+        if (strncmp(lang_code, "es", 2) == 0) return "El índice del diccionario %d está fuera de rango.";
+        if (strncmp(lang_code, "fr", 2) == 0) return "L'index du dictionnaire %d est hors de portée.";
+        if (strncmp(lang_code, "de", 2) == 0) return "Wörterbuch-Index %d ist außerhalb des Bereichs.";
+        if (strncmp(lang_code, "it", 2) == 0) return "L'indice del dizionario %d è fuori intervallo.";
+        if (strncmp(lang_code, "el", 2) == 0) return "Ο δείκτης λεξικού %d είναι εκτός ορίων.";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Индекс словаря %d вне диапазона.";
+        if (strncmp(lang_code, "zh", 2) == 0) return "字典索引 %d 超出范围。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "字典索引 %d 超出範圍。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "辞書のインデックス %d は範囲外です。";
         return "Dictionary index %d is out-of-range.";
     }
     if (strcmp(msg, "Dictionary key \"%s\" not found.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Dictionary key \"%s\" not found.";
         if (strncmp(lang_code, "es", 2) == 0) return "La llave \"%s\" no se encontró en el diccionario.";
         if (strncmp(lang_code, "fr", 2) == 0) return "La clé \"%s\" du dictionnaire est introuvable.";
         if (strncmp(lang_code, "de", 2) == 0) return "Schlüssel \"%s\" im Dictionary nicht gefunden.";
@@ -295,10 +325,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "未找到字典键 \"%s\"。";
         if (strncmp(lang_code, "tw", 2) == 0) return "未找到字典鍵 \"%s\"。";
         if (strncmp(lang_code, "ja", 2) == 0) return "辞書のキー \"%s\" がみつかりません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "La clau \"%s\" del diccionari no s'ha trobat.";
         return "Dictionary key \"%s\" not found.";
     }
     if (strcmp(msg, "Local variable \"%s\" not found.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Local variable \"%s\" not found.";
         if (strncmp(lang_code, "es", 2) == 0) return "La variable local \"%s\" no se ha encontrado.";
         if (strncmp(lang_code, "fr", 2) == 0) return "La variable locale \"%s\" est introuvable.";
         if (strncmp(lang_code, "de", 2) == 0) return "Lokale Variable \"%s\" nicht gefunden.";
@@ -308,10 +338,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "未找到局部变量 \"%s\"。";
         if (strncmp(lang_code, "tw", 2) == 0) return "未找到區域變數 \"%s\"。";
         if (strncmp(lang_code, "ja", 2) == 0) return "ローカル変数 \"%s\" がみつかりません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "La variable local \"%s\" no s'ha trobat.";
         return "Local variable \"%s\" not found.";
     }
     if (strcmp(msg, "Global variable \"%s\" not found.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Global variable \"%s\" not found.";
         if (strncmp(lang_code, "es", 2) == 0) return "La variable global \"%s\" no se ha encontrado.";
         if (strncmp(lang_code, "fr", 2) == 0) return "La variable globale \"%s\" est introuvable.";
         if (strncmp(lang_code, "de", 2) == 0) return "Globale Variable \"%s\" nicht gefunden.";
@@ -321,10 +351,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "未找到全局变量 \"%s\"。";
         if (strncmp(lang_code, "tw", 2) == 0) return "未找到全域變數 \"%s\"。";
         if (strncmp(lang_code, "ja", 2) == 0) return "グローバル変数 \"%s\" がみつかりません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "La variable global \"%s\" no s'ha trobat.";
         return "Global variable \"%s\" not found.";
     }
     if (strcmp(msg, "Value is not a number.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Value is not a number.";
         if (strncmp(lang_code, "es", 2) == 0) return "El valor no es un número.";
         if (strncmp(lang_code, "fr", 2) == 0) return "La valeur n'est pas un nombre.";
         if (strncmp(lang_code, "de", 2) == 0) return "Wert ist keine Zahl.";
@@ -334,10 +364,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "值不是数字。";
         if (strncmp(lang_code, "tw", 2) == 0) return "值不是數字。";
         if (strncmp(lang_code, "ja", 2) == 0) return "値が数ではありません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "El valor no és un número.";
         return "Value is not a number.";
     }
     if (strcmp(msg, "Value is not an integer.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Value is not an integer.";
         if (strncmp(lang_code, "es", 2) == 0) return "El valor no es un entero.";
         if (strncmp(lang_code, "fr", 2) == 0) return "La valeur n'est pas un entier.";
         if (strncmp(lang_code, "de", 2) == 0) return "Wert ist keine ganze Zahl.";
@@ -347,18 +377,23 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "值不是整数。";
         if (strncmp(lang_code, "tw", 2) == 0) return "值不是整數。";
         if (strncmp(lang_code, "ja", 2) == 0) return "値が整数ではありません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "El valor no és un enter.";
         return "Value is not an integer.";
     }
     if (strcmp(msg, "Value is not a string.") == 0) {
-        if (strncmp(lang_code, "ja", 2) == 0) return "値が文字列ではありません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "El valor no és un string.";
+        if (strncmp(lang_code, "en", 2) == 0) return "Value is not a string.";
         if (strncmp(lang_code, "es", 2) == 0) return "El valor no es un string.";
+        if (strncmp(lang_code, "fr", 2) == 0) return "La valeur n'est pas une chaîne de caractères.";
         if (strncmp(lang_code, "de", 2) == 0) return "Wert ist kein String.";
         if (strncmp(lang_code, "it", 2) == 0) return "Il valore non è un string.";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Значение не является строкой.";
+        if (strncmp(lang_code, "el", 2) == 0) return "Η τιμή δεν είναι συμβολοσειρά.";
+        if (strncmp(lang_code, "zh", 2) == 0) return "值不是字符串。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "值不是字串。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "値が文字列ではありません。";
         return "Value is not a string.";
     }
     if (strcmp(msg, "Value is not a number or a string.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Value is not a number or a string.";
         if (strncmp(lang_code, "es", 2) == 0) return "El valor no es un número ni un string.";
         if (strncmp(lang_code, "fr", 2) == 0) return "La valeur n'est ni un nombre ni une chaîne.";
         if (strncmp(lang_code, "de", 2) == 0) return "Wert ist weder eine Zahl noch ein String.";
@@ -368,10 +403,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "值不是数字或字符串。";
         if (strncmp(lang_code, "tw", 2) == 0) return "值不是數字或字串。";
         if (strncmp(lang_code, "ja", 2) == 0) return "値が数か文字列ではありません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "El valor no és un número ni un string.";
         return "Value is not a number or a string.";
     }
     if (strcmp(msg, "Division by zero.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Division by zero.";
         if (strncmp(lang_code, "es", 2) == 0) return "División por cero.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Division par zéro.";
         if (strncmp(lang_code, "de", 2) == 0) return "Division durch Null.";
@@ -381,10 +416,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "被零除。";
         if (strncmp(lang_code, "tw", 2) == 0) return "被零除。";
         if (strncmp(lang_code, "ja", 2) == 0) return "ゼロによる除算です。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "Divisió per zero.";
         return "Division by zero.";
     }
     if (strcmp(msg, "Subscript not an integer.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Subscript not an integer.";
         if (strncmp(lang_code, "es", 2) == 0) return "El subíndice no es un entero.";
         if (strncmp(lang_code, "fr", 2) == 0) return "L'indice n'est pas un entier.";
         if (strncmp(lang_code, "de", 2) == 0) return "Der Index ist keine ganze Zahl.";
@@ -394,10 +429,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "下标不是整数";
         if (strncmp(lang_code, "tw", 2) == 0) return "下標不是整數。";
         if (strncmp(lang_code, "ja", 2) == 0) return "添字が整数ではありません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "El subíndex no és un enter.";
         return "Subscript not an integer.";
     }
     if (strcmp(msg, "Not an array or a dictionary.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Not an array or a dictionary.";
         if (strncmp(lang_code, "es", 2) == 0) return "No es un array ni un diccionario.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Ce n'est ni un tableau ni un dictionnaire.";
         if (strncmp(lang_code, "de", 2) == 0) return "Weder ein Array noch ein Dictionary.";
@@ -407,10 +442,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "不是数组或字典。";
         if (strncmp(lang_code, "tw", 2) == 0) return "不是陣列或字典。";
         if (strncmp(lang_code, "ja", 2) == 0) return "配列か辞書ではありません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "No és un array ni un diccionari.";
         return "Not an array or a dictionary.";
     }
     if (strcmp(msg, "Subscript not a string.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Subscript not a string.";
         if (strncmp(lang_code, "es", 2) == 0) return "El subíndice no es un string.";
         if (strncmp(lang_code, "fr", 2) == 0) return "L'indice n'est pas une chaîne.";
         if (strncmp(lang_code, "de", 2) == 0) return "Der Index ist kein String.";
@@ -420,10 +455,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "下标不是字符串。";
         if (strncmp(lang_code, "tw", 2) == 0) return "下標不是字串。";
         if (strncmp(lang_code, "ja", 2) == 0) return "添字が文字列ではありません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "El subíndex no és un string.";
         return "Subscript not a string.";
     }
     if (strcmp(msg, "Value is not a string, an array, or a dictionary.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Value is not a string, an array, or a dictionary.";
         if (strncmp(lang_code, "es", 2) == 0) return "El valor no es un string, un array ni un diccionario.";
         if (strncmp(lang_code, "fr", 2) == 0) return "La valeur n'est ni une chaîne, ni un tableau, ni un dictionnaire.";
         if (strncmp(lang_code, "de", 2) == 0) return "Wert ist weder ein String, noch ein Array noch ein Dictionary.";
@@ -433,10 +468,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "值不是字符串、数组或字典。";
         if (strncmp(lang_code, "tw", 2) == 0) return "值不是字串、陣列或字典。";
         if (strncmp(lang_code, "ja", 2) == 0) return "値が文字列、配列、辞書ではありません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "El valor no és un string, un array ni un diccionari.";
         return "Value is not a string, an array, or a dictionary.";
     }
     if (strcmp(msg, "Not a dictionary.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Not a dictionary.";
         if (strncmp(lang_code, "es", 2) == 0) return "No es un diccionario.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Ce n'est pas un dictionnaire.";
         if (strncmp(lang_code, "de", 2) == 0) return "Kein Dictionary.";
@@ -450,6 +485,7 @@ const char *noct_gettext(const char *msg)
         return "Not a dictionary.";
     }
     if (strcmp(msg, "Dictionary index out-of-range.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Dictionary index out-of-range.";
         if (strncmp(lang_code, "es", 2) == 0) return "El índice del diccionario está fuera de rango.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Indice du dictionnaire hors de portée.";
         if (strncmp(lang_code, "de", 2) == 0) return "Dictionary-Index außerhalb des gültigen Bereichs.";
@@ -459,10 +495,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "字典索引超出范围。";
         if (strncmp(lang_code, "tw", 2) == 0) return "字典索引超出範圍。";
         if (strncmp(lang_code, "ja", 2) == 0) return "辞書のインデックスが範囲外です。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "L'índex del diccionari està fora de rang.";
         return "Dictionary index out-of-range.";
     }
     if (strcmp(msg, "Symbol \"%s\" not found.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Symbol \"%s\" not found.";
         if (strncmp(lang_code, "es", 2) == 0) return "El símbolo \"%s\" no se ha encontrado.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Le symbole \"%s\" est introuvable.";
         if (strncmp(lang_code, "de", 2) == 0) return "Symbol \"%s\" nicht gefunden.";
@@ -472,10 +508,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "未找到符号 \"%s\"。";
         if (strncmp(lang_code, "tw", 2) == 0) return "未找到符號 \"%s\"。";
         if (strncmp(lang_code, "ja", 2) == 0) return "シンボル \"%s\" がみつかりません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "El símbol \"%s\" no s'ha trobat.";
         return "Symbol \"%s\" not found.";
     }
     if (strcmp(msg, "%s(): Function arguments not match.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "%s(): Function arguments not match.";
         if (strncmp(lang_code, "es", 2) == 0) return "%s(): Los argumentos de la función no coinciden.";
         if (strncmp(lang_code, "fr", 2) == 0) return "%s(): Les arguments de la fonction ne correspondent pas.";
         if (strncmp(lang_code, "de", 2) == 0) return "%s(): Die Funktionsargumente stimmen nicht überein.";
@@ -485,10 +521,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "%s(): 函数参数不匹配。";
         if (strncmp(lang_code, "tw", 2) == 0) return "%s(): 函式參數不相符。";
         if (strncmp(lang_code, "ja", 2) == 0) return "%s(): 関数の引数が一致しません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "%s(): Els arguments de la funció no coincideixen.";
         return "%s(): Function arguments not match.";
     }
     if (strcmp(msg, "Element %d is not an integer.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Element %d is not an integer.";
         if (strncmp(lang_code, "es", 2) == 0) return "El elemento %d no es un número entero.";
         if (strncmp(lang_code, "fr", 2) == 0) return "L'élément %d n'est pas un entier.";
         if (strncmp(lang_code, "de", 2) == 0) return "Element %d ist keine ganze Zahl.";
@@ -498,10 +534,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "第 %d 个元素不是整数。";
         if (strncmp(lang_code, "tw", 2) == 0) return "第 %d 個元素不是整數。";
         if (strncmp(lang_code, "ja", 2) == 0) return "%d 番目の要素が整数ではありません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "L'element %d no és un nombre enter.";
         return "Element %d is not an integer.";
     }
     if (strcmp(msg, "Element %d is not a float.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Element %d is not a float.";
         if (strncmp(lang_code, "es", 2) == 0) return "El elemento %d no es un número decimal.";
         if (strncmp(lang_code, "fr", 2) == 0) return "L'élément %d n'est pas un nombre à virgule flottante.";
         if (strncmp(lang_code, "de", 2) == 0) return "Element %d ist keine Gleitkommazahl.";
@@ -511,10 +547,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "第 %d 个元素不是浮点数。";
         if (strncmp(lang_code, "tw", 2) == 0) return "第 %d 個元素不是浮點數。";
         if (strncmp(lang_code, "ja", 2) == 0) return "%d 番目の要素が浮動小数点数ではありません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "L'element %d no és un nombre amb coma flotant.";
         return "Element %d is not a float.";
     }
     if (strcmp(msg, "Element %d is not a string.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Element %d is not a string.";
         if (strncmp(lang_code, "es", 2) == 0) return "El elemento %d no es una cadena.";
         if (strncmp(lang_code, "fr", 2) == 0) return "L'élément %d n'est pas une chaîne de caractères.";
         if (strncmp(lang_code, "de", 2) == 0) return "Element %d ist keine Zeichenkette.";
@@ -524,10 +560,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "第 %d 个元素不是字符串。";
         if (strncmp(lang_code, "tw", 2) == 0) return "第 %d 個元素不是字串。";
         if (strncmp(lang_code, "ja", 2) == 0) return "%d 番目の要素が文字列ではありません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "L'element %d no és una cadena de caràcters.";
         return "Element %d is not a string.";
     }
     if (strcmp(msg, "Element %d is not an array.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Element %d is not an array.";
         if (strncmp(lang_code, "es", 2) == 0) return "El elemento %d no es una matriz.";
         if (strncmp(lang_code, "fr", 2) == 0) return "L'élément %d n'est pas un tableau.";
         if (strncmp(lang_code, "de", 2) == 0) return "Element %d ist kein Array.";
@@ -537,10 +573,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "第 %d 个元素不是数组。";
         if (strncmp(lang_code, "tw", 2) == 0) return "第 %d 個元素不是陣列。";
         if (strncmp(lang_code, "ja", 2) == 0) return "%d 番目の要素が配列ではありません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "L'element %d no és una matriu.";
         return "Element %d is not an array.";
     }
     if (strcmp(msg, "Element %d is not a dictionary.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Element %d is not a dictionary.";
         if (strncmp(lang_code, "es", 2) == 0) return "El elemento %d no es un diccionario.";
         if (strncmp(lang_code, "fr", 2) == 0) return "L'élément %d n'est pas un dictionnaire.";
         if (strncmp(lang_code, "de", 2) == 0) return "Element %d ist kein Dictionary.";
@@ -550,10 +586,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "第 %d 个元素不是字典。";
         if (strncmp(lang_code, "tw", 2) == 0) return "第 %d 個元素不是字典。";
         if (strncmp(lang_code, "ja", 2) == 0) return "%d 番目の要素が辞書ではありません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "L'element %d no és un diccionari.";
         return "Element %d is not a dictionary.";
     }
     if (strcmp(msg, "Element %d is not a function.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Element %d is not a function.";
         if (strncmp(lang_code, "es", 2) == 0) return "El elemento %d no es una función.";
         if (strncmp(lang_code, "fr", 2) == 0) return "L'élément %d n'est pas une fonction.";
         if (strncmp(lang_code, "de", 2) == 0) return "Element %d ist keine Funktion.";
@@ -563,10 +599,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "第 %d 个元素不是函数。";
         if (strncmp(lang_code, "tw", 2) == 0) return "第 %d 個元素不是函式。";
         if (strncmp(lang_code, "ja", 2) == 0) return "%d 番目の要素が関数ではありません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "L'element %d no és una funció.";
         return "Element %d is not a function.";
     }
     if (strcmp(msg, "Value for key %s is not an integer.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Value for key %s is not an integer.";
         if (strncmp(lang_code, "es", 2) == 0) return "El valor de la clave %s no es un número entero.";
         if (strncmp(lang_code, "fr", 2) == 0) return "La valeur associée à la clé %s n'est pas un entier.";
         if (strncmp(lang_code, "de", 2) == 0) return "Der Wert für den Schlüssel %s ist keine ganze Zahl.";
@@ -580,6 +616,7 @@ const char *noct_gettext(const char *msg)
         return "Value for key %s is not an integer.";
     }
     if (strcmp(msg, "Value for key %s is not a float.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Value for key %s is not a float.";
         if (strncmp(lang_code, "es", 2) == 0) return "El valor de la clave %s no es un número decimal.";
         if (strncmp(lang_code, "fr", 2) == 0) return "La valeur associée à la clé %s n'est pas un nombre à virgule flottante.";
         if (strncmp(lang_code, "de", 2) == 0) return "Der Wert für den Schlüssel %s ist keine Gleitkommazahl.";
@@ -593,6 +630,7 @@ const char *noct_gettext(const char *msg)
         return "Value for key %s is not a float.";
     }
     if (strcmp(msg, "Value for key %s is not a string.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Value for key %s is not a string.";
         if (strncmp(lang_code, "es", 2) == 0) return "El valor de la clave %s no es una cadena.";
         if (strncmp(lang_code, "fr", 2) == 0) return "La valeur associée à la clé %s n'est pas une chaîne de caractères.";
         if (strncmp(lang_code, "de", 2) == 0) return "Der Wert für den Schlüssel %s ist keine Zeichenkette.";
@@ -602,10 +640,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "键 %s 对应的值不是字符串。";
         if (strncmp(lang_code, "tw", 2) == 0) return "鍵 %s 對應的值不是字串。";
         if (strncmp(lang_code, "ja", 2) == 0) return "キー %s に対応する値が文字列ではありません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "El valor per a la clau %s no és una cadena de caràcters.";
         return "Value for key %s is not a string.";
     }
     if (strcmp(msg, "Value for key %s is not an array.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Value for key %s is not an array.";
         if (strncmp(lang_code, "es", 2) == 0) return "El valor de la clave %s no es una matriz.";
         if (strncmp(lang_code, "fr", 2) == 0) return "La valeur associée à la clé %s n'est pas un tableau.";
         if (strncmp(lang_code, "de", 2) == 0) return "Der Wert für den Schlüssel %s ist kein Array.";
@@ -615,10 +653,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "键 %s 对应的值不是数组。";
         if (strncmp(lang_code, "tw", 2) == 0) return "鍵 %s 對應的值不是陣列。";
         if (strncmp(lang_code, "ja", 2) == 0) return "キー %s に対応する値が配列ではありません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "El valor per a la clau %s no és una matriu.";
         return "Value for key %s is not an array.";
     }
     if (strcmp(msg, "Value for key %s is not a dictionary.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Value for key %s is not a dictionary.";
         if (strncmp(lang_code, "es", 2) == 0) return "El valor de la clave %s no es un diccionario.";
         if (strncmp(lang_code, "fr", 2) == 0) return "La valeur associée à la clé %s n'est pas un dictionnaire.";
         if (strncmp(lang_code, "de", 2) == 0) return "Der Wert für den Schlüssel %s ist kein Dictionary.";
@@ -628,10 +666,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "键 %s 对应的值不是字典。";
         if (strncmp(lang_code, "tw", 2) == 0) return "鍵 %s 對應的值不是字典。";
         if (strncmp(lang_code, "ja", 2) == 0) return "キー %s に対応する値が辞書ではありません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "El valor per a la clau %s no és un diccionari.";
         return "Value for key %s is not a dictionary.";
     }
     if (strcmp(msg, "Value for key %s is not a function.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Value for key %s is not a function.";
         if (strncmp(lang_code, "es", 2) == 0) return "El valor de la clave %s no es una función.";
         if (strncmp(lang_code, "fr", 2) == 0) return "La valeur associée à la clé %s n'est pas une fonction.";
         if (strncmp(lang_code, "de", 2) == 0) return "Der Wert für den Schlüssel %s ist keine Funktion.";
@@ -641,10 +679,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "键 %s 对应的值不是函数。";
         if (strncmp(lang_code, "tw", 2) == 0) return "鍵 %s 對應的值不是函式。";
         if (strncmp(lang_code, "ja", 2) == 0) return "キー %s に対応する値が関数ではありません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "El valor per a la clau %s no és una funció.";
         return "Value for key %s is not a function.";
     }
     if (strcmp(msg, "Argument (%d: %s) not an integer.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Argument (%d: %s) not an integer.";
         if (strncmp(lang_code, "es", 2) == 0) return "Argumento (%d: %s) no es un número entero.";
         if (strncmp(lang_code, "fr", 2) == 0) return "L'argument (%d : %s) n'est pas un entier.";
         if (strncmp(lang_code, "de", 2) == 0) return "Argument (%d: %s) ist keine ganze Zahl.";
@@ -654,10 +692,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "参数 (%d: %s) 不是整数。";
         if (strncmp(lang_code, "tw", 2) == 0) return "參數 (%d: %s) 不是整數。";
         if (strncmp(lang_code, "ja", 2) == 0) return "引数 (%d: %s) が整数ではありません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "L'argument (%d: %s) no és un nombre enter.";
         return "Argument (%d: %s) not an integer.";
     }
     if (strcmp(msg, "Argument (%d: %s) not a float.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Argument (%d: %s) not a float.";
         if (strncmp(lang_code, "es", 2) == 0) return "Argumento (%d: %s) no es un número decimal.";
         if (strncmp(lang_code, "fr", 2) == 0) return "L'argument (%d : %s) n'est pas un nombre à virgule flottante.";
         if (strncmp(lang_code, "de", 2) == 0) return "Argument (%d: %s) ist keine Gleitkommazahl.";
@@ -667,10 +705,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "参数 (%d: %s) 不是浮点数。";
         if (strncmp(lang_code, "tw", 2) == 0) return "參數 (%d: %s) 不是浮點數。";
         if (strncmp(lang_code, "ja", 2) == 0) return "引数 (%d: %s) が浮動小数点数ではありません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "L'argument (%d: %s) no és un nombre amb coma flotant.";
         return "Argument (%d: %s) not a float.";
     }
     if (strcmp(msg, "Argument (%d: %s) not a string.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Argument (%d: %s) not a string.";
         if (strncmp(lang_code, "es", 2) == 0) return "Argumento (%d: %s) no es una cadena.";
         if (strncmp(lang_code, "fr", 2) == 0) return "L'argument (%d : %s) n'est pas une chaîne de caractères.";
         if (strncmp(lang_code, "de", 2) == 0) return "Argument (%d: %s) ist keine Zeichenkette.";
@@ -684,6 +722,7 @@ const char *noct_gettext(const char *msg)
         return "Argument (%d: %s) not a string.";
     }
     if (strcmp(msg, "Argument (%d: %s) is not an array.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Argument (%d: %s) is not an array.";
         if (strncmp(lang_code, "es", 2) == 0) return "Argumento (%d: %s) no es una matriz.";
         if (strncmp(lang_code, "fr", 2) == 0) return "L'argument (%d : %s) n'est pas un tableau.";
         if (strncmp(lang_code, "de", 2) == 0) return "Argument (%d: %s) ist kein Array.";
@@ -693,10 +732,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "参数 (%d: %s) 不是数组。";
         if (strncmp(lang_code, "tw", 2) == 0) return "參數 (%d: %s) 不是陣列。";
         if (strncmp(lang_code, "ja", 2) == 0) return "引数 (%d: %s) が配列ではありません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "	L'argument (%d: %s) no és una matriu.";
         return "Argument (%d: %s) is not an array.";
     }
     if (strcmp(msg, "Argument (%d: %s) is not a dictionary.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Argument (%d: %s) is not a dictionary.";
         if (strncmp(lang_code, "es", 2) == 0) return "Argumento (%d: %s) no es un diccionario.";
         if (strncmp(lang_code, "fr", 2) == 0) return "L'argument (%d : %s) n'est pas un dictionnaire.";
         if (strncmp(lang_code, "de", 2) == 0) return "Argument (%d: %s) ist kein Dictionary.";
@@ -706,10 +745,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "参数 (%d: %s) 不是字典。";
         if (strncmp(lang_code, "tw", 2) == 0) return "參數 (%d: %s) 不是字典。";
         if (strncmp(lang_code, "ja", 2) == 0) return "引数 (%d: %s) が辞書ではありません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "L'argument (%d: %s) no és un diccionari.";
         return "Argument (%d: %s) is not a dictionary.";
     }
     if (strcmp(msg, "Not a function.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Not a function.";
         if (strncmp(lang_code, "es", 2) == 0) return "No es una función.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Ce n'est pas une fonction.";
         if (strncmp(lang_code, "de", 2) == 0) return "Keine Funktion.";
@@ -719,13 +758,23 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "不是函数。";
         if (strncmp(lang_code, "tw", 2) == 0) return "不是函式。";
         if (strncmp(lang_code, "ja", 2) == 0) return "関数ではありません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "No és una funció.";
         return "Not a function.";
     }
     if (strcmp(msg, "Empty array.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Empty array.";
+        if (strncmp(lang_code, "es", 2) == 0) return "Arreglo vacío.";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Tableau vide.";
+        if (strncmp(lang_code, "de", 2) == 0) return "Leeres Array.";
+        if (strncmp(lang_code, "it", 2) == 0) return "Array vuoto.";
+        if (strncmp(lang_code, "el", 2) == 0) return "Κενός πίνακας.";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Пустой массив.";
+        if (strncmp(lang_code, "zh", 2) == 0) return "空数组。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "空陣列。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "配列が空です。";
         return "Empty array.";
     }
     if (strcmp(msg, "Out of memory.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Out of memory.";
         if (strncmp(lang_code, "es", 2) == 0) return "Memoria insuficiente.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Mémoire insuffisante.";
         if (strncmp(lang_code, "de", 2) == 0) return "Nicht genügend Speicher.";
@@ -735,29 +784,49 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "内存不足。";
         if (strncmp(lang_code, "tw", 2) == 0) return "記憶體不足。";
         if (strncmp(lang_code, "ja", 2) == 0) return "メモリが足りません。";
-        if (strncmp(lang_code, "ca", 2) == 0) return "Memòria insuficient.";
         return "Out of memory.";
     }
     if (strcmp(msg, "Too many pinned global variables.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Too many pinned global variables.";
+        if (strncmp(lang_code, "es", 2) == 0) return "Demasiadas variables globales fijadas.";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Trop de variables globales epinglees.";
+        if (strncmp(lang_code, "de", 2) == 0) return "Zu viele angepinnte globale Variablen.";
+        if (strncmp(lang_code, "it", 2) == 0) return "Troppe variabili globali bloccate.";
+        if (strncmp(lang_code, "el", 2) == 0) return "Πάρα πολλές καρφιτσωμένες καθολικές μεταβλητές.";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Слишком много закрепленных глобальных переменных.";
+        if (strncmp(lang_code, "zh", 2) == 0) return "固定全局变量过多。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "固定全域變數過多。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "固定されたグローバル変数が多すぎます。";
         return "Too many pinned global variables.";
     }
     if (strcmp(msg, "Too many pinned local variables.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Too many pinned local variables.";
+        if (strncmp(lang_code, "es", 2) == 0) return "Demasiadas variables locales fijadas.";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Trop de variables locales epinglees.";
+        if (strncmp(lang_code, "de", 2) == 0) return "Zu viele angepinnte lokale Variablen.";
+        if (strncmp(lang_code, "it", 2) == 0) return "Troppe variabili locali bloccate.";
+        if (strncmp(lang_code, "el", 2) == 0) return "Πάρα πολλές καρφιτσωμένες τοπικές μεταβλητές.";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Слишком много закрепленных локальных переменных.";
+        if (strncmp(lang_code, "zh", 2) == 0) return "固定局部变量过多。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "固定區域變數過多。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "固定されたローカル変数が多すぎます。";
         return "Too many pinned local variables.";
     }
     if (strcmp(msg, "Cannot open file %s.\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Cannot open file %s.\n";
         if (strncmp(lang_code, "es", 2) == 0) return "No se puede abrir el archivo %s.\n";
         if (strncmp(lang_code, "fr", 2) == 0) return "Impossible d'ouvrir le fichier %s.\n";
         if (strncmp(lang_code, "de", 2) == 0) return "Datei %s kann nicht geöffnet werden.\n";
         if (strncmp(lang_code, "it", 2) == 0) return "Impossibile aprire il file %s.\n";
-        if (strncmp(lang_code, "el", 2) == 0) return "Δεν είναι δυνατό το άνοιγμα του αρχείου %s.";
+        if (strncmp(lang_code, "el", 2) == 0) return "Δεν είναι δυνατό το άνοιγμα του αρχείου %s.\n";
         if (strncmp(lang_code, "ru", 2) == 0) return "Не удаётся открыть файл %s.\n";
         if (strncmp(lang_code, "zh", 2) == 0) return "无法打开文件 %s。\n";
         if (strncmp(lang_code, "tw", 2) == 0) return "無法開啟檔案 %s。\n";
         if (strncmp(lang_code, "ja", 2) == 0) return "ファイル%sを開けません。\n";
-        if (strncmp(lang_code, "ca", 2) == 0) return "No es pot obrir el fitxer %s.\n";
         return "Cannot open file %s.\n";
     }
     if (strcmp(msg, "Cannot read file %s.\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Cannot read file %s.\n";
         if (strncmp(lang_code, "es", 2) == 0) return "No se puede leer el archivo %s.\n";
         if (strncmp(lang_code, "fr", 2) == 0) return "Impossible de lire le fichier %s.\n";
         if (strncmp(lang_code, "de", 2) == 0) return "Datei %s kann nicht gelesen werden.\n";
@@ -767,10 +836,11 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "无法读取文件 %s。\n";
         if (strncmp(lang_code, "tw", 2) == 0) return "無法讀取檔案 %s。\n";
         if (strncmp(lang_code, "ja", 2) == 0) return "ファイル%sを読み込めません。\n";
-        if (strncmp(lang_code, "ca", 2) == 0) return "No es pot llegir el fitxer %s.\n";
         return "Cannot read file %s.\n";
     }
     if (strcmp(msg, "Error: %s: %d: %s\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Error: %s: %d: %s\n";
+        if (strncmp(lang_code, "es", 2) == 0) return "Error: %s: %d: %s\n";
         if (strncmp(lang_code, "fr", 2) == 0) return "Erreur: %s: %d: %s\n";
         if (strncmp(lang_code, "de", 2) == 0) return "Fehler: %s: %d: %s\n";
         if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s: %d: %s\n";
@@ -782,6 +852,7 @@ const char *noct_gettext(const char *msg)
         return "Error: %s: %d: %s\n";
     }
     if (strcmp(msg, "Adding file %s\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Adding file %s\n";
         if (strncmp(lang_code, "es", 2) == 0) return "Añadiendo el archivo %s\n";
         if (strncmp(lang_code, "fr", 2) == 0) return "Ajout du fichier %s\n";
         if (strncmp(lang_code, "de", 2) == 0) return "Datei %s wird hinzugefügt\n";
@@ -791,10 +862,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "正在添加文件 %s\n";
         if (strncmp(lang_code, "tw", 2) == 0) return "正在新增檔案 %s\n";
         if (strncmp(lang_code, "ja", 2) == 0) return "ファイル%sを追加しています。\n";
-        if (strncmp(lang_code, "ca", 2) == 0) return "S'està afegint el fitxer %s\n";
         return "Adding file %s\n";
     }
     if (strcmp(msg, "Cannot find %s.\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Cannot find %s.\n";
         if (strncmp(lang_code, "es", 2) == 0) return "No se puede encontrar %s.\n";
         if (strncmp(lang_code, "fr", 2) == 0) return "Impossible de trouver %s.\n";
         if (strncmp(lang_code, "de", 2) == 0) return "%s konnte nicht gefunden werden.\n";
@@ -808,6 +879,7 @@ const char *noct_gettext(const char *msg)
         return "Cannot find %s.\n";
     }
     if (strcmp(msg, "Searching directory %s.\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Searching directory %s.\n";
         if (strncmp(lang_code, "es", 2) == 0) return "Buscando en el directorio %s.\n";
         if (strncmp(lang_code, "fr", 2) == 0) return "Recherche dans le répertoire %s.\n";
         if (strncmp(lang_code, "de", 2) == 0) return "Durchsuche Verzeichnis %s.\n";
@@ -817,10 +889,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "正在搜索目录 %s。\n";
         if (strncmp(lang_code, "tw", 2) == 0) return "正在搜尋目錄 %s。\n";
         if (strncmp(lang_code, "ja", 2) == 0) return "ディレクトリ%sを検索中です。\n";
-        if (strncmp(lang_code, "ca", 2) == 0) return "S'està cercant el directori %s.\n";
         return "Searching directory %s.\n";
     }
     if (strcmp(msg, "Skipping empty directory %s.\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Skipping empty directory %s.\n";
         if (strncmp(lang_code, "es", 2) == 0) return "Omitiendo el directorio vacío %s.\n";
         if (strncmp(lang_code, "fr", 2) == 0) return "Répertoire vide ignoré : %s.\n";
         if (strncmp(lang_code, "de", 2) == 0) return "Leeres Verzeichnis %s wird übersprungen.\n";
@@ -830,10 +902,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "跳过空目录 %s。\n";
         if (strncmp(lang_code, "tw", 2) == 0) return "跳過空目錄 %s。\n";
         if (strncmp(lang_code, "ja", 2) == 0) return "空のディレクトリ%sをスキップしています。\n";
-        if (strncmp(lang_code, "ca", 2) == 0) return "S'està ometent el directori buit %s.\n";
         return "Skipping empty directory %s.\n";
     }
     if (strcmp(msg, "Unknown option %s.\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Unknown option %s.\n";
         if (strncmp(lang_code, "es", 2) == 0) return "Opción desconocida %s.\n";
         if (strncmp(lang_code, "fr", 2) == 0) return "Option inconnue : %s.\n";
         if (strncmp(lang_code, "de", 2) == 0) return "Unbekannte Option %s.\n";
@@ -843,10 +915,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "未知选项 %s。\n";
         if (strncmp(lang_code, "tw", 2) == 0) return "未知選項 %s。\n";
         if (strncmp(lang_code, "ja", 2) == 0) return "不明なオプション%s\n";
-        if (strncmp(lang_code, "ca", 2) == 0) return "Opció desconeguda: %s.\n";
         return "Unknown option %s.\n";
     }
     if (strcmp(msg, "Specify a file.\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Specify a file.\n";
         if (strncmp(lang_code, "es", 2) == 0) return "Especifique un archivo.\n";
         if (strncmp(lang_code, "fr", 2) == 0) return "Veuillez spécifier un fichier.\n";
         if (strncmp(lang_code, "de", 2) == 0) return "Bitte eine Datei angeben.\n";
@@ -856,10 +928,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "请指定一个文件。\n";
         if (strncmp(lang_code, "tw", 2) == 0) return "請指定一個檔案。\n";
         if (strncmp(lang_code, "ja", 2) == 0) return "ファイルを指定してください。\n";
-        if (strncmp(lang_code, "ca", 2) == 0) return "Especifiqueu un fitxer.\n";
         return "Specify a file.\n";
     }
     if (strcmp(msg, "%s:%d: Error: %s\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "%s:%d: Error: %s\n";
         if (strncmp(lang_code, "fr", 2) == 0) return "%s:%d: Erreur: %s\n";
         if (strncmp(lang_code, "de", 2) == 0) return "%s:%d: Fehler: %s\n";
         if (strncmp(lang_code, "it", 2) == 0) return "%s:%d: Errore: %s\n";
@@ -871,6 +943,7 @@ const char *noct_gettext(const char *msg)
         return "%s:%d: Error: %s\n";
     }
     if (strcmp(msg, "Out of memory.\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Out of memory.\n";
         if (strncmp(lang_code, "es", 2) == 0) return "Memoria insuficiente.\n";
         if (strncmp(lang_code, "fr", 2) == 0) return "Mémoire insuffisante.\n";
         if (strncmp(lang_code, "de", 2) == 0) return "Nicht genügend Speicher.\n";
@@ -880,10 +953,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "内存不足。\n";
         if (strncmp(lang_code, "tw", 2) == 0) return "記憶體不足。\n";
         if (strncmp(lang_code, "ja", 2) == 0) return "メモリが足りません。\n";
-        if (strncmp(lang_code, "ca", 2) == 0) return "Memòria insuficient.\n";
         return "Out of memory.\n";
     }
     if (strcmp(msg, "Noct Programming Language ") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Noct Programming Language ";
         if (strncmp(lang_code, "es", 2) == 0) return "Lenguaje de programación Noct ";
         if (strncmp(lang_code, "fr", 2) == 0) return "Langage de programmation Noct ";
         if (strncmp(lang_code, "de", 2) == 0) return "Programmiersprache Noct ";
@@ -893,21 +966,23 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "Noct 编程语言 ";
         if (strncmp(lang_code, "tw", 2) == 0) return "Noct 程式語言 ";
         if (strncmp(lang_code, "ja", 2) == 0) return "Noct プログラミング言語 ";
-        if (strncmp(lang_code, "ca", 2) == 0) return "Llenguatge de programació Noct ";
         return "Noct Programming Language ";
     }
     if (strcmp(msg, "Version %s\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Version %s\n";
         if (strncmp(lang_code, "es", 2) == 0) return "Versión %s\n";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Version %s\n";
+        if (strncmp(lang_code, "de", 2) == 0) return "Version %s\n";
         if (strncmp(lang_code, "it", 2) == 0) return "Versione %s\n";
         if (strncmp(lang_code, "el", 2) == 0) return "Έκδοση %s\n";
         if (strncmp(lang_code, "ru", 2) == 0) return "Версия %s\n";
         if (strncmp(lang_code, "zh", 2) == 0) return "版本 %s\n";
         if (strncmp(lang_code, "tw", 2) == 0) return "版本 %s\n";
         if (strncmp(lang_code, "ja", 2) == 0) return "バージョン %s\n";
-        if (strncmp(lang_code, "ca", 2) == 0) return "Versió %s\n";
         return "Version %s\n";
     }
     if (strcmp(msg, "JIT compilation is enabled. Starting the fast VM...\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "JIT compilation is enabled. Starting the fast VM...\n";
         if (strncmp(lang_code, "es", 2) == 0) return "La compilación JIT está activada. Iniciando la máquina virtual rápida...\n";
         if (strncmp(lang_code, "fr", 2) == 0) return "La compilation JIT est activée. Démarrage de la machine virtuelle rapide...\n";
         if (strncmp(lang_code, "de", 2) == 0) return "JIT-Kompilierung ist aktiviert. Starte die schnelle VM...\n";
@@ -917,10 +992,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "JIT 编译已启用。正在启动快速虚拟机…\n";
         if (strncmp(lang_code, "tw", 2) == 0) return "JIT 編譯已啟用。正在啟動快速虛擬機器…\n";
         if (strncmp(lang_code, "ja", 2) == 0) return "JITコンパイルが有効 ... 高速仮想マシン実行を開始します。\n";
-        if (strncmp(lang_code, "ca", 2) == 0) return "La compilació JIT està activada. S'està iniciant la màquina virtual ràpida...\n";
         return "JIT compilation is enabled. Starting the fast VM...\n";
     }
     if (strcmp(msg, "Entering REPL mode.\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Entering REPL mode.\n";
         if (strncmp(lang_code, "es", 2) == 0) return "Entrando en modo REPL.\n";
         if (strncmp(lang_code, "fr", 2) == 0) return "Entrée en mode REPL.\n";
         if (strncmp(lang_code, "de", 2) == 0) return "REPL-Modus wird gestartet.\n";
@@ -930,10 +1005,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "进入 REPL 模式。\n";
         if (strncmp(lang_code, "tw", 2) == 0) return "進入 REPL 模式。\n";
         if (strncmp(lang_code, "ja", 2) == 0) return "REPLモードに入ります。\n";
-        if (strncmp(lang_code, "ca", 2) == 0) return "S'està entrant al mode REPL.\n";
         return "Entering REPL mode.\n";
     }
     if (strcmp(msg, "Usage\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Usage\n";
         if (strncmp(lang_code, "es", 2) == 0) return "Uso\n";
         if (strncmp(lang_code, "fr", 2) == 0) return "Utilisation\n";
         if (strncmp(lang_code, "de", 2) == 0) return "Verwendung\n";
@@ -943,10 +1018,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "用法\n";
         if (strncmp(lang_code, "tw", 2) == 0) return "用法\n";
         if (strncmp(lang_code, "ja", 2) == 0) return "使い方\n";
-        if (strncmp(lang_code, "ca", 2) == 0) return "Ús\n";
         return "Usage\n";
     }
     if (strcmp(msg, "  noct <file>                        ... run a program\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "  noct <file>                        ... run a program\n";
         if (strncmp(lang_code, "es", 2) == 0) return "  noct <file>                        ... ejecutar un programa\n";
         if (strncmp(lang_code, "fr", 2) == 0) return "  noct <file>                        ... exécuter un programme\n";
         if (strncmp(lang_code, "de", 2) == 0) return "  noct <file>                        ... ein Programm ausführen\n";
@@ -956,10 +1031,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "  noct <file>                        ... 运行程序\n";
         if (strncmp(lang_code, "tw", 2) == 0) return "  noct <file>                        ... 執行程式\n";
         if (strncmp(lang_code, "ja", 2) == 0) return "  noct <ファイル>                    ... プログラムを実行します\n";
-        if (strncmp(lang_code, "ca", 2) == 0) return "  noct <file>                        ... executar un programa\n";
         return "  noct <file>                        ... run a program\n";
     }
     if (strcmp(msg, "  noct --compile <files>             ... convert to bytecode files\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "  noct --compile <files>             ... convert to bytecode files\n";
         if (strncmp(lang_code, "es", 2) == 0) return "  noct --compile <files>             ... convertir en archivos de bytecode\n";
         if (strncmp(lang_code, "fr", 2) == 0) return "  noct --compile <files>             ... convertir en fichiers bytecode\n";
         if (strncmp(lang_code, "de", 2) == 0) return "  noct --compile <files>             ... in Bytecode-Dateien umwandeln\n";
@@ -969,10 +1044,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "  noct --compile <files>             ... 转换为字节码文件\n";
         if (strncmp(lang_code, "tw", 2) == 0) return "  noct --compile <files>             ... 轉換為位元組碼檔案\n";
         if (strncmp(lang_code, "ja", 2) == 0) return "  noct --compile <ファイル...>       ... バイトコードに変換します\n";
-        if (strncmp(lang_code, "ca", 2) == 0) return "  noct --compile <files>             ... convertir a fitxers de bytecode\n";
         return "  noct --compile <files>             ... convert to bytecode files\n";
     }
     if (strcmp(msg, "  noct --ansic <out file> <in files> ... convert to a C source file\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "  noct --ansic <out file> <in files> ... convert to a C source file\n";
         if (strncmp(lang_code, "es", 2) == 0) return "  noct --ansic <out file> <in files> ... convertir en un archivo fuente en C\n";
         if (strncmp(lang_code, "fr", 2) == 0) return "  noct --ansic <out file> <in files> ... convertir en un fichier source C\n";
         if (strncmp(lang_code, "de", 2) == 0) return "  noct --ansic <out file> <in files> ... in eine C-Quelldatei umwandeln\n";
@@ -982,10 +1057,10 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "  noct --ansic <out file> <in files> ... 转换为 C 源代码文件\n";
         if (strncmp(lang_code, "tw", 2) == 0) return "  noct --ansic <out file> <in files> ... 轉換為 C 原始碼檔案\n";
         if (strncmp(lang_code, "ja", 2) == 0) return "  noct --ansic <出力> <入力...>      ... Cソースに変換します\n";
-        if (strncmp(lang_code, "ca", 2) == 0) return "  noct --ansic <out file> <in files> ... convertir a un fitxer font en C\n";
         return "  noct --ansic <out file> <in files> ... convert to a C source file\n";
     }
     if (strcmp(msg, "  noct --elisp <out file> <in files> ... convert to an Emacs Lisp source file\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "  noct --elisp <out file> <in files> ... convert to an Emacs Lisp source file\n";
         if (strncmp(lang_code, "es", 2) == 0) return "  noct --elisp <out file> <in files> ... convertir en un archivo fuente Emacs Lisp\n";
         if (strncmp(lang_code, "fr", 2) == 0) return "  noct --elisp <out file> <in files> ... convertir en un fichier source Emacs Lisp\n";
         if (strncmp(lang_code, "de", 2) == 0) return "  noct --elisp <out file> <in files> ... in eine Emacs-Lisp-Quelldatei umwandeln\n";
@@ -995,7 +1070,6 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "  noct --elisp <out file> <in files> ... 转换为 Emacs Lisp 源代码文件\n";
         if (strncmp(lang_code, "tw", 2) == 0) return "  noct --elisp <out file> <in files> ... 轉換為 Emacs Lisp 原始碼檔案\n";
         if (strncmp(lang_code, "ja", 2) == 0) return "  noct --elisp <出力> <入力...>      ... Emacs Lispソースに変換します\n";
-        if (strncmp(lang_code, "ca", 2) == 0) return "  noct --elisp <out file> <in files> ... convertir a un fitxer font Emacs Lisp\n";
         return "  noct --elisp <out file> <in files> ... convert to an Emacs Lisp source file\n";
     }
     return msg;

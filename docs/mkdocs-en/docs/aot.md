@@ -9,12 +9,12 @@ The generated `library.c` file will be compiled with the entire engine source.
 
 ---
 
-## 1. Modify `main.pf`
+## 1. Modify `main.ray`
 
 Because the scripts will be compiled into native code,
 the runtime library loading will be no longer needed.
 
-Open `main.pf` and comment out the `Engine.loadLibrary()` calls.
+Open `main.ray` and comment out the `Engine.loadLibrary()` calls.
 
 Example:
 ```
@@ -22,7 +22,7 @@ Example:
 ```
 
 Please note that do not call `Engine.loadLibrary()` outside the
-`main.pf` file for convenience.
+`main.ray` file for convenience.
 
 ---
 
@@ -42,11 +42,11 @@ library.c
 The generated file contains the compiled script library.
 
 > [!TIPS]
-> Specify all script files in the command line, including `main.pf`.
+> Specify all script files in the command line, including `main.ray`.
 
 Example:
 ```
-playfield-aot main.pf system.pf scenario1.pf scenario2.pf
+playfield-aot main.ray system.ray scenario1.ray scenario2.ray
 ```
 
 --

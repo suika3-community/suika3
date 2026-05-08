@@ -561,7 +561,7 @@ static INLINE uint16_t pf_host_to_le_16(uint16_t d) {
 /*
  * Message Translation
  */
-#if defined(PF_USE_TRANSLATION)
+#if defined(PF_USE_TRANSLATION) && !defined(PF_USE_LIBINTL)
 
 /* Translate messages. */
 #define PF_TR(s)	pf_gettext(s)
@@ -569,12 +569,18 @@ static INLINE uint16_t pf_host_to_le_16(uint16_t d) {
 /* Translator. */
 const char *pf_gettext(const char *s);
 
+#elif defined(PF_USE_TRANSLATION) && defined(PF_USE_LIBINTL)
+
+#include <libintl.h>
+
+#define PF_TR(s)	dgettext("libplayfield", s)
+
 #else
 
 /* No translation. */
 #define PF_TR(s)	(s)
 
-#endif /* defined(PF_USE_TRANSLATION) */
+#endif
 
 #ifdef __cplusplus
 }

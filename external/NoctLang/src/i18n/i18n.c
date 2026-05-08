@@ -1,14 +1,23 @@
 /* -*- coding: utf-8; tab-width: 8; indent-tabs-mode: t; -*- */
 
 /*
- * Copyright (c) 2025, Awe Morris. All rights reserved.
+ * Noct Programming Language
+ * Copyright (c) 2025, 2026, Awe Morris
  */
 
 /*
  * Pseudo gettext support.
  */
 
-#if defined(NOCT_USE_TRANSLATION)
+#if defined(NOCT_USE_TRANSLATION) && defined(NOCT_USE_GETTEXT)
+
+void noct_init_locale(void)
+{
+	bindtextdomain("libnoct", LOCALEDIR);
+	bind_textdomain_codeset("libnoct", "UTF-8");
+}
+
+#elif defined(NOCT_USE_TRANSLATION) && !defined(NOCT_USE_GETTEXT)
 
 #include <stdio.h>
 #include <stdlib.h>

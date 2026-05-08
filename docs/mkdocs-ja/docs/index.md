@@ -7,8 +7,8 @@ Playfield Engine
 
 * 初めての方へ
     * [スタートガイド](gettingstarted.md)
-    * [Playfield Script の文法](syntax.md)
-    * [Playfield Script の API](api.md)
+    * [Ray の文法](syntax.md)
+    * [Ray の API](api.md)
 
 * プロジェクト貢献者へ
     * [ビルド方法](build.md)

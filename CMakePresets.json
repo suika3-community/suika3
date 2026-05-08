@@ -16,9 +16,10 @@
                 "CMAKE_BUILD_TYPE":           "Release",
                 "PLAYFIELD_ENABLE_JIT":       "ON",
                 "PLAYFIELD_ENABLE_I18N":      "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON",
                 "PLAYFIELD_ENABLE_PACK":      "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":  "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":   "ON",
+                "PLAYFIELD_ENABLE_BCC":       "ON",
+                "PLAYFIELD_ENABLE_AOTC":      "ON",
                 "PLAYFIELD_ENABLE_WEBSERVER": "ON",
                 "PLAYFIELD_ENABLE_EDITOR":    "ON"
             },
@@ -40,9 +41,10 @@
                 "CMAKE_BUILD_TYPE":           "Release",
                 "PLAYFIELD_ENABLE_JIT":       "ON",
                 "PLAYFIELD_ENABLE_I18N":      "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON",
                 "PLAYFIELD_ENABLE_PACK":      "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":  "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":   "ON",
+                "PLAYFIELD_ENABLE_BCC":       "ON",
+                "PLAYFIELD_ENABLE_AOTC":      "ON",
                 "PLAYFIELD_ENABLE_WEBSERVER": "ON",
                 "PLAYFIELD_ENABLE_EDITOR":    "ON"
             },
@@ -64,9 +66,10 @@
                 "CMAKE_BUILD_TYPE":           "Release",
                 "PLAYFIELD_ENABLE_JIT":       "ON",
                 "PLAYFIELD_ENABLE_I18N":      "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON",
                 "PLAYFIELD_ENABLE_PACK":      "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":  "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":   "ON",
+                "PLAYFIELD_ENABLE_BCC":       "ON",
+                "PLAYFIELD_ENABLE_AOTC":      "ON",
                 "PLAYFIELD_ENABLE_WEBSERVER": "ON",
                 "PLAYFIELD_ENABLE_EDITOR":    "ON"
             },
@@ -90,8 +93,8 @@
                 "PLAYFIELD_ENABLE_JIT":         "OFF",
                 "PLAYFIELD_ENABLE_I18N":        "OFF",
                 "PLAYFIELD_ENABLE_PACK":        "OFF",
-                "PLAYFIELD_ENABLE_BYTECOMP":    "OFF",
-                "PLAYFIELD_ENABLE_AOTCOMP":     "OFF",
+                "PLAYFIELD_ENABLE_BCC":         "OFF",
+                "PLAYFIELD_ENABLE_AOTC":        "OFF",
                 "PLAYFIELD_ENABLE_EDITOR":      "OFF"
             },
             "condition": {
@@ -113,9 +116,10 @@
                 "PLAYFIELD_TARGET_GDK_WINDOWS": "ON",
                 "PLAYFIELD_ENABLE_JIT":         "OFF",
                 "PLAYFIELD_ENABLE_I18N":        "OFF",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "OFF",
-                "PLAYFIELD_ENABLE_BYTECOMP":    "OFF",
-                "PLAYFIELD_ENABLE_AOTCOMP":     "OFF",
+                "PLAYFIELD_ENABLE_BCC":         "OFF",
+                "PLAYFIELD_ENABLE_AOTC":        "OFF",
                 "PLAYFIELD_ENABLE_EDITOR":      "OFF"
             },
             "condition": {
@@ -138,9 +142,10 @@
                 "PLAYFIELD_TARGET_UWP":                     "ON",
                 "PLAYFIELD_ENABLE_JIT":                     "OFF",
                 "PLAYFIELD_ENABLE_I18N":                    "OFF",
+                "PLAYFIELD_ENABLE_BIN":                     "ON",
                 "PLAYFIELD_ENABLE_PACK":                    "OFF",
-                "PLAYFIELD_ENABLE_BYTECOMP":                "OFF",
-                "PLAYFIELD_ENABLE_AOTCOMP":                 "OFF",
+                "PLAYFIELD_ENABLE_BCC":                     "OFF",
+                "PLAYFIELD_ENABLE_AOTC":                    "OFF",
                 "PLAYFIELD_ENABLE_EDITOR":                  "OFF"
             },
             "condition": {
@@ -161,9 +166,10 @@
                 "CMAKE_BUILD_TYPE":             "Release",
                 "PLAYFIELD_ENABLE_JIT":         "ON",
                 "PLAYFIELD_ENABLE_I18N":        "ON",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":    "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":     "ON",
+                "PLAYFIELD_ENABLE_BCC":         "ON",
+                "PLAYFIELD_ENABLE_AOTC":        "ON",
                 "PLAYFIELD_ENABLE_WEBSERVER":   "ON",
                 "PLAYFIELD_ENABLE_EDITOR":      "ON"
             },
@@ -185,9 +191,10 @@
                 "CMAKE_BUILD_TYPE":             "Debug",
                 "PLAYFIELD_ENABLE_JIT":         "ON",
                 "PLAYFIELD_ENABLE_I18N":        "ON",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":    "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":     "ON",
+                "PLAYFIELD_ENABLE_BCC":         "ON",
+                "PLAYFIELD_ENABLE_AOTC":        "ON",
                 "PLAYFIELD_ENABLE_WEBSERVER":   "ON",
                 "PLAYFIELD_ENABLE_EDITOR":      "ON"
             },
@@ -209,9 +216,10 @@
                 "CMAKE_BUILD_TYPE":             "Release",
                 "PLAYFIELD_ENABLE_JIT":         "ON",
                 "PLAYFIELD_ENABLE_I18N":        "ON",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":    "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":     "ON",
+                "PLAYFIELD_ENABLE_BCC":         "ON",
+                "PLAYFIELD_ENABLE_AOTC":        "ON",
                 "PLAYFIELD_ENABLE_WEBSERVER":   "ON",
                 "PLAYFIELD_ENABLE_EDITOR":      "OFF"
             },
@@ -233,9 +241,10 @@
                 "CMAKE_BUILD_TYPE":             "Release",
                 "PLAYFIELD_ENABLE_JIT":         "ON",
                 "PLAYFIELD_ENABLE_I18N":        "ON",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":    "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":     "ON",
+                "PLAYFIELD_ENABLE_BCC":         "ON",
+                "PLAYFIELD_ENABLE_AOTC":        "ON",
                 "PLAYFIELD_ENABLE_WEBSERVER":   "ON",
                 "PLAYFIELD_ENABLE_EDITOR":      "ON"
             },
@@ -257,9 +266,10 @@
                 "CMAKE_BUILD_TYPE":             "Debug",
                 "PLAYFIELD_ENABLE_JIT":         "ON",
                 "PLAYFIELD_ENABLE_I18N":        "ON",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":    "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":     "ON",
+                "PLAYFIELD_ENABLE_BCC":         "ON",
+                "PLAYFIELD_ENABLE_AOTC":        "ON",
                 "PLAYFIELD_ENABLE_WEBSERVER":   "ON",
                 "PLAYFIELD_ENABLE_EDITOR":      "ON"
             },
@@ -281,9 +291,10 @@
                 "CMAKE_BUILD_TYPE":             "Release",
                 "PLAYFIELD_ENABLE_JIT":         "ON",
                 "PLAYFIELD_ENABLE_I18N":        "ON",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":    "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":     "ON",
+                "PLAYFIELD_ENABLE_BCC":         "ON",
+                "PLAYFIELD_ENABLE_AOTC":        "ON",
                 "PLAYFIELD_ENABLE_WEBSERVER":   "ON",
                 "PLAYFIELD_ENABLE_EDITOR":      "ON"
             },
@@ -306,9 +317,10 @@
                 "PLAYFIELD_TARGET_UWP":                     "ON",
                 "PLAYFIELD_ENABLE_JIT":                     "OFF",
                 "PLAYFIELD_ENABLE_I18N":                    "OFF",
+                "PLAYFIELD_ENABLE_BIN":                     "ON",
                 "PLAYFIELD_ENABLE_PACK":                    "OFF",
-                "PLAYFIELD_ENABLE_BYTECOMP":                "OFF",
-                "PLAYFIELD_ENABLE_AOTCOMP":                 "OFF",
+                "PLAYFIELD_ENABLE_BCC":                     "OFF",
+                "PLAYFIELD_ENABLE_AOTC":                    "OFF",
                 "PLAYFIELD_ENABLE_EDITOR":                  "OFF"
             },
             "condition": {
@@ -329,9 +341,10 @@
                 "CMAKE_BUILD_TYPE":             "Debug",
                 "PLAYFIELD_ENABLE_JIT":         "ON",
                 "PLAYFIELD_ENABLE_I18N":        "ON",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":    "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":     "ON",
+                "PLAYFIELD_ENABLE_BCC":         "ON",
+                "PLAYFIELD_ENABLE_AOTC":        "ON",
                 "PLAYFIELD_ENABLE_WEBSERVER":   "ON",
                 "PLAYFIELD_ENABLE_EDITOR":      "ON"
             },
@@ -354,9 +367,10 @@
                 "PLAYFIELD_TARGET_GDK_WINDOWS": "ON",
                 "PLAYFIELD_ENABLE_JIT":         "OFF",
                 "PLAYFIELD_ENABLE_I18N":        "OFF",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "OFF",
-                "PLAYFIELD_ENABLE_BYTECOMP":    "OFF",
-                "PLAYFIELD_ENABLE_AOTCOMP":     "OFF",
+                "PLAYFIELD_ENABLE_BCC":         "OFF",
+                "PLAYFIELD_ENABLE_AOTC":        "OFF",
                 "PLAYFIELD_ENABLE_EDITOR":      "OFF"
             },
             "condition": {
@@ -376,9 +390,10 @@
                 "PLAYFIELD_TARGET_GDK_XBOX_XS": "ON",
                 "PLAYFIELD_ENABLE_JIT":         "OFF",
                 "PLAYFIELD_ENABLE_I18N":        "OFF",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "OFF",
-                "PLAYFIELD_ENABLE_BYTECOMP":    "OFF",
-                "PLAYFIELD_ENABLE_AOTCOMP":     "OFF",
+                "PLAYFIELD_ENABLE_BCC":         "OFF",
+                "PLAYFIELD_ENABLE_AOTC":        "OFF",
                 "PLAYFIELD_ENABLE_EDITOR":      "OFF"
             },
             "condition": {
@@ -398,9 +413,10 @@
                 "PLAYFIELD_TARGET_WINDOWS":    "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
+                "PLAYFIELD_ENABLE_BIN":        "ON",
                 "PLAYFIELD_ENABLE_PACK":       "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":   "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":    "ON",
+                "PLAYFIELD_ENABLE_BCC":        "ON",
+                "PLAYFIELD_ENABLE_AOTC":       "ON",
                 "PLAYFIELD_ENABLE_WEBSERVER":  "ON",
                 "PLAYFIELD_ENABLE_EDITOR":     "ON"
             }
@@ -416,9 +432,10 @@
                 "PLAYFIELD_TARGET_WINDOWS":    "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
+                "PLAYFIELD_ENABLE_BIN":        "ON",
                 "PLAYFIELD_ENABLE_PACK":       "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":   "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":    "ON",
+                "PLAYFIELD_ENABLE_BCC":        "ON",
+                "PLAYFIELD_ENABLE_AOTC":       "ON",
                 "PLAYFIELD_ENABLE_WEBSERVER":  "ON",
                 "PLAYFIELD_ENABLE_EDITOR":     "ON"
             }
@@ -434,9 +451,10 @@
                 "PLAYFIELD_TARGET_WINDOWS95":  "ON",
                 "PLAYFIELD_ENABLE_JIT":        "OFF",
                 "PLAYFIELD_ENABLE_I18N":       "OFF",
+                "PLAYFIELD_ENABLE_BIN":        "ON",
                 "PLAYFIELD_ENABLE_PACK":       "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":   "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":    "ON",
+                "PLAYFIELD_ENABLE_BCC":        "ON",
+                "PLAYFIELD_ENABLE_AOTC":       "ON",
                 "PLAYFIELD_ENABLE_WEBSERVER":  "OFF",
                 "PLAYFIELD_ENABLE_EDITOR":     "OFF"
             }
@@ -452,9 +470,10 @@
                 "PLAYFIELD_TARGET_WINDOWS":    "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
+                "PLAYFIELD_ENABLE_BIN":        "ON",
                 "PLAYFIELD_ENABLE_PACK":       "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":   "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":    "ON",
+                "PLAYFIELD_ENABLE_BCC":        "ON",
+                "PLAYFIELD_ENABLE_AOTC":       "ON",
                 "PLAYFIELD_ENABLE_WEBSERVER":  "ON",
                 "PLAYFIELD_ENABLE_EDITOR":     "ON"
             }
@@ -471,9 +490,10 @@
                 "PLAYFIELD_TARGET_MACOS":      "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
+                "PLAYFIELD_ENABLE_BIN":        "ON",
                 "PLAYFIELD_ENABLE_PACK":       "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":   "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":    "ON"
+                "PLAYFIELD_ENABLE_BCC":        "ON",
+                "PLAYFIELD_ENABLE_AOTC":       "ON"
             }
         },
         {
@@ -488,9 +508,11 @@
                 "PLAYFIELD_TARGET_MACOS_CLI":  "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
+                "PLAYFIELD_ENABLE_BIN":        "ON",
+                "PLAYFIELD_ENABLE_CONSOLE":    "ON",
                 "PLAYFIELD_ENABLE_PACK":       "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":   "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":    "ON"
+                "PLAYFIELD_ENABLE_BCC":        "ON",
+                "PLAYFIELD_ENABLE_AOTC":       "ON"
             }
         },
         {
@@ -505,9 +527,11 @@
                 "PLAYFIELD_TARGET_MACOS_CLI":  "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
+                "PLAYFIELD_ENABLE_BIN":        "ON",
+                "PLAYFIELD_ENABLE_CONSOLE":    "ON",
                 "PLAYFIELD_ENABLE_PACK":       "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":   "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":    "ON"
+                "PLAYFIELD_ENABLE_BCC":        "ON",
+                "PLAYFIELD_ENABLE_AOTC":       "ON"
             }
         },
         {
@@ -525,8 +549,8 @@
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "OFF",
                 "PLAYFIELD_ENABLE_PACK":       "OFF",
-                "PLAYFIELD_ENABLE_BYTECOMP":   "OFF",
-                "PLAYFIELD_ENABLE_AOTCOMP":    "OFF"
+                "PLAYFIELD_ENABLE_BCC":        "OFF",
+                "PLAYFIELD_ENABLE_AOTC":       "OFF"
             }
         },
         {
@@ -538,10 +562,11 @@
                 "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_LINUX":      "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
+                "PLAYFIELD_ENABLE_BIN":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
                 "PLAYFIELD_ENABLE_PACK":       "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":   "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":    "ON"
+                "PLAYFIELD_ENABLE_BCC":        "ON",
+                "PLAYFIELD_ENABLE_AOTC":       "ON"
             }
         },
         {
@@ -554,9 +579,10 @@
                 "PLAYFIELD_TARGET_LINUX":      "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
+                "PLAYFIELD_ENABLE_BIN":        "ON",
                 "PLAYFIELD_ENABLE_PACK":       "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":   "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":    "ON"
+                "PLAYFIELD_ENABLE_BCC":        "ON",
+                "PLAYFIELD_ENABLE_AOTC":       "ON"
             }
         },
         {
@@ -569,9 +595,10 @@
                 "PLAYFIELD_TARGET_LINUX_WAYLAND": "ON",
                 "PLAYFIELD_ENABLE_JIT":           "ON",
                 "PLAYFIELD_ENABLE_I18N":          "ON",
+                "PLAYFIELD_ENABLE_BIN":           "ON",
                 "PLAYFIELD_ENABLE_PACK":          "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":      "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":       "ON"
+                "PLAYFIELD_ENABLE_BCC":           "ON",
+                "PLAYFIELD_ENABLE_AOTC":          "ON"
             }
         },
         {
@@ -584,9 +611,10 @@
                 "PLAYFIELD_TARGET_LINUX_WAYLAND": "ON",
                 "PLAYFIELD_ENABLE_JIT":           "ON",
                 "PLAYFIELD_ENABLE_I18N":          "ON",
+                "PLAYFIELD_ENABLE_BIN":           "ON",
                 "PLAYFIELD_ENABLE_PACK":          "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":      "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":       "ON"
+                "PLAYFIELD_ENABLE_BCC":           "ON",
+                "PLAYFIELD_ENABLE_AOTC":          "ON"
             }
         },
         {
@@ -599,9 +627,10 @@
                 "PLAYFIELD_TARGET_LINUX_GBM":  "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
+                "PLAYFIELD_ENABLE_BIN":        "ON",
                 "PLAYFIELD_ENABLE_PACK":       "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":   "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":    "ON"
+                "PLAYFIELD_ENABLE_BCC":        "ON",
+                "PLAYFIELD_ENABLE_AOTC":       "ON"
             }
         },
         {
@@ -614,9 +643,10 @@
                 "PLAYFIELD_TARGET_LINUX_GBM":  "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
+                "PLAYFIELD_ENABLE_BIN":        "ON",
                 "PLAYFIELD_ENABLE_PACK":       "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":   "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":    "ON"
+                "PLAYFIELD_ENABLE_BCC":        "ON",
+                "PLAYFIELD_ENABLE_AOTC":       "ON"
             }
         },
         {
@@ -629,9 +659,10 @@
                 "PLAYFIELD_TARGET_LINUX_FBDEV": "ON",
                 "PLAYFIELD_ENABLE_JIT":         "ON",
                 "PLAYFIELD_ENABLE_I18N":        "ON",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":    "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":     "ON"
+                "PLAYFIELD_ENABLE_BCC":         "ON",
+                "PLAYFIELD_ENABLE_AOTC":        "ON"
             }
         },
         {
@@ -644,9 +675,10 @@
                 "PLAYFIELD_TARGET_LINUX_X11SOFT": "ON",
                 "PLAYFIELD_ENABLE_JIT":           "ON",
                 "PLAYFIELD_ENABLE_I18N":          "ON",
+                "PLAYFIELD_ENABLE_BIN":           "ON",
                 "PLAYFIELD_ENABLE_PACK":          "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":      "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":       "ON"
+                "PLAYFIELD_ENABLE_BCC":           "ON",
+                "PLAYFIELD_ENABLE_AOTC":          "ON"
             }
         },
         {
@@ -798,7 +830,8 @@
             "toolchainFile":  "${sourceDir}/cmake/toolchains/wasm.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
-                "PLAYFIELD_TARGET_WASM":       "ON"
+                "PLAYFIELD_TARGET_WASM":       "ON",
+                "PLAYFIELD_ENABLE_BIN":        "ON"
             }
         },
         {
@@ -884,9 +917,11 @@
                 "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_FREEBSD":    "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
+                "PLAYFIELD_ENABLE_I18N":       "ON",
+                "PLAYFIELD_ENABLE_BIN":        "ON",
                 "PLAYFIELD_ENABLE_PACK":       "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":   "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":    "ON"
+                "PLAYFIELD_ENABLE_BCC":        "ON",
+                "PLAYFIELD_ENABLE_AOTC":       "ON"
             }
         },
         {
@@ -898,9 +933,11 @@
                 "CMAKE_BUILD_TYPE":                  "Release",
                 "PLAYFIELD_TARGET_FREEBSD_WALYLAND": "ON",
                 "PLAYFIELD_ENABLE_JIT":              "ON",
+                "PLAYFIELD_ENABLE_I18N":             "ON",
+                "PLAYFIELD_ENABLE_BIN":              "ON",
                 "PLAYFIELD_ENABLE_PACK":             "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":         "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":          "ON"
+                "PLAYFIELD_ENABLE_BCC":              "ON",
+                "PLAYFIELD_ENABLE_AOTC":             "ON"
             }
         },
         {
@@ -912,9 +949,11 @@
                 "CMAKE_BUILD_TYPE":                  "Release",
                 "PLAYFIELD_TARGET_FREEBSD_X11SOFT":  "ON",
                 "PLAYFIELD_ENABLE_JIT":              "ON",
+                "PLAYFIELD_ENABLE_I18N":             "ON",
+                "PLAYFIELD_ENABLE_BIN":              "ON",
                 "PLAYFIELD_ENABLE_PACK":             "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":         "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":          "ON"
+                "PLAYFIELD_ENABLE_BCC":              "ON",
+                "PLAYFIELD_ENABLE_AOTC":             "ON"
             }
         },
         {
@@ -926,9 +965,11 @@
                 "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_NETBSD":     "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
+                "PLAYFIELD_ENABLE_I18N":       "ON",
+                "PLAYFIELD_ENABLE_BIN":        "ON",
                 "PLAYFIELD_ENABLE_PACK":       "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":   "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":    "ON"
+                "PLAYFIELD_ENABLE_BCC":        "ON",
+                "PLAYFIELD_ENABLE_AOTC":       "ON"
             }
         },
         {
@@ -940,9 +981,11 @@
                 "CMAKE_BUILD_TYPE":                 "Release",
                 "PLAYFIELD_TARGET_NETBSD_X11SOFT":  "ON",
                 "PLAYFIELD_ENABLE_JIT":             "ON",
+                "PLAYFIELD_ENABLE_I18N":            "ON",
+                "PLAYFIELD_ENABLE_BIN":             "ON",
                 "PLAYFIELD_ENABLE_PACK":            "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":        "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":         "ON"
+                "PLAYFIELD_ENABLE_BCC":             "ON",
+                "PLAYFIELD_ENABLE_AOTC":            "ON"
             }
         },
         {
@@ -953,9 +996,11 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_OPENBSD":    "ON",
+                "PLAYFIELD_ENABLE_I18N":       "ON",
+                "PLAYFIELD_ENABLE_BIN":        "ON",
                 "PLAYFIELD_ENABLE_PACK":       "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":   "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":    "ON"
+                "PLAYFIELD_ENABLE_BCC":        "ON",
+                "PLAYFIELD_ENABLE_AOTC":       "ON"
             }
         },
         {
@@ -966,9 +1011,11 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":                 "Release",
                 "PLAYFIELD_TARGET_OPENBSD_X11SOFT": "ON",
+                "PLAYFIELD_ENABLE_I18N":            "ON",
+                "PLAYFIELD_ENABLE_BIN":             "ON",
                 "PLAYFIELD_ENABLE_PACK":            "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":        "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":         "ON"
+                "PLAYFIELD_ENABLE_BCC":             "ON",
+                "PLAYFIELD_ENABLE_AOTC":            "ON"
             }
         },
         {
@@ -981,9 +1028,11 @@
                 "CMAKE_C_COMPILER":            "cc",
                 "CMAKE_CXX_COMPILER":          "CC",
                 "PLAYFIELD_TARGET_SOLARIS11":  "ON",
+                "PLAYFIELD_ENABLE_I18N":       "ON",
+                "PLAYFIELD_ENABLE_BIN":        "ON",
                 "PLAYFIELD_ENABLE_PACK":       "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":   "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":    "ON"
+                "PLAYFIELD_ENABLE_BCC":        "ON",
+                "PLAYFIELD_ENABLE_AOTC":       "ON"
             }
         },
         {
@@ -996,9 +1045,11 @@
                 "CMAKE_C_COMPILER":             "xlc",
                 "CMAKE_CXX_COMPILER":           "xlc++",
                 "PLAYFIELD_TARGET_GENERICUNIX": "ON",
+                "PLAYFIELD_ENABLE_I18N":        "ON",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":    "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":     "ON"
+                "PLAYFIELD_ENABLE_BCC":         "ON",
+                "PLAYFIELD_ENABLE_AOTC":        "ON"
             }
         },
         {
@@ -1011,9 +1062,11 @@
                 "CMAKE_C_COMPILER":             "cc",
                 "CMAKE_CXX_COMPILER":           "aCC",
                 "PLAYFIELD_TARGET_GENERICUNIX": "ON",
+                "PLAYFIELD_ENABLE_I18N":        "ON",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":    "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":     "ON"
+                "PLAYFIELD_ENABLE_BCC":         "ON",
+                "PLAYFIELD_ENABLE_AOTC":        "ON"
             }
         },
         {
@@ -1026,9 +1079,11 @@
                 "CMAKE_C_COMPILER":             "cc",
                 "CMAKE_CXX_COMPILER":           "c++",
                 "PLAYFIELD_TARGET_GENERICUNIX": "ON",
+                "PLAYFIELD_ENABLE_I18N":        "ON",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":    "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":     "ON"
+                "PLAYFIELD_ENABLE_BCC":         "ON",
+                "PLAYFIELD_ENABLE_AOTC":        "ON"
             }
         },
         {
@@ -1041,9 +1096,11 @@
                 "CMAKE_C_COMPILER":             "gcc",
                 "CMAKE_CXX_COMPILER":           "g++",
                 "PLAYFIELD_TARGET_HAIKU":       "ON",
+                "PLAYFIELD_ENABLE_I18N":        "ON",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "ON",
-                "PLAYFIELD_ENABLE_BYTECOMP":    "ON",
-                "PLAYFIELD_ENABLE_AOTCOMP":     "ON"
+                "PLAYFIELD_ENABLE_BCC":         "ON",
+                "PLAYFIELD_ENABLE_AOTC":        "ON"
             }
         }
     ],

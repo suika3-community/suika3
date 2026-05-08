@@ -37,7 +37,7 @@ To create a minimal game:
 1. Make a new folder anywhere you like.
 2. Open your favorite text editor in that folder.
     - On Windows, you can use `Playfield Editor` if you don't have a favorite editor.
-3. Create a new file called `main.pf`.
+3. Create a new file called `main.ray`.
 4. Copy the following code into to the file an save it.
 
 ```
@@ -77,7 +77,7 @@ func render() {
 
 Playfield Engine can load a game in two ways:
 
-* From a folder that contains a `main.pf` file.
+* From a folder that contains a `main.ray` file.
 * From an `assets.arc` file that bundles all game assets.
 
 To create an `assets.arc` file, see [Distributing Games](distribute.md).

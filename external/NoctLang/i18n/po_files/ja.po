@@ -1,0 +1,248 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "syntax error"
+msgstr "文法エラーです。"
+
+msgid "%s: Out of memory while parsing."
+msgstr "%s: メモリが足りません。"
+
+msgid "Too many functions."
+msgstr "関数が多すぎます。"
+
+msgid "continue appeared outside loop."
+msgstr "continue文がループの外で使用されました。"
+
+msgid "LHS is not a term or an array element."
+msgstr "左辺が項か配列要素ではありません。"
+
+msgid "var is specified without a single symbol."
+msgstr "varが変数名以外に指定されました。"
+
+msgid "else-if block appeared without if block."
+msgstr "else if文がifブロックの後ろ以外で使用されました。"
+
+msgid "else-if appeared after else."
+msgstr "else if文がelse文の後ろで使用されました。"
+
+msgid "else appeared after else."
+msgstr "else文がelse文の後ろで使用されました。"
+
+msgid "Exceeded the maximum argument count."
+msgstr "引数が多すぎます。"
+
+msgid "Too many anonymous functions."
+msgstr "無名関数が多すぎます。"
+
+msgid "Too many local variables."
+msgstr "ローカル変数が多すぎます。"
+
+msgid "Too many jumps."
+msgstr "ジャンプが多すぎます。"
+
+msgid "LIR: Out of memory error."
+msgstr "LIR: メモリが足りません。"
+
+msgid "Failed to load bytecode data."
+msgstr "バイトコードの読み込みに失敗しました。"
+
+msgid "Memory mapping failed."
+msgstr "メモリマップに失敗しました。"
+
+msgid "Code too big."
+msgstr "コードが大きすぎます。"
+
+msgid "Branch target not found."
+msgstr "分岐先がみつかりません。"
+
+msgid "Failed to load bytecode."
+msgstr "バイトコードの読み込みに失敗しました。"
+
+msgid "Cannot find function %s."
+msgstr "関数%sがみつかりません。"
+
+msgid "Not an array."
+msgstr "配列ではありません。"
+
+msgid "Array index %d is out-of-range."
+msgstr "配列の添字 %d は範囲外です。"
+
+msgid "Dictionary index %d is out-of-range."
+msgstr "辞書のインデックス %d は範囲外です。"
+
+msgid "Dictionary key \"%s\" not found."
+msgstr "辞書のキー \"%s\" がみつかりません。"
+
+msgid "Local variable \"%s\" not found."
+msgstr "ローカル変数 \"%s\" がみつかりません。"
+
+msgid "Global variable \"%s\" not found."
+msgstr "グローバル変数 \"%s\" がみつかりません。"
+
+msgid "Value is not a number."
+msgstr "値が数ではありません。"
+
+msgid "Value is not an integer."
+msgstr "値が整数ではありません。"
+
+msgid "Value is not a string."
+msgstr "値が文字列ではありません。"
+
+msgid "Value is not a number or a string."
+msgstr "値が数か文字列ではありません。"
+
+msgid "Division by zero."
+msgstr "ゼロによる除算です。"
+
+msgid "Subscript not an integer."
+msgstr "添字が整数ではありません。"
+
+msgid "Not an array or a dictionary."
+msgstr "配列か辞書ではありません。"
+
+msgid "Subscript not a string."
+msgstr "添字が文字列ではありません。"
+
+msgid "Value is not a string, an array, or a dictionary."
+msgstr "値が文字列、配列、辞書ではありません。"
+
+msgid "Not a dictionary."
+msgstr "辞書ではありません。"
+
+msgid "Dictionary index out-of-range."
+msgstr "辞書のインデックスが範囲外です。"
+
+msgid "Symbol \"%s\" not found."
+msgstr "シンボル \"%s\" がみつかりません。"
+
+msgid "%s(): Function arguments not match."
+msgstr "%s(): 関数の引数が一致しません。"
+
+msgid "Element %d is not an integer."
+msgstr "%d 番目の要素が整数ではありません。"
+
+msgid "Element %d is not a float."
+msgstr "%d 番目の要素が浮動小数点数ではありません。"
+
+msgid "Element %d is not a string."
+msgstr "%d 番目の要素が文字列ではありません。"
+
+msgid "Element %d is not an array."
+msgstr "%d 番目の要素が配列ではありません。"
+
+msgid "Element %d is not a dictionary."
+msgstr "%d 番目の要素が辞書ではありません。"
+
+msgid "Element %d is not a function."
+msgstr "%d 番目の要素が関数ではありません。"
+
+msgid "Value for key %s is not an integer."
+msgstr "キー %s に対応する値が整数ではありません。"
+
+msgid "Value for key %s is not a float."
+msgstr "キー %s に対応する値が浮動小数点数ではありません。"
+
+msgid "Value for key %s is not a string."
+msgstr "キー %s に対応する値が文字列ではありません。"
+
+msgid "Value for key %s is not an array."
+msgstr "キー %s に対応する値が配列ではありません。"
+
+msgid "Value for key %s is not a dictionary."
+msgstr "キー %s に対応する値が辞書ではありません。"
+
+msgid "Value for key %s is not a function."
+msgstr "キー %s に対応する値が関数ではありません。"
+
+msgid "Argument (%d: %s) not an integer."
+msgstr "引数 (%d: %s) が整数ではありません。"
+
+msgid "Argument (%d: %s) not a float."
+msgstr "引数 (%d: %s) が浮動小数点数ではありません。"
+
+msgid "Argument (%d: %s) not a string."
+msgstr "引数 (%d: %s) が文字列ではありません。"
+
+msgid "Argument (%d: %s) is not an array."
+msgstr "引数 (%d: %s) が配列ではありません。"
+
+msgid "Argument (%d: %s) is not a dictionary."
+msgstr "引数 (%d: %s) が辞書ではありません。"
+
+msgid "Not a function."
+msgstr "関数ではありません。"
+
+msgid "Empty array."
+msgstr "配列が空です。"
+
+msgid "Out of memory."
+msgstr "メモリが足りません。"
+
+msgid "Too many pinned global variables."
+msgstr "固定されたグローバル変数が多すぎます。"
+
+msgid "Too many pinned local variables."
+msgstr "固定されたローカル変数が多すぎます。"
+
+msgid "Cannot open file %s.\n"
+msgstr "ファイル%sを開けません。\n"
+
+msgid "Cannot read file %s.\n"
+msgstr "ファイル%sを読み込めません。\n"
+
+msgid "Error: %s: %d: %s\n"
+msgstr "エラー: %s: %d: %s\n"
+
+msgid "Adding file %s\n"
+msgstr "ファイル%sを追加しています。\n"
+
+msgid "Cannot find %s.\n"
+msgstr "%sがみつかりません。\n"
+
+msgid "Searching directory %s.\n"
+msgstr "ディレクトリ%sを検索中です。\n"
+
+msgid "Skipping empty directory %s.\n"
+msgstr "空のディレクトリ%sをスキップしています。\n"
+
+msgid "Unknown option %s.\n"
+msgstr "不明なオプション%s\n"
+
+msgid "Specify a file.\n"
+msgstr "ファイルを指定してください。\n"
+
+msgid "%s:%d: Error: %s\n"
+msgstr "%s:%d: エラー: %s\n"
+
+msgid "Out of memory.\n"
+msgstr "メモリが足りません。\n"
+
+msgid "Noct Programming Language"
+msgstr "Noct プログラミング言語"
+
+msgid "Version %s\n"
+msgstr "バージョン %s\n"
+
+msgid "JIT compilation is enabled. Starting the fast VM...\n"
+msgstr "JITコンパイルが有効 ... 高速仮想マシン実行を開始します。\n"
+
+msgid "Entering REPL mode.\n"
+msgstr "REPLモードに入ります。\n"
+
+msgid "Usage\n"
+msgstr "使い方\n"
+
+msgid "noct <file>                        ... run a program\n"
+msgstr "noct <ファイル>                    ... プログラムを実行します\n"
+
+msgid "noct --compile <files>             ... convert to bytecode files\n"
+msgstr "noct --compile <ファイル...>       ... バイトコードに変換します\n"
+
+msgid "noct --ansic <out file> <in files> ... convert to a C source file\n"
+msgstr "noct --ansic <出力> <入力...>      ... Cソースに変換します\n"
+
+msgid "noct --elisp <out file> <in files> ... convert to an Emacs Lisp source file\n"
+msgstr "noct --elisp <出力> <入力...>      ... Emacs Lispソースに変換します\n"
+

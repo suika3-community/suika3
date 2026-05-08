@@ -222,11 +222,13 @@ static void OnCommand(WPARAM wParam, LPARAM lParam);
 static void OnSizing(int edge, LPRECT lpRect);
 static void OnSize(void);
 static void UpdateScreenOffsetAndScale(int nClientWidth, int nClientHeight);
+#ifndef HAL_USE_CONSOLE
 static VOID InitLogWindow(void);
 static VOID AppendLogToEdit(const char *text);
 static LRESULT CALLBACK LogWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 static BOOL OpenLogFile(void);
 static void ShowLogFile(void);
+#endif
 static BOOL PlayVideo(const char *pszFileName);
 static VOID StopVideo(VOID);
 static BOOL IsVideoPlaying(VOID);
@@ -290,7 +292,9 @@ int WINAPI WinMain(
 	/* Do the lower layer cleanup. */
 	CleanupApp();
 
+#ifndef HAL_USE_CONSOLE
 	ShowLogFile();
+#endif
 
 	return nRet;
 }
@@ -381,11 +385,15 @@ InitApp(
 	/* On 64-bit environments, DirectShow does not work properly. So, we use Media Foundation if available. */
 	if (MFVInit())
 		bMFVEnabled = TRUE;
-#else
+#elif defined(HAL_USE_MFVIDEO)
 	/* On 32-bit environments, we first try using Media Foundation, and if it fails, we try using DirectShow. */
 	if (MFVInit())
 		bMFVEnabled = TRUE;
 	else if (DShowInit())
+		bDShowEnabled = TRUE;
+#else
+	/* On 32-bit environments, we first try using Media Foundation, and if it fails, we try using DirectShow. */
+	if (DShowInit())
 		bDShowEnabled = TRUE;
 #endif
 
@@ -661,8 +669,8 @@ RunFrame(void)
 			return FALSE;
 
 		/* Do a frame callback. */
-//		if(!hal_callback_on_event_frame())
-//			return FALSE;
+		if(!hal_callback_on_event_frame())
+			return FALSE;
 
 		return TRUE;
 	}
@@ -1445,6 +1453,7 @@ UpdateScreenOffsetAndScale(
 	D3DResizeWindow(nClientWidth, nClientHeight, nViewportOffsetX, nViewportOffsetY, nViewportWidth, nViewportHeight, fMouseScale);
 }
 
+#ifndef HAL_USE_CONSOLE
 /* Initialize the log window. */
 static VOID
 InitLogWindow(VOID)
@@ -1581,6 +1590,8 @@ ShowLogFile(void)
         NULL,               // Working directory.
         SW_SHOWNORMAL);		// ShowWindow() status.
 }
+#endif
+
 
 /* Play a video. */
 static BOOL
@@ -1597,6 +1608,7 @@ PlayVideo(
 	UpdateWindow(hWndRender);
 	UpdateWindow(hWndVideo);
 
+#ifdef HAL_USE_MFVIDEO
 	if (bMFVEnabled)
 	{
 		if (!MFVPlayVideo(hWndVideo, pszFileName, nViewportOffsetX, nViewportOffsetY, nViewportWidth, nViewportHeight))
@@ -1609,6 +1621,7 @@ PlayVideo(
 		bVideoMode = TRUE;
 		return TRUE;
 	}
+#endif
 	if (bDShowEnabled)
 	{
 		if (!DShowPlayVideo(hWndVideo, pszFileName, nViewportOffsetX, nViewportOffsetY, nViewportWidth, nViewportHeight))
@@ -1637,9 +1650,12 @@ StopVideo(VOID)
 	{
 		if (IsVideoPlaying())
 		{
+#ifdef HAL_USE_MFVIDEO
 			if (bMFVEnabled)
 				MFVStopVideo();
-			else if (bDShowEnabled)
+			else
+#endif
+			if (bDShowEnabled)
 				DShowStopVideo();
 
 			ShowWindow(hWndRender, SW_SHOW);
@@ -1659,6 +1675,7 @@ IsVideoPlaying(VOID)
 	if (!bVideoMode)
 		return FALSE;
 
+#ifdef HAL_USE_MFVIDEO
 	if (bMFVEnabled)
 	{
 		if (!MFVIsVideoPlaying())
@@ -1673,7 +1690,9 @@ IsVideoPlaying(VOID)
 		}
 		return TRUE;
 	}
-	else if (bDShowEnabled)
+	else
+#endif
+	if (bDShowEnabled)
 	{
 		if (!DShowIsVideoPlaying())
 		{
@@ -1694,9 +1713,12 @@ IsVideoPlaying(VOID)
 static VOID
 ProcessVideoEvents(VOID)
 {
+#ifdef HAL_USE_MFVIDEO
 	if (bMFVEnabled)
 		MFVProcessEvents();
-	else if (bDShowEnabled)
+	else
+#endif
+	if (bDShowEnabled)
 		DShowProcessEvents();
 }
 
@@ -1742,15 +1764,29 @@ hal_log_info(
 	char buf[LOG_BUF_SIZE];
 	va_list ap;
 
+#ifndef HAL_USE_CONSOLE
 	OpenLogFile();
+#endif
 
 	va_start(ap, s);
 	vsnprintf(buf, sizeof(buf), s, ap);
 	va_end(ap);
 
+#ifdef HAL_USE_CONSOLE
+	{
+		static wchar_t wbuf[4096];
+		DWORD dwWritten;
+
+		/* Use WriteConsoleW(). (Otherwise we can't write CJK.) */
+		memset(wbuf, 0, sizeof(wbuf));
+		MultiByteToWideChar(CP_UTF8, 0, buf, -1, wbuf, sizeof(wbuf) / sizeof(wchar_t));
+		WriteConsoleW(GetStdHandle(STD_OUTPUT_HANDLE), wbuf, lstrlenW(wbuf), &dwWritten, NULL);
+		WriteConsoleW(GetStdHandle(STD_OUTPUT_HANDLE), L"\n", 1, &dwWritten, NULL);
+		return true;
+	}
+#else
 	InitLogWindow();
 	AppendLogToEdit(buf);
-
 	if(pLogFile != NULL)
 	{
 		fprintf(pLogFile, "%s\n", buf);
@@ -1759,8 +1795,8 @@ hal_log_info(
 			return false;
 	}
 	printf("%s\n", buf);
-
 	return true;
+#endif
 }
 
 /*
@@ -1774,17 +1810,29 @@ hal_log_warn(
 	char buf[LOG_BUF_SIZE];
 	va_list ap;
 
+#ifndef HAL_USE_CONSOLE
 	OpenLogFile();
+#endif
 
 	va_start(ap, s);
 	vsnprintf(buf, sizeof(buf), s, ap);
 	va_end(ap);
 
-	//MessageBoxW(hWndMain, win32_utf8_to_utf16(buf), wszTitle, MB_OK | MB_ICONWARNING);
+#ifdef HAL_USE_CONSOLE
+	{
+		static wchar_t wbuf[4096];
+		DWORD dwWritten;
 
+		/* Use WriteConsoleW(). (Otherwise we can't write CJK.) */
+		memset(wbuf, 0, sizeof(wbuf));
+		MultiByteToWideChar(CP_UTF8, 0, buf, -1, wbuf, sizeof(wbuf) / sizeof(wchar_t));
+		WriteConsoleW(GetStdHandle(STD_OUTPUT_HANDLE), wbuf, lstrlenW(wbuf), &dwWritten, NULL);
+		WriteConsoleW(GetStdHandle(STD_OUTPUT_HANDLE), L"\n", 1, &dwWritten, NULL);
+		return true;
+	}
+#else
 	InitLogWindow();
 	AppendLogToEdit(buf);
-
 	if(pLogFile != NULL)
 	{
 		fprintf(pLogFile, "%s\n", buf);
@@ -1793,8 +1841,8 @@ hal_log_warn(
 			return false;
 	}
 	printf("%s\n", buf);
-
 	return true;
+#endif
 }
 
 /*
@@ -1808,17 +1856,29 @@ hal_log_error(
 	char buf[LOG_BUF_SIZE];
 	va_list ap;
 
+#ifndef HAL_USE_CONSOLE
 	OpenLogFile();
+#endif
 
 	va_start(ap, s);
 	vsnprintf(buf, sizeof(buf), s, ap);
 	va_end(ap);
 
-	//MessageBoxW(hWndMain, win32_utf8_to_utf16(buf), wszTitle, MB_OK | MB_ICONERROR);
+#ifdef HAL_USE_CONSOLE
+	{
+		static wchar_t wbuf[4096];
+		DWORD dwWritten;
 
+		/* Use WriteConsoleW(). (Otherwise we can't write CJK.) */
+		memset(wbuf, 0, sizeof(wbuf));
+		MultiByteToWideChar(CP_UTF8, 0, buf, -1, wbuf, sizeof(wbuf) / sizeof(wchar_t));
+		WriteConsoleW(GetStdHandle(STD_OUTPUT_HANDLE), wbuf, lstrlenW(wbuf), &dwWritten, NULL);
+		WriteConsoleW(GetStdHandle(STD_OUTPUT_HANDLE), L"\n", 1, &dwWritten, NULL);
+		return true;
+	}
+#else
 	InitLogWindow();
 	AppendLogToEdit(buf);
-
 	if(pLogFile != NULL)
 	{
 		fprintf(pLogFile, "%s\n", buf);
@@ -1827,8 +1887,8 @@ hal_log_error(
 			return false;
 	}
 	printf("%s\n", buf);
-
 	return true;
+#endif
 }
 
 /*

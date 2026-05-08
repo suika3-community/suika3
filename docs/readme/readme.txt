@@ -2,14 +2,13 @@ Playfield
 =========
 
  * Load this file into ChatGPT.
- * Try entering: "Create a game in Playfield Script."
+ * Try entering: "Create a game in Ray script."
 
 About
 -----
 
 Playfield is a lightweight game scripting runtime.  With scripts written in
-Playfield Script, it can render graphics and play sounds across multiple
-platforms.
+Ray, it can render graphics and play sounds across multiple platforms.
 
 Whether you're a beginner or a seasoned power user, you can create games on
 your PC — just like coding in classic BASIC, but with modern features.
@@ -19,7 +18,7 @@ Files
 
   playfield.exe           ... Main Executable (64-bit)
   playfield-editor.exe    ... Text Editor For Convenience
-  main.pf                 ... Sample main script
+  main.ray                ... Sample main script
   readme.txt              ... This document
 
 Installation
@@ -52,8 +51,8 @@ I'd love to hear from you, feel free to reach out.
 
 ==============================================================================
 
-Playfield Script Syntax
-=======================
+Ray Syntax
+==========
 
 `Playfield` uses `Noct` as a scripting language.
 
@@ -439,8 +438,8 @@ dic->unset("key1");
 
 ==============================================================================
 
-Playfield Script API
-====================
+Playfield Engine Ray API
+========================
 
 Every API function takes one parameter. The parameter must be a dictionary and
 arguments must be stored as key-and-value pairs.

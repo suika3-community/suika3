@@ -1,4 +1,5 @@
 ID:Error: %s: %d: %s
+en:Error: %s: %d: %s
 es:Error: %s: %d: %s
 fr:Erreur : %s : %d : %s
 it:Errore: %s: %d: %s
@@ -10,6 +11,7 @@ tw:錯誤: %s: %d: %s
 ja:エラー: %s: %d: %s
 ---
 ID:Cannot open file "%s".
+en:Cannot open file "%s".
 es:No se puede abrir el archivo "%s".
 fr:Impossible d'ouvrir le fichier "%s".
 it:Impossibile aprire il file "%s".
@@ -21,6 +23,7 @@ tw:無法打開檔案 "%s"。
 ja:ファイル "%s" を開けません。
 ---
 ID:Cannot get the size of file "%s".
+en:Cannot get the size of file "%s".
 es:No se puede obtener el tamaño del archivo "%s".
 fr:Impossible d'obtenir la taille du fichier "%s".
 it:Impossibile ottenere la dimensione del file "%s".
@@ -32,6 +35,7 @@ tw:無法取得檔案 "%s" 的大小。
 ja:ファイル "%s" のサイズを取得できません。
 ---
 ID:Cannot read file "%s".
+en:Cannot read file "%s".
 es:No se puede leer el archivo "%s".
 fr:Impossible de lire le fichier "%s".
 it:Impossibile leggere il file "%s".
@@ -43,6 +47,7 @@ tw:無法讀取檔案 "%s"。
 ja:ファイル "%s" を読み込めません。
 ---
 ID:In tag %s:%d: runtime error.
+en:In tag %s:%d: runtime error.
 es:En la etiqueta %s:%d: error en tiempo de ejecución.
 fr:Dans la balise %s : %d : erreur d'exécution.
 it:Nel tag %s:%d: errore di runtime.
@@ -54,6 +59,7 @@ tw:在標籤 %s:%d: 執行時錯誤。
 ja:タグ %s:%d: 実行エラー
 ---
 ID:%s:%d: Tag "%s" not found.
+en:%s:%d: Tag "%s" not found.
 es:%s:%d: No se encontró la etiqueta "%s".
 fr:%s : %d : Balise "%s" introuvable.
 it:%s:%d: Tag "%s" non trovato.
@@ -65,6 +71,7 @@ tw:%s:%d: 找不到標籤 "%s"。
 ja:%s:%d: タグ "%s" がみつかりません。
 ---
 ID:%s:%d: "tag_%s" is not a function.
+en:%s:%d: "tag_%s" is not a function.
 es:%s:%d: "tag_%s" no es una función.
 fr:%s : %d : "tag_%s" n'est pas une fonction.
 it:%s:%d: "tag_%s" non è una funzione.
@@ -76,6 +83,7 @@ tw:%s:%d: "tag_%s" 不是函式。
 ja:%s:%d: "tag_%s" が関数ではありません。
 ---
 ID:In tag %s:%d: Tag "%s" execution error.
+en:In tag %s:%d: Tag "%s" execution error.
 es:En la etiqueta %s:%d: Error de ejecución en la etiqueta "%s".
 fr:Dans la balise %s : %d : Erreur d'exécution de la balise "%s".
 it:Nel tag %s:%d: Errore di esecuzione del tag "%s".
@@ -87,6 +95,7 @@ tw:在標籤 %s:%d: 執行標籤 "%s" 時發生錯誤。
 ja:タグ %s:%d: タグ "%s" の実行エラーです。
 ---
 ID:Cannot determine the file type for "%s".
+en:Cannot determine the file type for "%s".
 es:No se puede determinar el tipo de archivo de "%s".
 fr:Impossible de déterminer le type du fichier  "%s".
 it:Impossibile determinare il tipo di file per "%s".
@@ -98,6 +107,7 @@ tw:無法判斷檔案 "%s" 的類型。
 ja:"%s" のファイルタイプを決定できません。
 ---
 ID:Cannot load an image "%s".
+en:Cannot load an image "%s".
 es:No se puede cargar la imagen "%s".
 fr:Impossible de charger l'image "%s".
 it:Impossibile caricare l'immagine "%s".
@@ -109,6 +119,7 @@ tw:無法載入圖片 "%s"。
 ja:画像 "%s" をロードできません。
 ---
 ID:Too many textures.
+en:Too many textures.
 es:Demasiadas texturas.
 fr:Trop de textures.
 it:Troppe texture.
@@ -120,6 +131,7 @@ tw:材質過多。
 ja:テキスチャが多すぎます。
 ---
 ID:Invalid font slot index.
+en:Invalid font slot index.
 es:Índice de ranura de fuente no válido.
 fr:Indice d'emplacement de police non valide.
 it:Indice di slot del font non valido.
@@ -131,6 +143,7 @@ tw:無效的字體槽索引。
 ja:フォントスロットの番号が不正です。
 ---
 ID:Invalid sound stream index.
+en:Invalid sound stream index.
 es:Índice de flujo de sonido no válido.
 fr:Indice de flux sonore non valide.
 it:Indice di stream audio non valido.
@@ -142,6 +155,7 @@ tw:無效的音訊串流索引。
 ja:サウンドストリームの番号が不正です。
 ---
 ID:Cannot make the save directory.
+en:Cannot make the save directory.
 es:No se puede crear el directorio de guardado.
 fr:Impossible de créer le répertoire de sauvegarde.
 it:Impossibile creare la directory di salvataggio.
@@ -153,6 +167,7 @@ tw:無法建立存檔目錄。
 ja:セーブディレクトリを作成できません。
 ---
 ID:Save data key too long.
+en:Save data key too long.
 es:La clave de los datos guardados es demasiado larga.
 fr:La clé des données de sauvegarde est trop longue.
 it:La chiave dei dati di salvataggio è troppo lunga.
@@ -164,6 +179,7 @@ tw:存檔資料鍵太長。
 ja:セーブデータキーが長すぎます。
 ---
 ID:Cannot open a save file.
+en:Cannot open a save file.
 es:No se puede abrir un archivo de guardado.
 fr:Impossible d'ouvrir un fichier de sauvegarde.
 it:Impossibile aprire un file di salvataggio.
@@ -175,6 +191,7 @@ tw:無法開啟存檔檔案。
 ja:セーブファイルを開けません。
 ---
 ID:Cannot write to a save file.
+en:Cannot write to a save file.
 es:No se puede escribir en un archivo de guardado.
 fr:Impossible d'écrire dans un fichier de sauvegarde.
 it:Impossibile scrivere in un file di salvataggio.
@@ -186,6 +203,7 @@ tw:無法寫入存檔檔案。
 ja:セーブファイルに書き込めません。
 ---
 ID:Cannot get the size of a save file.
+en:Cannot get the size of a save file.
 es:No se puede obtener el tamaño de un archivo de guardado.
 fr:Impossible d'obtenir la taille d'un fichier de sauvegarde.
 it:Impossibile ottenere la dimensione di un file di salvataggio.
@@ -197,6 +215,7 @@ tw:無法取得存檔檔案的大小。
 ja:セーブファイルのサイズを取得できません。
 ---
 ID:Save file too large.
+en:Save file too large.
 es:El archivo de guardado es demasiado grande.
 fr:Le fichier de sauvegarde est trop volumineux.
 it:Il file di salvataggio è troppo grande.
@@ -208,6 +227,7 @@ tw:存檔檔案過大。
 ja:セーブファイルが大きすぎます。
 ---
 ID:Cannot read a save file.
+en:Cannot read a save file.
 es:No se puede leer un archivo de guardado.
 fr:Impossible de lire un fichier de sauvegarde.
 it:Impossibile leggere un file di salvataggio.
@@ -219,6 +239,7 @@ tw:無法讀取存檔檔案。
 ja:セーブファイルを読み込めません。
 ---
 ID:String too long.
+en:String too long.
 es:Cadena demasiado larga.
 fr:Chaîne trop longue.
 it:Stringa troppo lunga.
@@ -230,6 +251,7 @@ tw:字串太長。
 ja:文字列が長すぎます。
 ---
 ID:Invalid save data.
+en:Invalid save data.
 es:Datos de guardado no validos.
 fr:Données de sauvegarde non valides.
 it:Dati di salvataggio non validi.
@@ -241,6 +263,7 @@ tw:無效的存檔資料。
 ja:セーブデータが無効です。
 ---
 ID:Searching directory "%s".
+en:Searching directory "%s".
 es:Buscando en el directorio "%s".
 fr:Recherche dans le répertoire "%s".
 it:Ricerca nella directory "%s".
@@ -252,6 +275,7 @@ tw:正在搜尋目錄 "%s"。
 ja:ディレクトリ "%s" を検索中。
 ---
 ID:Skipping empty directory "%s".
+en:Skipping empty directory "%s".
 es:Omitiendo el directorio vacío "%s".
 fr:Ignorer le répertoire vide "%s".
 it:Salto della directory vuota "%s".
@@ -263,6 +287,7 @@ tw:跳過空目錄 "%s"。
 ja:空のディレクトリ "%s" をスキップします。
 ---
 ID:Adding file "%s".
+en:Adding file "%s".
 es:Añadiendo archivo "%s".
 fr:Ajout du fichier "%s".
 it:Aggiunta del file "%s".
@@ -274,6 +299,7 @@ tw:正在新增檔案 "%s"。
 ja:ファイル "%s" を追加しています。
 ---
 ID:Parameter is not set.
+en:Parameter is not set.
 es:El parámetro no está configurado.
 fr:Le paramètre n'est pas défini.
 it:Il parametro non è impostato.
@@ -285,6 +311,7 @@ tw:未設定參數。
 ja:パラメータが設定されていません。
 ---
 ID:Unexpected parameter value for "%s".
+en:Unexpected parameter value for "%s".
 es:Valor de parámetro inesperado para "%s".
 fr:Valeur de paramètre inattendue pour "%s".
 it:Valore del parametro imprevisto per "%s".
@@ -296,6 +323,7 @@ tw:參數 "%s" 的值異常。
 ja:パラメータ "%s" の値が不正です。
 ---
 ID:Parameter "%s" doesn't have the key "%s".
+en:Parameter "%s" doesn't have the key "%s".
 es:El parámetro "%s" no tiene la clave "%s".
 fr:Le paramètre "%s" n'a pas la clé "%s".
 it:Il parametro "%s" non ha la chiave "%s".
@@ -307,6 +335,7 @@ tw:參數 "%s" 不包含鍵 "%s"。
 ja:パラメータ "%s" にキー "%s" がありません。
 ---
 ID:Unexpected parameter value for "%s.%s".
+en:Unexpected parameter value for "%s.%s".
 es:Valor de parámetro  inesperado para "%s.%s".
 fr:Valeur de paramètre inattendue pour "%s.%s".
 it:Valore del parametro imprevisto per "%s.%s".
@@ -318,6 +347,7 @@ tw:參數 "%s.%s" 的值異常。
 ja:パラメータ "%s.%s" の値が不正です。
 ---
 ID:Cannot deserialize function.
+en:Cannot deserialize function.
 es:No se puede deserializar la función.
 fr:Impossible de désérialiser la fonction.
 it:Impossibile deserializzare la funzione.

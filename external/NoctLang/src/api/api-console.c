@@ -1,7 +1,8 @@
 /* -*- coding: utf-8; tab-width: 8; indent-tabs-mode: t; -*- */
 
 /*
- * Copyright (c) 2025, Awe Morris. All rights reserved.
+ * Noct Programming Language
+ * Copyright (c) 2025, 2026, Awe Morris
  */
 
 /*
@@ -149,7 +150,7 @@ static bool serialize_printer(
 			strncat(buf, "\"", size);
 		break;
 	case NOCT_VALUE_ARRAY:
-		if (!noct_get_array_size(env, value, &items))
+		if (!noct_get_array_size(env, value, (uint32_t *)&items))
 			return false;
 		strncat(buf, "[", size);
 		for (i = 0; i < items; i++) {
@@ -164,7 +165,7 @@ static bool serialize_printer(
 		strncat(buf, "]", size);
 		break;
 	case NOCT_VALUE_DICT:
-		if (!noct_get_dict_size(env, value, &items))
+		if (!noct_get_dict_size(env, value, (uint32_t *)&items))
 			return false;
 		strncat(buf, "{", size);
 		for (i = 0; i < items; i++) {

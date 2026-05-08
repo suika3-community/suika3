@@ -42,7 +42,7 @@
 #elif defined(__SunOS_5_11)
 #include <sys/soundcard.h>   /* Solaris 11 (OSS) */
 #define USE_SUN_OSS
-#else
+#elif defined(__SunOS_5_10)
 #include <sys/audioio.h>     /* Solaris 10 */
 #define USE_SUN_AUDIO
 #endif
@@ -68,8 +68,10 @@
 #define DEVICE		"/dev/audio0"
 #elif defined(__OpenBSD__)
 #define DEVICE		"/dev/audio0"
-#elif defined(__SunOS_5_11)
+#elif defined(USE_SUN_OSS)
 #define DEVICE		"/dev/dsp"
+#elif defined(USE_SUN_AUDIO)
+#define DEVICE		"/dev/audio"
 #endif
 
 /*
@@ -124,7 +126,7 @@ init_sound(void)
 	/* Open /dev/audio0. */
 	dsp_fd = open(DEVICE, 2);
 	if (dsp_fd < 0) {
-		hal_log_error("Failed to open " DEVICE);
+		hal_log_info("Failed to open " DEVICE);
 		return false;
 	}
 
@@ -134,35 +136,35 @@ init_sound(void)
 	/* Set the format. */
 	val = AFMT_S16_LE;
 	if (ioctl(dsp_fd, SNDCTL_DSP_SETFMT, &val)) {
-		hal_log_error("ioctl() failed on " DEVICE);
+		hal_log_info("ioctl() failed on " DEVICE);
 		return false;
 	}
 
 	/* Set the sampling rate. */
 	val = SAMPLING_RATE;
 	if (ioctl(dsp_fd, SNDCTL_DSP_SPEED, &val)) {
-		hal_log_error("ioctl() failed on " DEVICE);
+		hal_log_info("ioctl() failed on " DEVICE);
 		return false;
 	}
 
 	/* Set the channels. */
 	val = CHANNELS;
 	if (ioctl(dsp_fd, SNDCTL_DSP_STEREO, &val)) {
-		hal_log_error("ioctl() failed on " DEVICE);
+		hal_log_info("ioctl() failed on " DEVICE);
 		return false;
 	}
 
 	/* Set the fragment size. */
 	val = (2 << 16) | 11; 	/* blocks=2, size=2^11=2048byte */
 	if (ioctl(dsp_fd, SNDCTL_DSP_SETFRAGMENT, &val)) {
-		hal_log_error("ioctl() failed on " DEVICE);
+		hal_log_info("ioctl() failed on " DEVICE);
 		return false;
 	}
 #elif defined(__NetBSD__)
 	/* Set the sampling rate. */
 	struct audio_info param;
 	if (ioctl(dsp_fd, AUDIO_GETINFO, &param)) {
-		hal_log_error("ioctl() failed on " DEVICE);
+		hal_log_info("ioctl() failed on " DEVICE);
 		return false;
 	}
 	param.play.sample_rate = SAMPLING_RATE;
@@ -172,7 +174,7 @@ init_sound(void)
 	param.play.buffer_size = TMP_SAMPLES * FRAME_SIZE;
 	param.play.samples = TMP_SAMPLES;
 	if (ioctl(dsp_fd, AUDIO_SETINFO, &param)) {
-		hal_log_error("ioctl() failed on " DEVICE);
+		hal_log_info("ioctl() failed on " DEVICE);
 		return false;
 	}
 #elif defined(__OpenBSD__)
@@ -189,7 +191,7 @@ init_sound(void)
 	param.nblks = TMP_SAMPLES;
 	param.round = TMP_SAMPLES * FRAME_SIZE;
 	if (ioctl(dsp_fd, AUDIO_SETPAR, &param)) {
-		hal_log_error("ioctl() failed on " DEVICE);
+		hal_log_info("ioctl() failed on " DEVICE);
 		return false;
 	}
 #elif defined(USE_SUN_OSS)
@@ -197,15 +199,15 @@ init_sound(void)
 	int channels = 2;
 	int rate = SAMPLING_RATE;
 	if (ioctl(dsp_fd, SNDCTL_DSP_SETFMT, &format)) {
-		hal_log_error("ioctl() SNDCTL_DSP_SETFMT failed on " DEVICE);
+		hal_log_info("ioctl() SNDCTL_DSP_SETFMT failed on " DEVICE);
 		return false;
 	}
 	if (ioctl(dsp_fd, SNDCTL_DSP_CHANNELS, &channels)) {
-		hal_log_error("ioctl() SNDCTL_DSP_CHANNELS failed on " DEVICE);
+		hal_log_info("ioctl() SNDCTL_DSP_CHANNELS failed on " DEVICE);
 		return false;
 	}
 	if (ioctl(dsp_fd, SNDCTL_DSP_SPEED, &rate)) {
-		hal_log_error("ioctl() SNDCTL_DSP_SPEED failed on " DEVICE);
+		hal_log_info("ioctl() SNDCTL_DSP_SPEED failed on " DEVICE);
 		return false;
 	}
 #elif defined(USE_SUN_AUDIO)
@@ -216,7 +218,7 @@ init_sound(void)
 	info.play.precision = DEPTH;
 	info.play.encoding = AUDIO_ENCODING_LINEAR;
 	if (ioctl(dsp_fd, AUDIO_SETINFO, &info)) {
-		hal_log_error("ioctl() failed on " DEVICE);
+		hal_log_info("ioctl() failed on " DEVICE);
 		return false;
 	}
 #endif

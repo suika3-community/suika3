@@ -38,7 +38,7 @@
 
 /* The file name of the startup file. */
 #ifndef STARTUP_FILE
-#define STARTUP_FILE	"main.pf"
+#define STARTUP_FILE	"main.ray"
 #endif
 
 #endif

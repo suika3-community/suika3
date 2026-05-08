@@ -1,5 +1,5 @@
-Playfield Script の文法
-=======================
+Ray の文法
+==========
 
 `Playfield Engine` はスクリプト言語として `Noct` を使用します。
 

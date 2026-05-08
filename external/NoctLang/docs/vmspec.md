@@ -384,15 +384,15 @@ be of valid types, or a runtime error will occur.
 These instructions compare two operands and produce an integer result
 (`0` = false, non-zero = true).
 
-| Mnemonic | Opcode | Operands                  | Description            |
-|----------|--------|---------------------------|------------------------|
-| `LT`     | 0x12   | `Td:2`, `Ts1:2`, `Ts2:2`  | Less than              |
-| `LTE`    | 0x13   | `Td:2`, `Ts1:2`, `Ts2:2`  | Less than or equal     |
-| `GT`     | 0x14   | `Td:2`, `Ts1:2`, `Ts2:2`  | Greater than           |
-| `GTE`    | 0x15   | `Td:2`, `Ts1:2`, `Ts2:2`  | Greater than or equal  |
-| `EQ`     | 0x16   | `Td:2`, `Ts1:2`, `Ts2:2`  | Equality (deep compare)|
-| `NEQ`    | 0x17   | `Td:2`, `Ts1:2`, `Ts2:2`  | Inequality             |
-| `EQI`    | 0x18   | `Td:2`, `Ts1:2`, `Ts2:2`  | Integer equality       |
+| Mnemonic | Opcode | Operands                  | Description               |
+|----------|--------|---------------------------|---------------------------|
+| `LT`     | 0x12   | `Td:2`, `Ts1:2`, `Ts2:2`  | Less than                 |
+| `LTE`    | 0x13   | `Td:2`, `Ts1:2`, `Ts2:2`  | Less than or equal        |
+| `GT`     | 0x14   | `Td:2`, `Ts1:2`, `Ts2:2`  | Greater than              |
+| `GTE`    | 0x15   | `Td:2`, `Ts1:2`, `Ts2:2`  | Greater than or equal     |
+| `EQ`     | 0x16   | `Td:2`, `Ts1:2`, `Ts2:2`  | Equality (typed compare)  |
+| `NEQ`    | 0x17   | `Td:2`, `Ts1:2`, `Ts2:2`  | Inequality                |
+| `EQI`    | 0x18   | `Td:2`, `Ts1:2`, `Ts2:2`  | Integer equality          |
 
 **Comparison Methods**
 |Operand1   |Operand2   |Behavior     |Notes                                          |
@@ -496,7 +496,7 @@ These instructions implement field-style dictionary access using the
 
 | Mnemonic             | Opcode | Operands                  | Description                   |
 |----------------------|--------|---------------------------|-------------------------------|
-| `GETDICTVALBYINDEX`  | 0x1C   | `Td:2`, `Ts1:2`, `Ts2:2`  | `dst = src1.valAtIndex(src2)` |
+| `GETDICTVALBYINDEX`  | 0x1D   | `Td:2`, `Ts1:2`, `Ts2:2`  | `dst = src1.valAtIndex(src2)` |
 
 ## 5.8 Global Symbol Instructions
 

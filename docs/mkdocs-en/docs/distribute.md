@@ -9,27 +9,27 @@ Once your game is ready, you can bundle it into a single package for easy distri
 
 You can use the packaging tool included with Playfield Engine:
 
-1. Go to the `misc/windows/` folder.
-2. Drag and drop all your game files (such as main.pf, images, sounds, etc.) onto `playfield-pack.exe`.
+1. Go to the `SDK/windows/` folder.
+2. Drag and drop all your game files (such as main.ray, images, sounds, etc.) onto `playfield-pack.exe`.
 3. The tool will create an `assets.arc` file in the same folder.
 
 This file contains all of your game’s scripts and assets in one archive.
 
 ### On macOS
 
-Use `misc/macos/playfield-pack` instead:
+Use `SDK/macos/playfield-pack` instead:
 
 1. Open the terminal.
-2. Go to `misc/macos/`. (`cd misc/macos`)
+2. Go to `SDK/macos/`. (`cd SDK/macos`)
 3. Run `xattr -c playfield-pack` to clear the macOS's quarantine flag.
 4. Run `./playfield-pack <files>` to create a package.
 
 ### On Linux
 
-Use `misc/linux/playfield-pack` instead:
+Use `SDK/linux/playfield-pack` instead:
 
 1. Open the terminal.
-2. Go to `misc/linux/`. (`cd misc/macos`)
+2. Go to `SDK/linux/`. (`cd SDK/macos`)
 3. Run `./playfield-pack <files>` to create a package.
 
 ## Files to Distribute

@@ -36,13 +36,13 @@
 
 #include <playfield/playfield.h>
 
-#ifdef USE_TRANSLATION
+#ifdef PF_USE_TRANSLATION
 
 /*
  * Initialized the locale.
  */
 void
-playfield_init_locale(void);
+pf_init_locale(void);
 
 #endif
 

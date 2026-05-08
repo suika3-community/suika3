@@ -73,6 +73,7 @@ static bool install_api(NoctEnv *env);
 
 /* External. */
 bool init_aot_code(struct rt_env *env);
+bool noct_init_locale(void);
 
 /*
  * Create a VM, then call setup().
@@ -84,6 +85,11 @@ pfi_create_vm(
 	int *height,
 	bool *fullscreen)
 {
+	/* Initialize the NoctLang's i18n system. */
+#ifdef PF_USE_TRANSLATION
+	noct_init_locale();
+#endif
+
 	/* Create a language runtime. */
 	if (!noct_create_vm(&vm, &env))
 		return false;
@@ -106,13 +112,19 @@ pfi_create_vm(
 		noct_get_error_file(env, &file);
 		noct_get_error_line(env, &line);
 		noct_get_error_message(env, &msg);
-		hal_log_error(PF_TR("Error: %s: %d: %s"), file, line, msg);
+		hal_log_error(PF_TR("Error: %s:%d: %s"), file, line, msg);
 		return false;
 	}
 
 	/* Install Math.* API. */
 	if (!noct_register_api_math(env))
 		return false;
+
+#if defined(PF_USE_UNSAFE)
+	/* Install System.* API. */
+	if (!noct_register_api_system(env))
+		return false;
+#endif
 
 	/* Install the custom APIs to the runtime. */
 	if (!install_api(env))
@@ -149,7 +161,7 @@ load_startup_file(void)
 		noct_get_error_file(env, &file);
 		noct_get_error_line(env, &line);
 		noct_get_error_message(env, &msg);
-		hal_log_error(PF_TR("Error: %s: %d: %s"), file, line, msg);
+		hal_log_error(PF_TR("Error: %s:%d: %s"), file, line, msg);
 		return false;
 	}
 
@@ -231,7 +243,7 @@ call_setup(
 		noct_get_error_file(env, &file);
 		noct_get_error_line(env, &line);
 		noct_get_error_message(env, &msg);
-		hal_log_error(PF_TR("Error: %s: %d: %s"), file, line, msg);
+		hal_log_error(PF_TR("Error: %s:%d: %s"), file, line, msg);
 		return false;
 	}
 
@@ -255,7 +267,7 @@ pfi_call_vm_function(
 		noct_get_error_file(env, &file);
 		noct_get_error_line(env, &line);
 		noct_get_error_message(env, &msg);
-		hal_log_error(PF_TR("Error: %s: %d: %s"), file, line, msg);
+		hal_log_error(PF_TR("Error: %s:%d: %s"), file, line, msg);
 		return false;
 	}
 
@@ -469,7 +481,7 @@ static bool import(NoctEnv *env)
 			noct_get_error_file(env, &file);
 			noct_get_error_line(env, &line);
 			noct_get_error_message(env, &msg);
-			hal_log_error(PF_TR("Error: %s: %d: %s"), file, line, msg);
+			hal_log_error(PF_TR("Error: %s:%d: %s"), file, line, msg);
 			return false;
 		}
 	} else {
@@ -480,7 +492,7 @@ static bool import(NoctEnv *env)
 			noct_get_error_file(env, &file);
 			noct_get_error_line(env, &line);
 			noct_get_error_message(env, &msg);
-			hal_log_error(PF_TR("Error: %s: %d: %s"), file, line, msg);
+			hal_log_error(PF_TR("Error: %s:%d: %s"), file, line, msg);
 			return false;
 		}
 	}

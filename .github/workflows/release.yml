@@ -109,7 +109,7 @@ jobs:
       - name: Install deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake build-essential libx11-dev libxpm-dev libasound2-dev mesa-common-dev flex bison libfuse2
+          sudo apt-get install -y git cmake ninja-build build-essential libasound2-dev libx11-dev libxpm-dev libwayland-dev wayland-protocols libegl1-mesa-dev libegl-dev libgles-dev libwayland-client0 libwayland-egl1 libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-x libdecor-0-dev flex bison libfuse2
 
       - name: Download appimagetool
         run: |
@@ -215,6 +215,7 @@ jobs:
           cmake --preset macos
           cmake --build --preset macos
           cd build-macos
+          ls -lha
           codesign --timestamp --options runtime --entitlements ../resources/macos/macos.entitlements --deep --force --sign "Developer ID Application" Playfield.app
           ditto -c -k --sequesterRsrc --keepParent Playfield.app Playfield.zip
           xcrun notarytool submit Playfield.zip --apple-id "$APPLE_ID" --team-id "$TEAM_ID" --password "$APP_SECRET" --wait
@@ -529,16 +530,16 @@ jobs:
       - name: Make the target directory.
         run: |
           mkdir dist
-          mkdir dist/misc
-          mkdir dist/misc/windows
-          mkdir dist/misc/macos
-          mkdir dist/misc/macos/project
-          mkdir dist/misc/linux
-          mkdir dist/misc/wasm
-          mkdir dist/misc/ios
-          mkdir dist/misc/android
-          mkdir dist/misc/openharmony
-          mkdir dist/misc/unity
+          mkdir dist/SDK
+          mkdir dist/SDK/windows
+          mkdir dist/SDK/macos
+          mkdir dist/SDK/macos/project
+          mkdir dist/SDK/linux
+          mkdir dist/SDK/wasm
+          mkdir dist/SDK/ios
+          mkdir dist/SDK/android
+          mkdir dist/SDK/openharmony
+          mkdir dist/SDK/unity
 
       - name: Download Windows artifacts
         uses: actions/download-artifact@v4
@@ -550,10 +551,10 @@ jobs:
         run: |
           cp windows/build/windows-vs2022-x64/Release/playfield.exe dist/
           cp windows/build/windows-vs2022-x64/Release/playfield-editor.exe dist/
-          cp windows/build/windows-vs2022-x86/Release/playfield-pack.exe dist/misc/windows/
-          cp windows/build/windows-vs2022-x86/Release/playfield-web.exe dist/misc/wasm/
-          cp windows/build/windows-vs2022-arm64/Release/playfield.exe dist/misc/windows/playfield-arm64.exe
-          cp samples/shoot/main.pf dist/
+          cp windows/build/windows-vs2022-x86/Release/playfield-pack.exe dist/SDK/windows/
+          cp windows/build/windows-vs2022-x86/Release/playfield-web.exe dist/SDK/wasm/
+          cp windows/build/windows-vs2022-arm64/Release/playfield.exe dist/SDK/windows/playfield-arm64.exe
+          cp samples/shoot/main.ray dist/
 
       - name: Download mingw artifacts
         uses: actions/download-artifact@v4
@@ -563,7 +564,7 @@ jobs:
 
       - name: Copy for mingw.
         run: |
-          cp mingw/playfield.exe dist/misc/windows/playfield32.exe
+          cp mingw/playfield.exe dist/SDK/windows/playfield32.exe
 
       - name: Download macOS artifacts
         uses: actions/download-artifact@v4
@@ -574,21 +575,21 @@ jobs:
       - name: Copy for macOS app.
         run: |
           ls -lha macos/
-          cp macos/build-macos/Playfield.dmg dist/misc/macos/
-          cp macos/build-macos/playfield-pack dist/misc/macos/
+          cp macos/build-macos/Playfield.dmg dist/SDK/macos/
+          cp macos/build-macos/playfield-pack dist/SDK/macos/
 
       - name: Copy for macOS project.
         run: |
-          mkdir dist/misc/macos/project/Resources/
-          cp resources/assets.arc dist/misc/macos/project/Resources/
-          mkdir dist/misc/macos/project/Resources/video
-          mkdir dist/misc/macos/project/Game.xcodeproj
-          cp resources/projects/macos/Game.xcodeproj/project.pbxproj dist/misc/macos/project/Game.xcodeproj/
-          mkdir dist/misc/macos/project/Game
-          tar xfz macos/Playfield.xcframework.tar.gz -C dist/misc/macos/project/Game/
-          cp -R resources/projects/macos/Game/Assets.xcassets dist/misc/macos/project/Game/
-          cp resources/projects/macos/Game/main.m dist/misc/macos/project/Game/
-          cp resources/macos/macos.entitlements dist/misc/macos/project/Game/Game.entitlements
+          mkdir dist/SDK/macos/project/Resources/
+          cp resources/assets.arc dist/SDK/macos/project/Resources/
+          mkdir dist/SDK/macos/project/Resources/video
+          mkdir dist/SDK/macos/project/Game.xcodeproj
+          cp resources/projects/macos/Game.xcodeproj/project.pbxproj dist/SDK/macos/project/Game.xcodeproj/
+          mkdir dist/SDK/macos/project/Game
+          tar xfz macos/Playfield.xcframework.tar.gz -C dist/SDK/macos/project/Game/
+          cp -R resources/projects/macos/Game/Assets.xcassets dist/SDK/macos/project/Game/
+          cp resources/projects/macos/Game/main.m dist/SDK/macos/project/Game/
+          cp resources/macos/macos.entitlements dist/SDK/macos/project/Game/Game.entitlements
 
       - name: Download Linux artifacts
         uses: actions/download-artifact@v4
@@ -598,7 +599,7 @@ jobs:
 
       - name: Copy for Linux.
         run: |
-          cp linux/Playfield-x86_64.AppImage dist/misc/linux/
+          cp linux/Playfield-x86_64.AppImage dist/SDK/linux/
 
       - name: Download wasm artifacts
         uses: actions/download-artifact@v4
@@ -608,8 +609,8 @@ jobs:
 
       - name: Copy for Wasm.
         run: |
-          cp wasm/index.html dist/misc/wasm/
-          cp resources/assets.arc dist/misc/wasm/
+          cp wasm/index.html dist/SDK/wasm/
+          cp resources/assets.arc dist/SDK/wasm/
 
       - name: Download iOS artifacts
         uses: actions/download-artifact@v4
@@ -619,18 +620,18 @@ jobs:
 
       - name: Copy for iOS.
         run: |
-          mkdir dist/misc/ios/Resources/
-          cp resources/assets.arc dist/misc/ios/Resources/
-          mkdir dist/misc/ios/Resources/video
-          mkdir dist/misc/ios/ios.xcodeproj
-          cp resources/projects/ios/ios.xcodeproj/project.pbxproj dist/misc/ios/ios.xcodeproj/
-          mkdir dist/misc/ios/ios
-          tar xfz ios/Playfield.xcframework.tar.gz -C dist/misc/ios/ios/
-          cp -R resources/projects/ios/ios/Assets.xcassets dist/misc/ios/ios/
-          cp resources/projects/ios/ios/entry.c dist/misc/ios/ios/
-          cp resources/projects/ios/ios/Info.plist dist/misc/ios/ios/
-          cp resources/projects/ios/ios/ios.entitlements dist/misc/ios/ios/
-          cp resources/projects/ios/ios/LaunchScreen.storyboard dist/misc/ios/ios/
+          mkdir dist/SDK/ios/Resources/
+          cp resources/assets.arc dist/SDK/ios/Resources/
+          mkdir dist/SDK/ios/Resources/video
+          mkdir dist/SDK/ios/ios.xcodeproj
+          cp resources/projects/ios/ios.xcodeproj/project.pbxproj dist/SDK/ios/ios.xcodeproj/
+          mkdir dist/SDK/ios/ios
+          tar xfz ios/Playfield.xcframework.tar.gz -C dist/SDK/ios/ios/
+          cp -R resources/projects/ios/ios/Assets.xcassets dist/SDK/ios/ios/
+          cp resources/projects/ios/ios/entry.c dist/SDK/ios/ios/
+          cp resources/projects/ios/ios/Info.plist dist/SDK/ios/ios/
+          cp resources/projects/ios/ios/ios.entitlements dist/SDK/ios/ios/
+          cp resources/projects/ios/ios/LaunchScreen.storyboard dist/SDK/ios/ios/
 
       - name: Download Android arm64 artifacts
         uses: actions/download-artifact@v4
@@ -664,27 +665,27 @@ jobs:
 
       - name: Copy for Android
         run: |
-          cp -R resources/projects/android/app dist/misc/android/
-          cp -R resources/projects/android/gradle.properties dist/misc/android/
-          cp -R resources/projects/android/build.gradle dist/misc/android/
-          cp -R resources/projects/android/gradlew dist/misc/android/
-          cp -R resources/projects/android/settings.gradle dist/misc/android/
-          cp -R resources/projects/android/gradlew.bat dist/misc/android/
-          cp -R resources/projects/android/gradle dist/misc/android/
-          mkdir -p dist/misc/android/app/src/main/assets
-          cp samples/shoot/main.pf dist/misc/android/app/src/main/assets/
-          mkdir -p dist/misc/android/app/src/main/java/io/noctvm/playfield/engineandroid
-          cp external/StratoHAL/src/MainActivity.java dist/misc/android/app/src/main/java/io/noctvm/playfield/engineandroid/
-          mkdir -p dist/misc/android/app/src/main/jniLibs/arm64-v8a
-          cp android-arm64/libplayfield.so dist/misc/android/app/src/main/jniLibs/arm64-v8a/
-          mkdir -p dist/misc/android/app/src/main/jniLibs/armeabi-v7a
-          cp android-armv7/libplayfield.so dist/misc/android/app/src/main/jniLibs/armeabi-v7a/
-          mkdir -p dist/misc/android/app/src/main/jniLibs/x86_64
-          cp android-x86_64/libplayfield.so dist/misc/android/app/src/main/jniLibs/x86_64/
-          mkdir -p dist/misc/android/app/src/main/jniLibs/x86
-          cp android-x86/libplayfield.so dist/misc/android/app/src/main/jniLibs/x86/
-          mkdir -p dist/misc/android/app/src/main/jniLibs/riscv64
-          cp android-riscv64/libplayfield.so dist/misc/android/app/src/main/jniLibs/riscv64/
+          cp -R resources/projects/android/app dist/SDK/android/
+          cp -R resources/projects/android/gradle.properties dist/SDK/android/
+          cp -R resources/projects/android/build.gradle dist/SDK/android/
+          cp -R resources/projects/android/gradlew dist/SDK/android/
+          cp -R resources/projects/android/settings.gradle dist/SDK/android/
+          cp -R resources/projects/android/gradlew.bat dist/SDK/android/
+          cp -R resources/projects/android/gradle dist/SDK/android/
+          mkdir -p dist/SDK/android/app/src/main/assets
+          cp samples/shoot/main.ray dist/SDK/android/app/src/main/assets/
+          mkdir -p dist/SDK/android/app/src/main/java/io/noctvm/playfield/engineandroid
+          cp external/StratoHAL/src/MainActivity.java dist/SDK/android/app/src/main/java/io/noctvm/playfield/engineandroid/
+          mkdir -p dist/SDK/android/app/src/main/jniLibs/arm64-v8a
+          cp android-arm64/libplayfield.so dist/SDK/android/app/src/main/jniLibs/arm64-v8a/
+          mkdir -p dist/SDK/android/app/src/main/jniLibs/armeabi-v7a
+          cp android-armv7/libplayfield.so dist/SDK/android/app/src/main/jniLibs/armeabi-v7a/
+          mkdir -p dist/SDK/android/app/src/main/jniLibs/x86_64
+          cp android-x86_64/libplayfield.so dist/SDK/android/app/src/main/jniLibs/x86_64/
+          mkdir -p dist/SDK/android/app/src/main/jniLibs/x86
+          cp android-x86/libplayfield.so dist/SDK/android/app/src/main/jniLibs/x86/
+          mkdir -p dist/SDK/android/app/src/main/jniLibs/riscv64
+          cp android-riscv64/libplayfield.so dist/SDK/android/app/src/main/jniLibs/riscv64/
 
       - name: Download OpenHarmony arm64 artifacts
         uses: actions/download-artifact@v4
@@ -700,18 +701,18 @@ jobs:
 
       - name: Copy for OpenHarmony
         run: |
-          cp -R resources/projects/openharmony/AppScope dist/misc/openharmony/
+          cp -R resources/projects/openharmony/AppScope dist/SDK/openharmony/
           cp -R resources/projects/openharmony/AppScope build-profile.json5
           cp -R resources/projects/openharmony/AppScope code-linter.json5
           cp -R resources/projects/openharmony/AppScope entry
           cp -R resources/projects/openharmony/AppScope hvigor
           cp -R resources/projects/openharmony/AppScope hvigorfile.ts
-          mkdir -p dist/misc/openharmony/entry/src/main/resources/rawfile/
-          cp samples/shoot/main.pf dist/misc/openharmony/entry/src/main/resources/rawfile/
-          mkdir -p dist/misc/openharmony/entry/libs/arm64-v8a
-          mkdir -p dist/misc/openharmony/entry/libs/arm64-x86_64
-          cp openharmony-arm64/libplayfield.a dist/misc/openharmony/entry/libs/arm64-v8a
-          cp openharmony-x86_64/libplayfield.a dist/misc/openharmony/entry/libs/x86_64
+          mkdir -p dist/SDK/openharmony/entry/src/main/resources/rawfile/
+          cp samples/shoot/main.ray dist/SDK/openharmony/entry/src/main/resources/rawfile/
+          mkdir -p dist/SDK/openharmony/entry/libs/arm64-v8a
+          mkdir -p dist/SDK/openharmony/entry/libs/arm64-x86_64
+          cp openharmony-arm64/libplayfield.a dist/SDK/openharmony/entry/libs/arm64-v8a
+          cp openharmony-x86_64/libplayfield.a dist/SDK/openharmony/entry/libs/x86_64
 
       - name: Download Unity Win64 artifacts
         uses: actions/download-artifact@v4
@@ -739,29 +740,29 @@ jobs:
 
       - name: Copy for Unity
         run: |
-          mkdir dist/misc/unity/Assets
-          mkdir dist/misc/unity/Assets/StreamingAssets
-          cp samples/shoot/main.pf dist/misc/unity/Assets/StreamingAssets/
-          mkdir dist/misc/unity/Assets/Resources
-          cp external/StratoHAL/src/PlayfieldScript.cs dist/misc/unity/Assets/
-          cp external/StratoHAL/src/NormalShader.shader dist/misc/unity/Assets/Resources/
-          cp external/StratoHAL/src/AddShader.shader dist/misc/unity/Assets/Resources/
-          cp external/StratoHAL/src/DimShader.shader dist/misc/unity/Assets/Resources/
-          cp external/StratoHAL/src/RuleShader.shader dist/misc/unity/Assets/Resources/
-          cp external/StratoHAL/src/MeltShader.shader dist/misc/unity/Assets/Resources/
-          cp external/StratoHAL/src/CrossShader.shader dist/misc/unity/Assets/Resources/
-          cp external/StratoHAL/src/MainScene.unity dist/misc/unity/Assets/
-          mkdir dist/misc/unity/Assets/Plugins
-          mkdir dist/misc/unity/Assets/Plugins/x86_64
-          mkdir dist/misc/unity/Assets/Plugins/Switch
-          mkdir dist/misc/unity/Assets/Plugins/PS5
-          mkdir dist/misc/unity/Assets/Plugins/GameCoreXboxSeries
-          mkdir dist/misc/unity/Assets/Plugins/Common
-          cp unity-win64/libplayfield.dll dist/misc/unity/Assets/Plugins/x86_64/
-          cp unity-switch/libplayfield.a dist/misc/unity/Assets/Plugins/Switch/
-          cp unity-ps5/libplayfield.a dist/misc/unity/Assets/Plugins/PS5/
-          cp unity-xbox/playfield.lib dist/misc/unity/Assets/Plugins/GameCoreXboxSeries/
-          cp docs/readme/unity.md dist/misc/unity/
+          mkdir dist/SDK/unity/Assets
+          mkdir dist/SDK/unity/Assets/StreamingAssets
+          cp samples/shoot/main.ray dist/SDK/unity/Assets/StreamingAssets/
+          mkdir dist/SDK/unity/Assets/Resources
+          cp external/StratoHAL/src/PlayfieldScript.cs dist/SDK/unity/Assets/
+          cp external/StratoHAL/src/NormalShader.shader dist/SDK/unity/Assets/Resources/
+          cp external/StratoHAL/src/AddShader.shader dist/SDK/unity/Assets/Resources/
+          cp external/StratoHAL/src/DimShader.shader dist/SDK/unity/Assets/Resources/
+          cp external/StratoHAL/src/RuleShader.shader dist/SDK/unity/Assets/Resources/
+          cp external/StratoHAL/src/MeltShader.shader dist/SDK/unity/Assets/Resources/
+          cp external/StratoHAL/src/CrossShader.shader dist/SDK/unity/Assets/Resources/
+          cp external/StratoHAL/src/MainScene.unity dist/SDK/unity/Assets/
+          mkdir dist/SDK/unity/Assets/Plugins
+          mkdir dist/SDK/unity/Assets/Plugins/x86_64
+          mkdir dist/SDK/unity/Assets/Plugins/Switch
+          mkdir dist/SDK/unity/Assets/Plugins/PS5
+          mkdir dist/SDK/unity/Assets/Plugins/GameCoreXboxSeries
+          mkdir dist/SDK/unity/Assets/Plugins/Common
+          cp unity-win64/libplayfield.dll dist/SDK/unity/Assets/Plugins/x86_64/
+          cp unity-switch/libplayfield.a dist/SDK/unity/Assets/Plugins/Switch/
+          cp unity-ps5/libplayfield.a dist/SDK/unity/Assets/Plugins/PS5/
+          cp unity-xbox/playfield.lib dist/SDK/unity/Assets/Plugins/GameCoreXboxSeries/
+          cp docs/readme/unity.md dist/SDK/unity/
 
       - name: Download mkdocs artifacts
         uses: actions/download-artifact@v4
@@ -771,8 +772,8 @@ jobs:
 
       - name: Copy documents
         run: |
-          tar xzf mkdocs/documents.tar.gz -C dist/misc/
-          cp -R samples dist/misc/samples
+          tar xzf mkdocs/documents.tar.gz -C dist/SDK/
+          cp -R samples dist/SDK/samples
           cp docs/readme/readme.txt dist/
 
       - name: Get current date
@@ -786,7 +787,6 @@ jobs:
         run: |
           mv dist "Playfield-$DATE-$SHORT_SHA"
           7z a -tzip -mx=9 "Playfield-$DATE-$SHORT_SHA.zip" "Playfield-$DATE-$SHORT_SHA"
-          7z a -t7z -mx=9 "Playfield-$DATE-$SHORT_SHA.7z" "Playfield-$DATE-$SHORT_SHA"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -795,7 +795,8 @@ jobs:
           name: Playfield-${{ env.DATE }}-${{ env.SHORT_SHA }}
           files: |
             Playfield-${{ env.DATE }}-${{ env.SHORT_SHA }}.zip
-            Playfield-${{ env.DATE }}-${{ env.SHORT_SHA }}.7z
+            windows/build/windows-vs2022-x64/Release/playfield.exe
+            macos/build-macos/Playfield.dmg
           body: |
             This is an artifact of the automatic build, not an official release.
             The zip includes standalone engines for Windows, macOS, and Linux (x86_64).

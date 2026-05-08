@@ -1,5 +1,5 @@
-Playfield Script Syntax
-=======================
+Ray Syntax
+==========
 
 `Playfield Engine` uses `Noct` as a scripting language.
 

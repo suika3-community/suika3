@@ -116,8 +116,8 @@ The target `build-macos/Playfield.app` will be created.
 
 * Pack assets into the `assets.arc` file.
 * Download the [Playfield Engine binary](https://github.com/awemorris/PlayfieldEngine/releases/tag/latest) and extract it.
-* Copy your `assets.arc` file into the `misc/ios/resources` folder.
-* Open the `misc/ios` folder by Xcode.
+* Copy your `assets.arc` file into the `SDK/ios/resources` folder.
+* Open the `SDK/ios` folder by Xcode.
 
 ---
 
@@ -130,8 +130,8 @@ The target `build-macos/Playfield.app` will be created.
 ### Steps
 
 * Download the [Playfield Engine binary](https://github.com/awemorris/PlayfieldEngine/releases/tag/latest) and extract it.
-* Copy your asset files into the `misc/android/app/src/main/assets` folder.
-* Open the `misc/android` folde by Android Studio
+* Copy your asset files into the `SDK/android/app/src/main/assets` folder.
+* Open the `SDK/android` folde by Android Studio
 
 ---
 

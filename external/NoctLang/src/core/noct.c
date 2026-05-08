@@ -1,7 +1,8 @@
 /* -*- coding: utf-8; tab-width: 8; indent-tabs-mode: t; -*- */
 
 /*
- * Copyright (c) 2025, Awe Morris. All rights reserved.
+ * Noct Programming Language
+ * Copyright (c) 2025, 2026, Awe Morris
  */
 
 /*
@@ -738,6 +739,47 @@ noct_make_dict_copy(
 
 NOCT_DLL
 bool
+noct_get_tmpvar_size(
+	NoctEnv *env,
+	uint32_t *size)
+{
+	assert(env != NULL);
+
+	if (env->frame->tmpvar_size == 0)
+		*size = 0;
+	else
+		*size = env->frame->tmpvar_size;
+
+	return true;
+}
+
+NOCT_DLL
+bool
+noct_get_args(
+	NoctEnv *env,
+	uint32_t count,
+	...)
+{
+	va_list ap;
+	struct rt_value *val;
+	uint32_t i;
+
+	assert(env != NULL);
+	assert(val != NULL);
+	assert(count <= env->frame->tmpvar_size);
+
+	va_start(ap, count);
+	for (i = 0; i < count; i++) {
+		val = va_arg(ap, struct rt_value *);
+		*val = env->frame->tmpvar[i];
+	}
+	va_end(ap);
+
+	return true;
+}
+
+NOCT_DLL
+bool
 noct_get_arg(
 	NoctEnv *env,
 	uint32_t index,
@@ -745,6 +787,7 @@ noct_get_arg(
 {
 	assert(env != NULL);
 	assert(val != NULL);
+	assert(index < env->frame->tmpvar_size);
 
 	*val = env->frame->tmpvar[index];
 

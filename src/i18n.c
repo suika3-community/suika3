@@ -31,17 +31,11 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#if defined(USE_TRANSLATION)
+#ifdef PF_USE_TRANSLATION
 
-#include <stratohal/platform.h>
-#include <stdio.h>
-#include <string.h>
-#include <locale.h>
+#include <playfield/playfield.h>
 
-/*
- * NoctLang's language code.
- */
-extern const char *noct_lang_code;
+void hal_init_locale(void);
 
 /*
  * Initialized the locale.
@@ -49,8 +43,11 @@ extern const char *noct_lang_code;
 void
 pf_init_locale(void)
 {
-	/* Initialize the NoctLang's i18n system manually. */
-	noct_lang_code = hal_get_system_language();
+	/* Initialize libintl. */
+#ifdef PF_USE_LIBINTL
+	bindtextdomain("libplayfield", LOCALEDIR);
+	bind_textdomain_codeset("libplayfield", "UTF-8");
+#endif
 }
 
-#endif	/* defined(USE_TRANSLATION) */
+#endif	/* defined(PF_USE_TRANSLATION) */

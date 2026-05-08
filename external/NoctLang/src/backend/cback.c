@@ -1,7 +1,8 @@
 /* -*- coding: utf-8; tab-width: 8; indent-tabs-mode: t; -*- */
 
 /*
- * Copyright (c) 2025, Awe Morris. All rights reserved.
+ * Noct Programming Language
+ * Copyright (c) 2025, 2026, Awe Morris
  */
 
 /*
@@ -77,8 +78,7 @@ cback_init(
 		return false;
 	}
 
-	fprintf(fp, "#include \"runtime.h\"\n");
-	fprintf(fp, "#include \"execution.h\"\n");
+	fprintf(fp, "#include <noct/aot.h>\"\n");
 	fprintf(fp, "\n");
 
 	return true;
@@ -1068,7 +1068,7 @@ cback_visit_op(
 			return false;
 		break;
 	default:
-		printf("Unknow opcode.");
+		printf("Unknown opcode.");
 		return false;
 	}
 

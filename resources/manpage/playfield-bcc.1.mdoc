@@ -1,48 +1,49 @@
-.\" playfield-compiler.1.mdoc - Playfield compiler manpage
-.Dd September 2025
-.Dt PLAYFIELD-COMPILER 1
-.Os Playfield 1.0
+.\" playfield-bcc.1.mdoc - Playfield bytecode compiler manpage
+.Dd January 2026
+.Dt PLAYFIELD-BCC 1
+.Os Playfield Engine 1.0
 .Sh NAME
-.Nm playfield-compiler
-.Nd compile Playfield scripts into bytecode
+.Nm playfield-bcc
+.Nd compile Ray scripts into bytecode files
 .Sh SYNOPSIS
 .Nm
 .Op Ar sourcefiles ...
 .Sh DESCRIPTION
 The
 .Nm
-translates Playfield script files
-.Pa .pf
+translates Ray script files
+.Pa .ray
 into bytecode files with the extension
-.Pa .pfc .
+.Pa .raybc .
 .Pp
 Each input file is compiled independently.
 The output file has the same basename as the input,
 with its extension replaced by
-.Pa .pfc .
+.Pa .raybc .
 For example, compiling
-.Pa sample.pf
+.Pa sample.ray
 produces
-.Pa sample.pfc
+.Pa sample.raybc
 in the same directory.
 .Sh EXAMPLES
 Compile a single script:
 .Bd -literal -offset indent
-playfield-compiler sample.pf
+playfield-bcc main.ray
 .Ed
 .Pp
 Compile multiple scripts:
 .Bd -literal -offset indent
-playfield-compiler main.pf enemy.pf level.pf
+playfield-bcc main.ray enemy.ray level.ray
 .Ed
 .Pp
 The above command produces:
 .Bd -literal -offset indent
-main.pfc enemy.pfc level.pfc
+main.raybc enemy.raybc level.raybc
 .Ed
 .Sh SEE ALSO
-.Xr playfield 1 ,
-.Xr playfield-pack 1
+.Xr playfield (1) ,
+.Xr playfield-aotc (1),
+.Xr playfield-pack (1)
 .Sh AUTHORS
 .An Awe Morris Aq Mt awe@noctvm.io
 and contributors.

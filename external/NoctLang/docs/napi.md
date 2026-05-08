@@ -1,16 +1,16 @@
-FFI API
-=======
+Native API (NAPI)
+=================
 
 Noct can be easily incorporated into your application. You can call
 Noct scripts from your application, and Noct scripts can call back
-into your application through FFI functions.
+into your application through Native API (NAPI) functions.
 
 Unlike Lua's stack-based virtual machine, Noct uses a straightforward
 register-based architecture, enabling more efficient JIT compilation.
 
 The following is an example skeleton to embed Noct in your app. It
 shows how to create and call a Noct virtual machine, and how to
-implement an FFI function.
+implement a Native API function.
 
 ```
 #include <noct/noct.h>
@@ -27,9 +27,9 @@ void call_noct(const char *file_name, const char *file_text)
     // All operations exclude VM destruction are done through a thread handle.
     noct_create_vm(&vm, &env);
 
-    // Install an FFI function "print(msg)" to the VM.
+    // Install a Native API function "print(msg)" to the VM.
     const char *param_name = {"msg"};
-    noct_register_cfunc(env, "print", 1, param_name, ffi_print, NULL);
+    noct_register_cfunc(env, "print", 1, param_name, napi_print, NULL);
 
     // Compile source and install it to the VM.
     noct_register_source(env, file_name, file_text);
@@ -43,7 +43,7 @@ void call_noct(const char *file_name, const char *file_text)
 }
 
 // print(msg)
-static bool ffi_print(NoctEnv *env)
+static bool napi_print(NoctEnv *env)
 {
     NoctValue param;
     const char *s;
@@ -85,7 +85,7 @@ The type `NoctValue` represents a value in Noct.
 A value has a type and it is one of the following:
 
 ```
-enum noct_value_type {
+enum NoctValueType {
 	NOCT_VALUE_INT    = 0,
 	NOCT_VALUE_FLOAT  = 1,
 	NOCT_VALUE_STRING = 2,
@@ -126,7 +126,7 @@ slow on Linux due to the Spectre vulnerability mitigation.
 
 ### noct_create_vm()
 
-This API creates a new virtual mechine instance.
+This API creates a new sandboxed virtual mechine instance.
 
 It also returns a pointer to an environment for the calling thread.
 Note that an environment is a per-thread handle for API calls.
@@ -140,7 +140,7 @@ noct_create_vm(
 
 ### noct_destroy_vm()
 
-This API destroys the given virtual machine instance and releases
+This API destroys the given sandboxed virtual machine instance and releases
 associated resources including all environments.
 
 ```
@@ -151,7 +151,7 @@ noct_destroy_vm(
 
 ### noct_create_thread_env()
 
-This API creates a thread-local environment for the current thread.
+This API creates a thread-local environment (=context) for the current thread.
 
 ```
 bool
@@ -190,7 +190,7 @@ noct_register_bytecode(
 
 ### noct_register_cfunc()
 
-This API registers an FFI function.
+This API registers a Native API function.
 
 ```
 bool
@@ -661,7 +661,7 @@ noct_set_global(
 
 ### noct_pin_global()
 
-This API declares a native global variable for use within an FFI function.
+This API declares a native global variable for use within a Native API function.
 
 This informs the GC that the given NoctValue variable is
 in use and should not be collected during GC.
@@ -675,7 +675,7 @@ noct_pin_global(
 
 ### noct_unpin_global()
 
-This API undeclare a native global variable for use within an FFI function.
+This API undeclare a native global variable for use within a Native API function.
 
 ```
 bool
@@ -686,11 +686,11 @@ noct_unpin_global(
 
 ### noct_pin_local()
 
-This API declares native local variables for use within an FFI function.
+This API declares native local variables for use within a Native API function.
 
 This informs the GC that the given stack-local NoctValue variables
-are in use and should not be collected during GC. Returning from an
-FFI function undeclares the local variables in the current stack.
+are in use and should not be collected during GC. Returning from a
+Native API function undeclares the local variables in the current stack.
 
 This function should be called with the number of variables,
 followed by that many NoctValue* arguments.
@@ -705,7 +705,7 @@ noct_pin_local(
 
 ### noct_unpin_local()
 
-This API undeclare a native local variables for use within an FFI function.
+This API undeclare a native local variables for use within a Native API function.
 
 ```
 bool

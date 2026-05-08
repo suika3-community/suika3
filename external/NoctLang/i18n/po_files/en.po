@@ -1,0 +1,248 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "syntax error"
+msgstr "Syntax error."
+
+msgid "%s: Out of memory while parsing."
+msgstr "%s: Out of memory while parsing."
+
+msgid "Too many functions."
+msgstr "Too many functions."
+
+msgid "continue appeared outside loop."
+msgstr "continue appeared outside loop."
+
+msgid "LHS is not a term or an array element."
+msgstr "LHS is not a term or an array element."
+
+msgid "var is specified without a single symbol."
+msgstr "var is specified without a single symbol."
+
+msgid "else-if block appeared without if block."
+msgstr "else-if block appeared without if block."
+
+msgid "else-if appeared after else."
+msgstr "else-if appeared after else."
+
+msgid "else appeared after else."
+msgstr "else appeared after else."
+
+msgid "Exceeded the maximum argument count."
+msgstr "Exceeded the maximum argument count."
+
+msgid "Too many anonymous functions."
+msgstr "Too many anonymous functions."
+
+msgid "Too many local variables."
+msgstr "Too many local variables."
+
+msgid "Too many jumps."
+msgstr "Too many jumps."
+
+msgid "LIR: Out of memory error."
+msgstr "LIR: Out of memory error."
+
+msgid "Failed to load bytecode data."
+msgstr "Failed to load bytecode data."
+
+msgid "Memory mapping failed."
+msgstr "Memory mapping failed."
+
+msgid "Code too big."
+msgstr "Code too big."
+
+msgid "Branch target not found."
+msgstr "Branch target not found."
+
+msgid "Failed to load bytecode."
+msgstr "Failed to load bytecode."
+
+msgid "Cannot find function %s."
+msgstr "Cannot find function %s."
+
+msgid "Not an array."
+msgstr "Not an array."
+
+msgid "Array index %d is out-of-range."
+msgstr "Array index %d is out-of-range."
+
+msgid "Dictionary index %d is out-of-range."
+msgstr "Dictionary index %d is out-of-range."
+
+msgid "Dictionary key \"%s\" not found."
+msgstr "Dictionary key \"%s\" not found."
+
+msgid "Local variable \"%s\" not found."
+msgstr "Local variable \"%s\" not found."
+
+msgid "Global variable \"%s\" not found."
+msgstr "Global variable \"%s\" not found."
+
+msgid "Value is not a number."
+msgstr "Value is not a number."
+
+msgid "Value is not an integer."
+msgstr "Value is not an integer."
+
+msgid "Value is not a string."
+msgstr "Value is not a string."
+
+msgid "Value is not a number or a string."
+msgstr "Value is not a number or a string."
+
+msgid "Division by zero."
+msgstr "Division by zero."
+
+msgid "Subscript not an integer."
+msgstr "Subscript not an integer."
+
+msgid "Not an array or a dictionary."
+msgstr "Not an array or a dictionary."
+
+msgid "Subscript not a string."
+msgstr "Subscript not a string."
+
+msgid "Value is not a string, an array, or a dictionary."
+msgstr "Value is not a string, an array, or a dictionary."
+
+msgid "Not a dictionary."
+msgstr "Not a dictionary."
+
+msgid "Dictionary index out-of-range."
+msgstr "Dictionary index out-of-range."
+
+msgid "Symbol \"%s\" not found."
+msgstr "Symbol \"%s\" not found."
+
+msgid "%s(): Function arguments not match."
+msgstr "%s(): Function arguments not match."
+
+msgid "Element %d is not an integer."
+msgstr "Element %d is not an integer."
+
+msgid "Element %d is not a float."
+msgstr "Element %d is not a float."
+
+msgid "Element %d is not a string."
+msgstr "Element %d is not a string."
+
+msgid "Element %d is not an array."
+msgstr "Element %d is not an array."
+
+msgid "Element %d is not a dictionary."
+msgstr "Element %d is not a dictionary."
+
+msgid "Element %d is not a function."
+msgstr "Element %d is not a function."
+
+msgid "Value for key %s is not an integer."
+msgstr "Value for key %s is not an integer."
+
+msgid "Value for key %s is not a float."
+msgstr "Value for key %s is not a float."
+
+msgid "Value for key %s is not a string."
+msgstr "Value for key %s is not a string."
+
+msgid "Value for key %s is not an array."
+msgstr "Value for key %s is not an array."
+
+msgid "Value for key %s is not a dictionary."
+msgstr "Value for key %s is not a dictionary."
+
+msgid "Value for key %s is not a function."
+msgstr "Value for key %s is not a function."
+
+msgid "Argument (%d: %s) not an integer."
+msgstr "Argument (%d: %s) not an integer."
+
+msgid "Argument (%d: %s) not a float."
+msgstr "Argument (%d: %s) not a float."
+
+msgid "Argument (%d: %s) not a string."
+msgstr "Argument (%d: %s) not a string."
+
+msgid "Argument (%d: %s) is not an array."
+msgstr "Argument (%d: %s) is not an array."
+
+msgid "Argument (%d: %s) is not a dictionary."
+msgstr "Argument (%d: %s) is not a dictionary."
+
+msgid "Not a function."
+msgstr "Not a function."
+
+msgid "Empty array."
+msgstr "Empty array."
+
+msgid "Out of memory."
+msgstr "Out of memory."
+
+msgid "Too many pinned global variables."
+msgstr "Too many pinned global variables."
+
+msgid "Too many pinned local variables."
+msgstr "Too many pinned local variables."
+
+msgid "Cannot open file %s.\n"
+msgstr "Cannot open file %s.\n"
+
+msgid "Cannot read file %s.\n"
+msgstr "Cannot read file %s.\n"
+
+msgid "Error: %s: %d: %s\n"
+msgstr "Error: %s: %d: %s\n"
+
+msgid "Adding file %s\n"
+msgstr "Adding file %s\n"
+
+msgid "Cannot find %s.\n"
+msgstr "Cannot find %s.\n"
+
+msgid "Searching directory %s.\n"
+msgstr "Searching directory %s.\n"
+
+msgid "Skipping empty directory %s.\n"
+msgstr "Skipping empty directory %s.\n"
+
+msgid "Unknown option %s.\n"
+msgstr "Unknown option %s.\n"
+
+msgid "Specify a file.\n"
+msgstr "Specify a file.\n"
+
+msgid "%s:%d: Error: %s\n"
+msgstr "%s:%d: Error: %s\n"
+
+msgid "Out of memory.\n"
+msgstr "Out of memory.\n"
+
+msgid "Noct Programming Language"
+msgstr "Noct Programming Language"
+
+msgid "Version %s\n"
+msgstr "Version %s\n"
+
+msgid "JIT compilation is enabled. Starting the fast VM...\n"
+msgstr "JIT compilation is enabled. Starting the fast VM...\n"
+
+msgid "Entering REPL mode.\n"
+msgstr "Entering REPL mode.\n"
+
+msgid "Usage\n"
+msgstr "Usage\n"
+
+msgid "noct <file>                        ... run a program\n"
+msgstr "noct <file>                        ... run a program\n"
+
+msgid "noct --compile <files>             ... convert to bytecode files\n"
+msgstr "noct --compile <files>             ... convert to bytecode files\n"
+
+msgid "noct --ansic <out file> <in files> ... convert to a C source file\n"
+msgstr "noct --ansic <out file> <in files> ... convert to a C source file\n"
+
+msgid "noct --elisp <out file> <in files> ... convert to an Emacs Lisp source file\n"
+msgstr "noct --elisp <out file> <in files> ... convert to an Emacs Lisp source file\n"
+

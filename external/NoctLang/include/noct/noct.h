@@ -1,7 +1,8 @@
 /* -*- coding: utf-8; tab-width: 8; indent-tabs-mode: t; -*- */
 
 /*
- * Copyright (c) 2025, Awe Morris. All rights reserved.
+ * Noct Programming Language
+ * Copyright (c) 2025, 2026, Awe Morris
  */
 
 /*
@@ -56,15 +57,15 @@ struct rt_func;
 /*
  * Friendly-names.
  */
-typedef struct rt_vm     NoctVM;
-typedef struct rt_env    NoctEnv;
-typedef struct rt_value  NoctValue;
-typedef struct rt_func   NoctFunc;
+typedef struct rt_vm     NoctVM;	/* A sandbox.        */
+typedef struct rt_env    NoctEnv;	/* A thread context. */
+typedef struct rt_value  NoctValue;	/* A value.          */
+typedef struct rt_func   NoctFunc;	/* A function.       */
 
 /*
  * Value type.
  */
-enum noct_value_type {
+enum NoctValueType {
 	NOCT_VALUE_INT    = 0,
 	NOCT_VALUE_FLOAT  = 1,
 	NOCT_VALUE_STRING = 2,
@@ -82,6 +83,7 @@ enum noct_value_type {
  * NoctValue implementation.
  *  - If a value is zero-cleared, it shows an integer zero.
  *  - This struct has 8 bytes on 32-bit architecture and 16 bytes on 64-bit architecture.
+ *  - This struct is public for declarations of variables that have NoctValue type.
  */
 struct rt_value {
 	/* Offset 0: */
@@ -105,20 +107,32 @@ struct rt_value {
 };
 
 /*
- * Allocator
+ * Allocators
+ *  - Override the macros and make your own custom build.
  */
 
+#ifndef noct_malloc
 #define noct_malloc	malloc
+#endif
+
+#ifndef noct_calloc
 #define noct_calloc	calloc
+#endif
+
+#ifndef noct_strdup
 #define noct_strdup	strdup
+#endif
+
+#ifndef noct_free
 #define noct_free	free
+#endif
 
 /*
  * Core Functions
  */
 
 /*
- * Creates a new VM instance.
+ * Creates a new sandboxed VM instance.
  *
  * Also returns a pointer to an environment for the calling thread.
  */
@@ -129,7 +143,7 @@ noct_create_vm(
 	NoctEnv **default_env);
 
 /*
- * Destroys the given VM instance and releases associated resources.
+ * Destroys the given sandboxed VM instance and releases associated resources.
  */
 NOCT_DLL
 bool
@@ -137,7 +151,7 @@ noct_destroy_vm(
 	NoctVM *vm);
 
 /*
- * Creates a thread-local environment for the current thread.
+ * Creates a thread-local environment (=context) for the current thread.
  */
 #if defined(NOCT_USE_MULTITHREAD)
 NOCT_DLL
@@ -168,7 +182,7 @@ noct_register_bytecode(
 	uint32_t size);
 
 /*
- * Registers an FFI function.
+ * Registers a native API function.
  */
 NOCT_DLL
 bool
@@ -526,6 +540,25 @@ noct_make_dict_copy(
 	NoctValue *src);
 
 /*
+ * Retrieves a tmpvar size from the current stack frame.
+ */
+NOCT_DLL
+bool
+noct_get_tmpvar_size(
+	NoctEnv *env,
+	uint32_t *size);
+
+/*
+ * Retrieves function arguments from the current stack frame.
+ */
+NOCT_DLL
+bool
+noct_get_args(
+	NoctEnv *env,
+	uint32_t count,
+	...);
+
+/*
  * Retrieves a function argument from the current stack frame.
  */
 NOCT_DLL
@@ -578,7 +611,7 @@ noct_set_global(
 	NoctValue *val);
 
 /*
- * Declares a native global variable for use within an FFI function.
+ * Declares a native global variable for use within a native API function.
  *
  * This informs the GC that the given NoctValue variable is
  * in use and should not be collected during GC.
@@ -590,7 +623,7 @@ noct_pin_global(
 	NoctValue *val);
 
 /*
- * Undeclares a native global variable for use within an FFI function.
+ * Undeclares a native global variable for use within a native API function.
  */
 NOCT_DLL
 bool
@@ -599,11 +632,11 @@ noct_unpin_global(
 	NoctValue *val);
 
 /*
- * Declares native local variables for use within an FFI function.
+ * Declares native local variables for use within a native API function.
  *
  * This informs the GC that the given stack-local NoctValue variables
- * are in use and should not be collected during GC. Returning from an
- * FFI function undeclares the local variables in the current stack.
+ * are in use and should not be collected during GC. Returning from a
+ * native API function undeclares the local variables in the current stack.
  *
  * This function should be called with the number of variables,
  * followed by that many NoctValue* arguments.
@@ -616,7 +649,7 @@ noct_pin_local(
 	...);
 
 /*
- * Undeclares a native local variables for use within an FFI function.
+ * Undeclares a native local variables for use within a native API function.
  */
 NOCT_DLL
 bool
