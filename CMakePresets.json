@@ -548,6 +548,7 @@
                 "PLAYFIELD_ENABLE_STATIC":     "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "OFF",
+                "PLAYFIELD_ENABLE_HOOK":       "ON",
                 "PLAYFIELD_ENABLE_PACK":       "OFF",
                 "PLAYFIELD_ENABLE_BCC":        "OFF",
                 "PLAYFIELD_ENABLE_AOTC":       "OFF"
@@ -690,7 +691,8 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_IOS":        "ON",
-                "PLAYFIELD_ENABLE_STATIC":     "ON"
+                "PLAYFIELD_ENABLE_STATIC":     "ON",
+                "PLAYFIELD_ENABLE_HOOK":       "ON"
             }
         },
         {
@@ -702,7 +704,8 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_IOS":        "ON",
-                "PLAYFIELD_ENABLE_STATIC":     "ON"
+                "PLAYFIELD_ENABLE_STATIC":     "ON",
+                "PLAYFIELD_ENABLE_HOOK":       "ON"
             }
         },
         {
@@ -717,7 +720,8 @@
                 "ANDROID_PLATFORM":            "30",
                 "ANDROID_ABI":                 "x86",
                 "PLAYFIELD_TARGET_ANDROID":    "ON",
-                "PLAYFIELD_ENABLE_SHARED":     "ON"
+                "PLAYFIELD_ENABLE_SHARED":     "ON",
+                "PLAYFIELD_ENABLE_HOOK":       "ON"
             }
         },
         {
@@ -732,7 +736,8 @@
                 "ANDROID_PLATFORM":            "30",
                 "ANDROID_ABI":                 "x86_64",
                 "PLAYFIELD_TARGET_ANDROID":    "ON",
-                "PLAYFIELD_ENABLE_SHARED":     "ON"
+                "PLAYFIELD_ENABLE_SHARED":     "ON",
+                "PLAYFIELD_ENABLE_HOOK":       "ON"
             }
         },
         {
@@ -747,7 +752,8 @@
                 "ANDROID_PLATFORM":            "30",
                 "ANDROID_ABI":                 "armeabi-v7a",
                 "PLAYFIELD_TARGET_ANDROID":    "ON",
-                "PLAYFIELD_ENABLE_SHARED":     "ON"
+                "PLAYFIELD_ENABLE_SHARED":     "ON",
+                "PLAYFIELD_ENABLE_HOOK":       "ON"
             }
         },
         {
@@ -762,7 +768,8 @@
                 "ANDROID_PLATFORM":            "30",
                 "ANDROID_ABI":                 "arm64-v8a",
                 "PLAYFIELD_TARGET_ANDROID":    "ON",
-                "PLAYFIELD_ENABLE_SHARED":     "ON"
+                "PLAYFIELD_ENABLE_SHARED":     "ON",
+                "PLAYFIELD_ENABLE_HOOK":       "ON"
             }
         },
         {
@@ -777,7 +784,8 @@
                 "ANDROID_PLATFORM":            "30",
                 "ANDROID_ABI":                 "riscv64",
                 "PLAYFIELD_TARGET_ANDROID":    "ON",
-                "PLAYFIELD_ENABLE_SHARED":     "ON"
+                "PLAYFIELD_ENABLE_SHARED":     "ON",
+                "PLAYFIELD_ENABLE_HOOK":       "ON"
             }
         },
         {
@@ -791,7 +799,8 @@
                 "OHOS_PLATFORM_LEVEL":          "12",
                 "OHOS_ARCH":                    "x86_64",
                 "PLAYFIELD_TARGET_OPENHARMONY": "ON",
-                "PLAYFIELD_ENABLE_STATIC":      "ON"
+                "PLAYFIELD_ENABLE_STATIC":      "ON",
+                "PLAYFIELD_ENABLE_HOOK":        "ON"
             }
         },
         {
@@ -805,7 +814,8 @@
                 "OHOS_PLATFORM_LEVEL":          "12",
                 "OHOS_ARCH":                    "arm64-v8a",
                 "PLAYFIELD_TARGET_OPENHARMONY": "ON",
-                "PLAYFIELD_ENABLE_STATIC":      "ON"
+                "PLAYFIELD_ENABLE_STATIC":      "ON",
+                "PLAYFIELD_ENABLE_HOOK":        "ON"
             }
         },
         {
@@ -819,7 +829,8 @@
                 "OHOS_PLATFORM_LEVEL":          "12",
                 "OHOS_ARCH":                    "armeabi-v7a",
                 "PLAYFIELD_TARGET_OPENHARMONY": "ON",
-                "PLAYFIELD_ENABLE_STATIC":      "ON"
+                "PLAYFIELD_ENABLE_STATIC":      "ON",
+                "PLAYFIELD_ENABLE_HOOK":        "ON"
             }
         },
         {
@@ -854,7 +865,8 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_UNITY":      "ON",
-                "PLAYFIELD_ENABLE_SHARED":     "ON"
+                "PLAYFIELD_ENABLE_SHARED":     "ON",
+                "PLAYFIELD_ENABLE_HOOK":       "ON"
             }
         },
         {
@@ -866,7 +878,8 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_UNITY":      "ON",
-                "PLAYFIELD_ENABLE_SHARED":     "ON"
+                "PLAYFIELD_ENABLE_SHARED":     "ON",
+                "PLAYFIELD_ENABLE_HOOK":       "ON"
             }
         },
         {
@@ -879,7 +892,8 @@
                 "CMAKE_BUILD_TYPE":                 "Release",
                 "PLAYFIELD_TARGET_UNITY":           "ON",
                 "PLAYFIELD_TARGET_UNITY_SWITCH":    "ON",
-                "PLAYFIELD_ENABLE_STATIC":          "ON"
+                "PLAYFIELD_ENABLE_STATIC":          "ON",
+                "PLAYFIELD_ENABLE_HOOK":            "ON"
             }
         },
         {
@@ -892,7 +906,8 @@
                 "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_UNITY":      "ON",
                 "PLAYFIELD_TARGET_UNITY_PS5":  "ON",
-                "PLAYFIELD_ENABLE_STATIC":     "ON"
+                "PLAYFIELD_ENABLE_STATIC":     "ON",
+                "PLAYFIELD_ENABLE_HOOK":       "ON"
             }
         },
         {
@@ -902,10 +917,11 @@
             "binaryDir":      "${sourceDir}/build-unity-xbox",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/unity-xbox.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":                 "Release",
-                "PLAYFIELD_TARGET_UNITY":           "ON",
-                "PLAYFIELD_TARGET_UNITY_XBOX":      "ON",
-                "PLAYFIELD_ENABLE_STATIC":          "ON"
+                "CMAKE_BUILD_TYPE":             "Release",
+                "PLAYFIELD_TARGET_UNITY":       "ON",
+                "PLAYFIELD_TARGET_UNITY_XBOX":  "ON",
+                "PLAYFIELD_ENABLE_STATIC":      "ON",
+                "PLAYFIELD_ENABLE_HOOK":        "ON"
             }
         },
         {
