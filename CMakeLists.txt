@@ -827,7 +827,7 @@ if(NOT SUIKA_ENABLE_DIST)
     playfield
     strato
     playfield  # Specify twice to resolve circular references.
-    noctlang
+    noct
   )
 else()
   target_link_libraries(suika3 PRIVATE
@@ -979,6 +979,7 @@ if(SUIKA_ENABLE_BCC)
     include
     external/PlayfieldEngine/include
     external/PlayfieldEngine/external/StratoHAL/include
+    external/PlayfieldEngine/external/NoctLang/include
     external/PlayfieldEngine/external/NoctLang/src/core
     external/PlayfieldEngine/external/NoctLang/src/backend
   )
@@ -1018,6 +1019,7 @@ if(SUIKA_ENABLE_AOTC)
     include
     external/PlayfieldEngine/include
     external/PlayfieldEngine/external/StratoHAL/include
+    external/PlayfieldEngine/external/NoctLang/include
     external/PlayfieldEngine/external/NoctLang/src/core
     external/PlayfieldEngine/external/NoctLang/src/backend
   )
