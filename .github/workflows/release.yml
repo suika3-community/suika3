@@ -6,14 +6,11 @@ on:
   pull_request:
     branches: [ main ]
 
-x-skip-docs: &skip-docs
-  if: |
-    github.event_name != 'push' ||
-    !contains(github.event.head_commit.message, '[docs]')
-
 jobs:
   build-windows-vs2022:
-    <<: *skip-docs
+    if: |
+      github.event_name != 'push' ||
+      !contains(github.event.head_commit.message, '[docs]')
     runs-on: windows-latest
     steps:
       - name: Checkout repository
@@ -73,7 +70,9 @@ jobs:
           retention-days: 7
 
   build-windows-mingw-w64:
-    <<: *skip-docs
+    if: |
+      github.event_name != 'push' ||
+      !contains(github.event.head_commit.message, '[docs]')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -106,7 +105,9 @@ jobs:
           retention-days: 7
 
   build-macos:
-    <<: *skip-docs
+    if: |
+      github.event_name != 'push' ||
+      !contains(github.event.head_commit.message, '[docs]')
     runs-on: macos-latest
     steps:
       - name: Checkout repository
@@ -173,7 +174,9 @@ jobs:
           retention-days: 7
 
   build-flatpak-x86_64:
-    <<: *skip-docs
+    if: |
+      github.event_name != 'push' ||
+      !contains(github.event.head_commit.message, '[docs]')
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -202,7 +205,9 @@ jobs:
           retention-days: 7
 
 #  build-flatpak-aarch64:
-#    <<: *skip-docs
+#    if: |
+#      github.event_name != 'push' ||
+#      !contains(github.event.head_commit.message, '[docs]')
 #    runs-on: ubuntu-24.04-arm64
 #
 #    steps:
@@ -232,7 +237,9 @@ jobs:
 #          retention-days: 7
 
   build-wasm:
-    <<: *skip-docs
+    if: |
+      github.event_name != 'push' ||
+      !contains(github.event.head_commit.message, '[docs]')
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -257,7 +264,9 @@ jobs:
           retention-days: 7
 
   build-ios:
-    <<: *skip-docs
+    if: |
+      github.event_name != 'push' ||
+      !contains(github.event.head_commit.message, '[docs]')
     runs-on: macos-latest
     steps:
       - name: Checkout repository
@@ -302,7 +311,9 @@ jobs:
           retention-days: 7
  
   build-android:
-    <<: *skip-docs
+    if: |
+      github.event_name != 'push' ||
+      !contains(github.event.head_commit.message, '[docs]')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -413,7 +424,9 @@ jobs:
 #          retention-days: 7
 
   build-openharmony:
-    <<: *skip-docs
+    if: |
+      github.event_name != 'push' ||
+      !contains(github.event.head_commit.message, '[docs]')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -458,7 +471,9 @@ jobs:
           retention-days: 7
 
   build-unity:
-    <<: *skip-docs
+    if: |
+      github.event_name != 'push' ||
+      !contains(github.event.head_commit.message, '[docs]')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -535,7 +550,9 @@ jobs:
           retention-days: 7
 
   build-mkdocs:
-    <<: *skip-docs
+    if: |
+      github.event_name != 'push' ||
+      !contains(github.event.head_commit.message, '[docs]')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -562,7 +579,9 @@ jobs:
           retention-days: 7
 
   zip:
-    <<: *skip-docs
+    if: |
+      github.event_name != 'push' ||
+      !contains(github.event.head_commit.message, '[docs]')
     needs: [build-windows-vs2022, build-windows-mingw-w64, build-macos, build-flatpak-x86_64, build-wasm, build-ios, build-android, build-openharmony, build-unity, build-mkdocs]
     runs-on: ubuntu-latest
     steps:
