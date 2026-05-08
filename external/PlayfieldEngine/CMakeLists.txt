@@ -58,6 +58,7 @@ option(PLAYFIELD_ENABLE_MAIN2            "Enable macOS main2()"                 
 option(PLAYFIELD_ENABLE_CONSOLE          "Enable console debug output on Windows"     OFF)
 option(PLAYFIELD_ENABLE_UNSAFE           "Enable unsafe APIs for launchers"           OFF)
 option(PLAYFIELD_ENABLE_PORTAL           "Enable XDG Portal"                          OFF)
+option(PLAYFIELD_ENABLE_HOOK             "Enable downstream pf_init_hook()"           OFF)
 
 # ---
 
@@ -535,10 +536,7 @@ if(NOT PLAYFIELD_ENABLE_DIST)
 endif()
 
 # Use stub hook for library-only platforms
-if(   PLAYFIELD_TARGET_IOS
-   OR PLAYFIELD_TARGET_ANDROID
-   OR PLAYFIELD_TARGET_OPENHARMONY
-   OR PLAYFIELD_TARGET_UNITY)
+if(NOT PLAYFIELD_ENABLE_HOOK)
   set(PLAYFIELD_HOOK src/hook.c)
 endif()
 
