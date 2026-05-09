@@ -19,8 +19,8 @@
                 "SUIKA_ENABLE_JIT":             "ON",
                 "SUIKA_ENABLE_I18N":            "ON",
                 "SUIKA_ENABLE_PACK":            "ON",
-                "SUIKA_ENABLE_BCC":        "ON",
-                "SUIKA_ENABLE_AOTC":         "ON",
+                "SUIKA_ENABLE_BCC":             "ON",
+                "SUIKA_ENABLE_AOTC":            "ON",
                 "SUIKA_ENABLE_WEBSERVER":       "ON"
             },
             "condition": {
@@ -44,8 +44,8 @@
                 "SUIKA_ENABLE_JIT":             "ON",
                 "SUIKA_ENABLE_I18N":            "ON",
                 "SUIKA_ENABLE_PACK":            "ON",
-                "SUIKA_ENABLE_BCC":        "ON",
-                "SUIKA_ENABLE_AOTC":         "ON",
+                "SUIKA_ENABLE_BCC":             "ON",
+                "SUIKA_ENABLE_AOTC":            "ON",
                 "SUIKA_ENABLE_WEBSERVER":       "ON"
             },
             "condition": {
@@ -69,8 +69,8 @@
                 "SUIKA_ENABLE_JIT":             "ON",
                 "SUIKA_ENABLE_I18N":            "ON",
                 "SUIKA_ENABLE_PACK":            "ON",
-                "SUIKA_ENABLE_BCC":        "ON",
-                "SUIKA_ENABLE_AOTC":         "ON",
+                "SUIKA_ENABLE_BCC":             "ON",
+                "SUIKA_ENABLE_AOTC":            "ON",
                 "SUIKA_ENABLE_WEBSERVER":       "ON"
             },
             "condition": {
@@ -95,8 +95,8 @@
                 "SUIKA_ENABLE_JIT":             "ON",
                 "SUIKA_ENABLE_I18N":            "ON",
                 "SUIKA_ENABLE_PACK":            "ON",
-                "SUIKA_ENABLE_BCC":        "ON",
-                "SUIKA_ENABLE_AOTC":         "ON",
+                "SUIKA_ENABLE_BCC":             "ON",
+                "SUIKA_ENABLE_AOTC":            "ON",
                 "SUIKA_ENABLE_WEBSERVER":       "ON"
             },
             "condition": {
@@ -160,8 +160,8 @@
                 "CMAKE_MSVC_RUNTIME_LIBRARY":   "MultiThreaded$<$<CONFIG:Debug>:Debug>",
                 "SUIKA_ENABLE_I18N":            "OFF",
                 "SUIKA_ENABLE_PACK":            "OFF",
-                "SUIKA_ENABLE_BCC":        "OFF",
-                "SUIKA_ENABLE_AOTC":         "OFF",
+                "SUIKA_ENABLE_BCC":             "OFF",
+                "SUIKA_ENABLE_AOTC":            "OFF",
                 "SUIKA_ENABLE_WEBSERVER":       "OFF"
             },
             "condition": {
@@ -182,8 +182,8 @@
                 "SUIKA_ENABLE_JIT":             "OFF",
                 "SUIKA_ENABLE_I18N":            "OFF",
                 "SUIKA_ENABLE_PACK":            "OFF",
-                "SUIKA_ENABLE_BCC":        "OFF",
-                "SUIKA_ENABLE_AOTC":         "OFF",
+                "SUIKA_ENABLE_BCC":             "OFF",
+                "SUIKA_ENABLE_AOTC":            "OFF",
                 "SUIKA_ENABLE_WEBSERVER":       "OFF"
             },
             "condition": {
@@ -207,8 +207,8 @@
                 "SUIKA_ENABLE_JIT":                         "OFF",
                 "SUIKA_ENABLE_I18N":                        "OFF",
                 "SUIKA_ENABLE_PACK":                        "OFF",
-                "SUIKA_ENABLE_BCC":                    "OFF",
-                "SUIKA_ENABLE_AOTC":                     "OFF",
+                "SUIKA_ENABLE_BCC":                         "OFF",
+                "SUIKA_ENABLE_AOTC":                        "OFF",
                 "SUIKA_ENABLE_WEBSERVER":                   "OFF"
             },
             "condition": {
@@ -232,8 +232,8 @@
                 "SUIKA_ENABLE_JIT":             "ON",
                 "SUIKA_ENABLE_I18N":            "ON",
                 "SUIKA_ENABLE_PACK":            "ON",
-                "SUIKA_ENABLE_BCC":        "ON",
-                "SUIKA_ENABLE_AOTC":         "ON",
+                "SUIKA_ENABLE_BCC":             "ON",
+                "SUIKA_ENABLE_AOTC":            "ON",
                 "SUIKA_ENABLE_WEBSERVER":       "ON"
             },
             "condition": {
@@ -250,15 +250,15 @@
             "toolset":        "v145",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":                "Debug",
-                "CMAKE_BUILD_TYPE":                         "Debug",
-                "SUIKA_TARGET_WINDOWS":                     "ON",
-                "SUIKA_ENABLE_JIT":                         "ON",
-                "SUIKA_ENABLE_I18N":                        "ON",
-                "SUIKA_ENABLE_PACK":                        "ON",
-                "SUIKA_ENABLE_BCC":                    "ON",
-                "SUIKA_ENABLE_AOTC":                     "ON",
-                "SUIKA_ENABLE_WEBSERVER":                   "ON"
+                "CMAKE_CONFIGURATION_TYPES":    "Debug",
+                "CMAKE_BUILD_TYPE":             "Debug",
+                "SUIKA_TARGET_WINDOWS":         "ON",
+                "SUIKA_ENABLE_JIT":             "ON",
+                "SUIKA_ENABLE_I18N":            "ON",
+                "SUIKA_ENABLE_PACK":            "ON",
+                "SUIKA_ENABLE_BCC":             "ON",
+                "SUIKA_ENABLE_AOTC":            "ON",
+                "SUIKA_ENABLE_WEBSERVER":       "ON"
             },
             "condition": {
                 "type": "equals",
@@ -296,18 +296,18 @@
             "toolset":        "v145",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":    "Release",
-                "CMAKE_BUILD_TYPE":             "Release",
-                "CMAKE_MSVC_RUNTIME_LIBRARY":   "MultiThreaded$<$<CONFIG:Debug>:Debug>",
-                "SUIKA_TARGET_WINDOWS":         "ON",
-                "SUIKA_ENABLE_JIT":             "ON",
-                "SUIKA_ENABLE_I18N":            "ON",
-                "SUIKA_ENABLE_PACK":            "ON",
+                "CMAKE_CONFIGURATION_TYPES":           "Release",
+                "CMAKE_BUILD_TYPE":                    "Release",
+                "CMAKE_MSVC_RUNTIME_LIBRARY":          "MultiThreaded$<$<CONFIG:Debug>:Debug>",
+                "SUIKA_TARGET_WINDOWS":                "ON",
+                "SUIKA_ENABLE_JIT":                    "ON",
+                "SUIKA_ENABLE_I18N":                   "ON",
+                "SUIKA_ENABLE_PACK":                   "ON",
                 "CMAKE_MSVC_DEBUG_INFORMATION_FORMAT": "ProgramDatabase",
-                "CMAKE_C_FLAGS_RELEASE": "/O2 /Zi",
-                "CMAKE_CXX_FLAGS_RELEASE": "/O2 /Zi",
-                "CMAKE_EXE_LINKER_FLAGS_RELEASE": "/DEBUG",
-                "CMAKE_SHARED_LINKER_FLAGS_RELEASE": "/DEBUG"
+                "CMAKE_C_FLAGS_RELEASE":               "/O2 /Zi",
+                "CMAKE_CXX_FLAGS_RELEASE":             "/O2 /Zi",
+                "CMAKE_EXE_LINKER_FLAGS_RELEASE":      "/DEBUG",
+                "CMAKE_SHARED_LINKER_FLAGS_RELEASE":   "/DEBUG"
             },
             "condition": {
                 "type": "equals",
@@ -323,15 +323,15 @@
             "toolset":        "v145",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":                "Debug",
-                "CMAKE_BUILD_TYPE":                         "Debug",
-                "SUIKA_TARGET_WINDOWS":                     "ON",
-                "SUIKA_ENABLE_JIT":                         "ON",
-                "SUIKA_ENABLE_I18N":                        "ON",
-                "SUIKA_ENABLE_PACK":                        "ON",
-                "SUIKA_ENABLE_BCC":                    "ON",
-                "SUIKA_ENABLE_AOTC":                     "ON",
-                "SUIKA_ENABLE_WEBSERVER":                   "ON"
+                "CMAKE_CONFIGURATION_TYPES": "Debug",
+                "CMAKE_BUILD_TYPE":          "Debug",
+                "SUIKA_TARGET_WINDOWS":      "ON",
+                "SUIKA_ENABLE_JIT":          "ON",
+                "SUIKA_ENABLE_I18N":         "ON",
+                "SUIKA_ENABLE_PACK":         "ON",
+                "SUIKA_ENABLE_BCC":          "ON",
+                "SUIKA_ENABLE_AOTC":         "ON",
+                "SUIKA_ENABLE_WEBSERVER":    "ON"
             },
             "condition": {
                 "type": "equals",
@@ -354,8 +354,8 @@
                 "SUIKA_ENABLE_JIT":             "ON",
                 "SUIKA_ENABLE_I18N":            "ON",
                 "SUIKA_ENABLE_PACK":            "ON",
-                "SUIKA_ENABLE_BCC":        "ON",
-                "SUIKA_ENABLE_AOTC":         "ON",
+                "SUIKA_ENABLE_BCC":             "ON",
+                "SUIKA_ENABLE_AOTC":            "ON",
                 "SUIKA_ENABLE_WEBSERVER":       "ON"
             },
             "condition": {
@@ -372,15 +372,15 @@
             "toolset":        "v145",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":                "Debug",
-                "CMAKE_BUILD_TYPE":                         "Debug",
-                "SUIKA_TARGET_WINDOWS":                     "ON",
-                "SUIKA_ENABLE_JIT":                         "ON",
-                "SUIKA_ENABLE_I18N":                        "ON",
-                "SUIKA_ENABLE_PACK":                        "ON",
-                "SUIKA_ENABLE_BCC":                    "ON",
-                "SUIKA_ENABLE_AOTC":                     "ON",
-                "SUIKA_ENABLE_WEBSERVER":                   "ON"
+                "CMAKE_CONFIGURATION_TYPES":    "Debug",
+                "CMAKE_BUILD_TYPE":             "Debug",
+                "SUIKA_TARGET_WINDOWS":         "ON",
+                "SUIKA_ENABLE_JIT":             "ON",
+                "SUIKA_ENABLE_I18N":            "ON",
+                "SUIKA_ENABLE_PACK":            "ON",
+                "SUIKA_ENABLE_BCC":             "ON",
+                "SUIKA_ENABLE_AOTC":            "ON",
+                "SUIKA_ENABLE_WEBSERVER":       "ON"
             },
             "condition": {
                 "type": "equals",
@@ -404,8 +404,8 @@
                 "SUIKA_ENABLE_JIT":             "ON",
                 "SUIKA_ENABLE_I18N":            "ON",
                 "SUIKA_ENABLE_PACK":            "ON",
-                "SUIKA_ENABLE_BCC":        "ON",
-                "SUIKA_ENABLE_AOTC":         "ON",
+                "SUIKA_ENABLE_BCC":             "ON",
+                "SUIKA_ENABLE_AOTC":            "ON",
                 "SUIKA_ENABLE_WEBSERVER":       "ON"
             },
             "condition": {
@@ -464,13 +464,13 @@
             "toolset":        "v145",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "SUIKA_TARGET_GDK_WINDOWS":                 "ON",
-                "SUIKA_ENABLE_JIT":                         "ON",
-                "SUIKA_ENABLE_I18N":                        "OFF",
-                "SUIKA_ENABLE_PACK":                        "OFF",
-                "SUIKA_ENABLE_BCC":                    "OFF",
-                "SUIKA_ENABLE_AOTC":                     "OFF",
-                "SUIKA_ENABLE_WEBSERVER":                   "OFF"
+                "SUIKA_TARGET_GDK_WINDOWS":  "ON",
+                "SUIKA_ENABLE_JIT":          "ON",
+                "SUIKA_ENABLE_I18N":         "OFF",
+                "SUIKA_ENABLE_PACK":         "OFF",
+                "SUIKA_ENABLE_BCC":          "OFF",
+                "SUIKA_ENABLE_AOTC":         "OFF",
+                "SUIKA_ENABLE_WEBSERVER":    "OFF"
             },
             "condition": {
                 "type": "equals",
@@ -486,13 +486,13 @@
             "toolset":        "v145",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "SUIKA_TARGET_GDK_XBOX_XS":                 "ON",
-                "SUIKA_ENABLE_JIT":                         "ON",
-                "SUIKA_ENABLE_I18N":                        "OFF",
-                "SUIKA_ENABLE_PACK":                        "OFF",
-                "SUIKA_ENABLE_BCC":                    "OFF",
-                "SUIKA_ENABLE_AOTC":                     "OFF",
-                "SUIKA_ENABLE_WEBSERVER":                   "OFF"
+                "SUIKA_TARGET_GDK_XBOX_XS":  "ON",
+                "SUIKA_ENABLE_JIT":          "ON",
+                "SUIKA_ENABLE_I18N":         "OFF",
+                "SUIKA_ENABLE_PACK":         "OFF",
+                "SUIKA_ENABLE_BCC":          "OFF",
+                "SUIKA_ENABLE_AOTC":         "OFF",
+                "SUIKA_ENABLE_WEBSERVER":    "OFF"
             },
             "condition": {
                 "type": "equals",
@@ -513,8 +513,8 @@
                 "SUIKA_ENABLE_JIT":        "ON",
                 "SUIKA_ENABLE_I18N":       "ON",
                 "SUIKA_ENABLE_PACK":       "ON",
-                "SUIKA_ENABLE_BCC":   "ON",
-                "SUIKA_ENABLE_AOTC":    "ON",
+                "SUIKA_ENABLE_BCC":        "ON",
+                "SUIKA_ENABLE_AOTC":       "ON",
                 "SUIKA_ENABLE_WEBSERVER":  "ON"
             }
         },
@@ -531,8 +531,8 @@
                 "SUIKA_ENABLE_JIT":        "ON",
                 "SUIKA_ENABLE_I18N":       "ON",
                 "SUIKA_ENABLE_PACK":       "ON",
-                "SUIKA_ENABLE_BCC":   "ON",
-                "SUIKA_ENABLE_AOTC":    "ON",
+                "SUIKA_ENABLE_BCC":        "ON",
+                "SUIKA_ENABLE_AOTC":       "ON",
                 "SUIKA_ENABLE_WEBSERVER":  "ON"
             }
         },
@@ -549,8 +549,8 @@
                 "SUIKA_ENABLE_JIT":        "ON",
                 "SUIKA_ENABLE_I18N":       "ON",
                 "SUIKA_ENABLE_PACK":       "ON",
-                "SUIKA_ENABLE_BCC":   "ON",
-                "SUIKA_ENABLE_AOTC":    "ON",
+                "SUIKA_ENABLE_BCC":        "ON",
+                "SUIKA_ENABLE_AOTC":       "ON",
                 "SUIKA_ENABLE_WEBSERVER":  "ON",
                 "SUIKA_ENABLE_CONSOLE":    "ON"
             }
@@ -568,8 +568,8 @@
                 "SUIKA_ENABLE_JIT":        "ON",
                 "SUIKA_ENABLE_I18N":       "ON",
                 "SUIKA_ENABLE_PACK":       "ON",
-                "SUIKA_ENABLE_BCC":   "ON",
-                "SUIKA_ENABLE_AOTC":    "ON",
+                "SUIKA_ENABLE_BCC":        "ON",
+                "SUIKA_ENABLE_AOTC":       "ON",
                 "SUIKA_ENABLE_WEBSERVER":  "ON",
                 "SUIKA_ENABLE_UNSAFE":     "ON"
             }
@@ -581,14 +581,14 @@
             "binaryDir":      "${sourceDir}/build-mingw-win95",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/mingw-win95.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":                         "Release",
-                "SUIKA_TARGET_WINDOWS95":                   "ON",
-                "SUIKA_ENABLE_JIT":                         "OFF",
-                "SUIKA_ENABLE_I18N":                        "OFF",
-                "SUIKA_ENABLE_PACK":                        "ON",
-                "SUIKA_ENABLE_BCC":                    "ON",
-                "SUIKA_ENABLE_AOTC":                     "ON",
-                "SUIKA_ENABLE_WEBSERVER":                   "ON"
+                "CMAKE_BUILD_TYPE":        "Release",
+                "SUIKA_TARGET_WINDOWS95":  "ON",
+                "SUIKA_ENABLE_JIT":        "OFF",
+                "SUIKA_ENABLE_I18N":       "OFF",
+                "SUIKA_ENABLE_PACK":       "ON",
+                "SUIKA_ENABLE_BCC":        "ON",
+                "SUIKA_ENABLE_AOTC":       "ON",
+                "SUIKA_ENABLE_WEBSERVER":  "ON"
             }
         },
         {
@@ -604,8 +604,8 @@
                 "SUIKA_ENABLE_JIT":        "ON",
                 "SUIKA_ENABLE_I18N":       "ON",
                 "SUIKA_ENABLE_PACK":       "ON",
-                "SUIKA_ENABLE_BCC":   "ON",
-                "SUIKA_ENABLE_AOTC":    "ON",
+                "SUIKA_ENABLE_BCC":        "ON",
+                "SUIKA_ENABLE_AOTC":       "ON",
                 "SUIKA_ENABLE_WEBSERVER":  "ON"
             }
         },
@@ -773,8 +773,8 @@
                 "SUIKA_ENABLE_JIT":            "ON",
                 "SUIKA_ENABLE_I18N":           "ON",
                 "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":       "ON",
-                "SUIKA_ENABLE_AOTC":        "ON",
+                "SUIKA_ENABLE_BCC":            "ON",
+                "SUIKA_ENABLE_AOTC":           "ON",
                 "SUIKA_ENABLE_GST":            "ON",
                 "SUIKA_ENABLE_UNSAFE":         "ON"
             }
@@ -792,8 +792,8 @@
                 "SUIKA_ENABLE_JIT":            "ON",
                 "SUIKA_ENABLE_I18N":           "ON",
                 "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":       "ON",
-                "SUIKA_ENABLE_AOTC":        "ON",
+                "SUIKA_ENABLE_BCC":            "ON",
+                "SUIKA_ENABLE_AOTC":           "ON",
                 "SUIKA_ENABLE_GST":            "ON",
                 "SUIKA_ENABLE_UNSAFE":         "ON"
             }
@@ -810,8 +810,8 @@
                 "SUIKA_ENABLE_JIT":            "ON",
                 "SUIKA_ENABLE_I18N":           "ON",
                 "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":       "ON",
-                "SUIKA_ENABLE_AOTC":        "ON",
+                "SUIKA_ENABLE_BCC":            "ON",
+                "SUIKA_ENABLE_AOTC":           "ON",
                 "SUIKA_ENABLE_GST":            "ON",
                 "SUIKA_ENABLE_UNSAFE":         "ON"
             }
@@ -829,8 +829,8 @@
                 "SUIKA_ENABLE_JIT":            "ON",
                 "SUIKA_ENABLE_I18N":           "ON",
                 "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":       "ON",
-                "SUIKA_ENABLE_AOTC":        "ON",
+                "SUIKA_ENABLE_BCC":            "ON",
+                "SUIKA_ENABLE_AOTC":           "ON",
                 "SUIKA_ENABLE_GST":            "ON",
                 "SUIKA_ENABLE_UNSAFE":         "ON"
             }
@@ -847,8 +847,8 @@
                 "SUIKA_ENABLE_JIT":            "ON",
                 "SUIKA_ENABLE_I18N":           "ON",
                 "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":       "ON",
-                "SUIKA_ENABLE_AOTC":        "ON",
+                "SUIKA_ENABLE_BCC":            "ON",
+                "SUIKA_ENABLE_AOTC":           "ON",
                 "SUIKA_ENABLE_GST":            "ON",
                 "SUIKA_ENABLE_UNSAFE":         "ON"
             }
@@ -866,8 +866,8 @@
                 "SUIKA_ENABLE_JIT":            "ON",
                 "SUIKA_ENABLE_I18N":           "ON",
                 "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":       "ON",
-                "SUIKA_ENABLE_AOTC":        "ON",
+                "SUIKA_ENABLE_BCC":            "ON",
+                "SUIKA_ENABLE_AOTC":           "ON",
                 "SUIKA_ENABLE_UNSAFE":         "ON"
             }
         },
@@ -1114,8 +1114,8 @@
                 "SUIKA_ENABLE_FREEDESKTOP":    "ON",
                 "SUIKA_ENABLE_JIT":            "ON",
                 "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":       "ON",
-                "SUIKA_ENABLE_AOTC":        "ON",
+                "SUIKA_ENABLE_BCC":            "ON",
+                "SUIKA_ENABLE_AOTC":           "ON",
                 "SUIKA_ENABLE_UNSAFE":         "ON",
                 "SUIKA_ENABLE_GST":            "ON"
             }
@@ -1132,8 +1132,8 @@
                 "SUIKA_ENABLE_FREEDESKTOP":    "ON",
                 "SUIKA_ENABLE_JIT":            "ON",
                 "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":       "ON",
-                "SUIKA_ENABLE_AOTC":        "ON",
+                "SUIKA_ENABLE_BCC":            "ON",
+                "SUIKA_ENABLE_AOTC":           "ON",
                 "SUIKA_ENABLE_UNSAFE":         "ON",
                 "SUIKA_ENABLE_GST":            "ON"
             }
@@ -1150,8 +1150,8 @@
                 "SUIKA_ENABLE_FREEDESKTOP":    "ON",
                 "SUIKA_ENABLE_JIT":            "ON",
                 "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":       "ON",
-                "SUIKA_ENABLE_AOTC":        "ON",
+                "SUIKA_ENABLE_BCC":            "ON",
+                "SUIKA_ENABLE_AOTC":           "ON",
                 "SUIKA_ENABLE_UNSAFE":         "ON",
                 "SUIKA_ENABLE_GST":            "ON"
             }
@@ -1168,8 +1168,8 @@
                 "SUIKA_ENABLE_FREEDESKTOP":    "ON",
                 "SUIKA_ENABLE_JIT":            "ON",
                 "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":       "ON",
-                "SUIKA_ENABLE_AOTC":        "ON",
+                "SUIKA_ENABLE_BCC":            "ON",
+                "SUIKA_ENABLE_AOTC":           "ON",
                 "SUIKA_ENABLE_UNSAFE":         "ON"
             }
         },
@@ -1185,8 +1185,8 @@
                 "SUIKA_ENABLE_FREEDESKTOP":    "ON",
                 "SUIKA_ENABLE_JIT":            "ON",
                 "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":       "ON",
-                "SUIKA_ENABLE_AOTC":        "ON"
+                "SUIKA_ENABLE_BCC":            "ON",
+                "SUIKA_ENABLE_AOTC":           "ON"
             }
         },
         {
@@ -1201,8 +1201,8 @@
                 "SUIKA_ENABLE_FREEDESKTOP":    "ON",
                 "SUIKA_ENABLE_JIT":            "ON",
                 "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":       "ON",
-                "SUIKA_ENABLE_AOTC":        "ON"
+                "SUIKA_ENABLE_BCC":            "ON",
+                "SUIKA_ENABLE_AOTC":           "ON"
             }
         },
         {
@@ -1217,8 +1217,8 @@
                 "SUIKA_ENABLE_FREEDESKTOP":    "ON",
                 "SUIKA_ENABLE_JIT":            "OFF",
                 "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":       "ON",
-                "SUIKA_ENABLE_AOTC":        "ON"
+                "SUIKA_ENABLE_BCC":            "ON",
+                "SUIKA_ENABLE_AOTC":           "ON"
             }
         },
         {
@@ -1233,8 +1233,8 @@
                 "SUIKA_ENABLE_FREEDESKTOP":    "ON",
                 "SUIKA_ENABLE_JIT":            "OFF",
                 "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":       "ON",
-                "SUIKA_ENABLE_AOTC":        "ON"
+                "SUIKA_ENABLE_BCC":            "ON",
+                "SUIKA_ENABLE_AOTC":           "ON"
             }
         },
         {
@@ -1251,8 +1251,8 @@
                 "SUIKA_ENABLE_FREEDESKTOP":    "ON",
                 "SUIKA_ENABLE_JIT":            "OFF",
                 "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":       "ON",
-                "SUIKA_ENABLE_AOTC":        "ON"
+                "SUIKA_ENABLE_BCC":            "ON",
+                "SUIKA_ENABLE_AOTC":           "ON"
             }
         },
         {
@@ -1262,16 +1262,16 @@
             "binaryDir":      "${sourceDir}/build-solaris10",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
-                "CMAKE_C_COMPILER":            "cc",
-                "CMAKE_CXX_COMPILER":          "CC",
-                "CMAKE_AR":                    "ar",
+                "CMAKE_C_COMPILER":            "/opt/developerstudio12.6/bin/cc",
+                "CMAKE_CXX_COMPILER":          "/opt/developerstudio12.6/bin/CC",
+                "CMAKE_AR":                    "/usr/ccs/bin/ar",
                 "SUIKA_TARGET_SOLARIS10":      "ON",
                 "SUIKA_ENABLE_INSTALL":        "ON",
                 "SUIKA_ENABLE_FREEDESKTOP":    "ON",
                 "SUIKA_ENABLE_JIT":            "OFF",
                 "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":       "ON",
-                "SUIKA_ENABLE_AOTC":        "ON"
+                "SUIKA_ENABLE_BCC":            "ON",
+                "SUIKA_ENABLE_AOTC":           "ON"
             }
         },
         {
@@ -1287,8 +1287,8 @@
                 "SUIKA_ENABLE_INSTALL":        "ON",
                 "SUIKA_ENABLE_JIT":            "ON",
                 "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":       "ON",
-                "SUIKA_ENABLE_AOTC":        "ON"
+                "SUIKA_ENABLE_BCC":            "ON",
+                "SUIKA_ENABLE_AOTC":           "ON"
             }
         },
         {
