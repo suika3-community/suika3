@@ -540,9 +540,6 @@ if(NOT PLAYFIELD_ENABLE_DIST)
       $<TARGET_OBJECTS:vorbis>
       $<TARGET_OBJECTS:ogg>
       $<TARGET_OBJECTS:freetype>
-      $<TARGET_OBJECTS:brotlidec>
-      $<TARGET_OBJECTS:brotlicommon>
-      $<TARGET_OBJECTS:bz2>
       $<TARGET_OBJECTS:z>
     )      
   else()

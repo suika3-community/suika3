@@ -1340,6 +1340,20 @@
                 "SUIKA_ENABLE_BCC":            "ON",
                 "SUIKA_ENABLE_AOTC":           "ON"
             }
+        },
+        {
+            "name":           "pc98",
+            "displayName":    "NEC PC-9800 Series DOS/4G OpenWatcom V2",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-pc98",
+            "toolchainFile":  "${sourceDir}/cmake/toolchains/openwatcom-dos4gw.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":    "Release",
+                "SUIKA_TARGET_PC98":   "ON",
+                "SUIKA_ENABLE_JIT":    "ON",
+                "SUIKA_ENABLE_BIN":    "ON",
+                "SUIKA_ENABLE_MAIN2":  "ON"
+	    }
         }
     ],
     "buildPresets": [
@@ -1606,6 +1620,10 @@
         {
             "name": "haiku",
             "configurePreset": "haiku"
+        },
+        {
+            "name": "pc98",
+            "configurePreset": "pc98"
         }
     ]
 }

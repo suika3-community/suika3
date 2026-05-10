@@ -38,6 +38,7 @@ option(SUIKA_TARGET_SOLARIS11        "Build for Solaris 11 (X11, Soft3D)"       
 option(SUIKA_TARGET_SOLARIS10        "Build for Solaris 10 (X11, Soft3D)"             OFF)
 option(SUIKA_TARGET_GENERICUNIX      "Build for Generic Unknow UNIX (X11, Soft3D)"    OFF)
 option(SUIKA_TARGET_HAIKU            "Build for Haiku OS (Soft3D)"                    OFF)
+option(SUIKA_TARGET_PC98             "Build for NEC PC-9801"                          OFF)
 
 # ---
 
@@ -227,6 +228,7 @@ if(   SUIKA_TARGET_WINDOWS
    OR SUIKA_TARGET_SOLARIS10
    OR SUIKA_TARGET_GENERICUNIX
    OR SUIKA_TARGET_HAIKU
+   OR SUIKA_TARGET_PC98
 )
   # A target and options are manually specified.
 else()   
@@ -440,6 +442,8 @@ if(   NOT SUIKA_ENABLE_DIST
     set(PLAYFIELD_TARGET_GDK_WINDOWS ON)
   elseif(SUIKA_TARGET_GDK_XBOX_XS)
     set(PLAYFIELD_TARGET_GDK_XBOX_XS ON)
+  elseif(SUIKA_TARGET_PC98)
+    set(PLAYFIELD_TARGET_PC98 ON)
   else()
     error("No target specified or detected.")
   endif()
@@ -531,8 +535,8 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU"
     set(CMAKE_OBJC_FLAGS_DEBUG "${CMAKE_OBJC_FLAGS_DEBUG} -O0 -g3 -DNDEBUG -Wall -Werror -Wextra -Wundef -Wconversion")
 else()
     # Other
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -g3 -DDEBUG")
-    set(CMAKE_OBJC_FLAGS_DEBUG "${CMAKE_OBJC_FLAGS_DEBUG} -O0 -g3 -DNDEBUG")
+    #set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -g3 -DDEBUG")
+    #set(CMAKE_OBJC_FLAGS_DEBUG "${CMAKE_OBJC_FLAGS_DEBUG} -O0 -g3 -DNDEBUG")
 endif()
 
 # Release Configuration
@@ -546,8 +550,8 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU"
   set(CMAKE_OBJC_FLAGS_RELEASE "${CMAKE_OBJC_FLAGS_RELEASE} -O2 -g -DNDEBUG")
 else()
   # Other
-  set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O2 -g -DNDEBUG")
-  set(CMAKE_OBJC_FLAGS_RELEASE "${CMAKE_OBJC_FLAGS_RELEASE} -O2 -g -DNDEBUG")
+  #set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O2 -g -DNDEBUG")
+  #set(CMAKE_OBJC_FLAGS_RELEASE "${CMAKE_OBJC_FLAGS_RELEASE} -O2 -g -DNDEBUG")
 endif()
 
 # ---
@@ -703,19 +707,28 @@ if(   SUIKA_ENABLE_STATIC
 
   # Link dependencies into the library if not packaing.
   if(NOT SUIKA_ENABLE_DIST)
-    set(SUIKA_DEPS
-        $<TARGET_OBJECTS:png>
-	$<TARGET_OBJECTS:jpeg>
-	$<TARGET_OBJECTS:webp>
-	$<TARGET_OBJECTS:vorbisfile>
-	$<TARGET_OBJECTS:vorbis>
-	$<TARGET_OBJECTS:ogg>
-	$<TARGET_OBJECTS:freetype>
-	$<TARGET_OBJECTS:brotlidec>
-	$<TARGET_OBJECTS:brotlicommon>
-	$<TARGET_OBJECTS:bz2>
-	$<TARGET_OBJECTS:z>
-    )
+    if(NOT SUIKA_TARGET_PC98)
+      set(SUIKA_DEPS
+          $<TARGET_OBJECTS:png>
+          $<TARGET_OBJECTS:jpeg>
+          $<TARGET_OBJECTS:webp>
+          $<TARGET_OBJECTS:vorbisfile>
+          $<TARGET_OBJECTS:vorbis>
+          $<TARGET_OBJECTS:ogg>
+          $<TARGET_OBJECTS:freetype>
+          $<TARGET_OBJECTS:z>
+      )
+    else()
+      set(SUIKA_DEPS
+          $<TARGET_OBJECTS:png>
+          $<TARGET_OBJECTS:jpeg>
+          $<TARGET_OBJECTS:vorbisfile>
+          $<TARGET_OBJECTS:vorbis>
+          $<TARGET_OBJECTS:ogg>
+          $<TARGET_OBJECTS:freetype>
+          $<TARGET_OBJECTS:z>
+      )
+    endif()
   endif()
 
   # Make a library.
