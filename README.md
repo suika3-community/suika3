@@ -53,7 +53,7 @@
   Suika3 now has a nice launcher written in and self-hosted by Suika3!<br>
   <img src="https://github.com/awemorris/suika3/blob/main/docs/img/screenshot-20260429.webp" alt="Suika3 Launcher Screenshot"><br>
   Suika3 runs on NEC PC-9800 Series (PC98)<br>
-  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-pc98.png" alt="Suika3 on NEC PC-9801" width="320" hspace="20">
+  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-pc98.png" alt="Suika3 on NEC PC-9801" width="320" hspace="20"><br>
   We've returned where VN was born...<br>
   Requires: 80386/16MB RAM/MS-DOS 6.2/OpenWatcom/DOS4GW<br>
   Crazy thing is, our Sun-Ray JIT VM works on a real PC98 machine!<br>
