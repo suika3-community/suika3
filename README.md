@@ -52,6 +52,11 @@
   </a>
   Suika3 now has a nice launcher written in and self-hosted by Suika3!<br>
   <img src="https://github.com/awemorris/suika3/blob/main/docs/img/screenshot-20260429.webp" alt="Suika3 Launcher Screenshot"><br>
+  Suika3 runs on NEC PC-9800 Series (PC98)<br>
+  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-pc98.png" alt="Suika3 on NEC PC-9801" width="320" hspace="20">
+  We've returned where VN was born...<br>
+  Requires: 80386/16MB RAM/MS-DOS 6.2/OpenWatcom/DOS4GW<br>
+  Crazy thing is, our Sun-Ray JIT VM works on a real PC98 machine!<br>
 </div>
 
 ---
@@ -1383,12 +1388,6 @@ Studio Code.
   <p>iOS</p><br>
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-android.webp" alt="Suika3 on Android" width="320" hspace="20">
   <p>Android</p><br>
-  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-pc98.png" alt="Suika3 on NEC PC-9801" width="320" hspace="20">
-  <p>NEC PC-9800 Series<br>
-  80386+ CPU and 16MB RAM required.<br>
-  MS-DOS 6.2 + OpenWatcom V2 + DOS4GW<br>
-  Ray's JIT works on real PC98 machines!
-  </p><br>
 </div>
 
 ---
