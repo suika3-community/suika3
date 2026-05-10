@@ -801,7 +801,22 @@ endif()
 
 # Unity
 if(SUIKA_TARGET_UNITY)
-  target_compile_definitions(suika3 PRIVATE S3_TARGET_UNITY PF_TARGET_UNITY HAL_TARGET_UNITY)
+  target_compile_definitions(suika3 PRIVATE
+    S3_TARGET_UNITY
+    PF_TARGET_UNITY
+    HAL_TARGET_UNITY
+    NOCT_TARGET_UNITY
+  )
+endif()
+
+# PC98
+if(SUIKA_TARGET_PC98)
+  target_compile_definitions(suika3 PRIVATE
+    S3_TARGET_PC98
+    PF_TARGET_PC98
+    HAL_TARGET_PC98
+    NOCT_TARGET_DOS4G
+  )
 endif()
 
 # ---
@@ -1315,3 +1330,11 @@ if(SUIKA_ENABLE_INSTALL)
     endif() # NOT SUIKA_ENABLE_DIST
   endif() # SUIKA_ENABLE_FREEDESKTOP
 endif()
+
+
+
+
+
+message(STATUS "CMAKE_C_COMPILER=${CMAKE_C_COMPILER}")
+message(STATUS "CMAKE_LINKER=${CMAKE_LINKER}")
+message(STATUS "CMAKE_C_LINK_EXECUTABLE=${CMAKE_C_LINK_EXECUTABLE}")

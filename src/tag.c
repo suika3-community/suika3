@@ -40,11 +40,19 @@
 #define NEVER_COME_HERE		0
 
 /* Sizes. */
+#if defined(S3_TARGET_PC98) || defined(S3_TARGET_PCAT)
+#define TAG_NAME_MAX		32
+#define PROP_NAME_MAX		32
+#define PROP_VALUE_MAX		1024
+#define TAG_MAX			128
+#define STACK_MAX		8
+#else
 #define TAG_NAME_MAX		128
 #define PROP_NAME_MAX		128
 #define PROP_VALUE_MAX		4096
-#define TAG_MAX			65536
+#define TAG_MAX			128
 #define STACK_MAX		128
+#endif
 
 /* Stack element type. */
 #define TYPE_IF			1
@@ -83,7 +91,7 @@ static char cur_file[1024];
 static int cur_index;
 
 /* Tag table. */
-static struct s3i_tag tag[TAG_MAX];
+static struct s3i_tag *tag;
 
 /* Tag size. */
 static int tag_size;
@@ -94,6 +102,10 @@ static int stack_pointer;
 
 /* Evaluation buffer. */
 static char eval_buf[65536];
+
+static char tag_name[TAG_NAME_MAX];
+static char prop_name[PROP_MAX][PROP_NAME_MAX];
+static char prop_val[PROP_MAX][PROP_VALUE_MAX];
 
 /* Forward declaration. */
 static const char *evaluate_prop_value(const char *prop_value);
@@ -106,6 +118,12 @@ static bool parse_tag_callback(const char *name, int props, const char **prop_na
 bool
 s3i_init_tag(void)
 {
+	tag = malloc(sizeof(struct s3i_tag) * TAG_MAX);
+	if (tag == NULL) {
+		s3_log_out_of_memory();
+		return false;
+	}
+
 	s3i_cleanup_tag();
 
 	if (!s3_move_to_tag_file(S3_PATH_START_TAG))
@@ -126,6 +144,9 @@ s3i_cleanup_tag(void)
 	cur_index = 0;
 
 	strcpy(cur_file, "");
+
+	if (tag == NULL)
+		return;
 
 	for (i = 0; i < tag_size; i++) {
 		t = &tag[i];
@@ -148,8 +169,6 @@ s3i_cleanup_tag(void)
 
 	tag_size = 0;
 	stack_pointer = 0;
-
-	memset(tag, 0, sizeof(tag));
 }
 
 /*
@@ -888,10 +907,6 @@ parse_tag_document(
 	char **error_msg,
 	int *error_line)
 {
-	static char tag_name[TAG_NAME_MAX];
-	static char prop_name[PROP_MAX][PROP_NAME_MAX];
-	static char prop_val[PROP_MAX][PROP_VALUE_MAX];
-
 	/* State machine */
 	enum state {
 		ST_INIT,
@@ -1137,6 +1152,7 @@ parse_tag_document(
 				continue;
 			}
 			if (c == '\"') {
+
 				if (multiline) {
 					if (*top != '\0' && *(top + 1) != '\0' &&
 					    *top == '\"' && *(top + 1) == '\"') {
@@ -1211,7 +1227,7 @@ parse_tag_callback(
 
 	/* If command table is full. */
 	if (tag_size >= TAG_MAX) {
-		hal_log_error("Too many tags.");
+		s3_log_error("Too many tags.");
 		return false;
 	}
 
@@ -1229,13 +1245,13 @@ parse_tag_callback(
 	for (i = 0; i < props; i++) {
 		t->prop_name[i] = strdup(prop_name[i]);
 		if (t->prop_name[i] == NULL) {
-			hal_log_out_of_memory();
+			s3_log_out_of_memory();
 			return false;
 		}
 
 		t->prop_value[i] = strdup(prop_value[i]);
 		if (t->prop_value[i] == NULL) {
-			hal_log_out_of_memory();
+			s3_log_out_of_memory();
 			return false;
 		}
 	}

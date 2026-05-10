@@ -5639,6 +5639,7 @@ Suika_getCharacterVolume(
 	void *p)
 {
 	int index;
+	float val;
 	bool ret;
 
 	UNUSED_PARAMETER(p);
@@ -5649,7 +5650,7 @@ Suika_getCharacterVolume(
 		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
-		float val = s3_get_character_volume(index);
+		val = s3_get_character_volume(index);
 
 		/* Set the return value. */
 		if (!pf_set_return_float(val))

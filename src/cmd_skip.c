@@ -49,7 +49,7 @@ s3i_tag_skip(
 	s3_evaluate_tag();
 
 	/* Get the argument. */
-	is_enabled = s3_get_tag_arg_string("enable", false, false);
+	is_enabled = s3_get_tag_arg_string("enable", false, NULL);
 
 	if (is_enabled) {
 		s3_set_non_interruptible(false);

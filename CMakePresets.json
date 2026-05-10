@@ -1351,7 +1351,6 @@
                 "CMAKE_BUILD_TYPE":    "Release",
                 "SUIKA_TARGET_PC98":   "ON",
                 "SUIKA_ENABLE_JIT":    "ON",
-                "SUIKA_ENABLE_BIN":    "ON",
                 "SUIKA_ENABLE_MAIN2":  "ON"
 	    }
         }

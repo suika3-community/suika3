@@ -469,7 +469,7 @@ init(void)
 			if (s3_check_tag_arg(DIM_ARG)) {
 				bool dim;
 
-				dim = s3_get_tag_arg_bool(DIM_ARG, false, NULL);
+				dim = s3_get_tag_arg_bool(DIM_ARG, false, false);
 
 				s3_set_layer_dim(LAYER_INDEX, dim);
 			}
