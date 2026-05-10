@@ -1,0 +1,27 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3, "minor": 22, "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name":           "pc98",
+            "displayName":    "NEC PC-9800 Series DOS/4G OpenWatcom V2",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-pc98",
+            "toolchainFile":  "${sourceDir}/cmake/toolchains/openwatcom-dos4gw.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":        "Release",
+                "PLAYFIELD_TARGET_PC98":   "ON",
+                "PLAYFIELD_ENABLE_JIT":    "ON",
+                "PLAYFIELD_ENABLE_BIN":    "ON",
+                "PLAYFIELD_ENABLE_MAIN2":  "ON"
+	    }
+    ],
+    "buildPresets": [
+        {
+            "name": "pc98",
+            "configurePreset": "pc98"
+        }
+    ]
+}

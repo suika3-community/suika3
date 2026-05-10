@@ -23,6 +23,7 @@ option(NOCT_ENABLE_MDOC         "Install mdoc(7) man page"    OFF)
 # Choose one if needed.
 option(NOCT_TARGET_WASM         "Build for Emscripten"        OFF)
 option(NOCT_TARGET_UNITY        "Build for Unity"             OFF)
+option(NOCT_TARGET_DOS4G        "Build for Unity"             OFF)
 
 # Experimental.
 option(NOCT_ENABLE_MULTITHREAD  "Enable multithread support"  OFF)
@@ -260,6 +261,14 @@ if(NOCT_TARGET_UNITY)
   target_compile_definitions(noct PUBLIC NOCT_TARGET_UNITY)
   if(NOCT_ENABLE_API)
     target_compile_definitions(noctapi PUBLIC NOCT_TARGET_UNITY)
+  endif()
+endif()
+
+# NOCT_TARGET_DOS4G
+if(NOCT_TARGET_DOS4G)
+  target_compile_definitions(noct PUBLIC NOCT_TARGET_DOS4G)
+  if(NOCT_ENABLE_API)
+    target_compile_definitions(noctapi PUBLIC NOCT_TARGET_DOS4G)
   endif()
 endif()
 

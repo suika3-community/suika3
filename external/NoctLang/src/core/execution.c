@@ -23,6 +23,7 @@
  * Add helper.
  */
 bool
+CDECL
 rt_add_helper(
 	struct rt_env *env,
 	int dst,
@@ -107,6 +108,7 @@ rt_add_helper(
  * Subtract helper.
  */
 bool
+CDECL
 rt_sub_helper(
 	struct rt_env *env,
 	int dst,
@@ -164,6 +166,7 @@ rt_sub_helper(
  * Multiply helper.
  */
 bool
+CDECL
 rt_mul_helper(
 	struct rt_env *env,
 	int dst,
@@ -221,6 +224,7 @@ rt_mul_helper(
  * Multiply helper.
  */
 bool
+CDECL
 rt_div_helper(
 	struct rt_env *env,
 	int dst,
@@ -294,6 +298,7 @@ rt_div_helper(
  * MOD helper. (modulo)
  */
 bool
+CDECL
 rt_mod_helper(
 	struct rt_env *env,
 	int dst,
@@ -332,6 +337,7 @@ rt_mod_helper(
  * AND helper.
  */
 bool
+CDECL
 rt_and_helper(
 	struct rt_env *env,
 	int dst,
@@ -370,6 +376,7 @@ rt_and_helper(
  * OR helper.
  */
 bool
+CDECL
 rt_or_helper(
 	struct rt_env *env,
 	int dst,
@@ -408,6 +415,7 @@ rt_or_helper(
  * XOR helper.
  */
 bool
+CDECL
 rt_xor_helper(
 	struct rt_env *env,
 	int dst,
@@ -446,6 +454,7 @@ rt_xor_helper(
  * SHL helper.
  */
 bool
+CDECL
 rt_shl_helper(
 	struct rt_env *env,
 	int dst,
@@ -484,6 +493,7 @@ rt_shl_helper(
  * SHR helper.
  */
 bool
+CDECL
 rt_shr_helper(
 	struct rt_env *env,
 	int dst,
@@ -522,6 +532,7 @@ rt_shr_helper(
  * NEG helper.
  */
 bool
+CDECL
 rt_neg_helper(
 	struct rt_env *env,
 	int dst,
@@ -554,6 +565,7 @@ rt_neg_helper(
  * NEG helper.
  */
 bool
+CDECL
 rt_not_helper(
 	struct rt_env *env,
 	int dst,
@@ -582,6 +594,7 @@ rt_not_helper(
  * LT helper.
  */
 bool
+CDECL
 rt_lt_helper(
 	struct rt_env *env,
 	int dst,
@@ -650,6 +663,7 @@ rt_lt_helper(
  * LTE helper.
  */
 bool
+CDECL
 rt_lte_helper(
 	struct rt_env *env,
 	int dst,
@@ -718,6 +732,7 @@ rt_lte_helper(
  * GT helper.
  */
 bool
+CDECL
 rt_gt_helper(
 	struct rt_env *env,
 	int dst,
@@ -786,6 +801,7 @@ rt_gt_helper(
  * GTE helper.
  */
 bool
+CDECL
 rt_gte_helper(
 	struct rt_env *env,
 	int dst,
@@ -854,6 +870,7 @@ rt_gte_helper(
  * EQ helper.
  */
 bool
+CDECL
 rt_eq_helper(
 	struct rt_env *env,
 	int dst,
@@ -931,6 +948,7 @@ rt_eq_helper(
 
 /* NEQ helper. */
 bool
+CDECL
 rt_neq_helper(
 	struct rt_env *env,
 	int dst,
@@ -1003,6 +1021,7 @@ rt_neq_helper(
  * STOREARRAY helper.
  */
 bool
+CDECL
 rt_storearray_helper(
 	struct rt_env *env,
 	int arr,
@@ -1060,6 +1079,7 @@ rt_storearray_helper(
  * loadarray helper.
  */
 bool
+CDECL
 rt_loadarray_helper(
 	struct rt_env *env,
 	int dst,
@@ -1115,6 +1135,7 @@ rt_loadarray_helper(
  * LEN helper.
  */
 bool
+CDECL
 rt_len_helper(
 	struct rt_env *env,
 	int dst,
@@ -1153,6 +1174,7 @@ rt_len_helper(
 
 /* getdictkeybyindex helper. */
 bool
+CDECL
 rt_getdictkeybyindex_helper(
 	struct rt_env *env,
 	int dst,
@@ -1187,6 +1209,7 @@ rt_getdictkeybyindex_helper(
  * getdictvalbyindex helper.
  */
 bool
+CDECL
 rt_getdictvalbyindex_helper(
 	struct rt_env *env,
 	int dst,
@@ -1221,6 +1244,7 @@ rt_getdictvalbyindex_helper(
  * loadsymbol helper.
  */
 bool
+CDECL
 rt_loadsymbol_helper(
 	struct rt_env *env,
 	int dst,
@@ -1242,6 +1266,7 @@ rt_loadsymbol_helper(
  * storesymbol helper.
  */
 bool
+CDECL
 rt_storesymbol_helper(
 	struct rt_env *env,
 	const char *symbol,
@@ -1259,6 +1284,7 @@ rt_storesymbol_helper(
  * loaddot helper.
  */
 bool
+CDECL
 rt_loaddot_helper(
 	struct rt_env *env,
 	int dst,
@@ -1307,6 +1333,7 @@ rt_loaddot_helper(
  * STOREDOT helper.
  */
 bool
+CDECL
 rt_storedot_helper(
 	struct rt_env *env,
 	int dict,
@@ -1336,6 +1363,7 @@ rt_storedot_helper(
 
 /* CALL helper. */
 bool
+CDECL
 rt_call_helper(
 	struct rt_env *env,
 	int dst,
@@ -1373,6 +1401,7 @@ rt_call_helper(
  * THISCALL helper.
  */
 bool
+CDECL
 rt_thiscall_helper(
 	struct rt_env *env,
 	int dst,

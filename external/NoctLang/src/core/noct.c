@@ -200,6 +200,8 @@ noct_make_int(
 	NoctValue *val,
 	int i)
 {
+	UNUSED_PARAMETER(env);
+
 	assert(env != NULL);
 	assert(val != NULL);
 
@@ -216,6 +218,8 @@ noct_make_float(
 	NoctValue *val,
 	float f)
 {
+	UNUSED_PARAMETER(env);
+
 	assert(env != NULL);
 	assert(val != NULL);
 
@@ -279,6 +283,8 @@ noct_get_value_type(
 	NoctValue *val,
 	int *type)
 {
+	UNUSED_PARAMETER(env);
+
 	assert(env != NULL);
 	assert(val != NULL);
 	assert(type != NULL);

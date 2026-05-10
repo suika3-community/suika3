@@ -129,6 +129,10 @@ Playfield Engine running on Haiku OS: — "Be" Portable!
 
 <img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-haiku.png" width="320" alt="Playfield Engine running on Haiku OS">
 
+Playfield Engine running on NP21/W PC-9801 emulator:
+
+<img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-pc98.png" width="320" alt="Playfield Engine running on NP21/W PC-9801 emulator">
+
 ---
 
 ## Status
@@ -152,6 +156,7 @@ maintaining a small set of `Ray` wrapper APIs.
 |            | NetBSD          | ✅ Works     | 22 Sep 2025  | NetBSD 10.1 amd64                   |
 |            | OpenBSD         | ✅ Works     | 22 Sep 2025  | OpenBSD 7.7 amd64                   |
 | UNIX       | Solaris 11      | ✅ Works     | 16 Mar 2026  | Solaris 11.4 SunCC                  |
+| DOS        | NEC PC-9801     | ✅ Works     | 10 May 2026  | DOS4GW, 16-colors, no sound, JIT    |
 | Others     | WebAssembly     | ✅ Works     | 22 Sep 2025  | Chrome                              |
 |            | Chromebook      | ✅ Works     | 22 Sep 2025  | Chrome [Here](https://noctvm.io/w/) |
 |            | Unity           | ✅ Works     | 22 Sep 2025  | Unity 6.2 Windows 11 x86_64         |
@@ -461,6 +466,7 @@ and build configurations.
 | unity-switch                   | Unity Plugin     | Clang      | build-unity-switch                     | libplayfield.a   | Static Library |
 | unity-ps5                      | Unity Plugin     | Clang      | build-unity-ps5                        | libplayfield.a   | Static Library |
 | unity-xbox                     | Unity Plugin     | Clang      | build-unity-xbox                       | libplayfield.a   | Static Library |
+| pc98                           | DOS4GW           | OpenWatcom | build-pc98                             | playfield.exe    | Executable     |
 
 ---
 

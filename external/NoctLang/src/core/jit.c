@@ -54,6 +54,9 @@
 
 #if defined(_WIN32)
 #include <windows.h>		/* VirtualAlloc(), VirtualProtect(), VirtualFree() */
+#elif defined(NOCT_TARGET_DOS4G)
+#include <dos.h>
+#include <i86.h>
 #else
 #include <sys/mman.h>		/* mmap(), mprotect(), munmap() */
 #endif
@@ -78,6 +81,22 @@ jit_map_memory_region(
 #elif defined(__NetBSD__) && defined(PROT_MPROTECT)
 	/* Use PROT_MPROTECT() to avoid W^X. */
 	*region = mmap(NULL, size, PROT_READ | PROT_WRITE | PROT_MPROTECT(PROT_READ | PROT_EXEC), MAP_ANON | MAP_PRIVATE, -1, 0);
+#elif defined(NOCT_TARGET_DOS4G)
+	*region = malloc(size);
+	{
+		union REGS regs;
+		unsigned short current_cs;
+		_asm { mov current_cs, cs }
+		regs.w.ax = 0x0008;
+		regs.w.bx = current_cs;
+		regs.w.cx = 0xFFFF;
+		regs.w.dx = 0x000F;
+		int386(0x31, &regs, &regs);
+		if (regs.w.cflag != 0) {
+			printf("Failed to expand the CS segment limit.\n");
+			return false;
+		}
+	}
 #else
 	/* Assume no W^X. */
 	*region = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
@@ -100,6 +119,8 @@ jit_unmap_memory_region(
 {
 #if defined(_WIN32)
 	VirtualFree(region, size, MEM_RELEASE);
+#elif defined(NOCT_TARGET_DOS4G)
+	/* Do nothing. */
 #else
 	munmap(region, size);
 #endif
@@ -116,6 +137,8 @@ jit_map_writable(
 #if defined(_WIN32)
 	DWORD dwOldProt;
 	VirtualProtect(region, size, PAGE_READWRITE, &dwOldProt);
+#elif defined(NOCT_TARGET_DOS4G)
+	/* Do nothing. */
 #else
 	mprotect(region, size, PROT_READ | PROT_WRITE);
 #endif
@@ -133,6 +156,8 @@ jit_map_executable(
 	DWORD dwOldProt;
 	VirtualProtect(region, size, PAGE_EXECUTE_READ, &dwOldProt);
 	FlushInstructionCache(GetCurrentProcess(), region, size);
+#elif defined(NOCT_TARGET_DOS4G)
+	/* Do nothing. */
 #else
 	mprotect(region, size, PROT_EXEC | PROT_READ);
 	__builtin___clear_cache((char *)region, (char *)region + size);

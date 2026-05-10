@@ -1942,6 +1942,8 @@ rt_gc_get_heap_usage(
 	struct rt_env *env,
 	size_t *ret)
 {
+	UNUSED_PARAMETER(env);
+
 	assert(env != NULL);
 	assert(ret != NULL);
 

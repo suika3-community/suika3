@@ -36,6 +36,7 @@ option(STRATO_TARGET_HAIKU            "Build for Haiku OS (Soft3D)"             
 option(STRATO_TARGET_UWP              "Build for UWP"                           OFF)
 option(STRATO_TARGET_GDK_WINDOWS      "Build for GDK for Desktop"               OFF)
 option(STRATO_TARGET_GDK_XBOX_XS      "Build for GDK for Xbox Series X|S"       OFF)
+option(STRATO_TARGET_PC98             "Build for PC-9800 series"                OFF)
 
 # Options
 option(STRATO_ENABLE_OBJECT           "Build an object library"                 OFF)
@@ -45,6 +46,7 @@ option(STRATO_ENABLE_INSTALL          "Install files"                           
 option(STRATO_ENABLE_DIST             "Use system libraries"                    OFF)
 option(STRATO_ENABLE_PACK             "Build packager"                          OFF)
 option(STRATO_ENABLE_I18N             "Enable translation"                      OFF)
+option(STRATO_ENABLE_I18N_LIBINTL     "Enable gettext"                          OFF)
 option(STRATO_ENABLE_ROT90            "Rotate screen"                           OFF)
 option(STRATO_ENABLE_GST              "Enable Gstreamer support"                OFF)
 option(STRATO_ENABLE_MAIN2            "Enable macOS main2()"                    OFF)
@@ -87,6 +89,7 @@ if(   STRATO_TARGET_WINDOWS
    OR STRATO_TARGET_UWP
    OR STRATO_TARGET_GDK_WINDOWS
    OR STRATO_TARGET_GDK_XBOX_XS
+   OR STRATO_TARGET_PC98
 )
   # A target and options are manually specified.
 else()
@@ -192,6 +195,19 @@ endif()
 # ---
 
 #
+# gettext
+#
+
+if(STRATO_ENABLE_I18N_LIBINTL)
+  list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+  find_package(INTL REQUIRED)
+  include(GNUInstallDirs)
+  add_definitions(-DLOCALEDIR="${CMAKE_INSTALL_FULL_LOCALEDIR}")
+endif()
+
+# ---
+
+#
 # Dependency
 #
 
@@ -212,11 +228,13 @@ else()
   include(cmake/zlib.cmake)
   include(cmake/libpng.cmake)
   include(cmake/jpeg.cmake)
-  include(cmake/libwebp.cmake)
+  if(NOT STRATO_TARGET_PC98)
+    include(cmake/libwebp.cmake)
+    include(cmake/brotli.cmake)
+    include(cmake/bzip2.cmake)
+  endif()
   include(cmake/libogg.cmake)
   include(cmake/libvorbis.cmake)
-  include(cmake/brotli.cmake)
-  include(cmake/bzip2.cmake)
   include(cmake/freetype.cmake)
 endif()
 
@@ -633,6 +651,17 @@ if(STRATO_TARGET_UWP)
   )
 endif()
 
+# PC-9800
+if(STRATO_TARGET_PC98)
+  set(STRATO_SOURCES
+      src/image.c
+      src/glyph.c
+      src/wave.c
+      src/stdfile.c
+      src/98main.c
+    )
+endif()
+
 # I18N
 if(STRATO_ENABLE_I18N)
   set(STRATO_I18N_SOURCES
@@ -642,19 +671,31 @@ endif()
 
 # Deps (merge third-party library objects into the target)
 if(NOT STRATO_ENABLE_DIST)
-  set(STRATO_DEPS
-      $<TARGET_OBJECTS:png>
-      $<TARGET_OBJECTS:jpeg>
-      $<TARGET_OBJECTS:webp>
-      $<TARGET_OBJECTS:vorbisfile>
-      $<TARGET_OBJECTS:vorbis>
-      $<TARGET_OBJECTS:ogg>
-      $<TARGET_OBJECTS:freetype>
-      $<TARGET_OBJECTS:brotlidec>
-      $<TARGET_OBJECTS:brotlicommon>
-      $<TARGET_OBJECTS:bz2>
-      $<TARGET_OBJECTS:z>
-  )
+  if(NOT STRATO_TARGET_PC98)
+    set(STRATO_DEPS
+        $<TARGET_OBJECTS:png>
+        $<TARGET_OBJECTS:jpeg>
+        $<TARGET_OBJECTS:webp>
+        $<TARGET_OBJECTS:vorbisfile>
+        $<TARGET_OBJECTS:vorbis>
+        $<TARGET_OBJECTS:ogg>
+        $<TARGET_OBJECTS:freetype>
+        $<TARGET_OBJECTS:brotlidec>
+        $<TARGET_OBJECTS:brotlicommon>
+        $<TARGET_OBJECTS:bz2>
+        $<TARGET_OBJECTS:z>
+    )
+  else()
+    set(STRATO_DEPS
+        $<TARGET_OBJECTS:png>
+        $<TARGET_OBJECTS:jpeg>
+        $<TARGET_OBJECTS:vorbisfile>
+        $<TARGET_OBJECTS:vorbis>
+        $<TARGET_OBJECTS:ogg>
+        $<TARGET_OBJECTS:freetype>
+        $<TARGET_OBJECTS:z>
+    )
+  endif()
 endif()
 
 # Library type.
@@ -855,6 +896,11 @@ if(STRATO_TARGET_UNITY)
   endif()
 endif()
 
+# PC98
+if(STRATO_TARGET_PC98)
+  target_compile_definitions(strato PUBLIC HAL_TARGET_PC98)
+endif()
+
 # GLES
 if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_LINUX_WAYLAND
@@ -918,6 +964,11 @@ if(STRATO_ENABLE_I18N)
   target_compile_definitions(strato PRIVATE HAL_USE_TRANSLATION)
 endif()
 
+# gettext
+if(NOCT_ENABLE_I18N_LIBINTL)
+  target_compile_definitions(strato PRIVATE HAL_USE_LIBINTL)
+endif()  
+
 # Rotation
 if(STRATO_ENABLE_ROT90)
   target_compile_definitions(strato PRIVATE HAL_USE_ROT90)
@@ -977,6 +1028,10 @@ endif()
 #
 # LDFLAGS
 #
+
+if(STRATO_ENABLE_I18N_INTL)
+  target_link_libraries(straro PUBLIC ${INTL_LIBRARY})
+endif()
 
 # Libraries.
 if(STRATO_ENABLE_SHARED OR STRATO_ENABLE_DIST)
@@ -1313,4 +1368,9 @@ if(STRATO_ENABLE_INSTALL)
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/stratohal)
   install(TARGETS strato RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR})
   install(TARGETS stratopack RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+  if(STRATO_ENABLE_I18N_LIBINTL)
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/locale/
+            DESTINATION ${CMAKE_INSTALL_FULL_LOCALEDIR})
+  endif()
 endif()

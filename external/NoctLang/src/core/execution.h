@@ -14,13 +14,21 @@
 
 #include <noct/c89compat.h>
 
+#if defined(NOCT_TARGET_DOS4G)
+#define CDECL __cdecl
+#else
+#define CDECL
+#endif
+
 bool
+CDECL
 rt_assign_helper(
 	struct rt_env *rt,
 	int dst,
 	int src);
 
 bool
+CDECL
 rt_add_helper(
 	struct rt_env *rt,
 	int dst,
@@ -28,6 +36,7 @@ rt_add_helper(
 	int src2);
 
 bool
+CDECL
 rt_sub_helper(
 	struct rt_env *rt,
 	int dst,
@@ -35,6 +44,7 @@ rt_sub_helper(
 	int src2);
 
 bool
+CDECL
 rt_mul_helper(
 	struct rt_env *rt,
 	int dst,
@@ -42,6 +52,7 @@ rt_mul_helper(
 	int src2);
 
 bool
+CDECL
 rt_div_helper(
 	struct rt_env *rt,
 	int dst,
@@ -49,6 +60,7 @@ rt_div_helper(
 	int src2);
 
 bool
+CDECL
 rt_mod_helper(
 	struct rt_env *rt,
 	int dst,
@@ -56,6 +68,7 @@ rt_mod_helper(
 	int src2);
 
 bool
+CDECL
 rt_and_helper(
 	struct rt_env *rt,
 	int dst,
@@ -63,6 +76,7 @@ rt_and_helper(
 	int src2);
 
 bool
+CDECL
 rt_or_helper(
 	struct rt_env *rt,
 	int dst,
@@ -70,6 +84,7 @@ rt_or_helper(
 	int src2);
 
 bool
+CDECL
 rt_xor_helper(
 	struct rt_env *rt,
 	int dst,
@@ -77,6 +92,7 @@ rt_xor_helper(
 	int src2);
 
 bool
+CDECL
 rt_shl_helper(
 	struct rt_env *rt,
 	int dst,
@@ -84,6 +100,7 @@ rt_shl_helper(
 	int src2);
 
 bool
+CDECL
 rt_shr_helper(
 	struct rt_env *rt,
 	int dst,
@@ -91,18 +108,21 @@ rt_shr_helper(
 	int src2);
 
 bool
+CDECL
 rt_neg_helper(
 	struct rt_env *rt,
 	int dst,
 	int src);
 
 bool
+CDECL
 rt_not_helper(
 	struct rt_env *rt,
 	int dst,
 	int src);
 
 bool
+CDECL
 rt_lt_helper(
 	struct rt_env *rt,
 	int dst,
@@ -110,6 +130,7 @@ rt_lt_helper(
 	int src2);
 
 bool
+CDECL
 rt_lte_helper(
 	struct rt_env *rt,
 	int dst,
@@ -117,6 +138,7 @@ rt_lte_helper(
 	int src2);
 
 bool
+CDECL
 rt_eq_helper(
 	struct rt_env *rt,
 	int dst,
@@ -124,6 +146,7 @@ rt_eq_helper(
 	int src2);
 
 bool
+CDECL
 rt_neq_helper(
 	struct rt_env *rt,
 	int dst,
@@ -131,6 +154,7 @@ rt_neq_helper(
 	int src2);
 
 bool
+CDECL
 rt_gte_helper(
 	struct rt_env *rt,
 	int dst,
@@ -138,6 +162,7 @@ rt_gte_helper(
 	int src2);
 
 bool
+CDECL
 rt_gt_helper(
 	struct rt_env *rt,
 	int dst,
@@ -145,6 +170,7 @@ rt_gt_helper(
 	int src2);
 
 bool
+CDECL
 rt_storearray_helper(
 	struct rt_env *rt,
 	int arr,
@@ -152,6 +178,7 @@ rt_storearray_helper(
 	int val);
 
 bool
+CDECL
 rt_loadarray_helper(
 	struct rt_env *rt,
 	int dst,
@@ -159,12 +186,14 @@ rt_loadarray_helper(
 	int subscr);
 
 bool
+CDECL
 rt_len_helper(
 	struct rt_env *rt,
 	int dst,
 	int src);
 
 bool
+CDECL
 rt_getdictkeybyindex_helper(
 	struct rt_env *rt,
 	int dst,
@@ -172,6 +201,7 @@ rt_getdictkeybyindex_helper(
 	int subscr);
 
 bool
+CDECL
 rt_getdictvalbyindex_helper(
 	struct rt_env *rt,
 	int dst,
@@ -179,6 +209,7 @@ rt_getdictvalbyindex_helper(
 	int subscr);
 
 bool
+CDECL
 rt_loadsymbol_helper(
 	struct rt_env *rt,
 	int dst,
@@ -187,6 +218,7 @@ rt_loadsymbol_helper(
 	uint32_t symbol_hash);
 
 bool
+CDECL
 rt_storesymbol_helper(
 	struct rt_env *rt,
 	const char *symbol,
@@ -195,6 +227,7 @@ rt_storesymbol_helper(
 	int src);
 
 bool
+CDECL
 rt_loaddot_helper(
 	struct rt_env *rt,
 	int dst,
@@ -204,6 +237,7 @@ rt_loaddot_helper(
 	uint32_t field_hash);
 
 bool
+CDECL
 rt_storedot_helper(
 	struct rt_env *rt,
 	int dict,
@@ -213,6 +247,7 @@ rt_storedot_helper(
 	int src);
 
 bool
+CDECL
 rt_call_helper(
 	struct rt_env *rt,
 	int dst,
@@ -221,6 +256,7 @@ rt_call_helper(
 	int *arg);
 
 bool
+CDECL
 rt_thiscall_helper(
 	struct rt_env *rt,
 	int dst,

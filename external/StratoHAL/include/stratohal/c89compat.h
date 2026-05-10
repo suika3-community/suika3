@@ -182,6 +182,8 @@ extern "C" {
  * |HAL_TARGET_SOLARIS11|Solaris 11            |                            |
  * |HAL_TARGET_SOLARIS10|Solaris 10            |                            |
  * |HAL_TARGET_BEOS     |BeOS and Haiku        |                            |
+ * |HAL_TARGET_PCAT     |PC/AT DOS4G           |                            |
+ * |HAL_TARGET_PC98     |PC-9801 DOS4G         |                            |
  *
  * |Macro               |Description                     |
  * |--------------------|--------------------------------|
@@ -284,7 +286,8 @@ extern "C" {
     !defined(HAL_TARGET_ANDROID) &&              \
     !defined(HAL_TARGET_WASM) &&                 \
     !defined(HAL_TARGET_HAIKU) &&                \
-    !defined(HAL_TARGET_UNITY)
+    !defined(HAL_TARGET_UNITY) &&                \
+    !defined(HAL_TARGET_PC98)
 #error "No target detected."
 #endif
 
@@ -351,6 +354,9 @@ typedef unsigned long long uint64_t;
 #define INLINE			__inline	/* IBM XLC extension */
 #elif defined(_MSC_VER)
 #define INLINE			__inline	/* MSVC extension */
+#elif defined(__WATCOMC__)
+#define INLINE			__inline	/* Watcom extension */
+#pragma warning 202 9
 #else
 #define INLINE					/* Not supported */
 #endif
@@ -425,6 +431,38 @@ typedef unsigned long long uint64_t;
 #if defined(_MSC_VER)
 #if !defined(strcasecmp)
 #define strcasecmp _stricmp
+#endif
+#endif
+#if defined(__WATCOMC__)
+#if !defined(strcasecmp)
+#define strcasecmp stricmp
+#endif
+#endif
+
+/*
+ * math
+ */
+#if defined(__WATCOMC__)
+#if !defined(lroundf)
+#define lroundf round
+#endif
+#if !defined(floorf)
+#define floorf floor
+#endif
+#if !defined(ceilf)
+#define ceilf ceil
+#endif
+#if !defined(sqrtf)
+#define sqrtf sqrt
+#endif
+#if !defined(sinf)
+#define sinf sin
+#endif
+#if !defined(cosf)
+#define cosf cos
+#endif
+#if !defined(tanf)
+#define tanf tan
 #endif
 #endif
 
@@ -574,7 +612,7 @@ static INLINE uint16_t hal_host_to_le_16(uint16_t d) {
 /*
  * Message Translation
  */
-#if defined(HAL_USE_TRANSLATION)
+#if defined(HAL_USE_TRANSLATION) && !defined(HAL_USE_LIBINTL)
 
 /* Translate messages. */
 #define HAL_TR(s)	hal_gettext(s)
@@ -582,12 +620,18 @@ static INLINE uint16_t hal_host_to_le_16(uint16_t d) {
 /* Translator. */
 const char *hal_gettext(const char *s);
 
+#elif defined(HAL_USE_TRANSLATION) && defined(HAL_USE_LIBINTL)
+
+#include <libintl.h>
+
+#define HAL_TR(s) dgettext("libstrato", s)
+
 #else
 
 /* No translation. */
 #define HAL_TR(s)	(s)
 
-#endif /* defined(HAL_USE_TRANSLATION) */
+#endif
 
 #ifdef __cplusplus
 }

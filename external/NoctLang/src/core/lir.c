@@ -41,7 +41,8 @@ extern int noct_conf_optimize;
 #define BYTECODE_BUF_SIZE	65536
 
 /* Bytecode array. */
-static uint8_t bytecode[BYTECODE_BUF_SIZE];
+/*static uint8_t bytecode[BYTECODE_BUF_SIZE];*/
+static uint8_t *bytecode;
 
 /* Cuurent bytecode length. */
 static uint32_t bytecode_top;
@@ -159,8 +160,18 @@ lir_build(
 	}
 
 	/* Initialize the bytecode buffer. */
+	if (bytecode != NULL) {
+		free(bytecode);
+		bytecode = NULL;
+	}
+	bytecode = noct_calloc(BYTECODE_BUF_SIZE, 1);
+	if (bytecode == NULL) {
+		lir_out_of_memory();
+		free(bytecode);
+		bytecode = NULL;
+		return false;
+	}
 	bytecode_top = 0;
-	memset(bytecode, 0, BYTECODE_BUF_SIZE);
 
 	/* Initialize the tmpvars. */
 	tmpvar_top = lir_count_local(hir_func);
@@ -216,13 +227,19 @@ lir_build(
 	}
 
 	/* Copy the bytecode. */
-	(*lir_func)->bytecode = noct_malloc((size_t)bytecode_top);
-	if ((*lir_func)->bytecode == NULL) {
-		lir_out_of_memory();
-		return false;
+	if (bytecode_top != 0) {
+		(*lir_func)->bytecode = noct_malloc((size_t)bytecode_top);
+		if ((*lir_func)->bytecode == NULL) {
+			lir_out_of_memory();
+			return false;
+		}
+	} else {
+		(*lir_func)->bytecode = NULL;
 	}
 	(*lir_func)->bytecode_size = bytecode_top;
 	memcpy((*lir_func)->bytecode, bytecode, (size_t)bytecode_top);
+	free(bytecode);
+	bytecode = NULL;
 
 	/* Copy the file name. */
 	(*lir_func)->file_name = noct_strdup(hir_func->val.func.file_name);
@@ -1764,6 +1781,8 @@ lir_visit_empty_array_term(
 	int dst_tmpvar,
 	struct hir_term *term)
 {
+	UNUSED_PARAMETER(term);
+
 	assert(term != NULL);
 	assert(term->type == HIR_TERM_EMPTY_ARRAY);
 
@@ -1780,6 +1799,8 @@ lir_visit_empty_dict_term(
 	int dst_tmpvar,
 	struct hir_term *term)
 {
+	UNUSED_PARAMETER(term);
+
 	assert(term != NULL);
 	assert(term->type == HIR_TERM_EMPTY_DICT);
 
@@ -1813,6 +1834,8 @@ static bool
 lir_decrement_tmpvar(
 	int tmpvar_index)
 {
+	UNUSED_PARAMETER(tmpvar_index);
+
 	assert(tmpvar_index == (int)tmpvar_top - 1);
 	assert(tmpvar_top > 0);
 

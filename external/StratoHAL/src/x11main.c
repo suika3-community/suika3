@@ -294,6 +294,11 @@ bool main_run_x11(void)
 /* Initialize HAL. */
 static bool init_hal(int argc, char *argv[])
 {
+#if defined(HAL_USE_LIBINTL)
+	bindtextdomain("libstrato", LOCALEDIR);
+	bind_textdomain_codeset("libstrato", "UTF-8");
+#endif
+
 	/* Initialize the locale. */
 	init_locale();
 

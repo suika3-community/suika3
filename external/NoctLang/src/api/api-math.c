@@ -46,7 +46,6 @@ static struct ffi_item ffi_items[] = {
 	{"__Math_random",	"random",	0,	{NULL},	cfunc_Math_random},
 };
 
-	
 /*
  * Register "Console.*" functions.
  */
@@ -176,7 +175,6 @@ cfunc_Math_sqrt(
 
 	return true;
 }
-
 
 /* sin() */
 static bool
