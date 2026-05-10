@@ -1384,8 +1384,9 @@ Studio Code.
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-android.webp" alt="Suika3 on Android" width="320" hspace="20">
   <p>Android</p><br>
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-pc98.png" alt="Suika3 on NEC PC-9801" width="320" hspace="20">
-  <p>NEC PC-9801 Series<br>
+  <p>NEC PC-9800 Series<br>
   80386+ CPU and 16MB RAM required.<br>
+  MS-DOS 6.2 + OpenWatcom V2 + DOS4GW<br>
   Ray's JIT works on real PC98 machines!
   </p><br>
 </div>
