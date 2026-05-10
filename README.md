@@ -1384,7 +1384,7 @@ Studio Code.
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-android.webp" alt="Suika3 on Android" width="320" hspace="20">
   <p>Android</p><br>
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-pc98.png" alt="Suika3 on NEC PC-9801" width="320" hspace="20">
-  <p>NEC PC-9801 (JIT-enabled!)</p><br>
+  <p>NEC PC-9801 (Runs on DOS4GW, with Ray's JIT enabled on 386)</p><br>
 </div>
 
 ---
