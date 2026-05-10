@@ -572,6 +572,9 @@ hir_visit_expr_stmt(
 {
 	struct hir_stmt *hstmt;
 
+	UNUSED_PARAMETER(parent_block);
+	UNUSED_PARAMETER(prev_block);
+
 	assert(cur_block != NULL);
 	assert(*cur_block != NULL);
 	assert((*cur_block)->type == HIR_BLOCK_BASIC);
@@ -623,6 +626,9 @@ hir_visit_assign_stmt(
 {
 	struct hir_stmt *hstmt;
 	bool is_lhs_ok;
+
+	UNUSED_PARAMETER(parent_block);
+	UNUSED_PARAMETER(prev_block);
 
 	assert(cur_block != NULL);
 	assert(*cur_block != NULL);
@@ -1246,6 +1252,9 @@ hir_visit_return_stmt(
 	struct ast_stmt *cur_astmt)
 {
 	struct hir_stmt *hstmt;
+
+	UNUSED_PARAMETER(parent_block);
+	UNUSED_PARAMETER(prev_block);
 
 	assert(cur_block != NULL);
 	assert(*cur_block != NULL);

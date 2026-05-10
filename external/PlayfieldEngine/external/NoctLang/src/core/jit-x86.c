@@ -60,6 +60,9 @@ jit_build(
         struct jit_context ctx;
         int i;
 
+        if (func->bytecode_size == 0 || func->cfunc != NULL)
+                return false;
+
         /* If the first call, map a memory region for the generated code. */
         if (jit_code_region == NULL) {
                 if (!jit_map_memory_region((void **)&jit_code_region, JIT_CODE_MAX)) {
@@ -94,7 +97,7 @@ jit_build(
                         return false;
         }
 
-        func->jit_code = (bool (*)(struct rt_env *))ctx.code_top;
+        func->jit_code = (bool (CDECL *)(struct rt_env *))ctx.code_top;
 
         return true;
 }
@@ -1497,7 +1500,7 @@ jit_visit_bytecode(
                 /* pushl %ebp */                        IB(0x55);
 
                 /* movl %esp, %ebp */                   IB(0x89); IB(0xe5);
-                /* subl $16, %esp */                    IB(0x83); IB(0xec); IB(0x0c);
+                /* subl $12, %esp */                    IB(0x83); IB(0xec); IB(0x0c);
 
                 /* (ebp-8): rt */
                 /* movl %eax, -8(%ebp) */               IB(0x89); IB(0x45); IB(0xf8);
@@ -1518,7 +1521,7 @@ jit_visit_bytecode(
         ctx->exception_code = ctx->code;
         ASM {
         /* exception_handler: */
-                /* addl $16, %esp */                    IB(0x83); IB(0xc4); IB(0x0c);
+                /* addl $12, %esp */                    IB(0x83); IB(0xc4); IB(0x0c);
                 /* popl %ebp */                         IB(0x5d);
                 /* popl %esi */                         IB(0x5e);
                 /* popl %edi */                         IB(0x5f);
@@ -1726,7 +1729,7 @@ jit_visit_bytecode(
         /* Put an epilogue. */
         ASM {
         /* epilogue: */
-                /* addl $16, %esp */    IB(0x83); IB(0xc4); IB(0x0c);
+                /* addl $12, %esp */    IB(0x83); IB(0xc4); IB(0x0c);
                 /* popl %ebp */         IB(0x5d);
                 /* popl %esi */         IB(0x5e);
                 /* popl %edi */         IB(0x5f);

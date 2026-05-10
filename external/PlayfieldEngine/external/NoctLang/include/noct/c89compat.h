@@ -182,6 +182,7 @@ extern "C" {
  * |NOCT_TARGET_SOLARIS11 |Solaris               |                            |
  * |NOCT_TARGET_SOLARIS10 |Solaris               |                            |
  * |NOCT_TARGET_BEOS      |BeOS and Haiku        |                            |
+ * |NOCT_TARGET_DOS4G     |DOS4G                 |                            |
  *
  * |Macro               |Description                     |
  * |--------------------|--------------------------------|
@@ -284,7 +285,8 @@ extern "C" {
     !defined(NOCT_TARGET_ANDROID) &&              \
     !defined(NOCT_TARGET_WASM) &&                 \
     !defined(NOCT_TARGET_BEOS) &&                 \
-    !defined(NOCT_TARGET_UNITY)
+    !defined(NOCT_TARGET_UNITY) &&                \
+    !defined(NOCT_TARGET_DOS4G)
 #error "No target detected."
 #endif
 
@@ -332,10 +334,12 @@ typedef signed char int8_t;
 typedef signed short int16_t;
 typedef signed int int32_t;
 typedef signed long long int64_t;
+typedef long intptr_t;
 typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
 typedef unsigned long long uint64_t;
+typedef unsigned long uintptr_t;
 #endif
 #endif
 
@@ -351,6 +355,9 @@ typedef unsigned long long uint64_t;
 #define INLINE			__inline	/* IBM XLC extension */
 #elif defined(_MSC_VER)
 #define INLINE			__inline	/* MSVC extension */
+#elif defined(__WATCOMC__)
+#define INLINE			__inline	/* Watcom extension */
+#pragma warning 202 9
 #else
 #define INLINE					/* Not supported */
 #endif
@@ -425,6 +432,41 @@ typedef unsigned long long uint64_t;
 #if defined(_MSC_VER)
 #if !defined(strcasecmp)
 #define strcasecmp _stricmp
+#endif
+#endif
+#if defined(__WATCOMC__)
+#if !defined(strcasecmp)
+#define strcasecmp stricmp
+#endif
+#endif
+
+/*
+ * math
+ */
+#if defined(__WATCOMC__)
+#if !defined(lroundf)
+#define lroundf round
+#endif
+#if !defined(floorf)
+#define floorf floor
+#endif
+#if !defined(ceilf)
+#define ceilf ceil
+#endif
+#if !defined(sqrtf)
+#define sqrtf sqrt
+#endif
+#if !defined(sinf)
+#define sinf sin
+#endif
+#if !defined(cosf)
+#define cosf cos
+#endif
+#if !defined(tanf)
+#define tanf tan
+#endif
+#if !defined(fmodf)
+#define fmodf fmod
 #endif
 #endif
 

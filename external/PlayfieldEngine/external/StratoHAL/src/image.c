@@ -146,7 +146,7 @@ hal_create_image(
 		free(*img);
 		return false;
 	}
-#elif !defined(HAL_TARGET_UNITY)
+#elif !defined(HAL_TARGET_UNITY) && !defined(HAL_TARGET_PC98)
 	if (posix_memalign((void **)&pixels, 64, (size_t)w * (size_t)h * sizeof(hal_pixel_t)) != 0) {
 		hal_log_out_of_memory();
 		free(*img);
@@ -1026,6 +1026,37 @@ hal_draw_image_3d_cross(
  * Scanline Conversion (for 3D polygon drawing)
  */
 
+static INLINE int fp32_eq(float a, float b)
+{
+    float d = a - b;
+    return d > -0.0001f && d < 0.0001f;
+}
+
+#if defined(HAL_TARGET_DOS4G)
+#undef floorf
+static INLINE int floorf(float x)
+{
+    int i = (int)x;
+    return (x < (float)i) ? i - 1 : i;
+}
+
+#undef ceilf
+static INLINE int ceilf(float x)
+{
+    int i = (int)x;
+    return (x > (float)i) ? i + 1 : i;
+}
+
+#undef lroundf
+static INLINE int lroundf(float x)
+{
+    if (x >= 0.0f)
+        return (int)(x + 0.5f);
+    else
+        return (int)(x - 0.5f);
+}
+#endif
+
 static inline void
 scanline_edge(
 	struct scbuf *scbuf,
@@ -1041,7 +1072,7 @@ scanline_edge(
 	int iy;
 
 	/* Horizontal edge. */
-	if (y1 == y2) {
+	if (fp32_eq(y1, y2)) {
 		iy = (int)lroundf(y1);
 		if (iy < 0 || iy >= SC_LINES)
 			return;
@@ -1082,7 +1113,7 @@ scanline_edge(
 	}
 
 	/* Vertical edge. */
-	if (x1 == x2) {
+	if (fp32_eq(x1, x2)) {
 		int ix = (int)ceilf(x1);
 		for (iy = (int)ceilf(y1); iy <= (int)ceilf(y2); iy++) {
 			float t, tx, ty;
@@ -1720,6 +1751,8 @@ hal_create_image_with_jpeg(
  * WebP
  */
 
+#if !defined(HAL_TARGET_PC98)
+
 #include <webp/decode.h>
 
 /*
@@ -1781,3 +1814,21 @@ hal_create_image_with_webp(
 
 	return true;
 }
+
+#else
+
+bool
+hal_create_image_with_webp(
+	const uint8_t *data,
+	size_t size,
+	struct hal_image **img)
+{
+	UNUSED_PARAMETER(data);
+	UNUSED_PARAMETER(size);
+	UNUSED_PARAMETER(img);
+
+	hal_log_error("WebP is not supported.");
+	return false;
+}
+
+#endif /* !defined(HAL_TARGET_PC98) */

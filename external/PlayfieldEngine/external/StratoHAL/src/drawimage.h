@@ -659,7 +659,6 @@ DRAW_IMAGE_3D_ALPHA(
 			    (float)y4,
 			    (float)src_width,
 			    (float)src_height);			    
-
 	dw = dst_image->width;
 	sw = src_image->width;
 	sh = src_image->height;
@@ -1289,7 +1288,7 @@ DRAW_IMAGE_3D_CROSS(
         for (y = 0; y < dst_y_max; y++) {
                 int min_x1 = scbuf1[y].sc_min_x,  max_x1 = scbuf1[y].sc_max_x;
                 int min_x2 = scbuf2[y].sc_min_x, max_x2 = scbuf2[y].sc_max_x;
-
+		int start_x, end_x;
                 float tx1 = scbuf1[y].sc_min_tx,  ty1 = scbuf1[y].sc_min_ty;
                 float tx2 = scbuf2[y].sc_min_tx, ty2 = scbuf2[y].sc_min_ty;
                 float tx1_inc = 0, ty1_inc = 0, tx2_inc = 0, ty2_inc = 0;
@@ -1310,7 +1309,8 @@ DRAW_IMAGE_3D_CROSS(
                         }
                 }
 
-                int start_x = INT_MAX, end_x = INT_MIN;
+                start_x = INT_MAX;
+		end_x = INT_MIN;
                 if (min_x1 != INT_MAX)
 			start_x = (min_x1 < start_x) ? min_x1 : start_x;
                 if (min_x2 != INT_MAX)
@@ -1324,6 +1324,9 @@ DRAW_IMAGE_3D_CROSS(
 
                 for (x = start_x; x <= end_x; x++) {
                         uint32_t src1_pix = 0, src2_pix = 0;
+                        uint32_t dst_pix;
+			float src1_a, src2_a, src_r, src_g, src_b;
+                        float dst_a, dst_r, dst_g, dst_b;
 
                         if (min_x1 != INT_MAX && x >= min_x1 && x <= max_x1) {
                                 if (x >= 0 && x < dw) {
@@ -1364,22 +1367,22 @@ DRAW_IMAGE_3D_CROSS(
                         if ((src1_pix >> 24) == 0 && (src2_pix >> 24) == 0)
 				continue; /* alpha = 0 */
 
-                        uint32_t dst_pix = dst_pixel[y * dw + x];
+			dst_pix = dst_pixel[y * dw + x];
 
-                        float src1_a = alpha_f * ((float)hal_get_pixel_a(src1_pix) / 255.0f);
-                        float src2_a = (1.0f - alpha_f) * ((float)hal_get_pixel_a(src2_pix) / 255.0f);
-                        float dst_a = 1.0f - (src1_a + src2_a);
+                        src1_a = alpha_f * ((float)hal_get_pixel_a(src1_pix) / 255.0f);
+                        src2_a = (1.0f - alpha_f) * ((float)hal_get_pixel_a(src2_pix) / 255.0f);
+                        dst_a = 1.0f - (src1_a + src2_a);
 
-                        float src_r = src1_a * (float)((src1_pix >> 16) & 0xff) +
-				      src2_a * (float)((src2_pix >> 16) & 0xff);
-                        float src_g = src1_a * (float)((src1_pix >> 8)  & 0xff) +
-				      src2_a * (float)((src2_pix >> 8)  & 0xff);
-                        float src_b = src1_a * (float)(src1_pix & 0xff) +
-				      src2_a * (float)(src2_pix & 0xff);
+                        src_r = src1_a * (float)((src1_pix >> 16) & 0xff) +
+				src2_a * (float)((src2_pix >> 16) & 0xff);
+                        src_g = src1_a * (float)((src1_pix >> 8)  & 0xff) +
+				src2_a * (float)((src2_pix >> 8)  & 0xff);
+                        src_b = src1_a * (float)(src1_pix & 0xff) +
+				src2_a * (float)(src2_pix & 0xff);
 
-                        float dst_r = dst_a * (float)((dst_pix >> 16) & 0xff);
-                        float dst_g = dst_a * (float)((dst_pix >> 8)  & 0xff);
-                        float dst_b = dst_a * (float)(dst_pix & 0xff);
+                        dst_r = dst_a * (float)((dst_pix >> 16) & 0xff);
+                        dst_g = dst_a * (float)((dst_pix >> 8)  & 0xff);
+                        dst_b = dst_a * (float)(dst_pix & 0xff);
 
                         dst_pixel[y * dw + x] = 0xff000000 |
                                                 ((uint32_t)(src_r + dst_r) << 16) |

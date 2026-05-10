@@ -259,6 +259,7 @@ hal_check_file_exist(
 {
 	FILE *fp;
 	uint64_t i;
+	char *real_path;
 
 	/* If we're using a package file. */
 	if (package_path != NULL) {
@@ -279,7 +280,6 @@ hal_check_file_exist(
 #endif
 
 	/* Make a real file path. */
-	char *real_path;
 	real_path = hal_make_real_path(file);
 	if (real_path == NULL)
 		return false;

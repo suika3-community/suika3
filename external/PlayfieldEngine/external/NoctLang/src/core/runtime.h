@@ -15,6 +15,12 @@
 #include <noct/noct.h>
 #include "gc.h"
 
+#if defined(NOCT_TARGET_DOS4G)
+#define CDECL __cdecl
+#else
+#define CDECL
+#endif
+
 /*
  * Maximum number of the stack depth.
  */
@@ -124,7 +130,7 @@ struct rt_func {
 	uint32_t tmpvar_size;
 
 	/* JIT-generated code. */
-	bool (*jit_code)(struct rt_env *env);
+	bool (CDECL *jit_code)(struct rt_env *env);
 	int call_count;
 
 	/* Function pointer. (if a cfunc) */
@@ -358,6 +364,7 @@ rt_make_string(
 
 /* Make a string value. (hash version) */
 bool
+CDECL
 rt_make_string_with_hash(
 	struct rt_env *env,
 	struct rt_value *val,
@@ -376,6 +383,7 @@ rt_cache_string_hash(
 
 /* Make an empty array. */
 bool
+CDECL
 rt_make_empty_array(
 	struct rt_env *env,
 	struct rt_value *val);
@@ -419,6 +427,7 @@ rt_make_array_copy(
 
 /* Make an empty dictionary value. */
 bool
+CDECL
 rt_make_empty_dict(
 	struct rt_env *env,
 	struct rt_value *val);

@@ -6,48 +6,48 @@
  */
 
 /*
- * CLI: FFI routines
+ * CLI: Native API routines
  */
 
 #include "cli-main.h"
 
 /*
- * FFI Functions
+ * NAPI Functions
  */
 
-/* FFI function implementation. */
+/* NAPI function implementation. */
 static bool cfunc_print(NoctEnv *env);
 static bool serialize_printer(NoctEnv *env, char *buf, size_t size, NoctValue *value, bool is_inside_obj);
 
-/* FFI table. */
-struct ffi_item {
+/* NAPU table. */
+struct napi_item {
 	const char *name;
 	int param_count;
 	const char *param[NOCT_ARG_MAX];
 	bool (*cfunc)(NoctEnv *env);
-} ffi_items[] = {
+} napi_items[] = {
 	{"print", 1, {"msg"}, cfunc_print},
 };
 
 /*
- * Register FFI functions.
+ * Register NAPI functions.
  */
-bool register_cli_ffi(NoctEnv *env)
+bool register_cli_cfunc(NoctEnv *env)
 {
+	NoctValue dict;
 	int i;
 
-	for (i = 0; i < (int)(sizeof(ffi_items) / sizeof(struct ffi_item)); i++) {
+	for (i = 0; i < (int)(sizeof(napi_items) / sizeof(struct napi_item)); i++) {
 		if (!noct_register_cfunc(env,
-					 ffi_items[i].name,
-					 ffi_items[i].param_count,
-					 ffi_items[i].param,
-					 ffi_items[i].cfunc,
+					 napi_items[i].name,
+					 napi_items[i].param_count,
+					 napi_items[i].param,
+					 napi_items[i].cfunc,
 					 NULL))
 			return false;
 	}
 
 	/* Add a global variable "App". */
-	NoctValue dict;
 	if (!noct_make_empty_dict(env, &dict))
 		return false;
 	if (!noct_set_global(env, "App", &dict))

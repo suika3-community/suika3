@@ -96,6 +96,7 @@ if(   PLAYFIELD_TARGET_WINDOWS
    OR PLAYFIELD_TARGET_GDK_WINDOWS
    OR PLAYFIELD_TARGET_GDK_XBOX_XS
    OR PLAYFIELD_TARGET_UWP
+   OR PLAYFIELD_TARGET_PC98
 )
   # A target and options are manually specified.
 else()   
@@ -222,6 +223,11 @@ if(NOT PLAYFIELD_ENABLE_DIST)
     set(NOCT_TARGET_UNITY ON)
   endif()
 
+  # If building for PC98.
+  if(PLAYFIELD_TARGET_PC98)
+    set(NOCT_TARGET_DOS4G ON)
+  endif()
+
   # No `noct` CLI.
   if(NOT NOCT_ENABLE_CLI)
     set(NOCT_ENABLE_CLI OFF)
@@ -321,6 +327,8 @@ if(NOT PLAYFIELD_ENABLE_DIST)
     set(STRATO_TARGET_GDK_XBOX_XS ON)
   elseif(PLAYFIELD_TARGET_UWP)
     set(STRATO_TARGET_UWP ON)
+  elseif(PLAYFIELD_TARGET_PC98)
+    set(STRATO_TARGET_PC98 ON)
   else()
     error("No target specified or detected.")
   endif()
@@ -430,8 +438,8 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU"
   set(CMAKE_OBJC_FLAGS_RELEASE "${CMAKE_OBJC_FLAGS_RELEASE} -DNDEBUG -O2 -g0")
 else()
   # Other
-  set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -DNDEBUG -O2 -g0")
-  set(CMAKE_OBJC_FLAGS_RELEASE "${CMAKE_OBJC_FLAGS_RELEASE} -DNDEBUG -O2 -g0")
+  #set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -DNDEBUG -O2 -g0")
+  #set(CMAKE_OBJC_FLAGS_RELEASE "${CMAKE_OBJC_FLAGS_RELEASE} -DNDEBUG -O2 -g0")
 endif()
 
 # ---
@@ -522,20 +530,33 @@ endif()
 
 # Determine the objects if we use static linking.
 if(NOT PLAYFIELD_ENABLE_DIST)
-  set(
-    PLAYFIELD_DEPS
-    $<TARGET_OBJECTS:png>
-    $<TARGET_OBJECTS:jpeg>
-    $<TARGET_OBJECTS:webp>
-    $<TARGET_OBJECTS:vorbisfile>
-    $<TARGET_OBJECTS:vorbis>
-    $<TARGET_OBJECTS:ogg>
-    $<TARGET_OBJECTS:freetype>
-    $<TARGET_OBJECTS:brotlidec>
-    $<TARGET_OBJECTS:brotlicommon>
-    $<TARGET_OBJECTS:bz2>
-    $<TARGET_OBJECTS:z>
-  )      
+  if(NOT PLAYFIELD_TARGET_PC98)
+    set(
+      PLAYFIELD_DEPS
+      $<TARGET_OBJECTS:png>
+      $<TARGET_OBJECTS:jpeg>
+      $<TARGET_OBJECTS:webp>
+      $<TARGET_OBJECTS:vorbisfile>
+      $<TARGET_OBJECTS:vorbis>
+      $<TARGET_OBJECTS:ogg>
+      $<TARGET_OBJECTS:freetype>
+      $<TARGET_OBJECTS:brotlidec>
+      $<TARGET_OBJECTS:brotlicommon>
+      $<TARGET_OBJECTS:bz2>
+      $<TARGET_OBJECTS:z>
+    )      
+  else()
+    set(
+      PLAYFIELD_DEPS
+      $<TARGET_OBJECTS:png>
+      $<TARGET_OBJECTS:jpeg>
+      $<TARGET_OBJECTS:vorbisfile>
+      $<TARGET_OBJECTS:vorbis>
+      $<TARGET_OBJECTS:ogg>
+      $<TARGET_OBJECTS:freetype>
+      $<TARGET_OBJECTS:z>
+    )      
+  endif()
 endif()
 
 # Use stub hook for library-only platforms
@@ -601,6 +622,11 @@ endif()
 # Unity
 if(PLAYFIELD_TARGET_UNITY)
   target_compile_definitions(playfield PRIVATE PF_TARGET_UNITY)
+endif()
+
+# PC98
+if(PLAYFIELD_TARGET_PC98)
+  target_compile_definitions(playfield PRIVATE PF_TARGET_PC98)
 endif()
 
 # Windows
@@ -720,6 +746,11 @@ if(PLAYFIELD_ENABLE_BIN)
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${NOCT_INCLUDE_DIR}
   )
+endif()
+
+# PC98
+if(PLAYFIELD_TARGET_PC98)
+  target_compile_definitions(playfieldbin PRIVATE PF_TARGET_PC98)
 endif()
 
 # ---
@@ -1113,3 +1144,10 @@ if(PLAYFIELD_ENABLE_INSTALL)
             DESTINATION ${CMAKE_INSTALL_FULL_LOCALEDIR})
   endif()
 endif()
+
+
+
+
+message(STATUS "CMAKE_C_COMPILER=${CMAKE_C_COMPILER}")
+message(STATUS "CMAKE_LINKER=${CMAKE_LINKER}")
+message(STATUS "CMAKE_C_LINK_EXECUTABLE=${CMAKE_C_LINK_EXECUTABLE}")
