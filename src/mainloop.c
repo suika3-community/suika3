@@ -36,6 +36,8 @@
 #include "vm.h"
 #include "i18n.h"
 
+#include <stratohal/platform.h>
+
 #include <stdio.h>
 
 /* Show whether the game is running. */

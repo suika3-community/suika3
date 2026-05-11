@@ -6,14 +6,12 @@
     "configurePresets": [
         {
             "name":           "windows-vs2022-x86",
-            "displayName":    "VS2022 MSVC x86 Release",
+            "displayName":    "VS2022 MSVC x86",
             "generator":      "Visual Studio 17 2022",
             "architecture":   "Win32",
             "toolset":        "v143",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":  "Release",
-                "CMAKE_BUILD_TYPE":           "Release",
                 "PLAYFIELD_ENABLE_JIT":       "ON",
                 "PLAYFIELD_ENABLE_I18N":      "ON",
                 "PLAYFIELD_ENABLE_BIN":       "ON",
@@ -31,14 +29,12 @@
         },
         {
             "name":           "windows-vs2022-x64",
-            "displayName":    "VS2022 MSVC x64 Release",
+            "displayName":    "VS2022 MSVC x64",
             "generator":      "Visual Studio 17 2022",
             "architecture":   "x64",
             "toolset":        "v143",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":  "Release",
-                "CMAKE_BUILD_TYPE":           "Release",
                 "PLAYFIELD_ENABLE_JIT":       "ON",
                 "PLAYFIELD_ENABLE_I18N":      "ON",
                 "PLAYFIELD_ENABLE_BIN":       "ON",
@@ -56,14 +52,12 @@
         },
         {
             "name":           "windows-vs2022-arm64",
-            "displayName":    "VS2022 MSVC arm64 Release",
+            "displayName":    "VS2022 MSVC arm64",
             "generator":      "Visual Studio 17 2022",
             "architecture":   "arm64",
             "toolset":        "v143",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":  "Release",
-                "CMAKE_BUILD_TYPE":           "Release",
                 "PLAYFIELD_ENABLE_JIT":       "ON",
                 "PLAYFIELD_ENABLE_I18N":      "ON",
                 "PLAYFIELD_ENABLE_BIN":       "ON",
@@ -87,8 +81,6 @@
             "toolset":        "v143",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":    "Release",
-                "CMAKE_BUILD_TYPE":             "Release",
                 "PLAYFIELD_TARGET_GDK_WINDOWS": "ON",
                 "PLAYFIELD_ENABLE_JIT":         "OFF",
                 "PLAYFIELD_ENABLE_I18N":        "OFF",
@@ -111,8 +103,6 @@
             "toolset":        "v143",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":    "Release",
-                "CMAKE_BUILD_TYPE":             "Release",
                 "PLAYFIELD_TARGET_GDK_WINDOWS": "ON",
                 "PLAYFIELD_ENABLE_JIT":         "OFF",
                 "PLAYFIELD_ENABLE_I18N":        "OFF",
@@ -156,14 +146,12 @@
         },
         {
             "name":           "windows-vs2026-x86",
-            "displayName":    "!VS2026 MSVC x86 Release",
+            "displayName":    "VS2026 MSVC x86",
             "generator":      "Visual Studio 18 2026",
             "architecture":   "Win32",
             "toolset":        "v145",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":    "Release",
-                "CMAKE_BUILD_TYPE":             "Release",
                 "PLAYFIELD_ENABLE_JIT":         "ON",
                 "PLAYFIELD_ENABLE_I18N":        "ON",
                 "PLAYFIELD_ENABLE_BIN":         "ON",
@@ -172,56 +160,6 @@
                 "PLAYFIELD_ENABLE_AOTC":        "ON",
                 "PLAYFIELD_ENABLE_WEBSERVER":   "ON",
                 "PLAYFIELD_ENABLE_EDITOR":      "ON"
-            },
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            }
-        },
-        {
-            "name":           "windows-vs2026-x86-debug",
-            "displayName":    "!VS2026 MSVC x86 Debug",
-            "generator":      "Visual Studio 18 2026",
-            "architecture":   "Win32",
-            "toolset":        "v145",
-            "binaryDir":      "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":    "Debug",
-                "CMAKE_BUILD_TYPE":             "Debug",
-                "PLAYFIELD_ENABLE_JIT":         "ON",
-                "PLAYFIELD_ENABLE_I18N":        "ON",
-                "PLAYFIELD_ENABLE_BIN":         "ON",
-                "PLAYFIELD_ENABLE_PACK":        "ON",
-                "PLAYFIELD_ENABLE_BCC":         "ON",
-                "PLAYFIELD_ENABLE_AOTC":        "ON",
-                "PLAYFIELD_ENABLE_WEBSERVER":   "ON",
-                "PLAYFIELD_ENABLE_EDITOR":      "ON"
-            },
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            }
-        },
-        {
-            "name":           "windows-vs2026-x86-xp",
-            "displayName":    "!VS2026 MSVC x86 XP Release",
-            "generator":      "Visual Studio 18 2026",
-            "architecture":   "Win32",
-            "toolset":        "v141_xp",
-            "binaryDir":      "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":    "Release",
-                "CMAKE_BUILD_TYPE":             "Release",
-                "PLAYFIELD_ENABLE_JIT":         "ON",
-                "PLAYFIELD_ENABLE_I18N":        "ON",
-                "PLAYFIELD_ENABLE_BIN":         "ON",
-                "PLAYFIELD_ENABLE_PACK":        "ON",
-                "PLAYFIELD_ENABLE_BCC":         "ON",
-                "PLAYFIELD_ENABLE_AOTC":        "ON",
-                "PLAYFIELD_ENABLE_WEBSERVER":   "ON",
-                "PLAYFIELD_ENABLE_EDITOR":      "OFF"
             },
             "condition": {
                 "type": "equals",
@@ -231,39 +169,12 @@
         },
         {
             "name":           "windows-vs2026-x64",
-            "displayName":    "!VS2026 MSVC x64 Release",
+            "displayName":    "VS2026 MSVC x64",
             "generator":      "Visual Studio 18 2026",
             "architecture":   "x64",
             "toolset":        "v145",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":    "Release",
-                "CMAKE_BUILD_TYPE":             "Release",
-                "PLAYFIELD_ENABLE_JIT":         "ON",
-                "PLAYFIELD_ENABLE_I18N":        "ON",
-                "PLAYFIELD_ENABLE_BIN":         "ON",
-                "PLAYFIELD_ENABLE_PACK":        "ON",
-                "PLAYFIELD_ENABLE_BCC":         "ON",
-                "PLAYFIELD_ENABLE_AOTC":        "ON",
-                "PLAYFIELD_ENABLE_WEBSERVER":   "ON",
-                "PLAYFIELD_ENABLE_EDITOR":      "ON"
-            },
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            }
-        },
-        {
-            "name":           "windows-vs2026-x64-debug",
-            "displayName":    "!VS2026 MSVC x64 Debug",
-            "generator":      "Visual Studio 18 2026",
-            "architecture":   "x64",
-            "toolset":        "v145",
-            "binaryDir":      "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":    "Debug",
-                "CMAKE_BUILD_TYPE":             "Debug",
                 "PLAYFIELD_ENABLE_JIT":         "ON",
                 "PLAYFIELD_ENABLE_I18N":        "ON",
                 "PLAYFIELD_ENABLE_BIN":         "ON",
@@ -281,14 +192,12 @@
         },
         {
             "name":           "windows-vs2026-arm64",
-            "displayName":    "!VS2026 MSVC arm64 Release",
+            "displayName":    "VS2026 MSVC arm64",
             "generator":      "Visual Studio 18 2026",
             "architecture":   "arm64",
             "toolset":        "v145",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":    "Release",
-                "CMAKE_BUILD_TYPE":             "Release",
                 "PLAYFIELD_ENABLE_JIT":         "ON",
                 "PLAYFIELD_ENABLE_I18N":        "ON",
                 "PLAYFIELD_ENABLE_BIN":         "ON",
@@ -306,7 +215,7 @@
         },
         {
             "name":           "windows-vs2026-uwp",
-            "displayName":    "!VS2026 UWP x64",
+            "displayName":    "VS2026 UWP x64",
             "generator":      "Visual Studio 18 2026",
             "architecture":   "x64",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
@@ -330,31 +239,6 @@
             }
         },
         {
-            "name":           "windows-vs2026-arm64-debug",
-            "displayName":    "!VS2026 MSVC arm64 Debug",
-            "generator":      "Visual Studio 18 2026",
-            "architecture":   "arm64",
-            "toolset":        "v145",
-            "binaryDir":      "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":    "Debug",
-                "CMAKE_BUILD_TYPE":             "Debug",
-                "PLAYFIELD_ENABLE_JIT":         "ON",
-                "PLAYFIELD_ENABLE_I18N":        "ON",
-                "PLAYFIELD_ENABLE_BIN":         "ON",
-                "PLAYFIELD_ENABLE_PACK":        "ON",
-                "PLAYFIELD_ENABLE_BCC":         "ON",
-                "PLAYFIELD_ENABLE_AOTC":        "ON",
-                "PLAYFIELD_ENABLE_WEBSERVER":   "ON",
-                "PLAYFIELD_ENABLE_EDITOR":      "ON"
-            },
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            }
-        },
-        {
             "name":           "windows-vs2026-gdk-desktop",
             "displayName":    "VS2026 GDK Windows",
             "generator":      "Visual Studio 18 2026",
@@ -362,8 +246,6 @@
             "toolset":        "v145",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":    "Release",
-                "CMAKE_BUILD_TYPE":             "Release",
                 "PLAYFIELD_TARGET_GDK_WINDOWS": "ON",
                 "PLAYFIELD_ENABLE_JIT":         "OFF",
                 "PLAYFIELD_ENABLE_I18N":        "OFF",
@@ -409,7 +291,6 @@
             "binaryDir":      "${sourceDir}/build-mingw-x86",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-x86.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_WINDOWS":    "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
@@ -428,7 +309,6 @@
             "binaryDir":      "${sourceDir}/build-mingw-x86_64",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-x86_64.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_WINDOWS":    "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
@@ -447,7 +327,6 @@
             "binaryDir":      "${sourceDir}/build-mingw-win95",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-win95.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_WINDOWS95":  "ON",
                 "PLAYFIELD_ENABLE_JIT":        "OFF",
                 "PLAYFIELD_ENABLE_I18N":       "OFF",
@@ -466,7 +345,6 @@
             "binaryDir":      "${sourceDir}/build-mingw-arm64",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-arm64.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_WINDOWS":    "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
@@ -485,7 +363,6 @@
             "binaryDir":      "${sourceDir}/build-macos",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/macos.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
                 "CMAKE_OSX_DEPLOYMENT_TARGET": "10.11",
                 "PLAYFIELD_TARGET_MACOS":      "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
@@ -503,26 +380,6 @@
             "binaryDir":      "${sourceDir}/build-macos-cli",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/macos.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "CMAKE_OSX_DEPLOYMENT_TARGET": "10.11",
-                "PLAYFIELD_TARGET_MACOS_CLI":  "ON",
-                "PLAYFIELD_ENABLE_JIT":        "ON",
-                "PLAYFIELD_ENABLE_I18N":       "ON",
-                "PLAYFIELD_ENABLE_BIN":        "ON",
-                "PLAYFIELD_ENABLE_CONSOLE":    "ON",
-                "PLAYFIELD_ENABLE_PACK":       "ON",
-                "PLAYFIELD_ENABLE_BCC":        "ON",
-                "PLAYFIELD_ENABLE_AOTC":       "ON"
-            }
-        },
-        {
-            "name":           "macos-cli-debug",
-            "displayName":    "macOS",
-            "generator":      "Ninja",
-            "binaryDir":      "${sourceDir}/build-macos-cli-debug",
-            "toolchainFile":  "${sourceDir}/cmake/toolchains/macos.cmake",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Debug",
                 "CMAKE_OSX_DEPLOYMENT_TARGET": "10.11",
                 "PLAYFIELD_TARGET_MACOS_CLI":  "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
@@ -556,11 +413,10 @@
         },
         {
             "name":           "linux",
-            "displayName":    "Linux X11 OpenGL",
+            "displayName":    "Linux Wayland/X11 Dual OpenGL",
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-linux",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_LINUX":      "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_BIN":        "ON",
@@ -571,16 +427,15 @@
             }
         },
         {
-            "name":           "linux-debug",
-            "displayName":    "Linux X11 OpenGL Debug",
+            "name":           "linux-x11",
+            "displayName":    "Linux X11-only OpenGL",
             "generator":      "Ninja",
-            "binaryDir":      "${sourceDir}/build-linux-debug",
+            "binaryDir":      "${sourceDir}/build-linux-x11",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Debug",
                 "PLAYFIELD_TARGET_LINUX":      "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
-                "PLAYFIELD_ENABLE_I18N":       "ON",
                 "PLAYFIELD_ENABLE_BIN":        "ON",
+                "PLAYFIELD_ENABLE_I18N":       "ON",
                 "PLAYFIELD_ENABLE_PACK":       "ON",
                 "PLAYFIELD_ENABLE_BCC":        "ON",
                 "PLAYFIELD_ENABLE_AOTC":       "ON"
@@ -588,11 +443,10 @@
         },
         {
             "name":           "linux-wayland",
-            "displayName":    "Linux Wayland OpenGL",
+            "displayName":    "Linux Wayland-only OpenGL",
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-linux-wayland",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":               "Release",
                 "PLAYFIELD_TARGET_LINUX_WAYLAND": "ON",
                 "PLAYFIELD_ENABLE_JIT":           "ON",
                 "PLAYFIELD_ENABLE_I18N":          "ON",
@@ -603,28 +457,11 @@
             }
         },
         {
-            "name":           "linux-wayland-debug",
-            "displayName":    "Linux Wayland OpenGL",
+            "name":           "linux-dri",
+            "displayName":    "Linux DRI OpenGL ES",
             "generator":      "Ninja",
-            "binaryDir":      "${sourceDir}/build-linux-wayland-debug",
+            "binaryDir":      "${sourceDir}/build-linux-dri",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":               "Debug",
-                "PLAYFIELD_TARGET_LINUX_WAYLAND": "ON",
-                "PLAYFIELD_ENABLE_JIT":           "ON",
-                "PLAYFIELD_ENABLE_I18N":          "ON",
-                "PLAYFIELD_ENABLE_BIN":           "ON",
-                "PLAYFIELD_ENABLE_PACK":          "ON",
-                "PLAYFIELD_ENABLE_BCC":           "ON",
-                "PLAYFIELD_ENABLE_AOTC":          "ON"
-            }
-        },
-        {
-            "name":           "linux-gbm",
-            "displayName":    "Linux GBM OpenGL ES",
-            "generator":      "Ninja",
-            "binaryDir":      "${sourceDir}/build-linux-gbm",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_LINUX_GBM":  "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
@@ -635,12 +472,11 @@
             }
         },
         {
-            "name":           "linux-gbm-rot90",
-            "displayName":    "Linux GBM OpenGL ES Rotate",
+            "name":           "linux-dri-rot90",
+            "displayName":    "Linux DRI OpenGL ES Rotate",
             "generator":      "Ninja",
-            "binaryDir":      "${sourceDir}/build-linux-gbm-rot90",
+            "binaryDir":      "${sourceDir}/build-linux-dri-rot90",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_LINUX_GBM":  "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
@@ -656,7 +492,6 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-linux-fbdev",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":             "Debug",
                 "PLAYFIELD_TARGET_LINUX_FBDEV": "ON",
                 "PLAYFIELD_ENABLE_JIT":         "ON",
                 "PLAYFIELD_ENABLE_I18N":        "ON",
@@ -672,7 +507,6 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-linux-x11soft",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":               "Debug",
                 "PLAYFIELD_TARGET_LINUX_X11SOFT": "ON",
                 "PLAYFIELD_ENABLE_JIT":           "ON",
                 "PLAYFIELD_ENABLE_I18N":          "ON",
@@ -689,7 +523,6 @@
             "binaryDir":      "${sourceDir}/build-ios-device",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/ios-device.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_IOS":        "ON",
                 "PLAYFIELD_ENABLE_STATIC":     "ON",
                 "PLAYFIELD_ENABLE_HOOK":       "ON"
@@ -702,7 +535,6 @@
             "binaryDir":      "${sourceDir}/build-ios-simulator",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/ios-simulator.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_IOS":        "ON",
                 "PLAYFIELD_ENABLE_STATIC":     "ON",
                 "PLAYFIELD_ENABLE_HOOK":       "ON"
@@ -715,7 +547,6 @@
             "binaryDir":      "${sourceDir}/build-android-x86",
             "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
                 "CMAKE_SHARED_LINKER_FLAGS":   "-Wl,--hash-style=both -Wl,-z,max-page-size=16384",
                 "ANDROID_PLATFORM":            "30",
                 "ANDROID_ABI":                 "x86",
@@ -731,7 +562,6 @@
             "binaryDir":      "${sourceDir}/build-android-x86_64",
             "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
                 "CMAKE_SHARED_LINKER_FLAGS":   "-Wl,--hash-style=both -Wl,-z,max-page-size=16384",
                 "ANDROID_PLATFORM":            "30",
                 "ANDROID_ABI":                 "x86_64",
@@ -747,7 +577,6 @@
             "binaryDir":      "${sourceDir}/build-android-armv7",
             "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
                 "CMAKE_SHARED_LINKER_FLAGS":   "-Wl,--hash-style=both -Wl,-z,max-page-size=16384",
                 "ANDROID_PLATFORM":            "30",
                 "ANDROID_ABI":                 "armeabi-v7a",
@@ -763,7 +592,6 @@
             "binaryDir":      "${sourceDir}/build-android-arm64",
             "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
                 "CMAKE_SHARED_LINKER_FLAGS":   "-Wl,--hash-style=both -Wl,-z,max-page-size=16384",
                 "ANDROID_PLATFORM":            "30",
                 "ANDROID_ABI":                 "arm64-v8a",
@@ -779,7 +607,6 @@
             "binaryDir":      "${sourceDir}/build-android-riscv64",
             "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
                 "CMAKE_SHARED_LINKER_FLAGS":   "-Wl,--hash-style=both -Wl,-z,max-page-size=16384",
                 "ANDROID_PLATFORM":            "30",
                 "ANDROID_ABI":                 "riscv64",
@@ -795,7 +622,6 @@
             "binaryDir":      "${sourceDir}/build-openharmony-x86_64",
             "toolchainFile":  "$env{OH_NATIVE_SDK_ROOT}/build/cmake/ohos.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":             "Release",
                 "OHOS_PLATFORM_LEVEL":          "12",
                 "OHOS_ARCH":                    "x86_64",
                 "PLAYFIELD_TARGET_OPENHARMONY": "ON",
@@ -810,7 +636,6 @@
             "binaryDir":      "${sourceDir}/build-openharmony-arm64",
             "toolchainFile":  "$env{OH_NATIVE_SDK_ROOT}/build/cmake/ohos.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":             "Release",
                 "OHOS_PLATFORM_LEVEL":          "12",
                 "OHOS_ARCH":                    "arm64-v8a",
                 "PLAYFIELD_TARGET_OPENHARMONY": "ON",
@@ -825,7 +650,6 @@
             "binaryDir":      "${sourceDir}/build-openharmony-armv7",
             "toolchainFile":  "$env{OH_NATIVE_SDK_ROOT}/build/cmake/ohos.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":             "Release",
                 "OHOS_PLATFORM_LEVEL":          "12",
                 "OHOS_ARCH":                    "armeabi-v7a",
                 "PLAYFIELD_TARGET_OPENHARMONY": "ON",
@@ -840,7 +664,6 @@
             "binaryDir":      "${sourceDir}/build-wasm",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/wasm.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_WASM":       "ON",
                 "PLAYFIELD_ENABLE_BIN":        "ON"
             }
@@ -852,7 +675,6 @@
             "binaryDir":      "${sourceDir}/build-wasm-local",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/wasm.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_WASM_LOCAL": "ON"
             }
         },
@@ -863,7 +685,6 @@
             "binaryDir":      "${sourceDir}/build-unity-win64",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/unity-win64.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_UNITY":      "ON",
                 "PLAYFIELD_ENABLE_SHARED":     "ON",
                 "PLAYFIELD_ENABLE_HOOK":       "ON"
@@ -876,7 +697,6 @@
             "binaryDir":      "${sourceDir}/build-unity-winarm64",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/unity-winarm64.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_UNITY":      "ON",
                 "PLAYFIELD_ENABLE_SHARED":     "ON",
                 "PLAYFIELD_ENABLE_HOOK":       "ON"
@@ -889,7 +709,6 @@
             "binaryDir":      "${sourceDir}/build-unity-switch",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/unity-switch.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":                 "Release",
                 "PLAYFIELD_TARGET_UNITY":           "ON",
                 "PLAYFIELD_TARGET_UNITY_SWITCH":    "ON",
                 "PLAYFIELD_ENABLE_STATIC":          "ON",
@@ -903,7 +722,6 @@
             "binaryDir":      "${sourceDir}/build-unity-ps5",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/unity-ps5.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_UNITY":      "ON",
                 "PLAYFIELD_TARGET_UNITY_PS5":  "ON",
                 "PLAYFIELD_ENABLE_STATIC":     "ON",
@@ -917,7 +735,6 @@
             "binaryDir":      "${sourceDir}/build-unity-xbox",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/unity-xbox.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":             "Release",
                 "PLAYFIELD_TARGET_UNITY":       "ON",
                 "PLAYFIELD_TARGET_UNITY_XBOX":  "ON",
                 "PLAYFIELD_ENABLE_STATIC":      "ON",
@@ -926,11 +743,25 @@
         },
         {
             "name":           "freebsd",
-            "displayName":    "FreeBSD X11 OpenGL",
+            "displayName":    "FreeBSD Wayland/X11 Dual OpenGL",
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-freebsd",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
+                "PLAYFIELD_TARGET_FREEBSD":    "ON",
+                "PLAYFIELD_ENABLE_JIT":        "ON",
+                "PLAYFIELD_ENABLE_I18N":       "ON",
+                "PLAYFIELD_ENABLE_BIN":        "ON",
+                "PLAYFIELD_ENABLE_PACK":       "ON",
+                "PLAYFIELD_ENABLE_BCC":        "ON",
+                "PLAYFIELD_ENABLE_AOTC":       "ON"
+            }
+        },
+        {
+            "name":           "freebsd-x11",
+            "displayName":    "FreeBSD X11-only OpenGL",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-freebsd-x11",
+            "cacheVariables": {
                 "PLAYFIELD_TARGET_FREEBSD":    "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
@@ -944,9 +775,8 @@
             "name":           "freebsd-wayland",
             "displayName":    "FreeBSD Wayland",
             "generator":      "Ninja",
-            "binaryDir":      "${sourceDir}/build-freebsd",
+            "binaryDir":      "${sourceDir}/build-freebsd-wayland",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":                  "Release",
                 "PLAYFIELD_TARGET_FREEBSD_WALYLAND": "ON",
                 "PLAYFIELD_ENABLE_JIT":              "ON",
                 "PLAYFIELD_ENABLE_I18N":             "ON",
@@ -962,7 +792,6 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-freebsd-x11soft",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":                  "Release",
                 "PLAYFIELD_TARGET_FREEBSD_X11SOFT":  "ON",
                 "PLAYFIELD_ENABLE_JIT":              "ON",
                 "PLAYFIELD_ENABLE_I18N":             "ON",
@@ -978,7 +807,6 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-netbsd",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_NETBSD":     "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
@@ -994,7 +822,6 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-netbsd-x11soft",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":                 "Release",
                 "PLAYFIELD_TARGET_NETBSD_X11SOFT":  "ON",
                 "PLAYFIELD_ENABLE_JIT":             "ON",
                 "PLAYFIELD_ENABLE_I18N":            "ON",
@@ -1010,7 +837,6 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-openbsd",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_OPENBSD":    "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
                 "PLAYFIELD_ENABLE_BIN":        "ON",
@@ -1025,7 +851,6 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-openbsd-x11soft",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":                 "Release",
                 "PLAYFIELD_TARGET_OPENBSD_X11SOFT": "ON",
                 "PLAYFIELD_ENABLE_I18N":            "ON",
                 "PLAYFIELD_ENABLE_BIN":             "ON",
@@ -1036,11 +861,26 @@
         },
         {
             "name":           "solaris11",
-            "displayName":    "Solaris 11",
+            "displayName":    "Solaris 11 X11 Soft3D",
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-solaris11",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
+                "CMAKE_C_COMPILER":            "cc",
+                "CMAKE_CXX_COMPILER":          "CC",
+                "PLAYFIELD_TARGET_SOLARIS11":  "ON",
+                "PLAYFIELD_ENABLE_I18N":       "ON",
+                "PLAYFIELD_ENABLE_BIN":        "ON",
+                "PLAYFIELD_ENABLE_PACK":       "ON",
+                "PLAYFIELD_ENABLE_BCC":        "ON",
+                "PLAYFIELD_ENABLE_AOTC":       "ON"
+            }
+        },
+        {
+            "name":           "solaris10",
+            "displayName":    "Solaris 10 X11 Soft3D",
+            "generator":      "Unix Makefiles",
+            "binaryDir":      "${sourceDir}/build-solaris10",
+            "cacheVariables": {
                 "CMAKE_C_COMPILER":            "cc",
                 "CMAKE_CXX_COMPILER":          "CC",
                 "PLAYFIELD_TARGET_SOLARIS11":  "ON",
@@ -1074,7 +914,6 @@
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-hpux",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":             "Release",
                 "CMAKE_C_COMPILER":             "cc",
                 "CMAKE_CXX_COMPILER":           "aCC",
                 "PLAYFIELD_TARGET_GENERICUNIX": "ON",
@@ -1091,7 +930,6 @@
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-unix",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":             "Release",
                 "CMAKE_C_COMPILER":             "cc",
                 "CMAKE_CXX_COMPILER":           "c++",
                 "PLAYFIELD_TARGET_GENERICUNIX": "ON",
@@ -1108,7 +946,6 @@
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-haiku",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":             "Release",
                 "CMAKE_C_COMPILER":             "gcc",
                 "CMAKE_CXX_COMPILER":           "g++",
                 "PLAYFIELD_TARGET_HAIKU":       "ON",
@@ -1126,7 +963,6 @@
             "binaryDir":      "${sourceDir}/build-pc98",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/openwatcom-dos4gw.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":        "Release",
                 "PLAYFIELD_TARGET_PC98":   "ON",
                 "PLAYFIELD_ENABLE_JIT":    "ON",
                 "PLAYFIELD_ENABLE_BIN":    "ON",
@@ -1138,167 +974,208 @@
     "buildPresets": [
         {
             "name": "windows-vs2022-x86",
-            "configurePreset": "windows-vs2022-x86"
+            "configurePreset": "windows-vs2022-x86",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-vs2022-x64",
-            "configurePreset": "windows-vs2022-x64"
+            "configurePreset": "windows-vs2022-x64",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-vs2022-arm64",
-            "configurePreset": "windows-vs2022-arm64"
+            "configurePreset": "windows-vs2022-arm64",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-vs2022-gdk-desktop",
-            "configurePreset": "windows-vs2022-gdk-desktop"
+            "configurePreset": "windows-vs2022-gdk-desktop",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-vs2022-gdk-xbox-xs",
-            "configurePreset": "windows-vs2022-gdk-xbox-xs"
+            "configurePreset": "windows-vs2022-gdk-xbox-xs",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-vs2022-uwp",
-            "configurePreset": "windows-vs2022-uwp"
+            "configurePreset": "windows-vs2022-uwp",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-vs2026-x86",
-            "configurePreset": "windows-vs2026-x86"
+            "configurePreset": "windows-vs2026-x86",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-vs2026-x86-debug",
-            "configurePreset": "windows-vs2026-x86-debug"
+            "configurePreset": "windows-vs2026-x86",
+	    "configuration":   "Debug"
         },
         {
-            "name": "windows-vs2026-x64",
-            "configurePreset": "windows-vs2026-x64"
+            "name":            "windows-vs2026-x64",
+            "configurePreset": "windows-vs2026-x64",
+	    "configuration":   "Release"
         },
         {
-            "name": "windows-vs2026-x64-debug",
-            "configurePreset": "windows-vs2026-x64-debug"
+            "name":            "windows-vs2026-x64-debug",
+            "configurePreset": "windows-vs2026-x64",
+	    "configuration":   "Debug"
         },
         {
             "name": "windows-vs2026-arm64",
-            "configurePreset": "windows-vs2026-arm64"
+            "configurePreset": "windows-vs2026-arm64",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-vs2026-arm64-debug",
-            "configurePreset": "windows-vs2026-arm64-debug"
+            "configurePreset": "windows-vs2026-arm64",
+	    "configuration":   "Debug"
         },
         {
             "name": "windows-vs2026-gdk-desktop",
-            "configurePreset": "windows-vs2026-gdk-desktop"
+            "configurePreset": "windows-vs2026-gdk-desktop",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-vs2026-gdk-xbox-xs",
-            "configurePreset": "windows-vs2026-gdk-xbox-xs"
+            "configurePreset": "windows-vs2026-gdk-xbox-xs",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-mingw-x86",
-            "configurePreset": "windows-mingw-x86"
+            "configurePreset": "windows-mingw-x86",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-mingw-x86_64",
-            "configurePreset": "windows-mingw-x86_64"
+            "configurePreset": "windows-mingw-x86_64",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-mingw-arm64",
-            "configurePreset": "windows-mingw-arm64"
+            "configurePreset": "windows-mingw-arm64",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-mingw-win95",
-            "configurePreset": "windows-mingw-win95"
+            "configurePreset": "windows-mingw-win95",
+	    "configuration":   "Release"
         },
         {
             "name": "macos",
-            "configurePreset": "macos"
+            "configurePreset": "macos",
+	    "configuration":   "Release"
         },
         {
             "name": "macos-cli",
-            "configurePreset": "macos-cli"
+            "configurePreset": "macos-cli",
+	    "configuration":   "Release"
         },
         {
             "name": "macos-cli-debug",
-            "configurePreset": "macos-cli-debug"
+            "configurePreset": "macos-cli",
+	    "configuration":   "Debug"
         },
         {
             "name": "macos-lib",
-            "configurePreset": "macos-lib"
+            "configurePreset": "macos-lib",
+	    "configuration":   "Release"
         },
         {
             "name": "linux",
-            "configurePreset": "linux"
+            "configurePreset": "linux",
+	    "configuration":   "Release"
         },
         {
             "name": "linux-debug",
-            "configurePreset": "linux-debug"
+            "configurePreset": "linux",
+	    "configuration":   "Debug"
+        },
+        {
+            "name": "linux-x11",
+            "configurePreset": "linux-x11",
+	    "configuration":   "Release"
         },
         {
             "name": "linux-wayland",
-            "configurePreset": "linux-wayland"
+            "configurePreset": "linux-wayland",
+	    "configuration":   "Release"
         },
         {
-            "name": "linux-wayland-debug",
-            "configurePreset": "linux-wayland-debug"
+            "name": "linux-dri",
+            "configurePreset": "linux-dri",
+	    "configuration":   "Release"
         },
         {
-            "name": "linux-gbm",
-            "configurePreset": "linux-gbm"
-        },
-        {
-            "name": "linux-gbm-rot90",
-            "configurePreset": "linux-gbm-rot90"
+            "name": "linux-dri-rot90",
+            "configurePreset": "linux-dri-rot90",
+	    "configuration":   "Release"
         },
         {
             "name": "linux-x11soft",
-            "configurePreset": "linux-x11soft"
+            "configurePreset": "linux-x11soft",
+	    "configuration":   "Release"
         },
         {
             "name": "ios-device",
-            "configurePreset": "ios-device"
+            "configurePreset": "ios-device",
+	    "configuration":   "Release"
         },
         {
             "name": "ios-simulator",
-            "configurePreset": "ios-simulator"
+            "configurePreset": "ios-simulator",
+	    "configuration":   "Release"
         },
         {
             "name": "android-x86",
-            "configurePreset": "android-x86"
+            "configurePreset": "android-x86",
+	    "configuration":   "Release"
         },
         {
             "name": "android-x86_64",
-            "configurePreset": "android-x86_64"
+            "configurePreset": "android-x86_64",
+	    "configuration":   "Release"
         },
         {
             "name": "android-armv7",
-            "configurePreset": "android-armv7"
+            "configurePreset": "android-armv7",
+	    "configuration":   "Release"
         },
         {
             "name": "android-arm64",
-            "configurePreset": "android-arm64"
+            "configurePreset": "android-arm64",
+	    "configuration":   "Release"
         },
         {
             "name": "android-riscv64",
-            "configurePreset": "android-riscv64"
+            "configurePreset": "android-riscv64",
+	    "configuration":   "Release"
         },
         {
             "name": "openharmony-x86_64",
-            "configurePreset": "openharmony-x86_64"
+            "configurePreset": "openharmony-x86_64",
+	    "configuration":   "Release"
         },
         {
             "name": "openharmony-arm64",
-            "configurePreset": "openharmony-arm64"
+            "configurePreset": "openharmony-arm64",
+	    "configuration":   "Release"
         },
         {
             "name": "openharmony-armv7",
-            "configurePreset": "openharmony-armv7"
+            "configurePreset": "openharmony-armv7",
+	    "configuration":   "Release"
         },
         {
             "name": "wasm",
-            "configurePreset": "wasm"
+            "configurePreset": "wasm",
+	    "configuration":   "Release"
         },
         {
             "name": "wasm-local",
-            "configurePreset": "wasm-local"
+            "configurePreset": "wasm-local",
+	    "configuration":   "Release"
         },
         {
             "name": "unity-win64",
@@ -1306,67 +1183,93 @@
         },
         {
             "name": "unity-switch",
-            "configurePreset": "unity-switch"
+            "configurePreset": "unity-switch",
+	    "configuration":   "Release"
         },
         {
             "name": "unity-ps5",
-            "configurePreset": "unity-ps5"
+            "configurePreset": "unity-ps5",
+	    "configuration":   "Release"
         },
         {
             "name": "unity-xbox",
-            "configurePreset": "unity-xbox"
+            "configurePreset": "unity-xbox",
+	    "configuration":   "Release"
         },
         {
             "name": "freebsd",
-            "configurePreset": "freebsd"
+            "configurePreset": "freebsd",
+	    "configuration":   "Release"
+        },
+        {
+            "name": "freebsd-x11",
+            "configurePreset": "freebsd-x11",
+	    "configuration":   "Release"
         },
         {
             "name": "freebsd-wayland",
-            "configurePreset": "freebsd-wayland"
+            "configurePreset": "freebsd-wayland",
+	    "configuration":   "Release"
         },
         {
             "name": "freebsd-x11soft",
-            "configurePreset": "freebsd-x11soft"
+            "configurePreset": "freebsd-x11soft",
+	    "configuration":   "Release"
         },
         {
             "name": "netbsd",
-            "configurePreset": "netbsd"
+            "configurePreset": "netbsd",
+	    "configuration":   "Release"
         },
         {
             "name": "netbsd-x11soft",
-            "configurePreset": "netbsd-x11soft"
+            "configurePreset": "netbsd-x11soft",
+	    "configuration":   "Release"
         },
         {
             "name": "openbsd",
-            "configurePreset": "openbsd"
+            "configurePreset": "openbsd",
+	    "configuration":   "Release"
         },
         {
             "name": "openbsd-x11soft",
-            "configurePreset": "openbsd-x11soft"
+            "configurePreset": "openbsd-x11soft",
+	    "configuration":   "Release"
         },
         {
             "name": "solaris11",
-            "configurePreset": "solaris11"
+            "configurePreset": "solaris11",
+	    "configuration":   "Release"
+        },
+        {
+            "name": "solaris10",
+            "configurePreset": "solaris10",
+	    "configuration":   "Release"
         },
         {
             "name": "aix",
-            "configurePreset": "aix"
+            "configurePreset": "aix",
+	    "configuration":   "Release"
         },
         {
             "name": "hpux",
-            "configurePreset": "hpux"
+            "configurePreset": "hpux",
+	    "configuration":   "Release"
         },
         {
             "name": "unix",
-            "configurePreset": "unix"
+            "configurePreset": "unix",
+	    "configuration":   "Release"
         },
         {
             "name": "haiku",
-            "configurePreset": "haiku"
+            "configurePreset": "haiku",
+	    "configuration":   "Release"
         },
         {
             "name": "pc98",
-            "configurePreset": "pc98"
+            "configurePreset": "pc98",
+	    "configuration":   "Release"
         }
     ]
 }

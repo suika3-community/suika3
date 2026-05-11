@@ -79,8 +79,7 @@ static FILE *log_fp;
 static void init_vram(void);
 static void cleanup_vram(void);
 static void process_input(void);
-static void flip_4bpp(void);
-static void flip_8bpp(void);
+static void flip(void);
 static bool open_log_file(void);
 
 int main2(int argc, char *argv[])
@@ -151,8 +150,10 @@ init_vram(void)
 	 *  - INT 18h, AH=42h, CH=C0h
 	 */
 	r.w.ax = 0x4200; 
-	r.h.ch = 0xc0; 
+	r.h.ch = 192; 
 	int386(0x18, &r, &r);
+
+	outp(0x6a, 1);
 
 	/* Hide Text VRAM. */
 	text = (volatile uint16_t *)TVRAM_TEXT;
@@ -227,13 +228,13 @@ static void flip(void)
 
 				mask = (unsigned char)(0x80 >> bit);
 
-				if (b & 0xF0)
+				if (b >= 200)
 					pb |= mask;
-				if (g & 0xC0)
+				if (g >= 200)
 					pg |= mask;
-				if (r & 0x80)
+				if (r >= 200)
 					pr |= mask;
-				if (r & g & b & 0x80)
+				if ((r | g | b) >= 128)
 					pi |= mask;
 			}
 
@@ -789,7 +790,22 @@ hal_make_save_directory(void)
 char *
 hal_make_real_path(const char *fname)
 {
-	return strdup(fname);
+	char *s, *t;
+
+	s = strdup(fname);
+	if (s == NULL) {
+		hal_log_out_of_memory();
+		return NULL;
+	}
+
+	t = s;
+	while (*t != '\0') {
+		if (*t == '/')
+			*t = '\\';
+		t++;
+	}
+
+	return s;
 }
 
 bool
@@ -880,6 +896,7 @@ open_log_file(void)
 bool
 hal_log_out_of_memory(void)
 {
+	hal_log_error("Out of memory.\n");
 	return true;
 }
 

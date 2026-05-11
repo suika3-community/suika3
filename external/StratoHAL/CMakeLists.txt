@@ -220,8 +220,6 @@ if(STRATO_ENABLE_DIST)
   find_package(Ogg REQUIRED)
   find_package(Vorbis MODULE REQUIRED)
   find_package(Freetype REQUIRED)
-  find_package(Brotli REQUIRED)
-  find_package(BZip2 REQUIRED)
   find_package(ZLIB REQUIRED)
 else()
   # Build the dependencies statically.
@@ -230,8 +228,6 @@ else()
   include(cmake/jpeg.cmake)
   if(NOT STRATO_TARGET_PC98)
     include(cmake/libwebp.cmake)
-    include(cmake/brotli.cmake)
-    include(cmake/bzip2.cmake)
   endif()
   include(cmake/libogg.cmake)
   include(cmake/libvorbis.cmake)
@@ -680,9 +676,6 @@ if(NOT STRATO_ENABLE_DIST)
         $<TARGET_OBJECTS:vorbis>
         $<TARGET_OBJECTS:ogg>
         $<TARGET_OBJECTS:freetype>
-        $<TARGET_OBJECTS:brotlidec>
-        $<TARGET_OBJECTS:brotlicommon>
-        $<TARGET_OBJECTS:bz2>
         $<TARGET_OBJECTS:z>
     )
   else()
@@ -736,8 +729,6 @@ target_include_directories(strato PRIVATE ${WEBP_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${OGG_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${VORBIS_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${FREETYPE_INCLUDE_DIRS})
-target_include_directories(strato PRIVATE ${BROTLI_INCLUDE_DIRS})
-target_include_directories(strato PRIVATE ${BZIP2_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${ZLIB_INCLUDE_DIRS})
 
 if(STRATO_ENABLE_SHARED OR STRATO_ENABLE_DIST)
@@ -941,7 +932,7 @@ endif()
 
 # UWP
 if(STRATO_TARGET_UWP)
-  add_compile_definitions(_CRT_SECURE_NO_WARNINGS BZ_STRICT_ANSI)
+  add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
   target_compile_definitions(strato PRIVATE HAL_TARGET_UWP)
   file(ARCHIVE_EXTRACT
     INPUT       ${CMAKE_CURRENT_SOURCE_DIR}/lib/archive/dx12headers.tar.gz
@@ -1045,9 +1036,6 @@ if(STRATO_ENABLE_SHARED OR STRATO_ENABLE_DIST)
     ${VORBISFILE_LIBRARY}
     ${OGG_LIBRARY}
     ${FREETYPE_LIBRARY}
-    ${BROTLIDEC_LIBRARIES}
-    ${BROTLICOMMON_LIBRARIES}
-    ${BZIP2_LIBRARIES}
     ${ZLIB_LIBRARIES}
   )
 endif()
