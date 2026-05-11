@@ -1,25 +1,48 @@
 Playfield Engine Ray API
 ========================
 
-Every API function takes one parameter. The parameter must be a dictionary and
-arguments must be stored as key-and-value pairs.
+To build a game with Ray scripting, use the `Ray API`.
 
-## Skelton
+You can mix C/C++ code with Ray. See also [C API](c-api.md) for the
+details.
+
+Every Ray API function (`Engine.*`) takes only one argument. That
+parameter must be a dictionary and arguments must be stored as
+key-and-value pairs.
+
+---
+
+## Project Skelton
 
 ```
 // Do not define variables outside functions because it's a syntax error.
 
-// Called when the window is created.
+//
+// [Boot Sequence #1]
+//  - "setup()" is called when the window is created.
+//
 func setup() {
-    // Return the window configuration.
+    // You have to return the window configuration.
     return {
-        width: 1280,
-        height: 720,
-        title: "My First Game"
+        width:      1280,
+        height:     720,
+        title:      "My First Game",
+        fullscreen: false
     };
 }
 
-// Called once when the game starts.
+//
+// [Boot Sequence #2]
+//  - "pf_init_hook()" in the native code is called.
+//  - This function is empty if you use a prebuilt "playfield" executable.
+//  - If you build a custom executable using libplayfield, you can freely
+//    implement "pf_init_hook()" by C, C++, or other languages you like.
+//
+
+//
+// [Boot Sequecen #3]
+//  - Called once when the game starts.
+//
 func start() {
     // Global variables should be defined here.
     posX = 0;
@@ -32,6 +55,10 @@ func start() {
         r: 255, g: 255, b: 255, a: 255
     });
 }
+
+//
+// After Boot:
+//
 
 // Called every frame before rendering.
 func update() {

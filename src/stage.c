@@ -1885,20 +1885,21 @@ render_layer(
 
 		/* Render. */
 		if (layer >= S3_LAYER_CHB && layer <= S3_LAYER_CHC && layer_dim[base_layer]) {
-			pf_render_texture_3d_dim(x1,
-						 y1,
-						 x2,
-						 y2,
-						 x3,
-						 y3,
-						 x4,
-						 y4,
-						 layer_img->tex_id,
-						 src_x,
-						 0,
-						 src_width,
-						 src_height,
-						 layer_alpha[layer]);
+			pf_render_texture_3d(x1,
+					     y1,
+					     x2,
+					     y2,
+					     x3,
+					     y3,
+					     x4,
+					     y4,
+					     layer_img->tex_id,
+					     src_x,
+					     0,
+					     src_width,
+					     src_height,
+					     layer_alpha[layer],
+					     PF_BLEND_DIM);
 		} else if (layer_blend[layer] == S3_BLEND_RULE && fade_rule_img != NULL) {
 			/* TODO: 3D transform. */
 			pf_render_texture_rule(layer_img->tex_id,
@@ -1910,35 +1911,37 @@ render_layer(
 					       fade_rule_img->tex_id,
 					       layer_alpha[layer]);
 		} else if (layer_blend[layer] == S3_BLEND_ADD) {
-			pf_render_texture_3d_add(x1,
-						 y1,
-						 x2,
-						 y2,
-						 x3,
-						 y3,
-						 x4,
-						 y4,
-						 layer_img->tex_id,
-						 src_x,
-						 0,
-						 src_width,
-						 src_height,
-						 layer_alpha[layer]);
+			pf_render_texture_3d(x1,
+					     y1,
+					     x2,
+					     y2,
+					     x3,
+					     y3,
+					     x4,
+					     y4,
+					     layer_img->tex_id,
+					     src_x,
+					     0,
+					     src_width,
+					     src_height,
+					     layer_alpha[layer],
+					     PF_BLEND_ADD);
 		} else if (layer_blend[layer] == S3_BLEND_SUB) {
-			pf_render_texture_3d_sub(x1,
-						 y1,
-						 x2,
-						 y2,
-						 x3,
-						 y3,
-						 x4,
-						 y4,
-						 layer_img->tex_id,
-						 src_x,
-						 0,
-						 src_width,
-						 src_height,
-						 layer_alpha[layer]);
+			pf_render_texture_3d(x1,
+					     y1,
+					     x2,
+					     y2,
+					     x3,
+					     y3,
+					     x4,
+					     y4,
+					     layer_img->tex_id,
+					     src_x,
+					     0,
+					     src_width,
+					     src_height,
+					     layer_alpha[layer],
+					     PF_BLEND_SUB);
 		} else {
 			pf_render_texture_3d(x1,
 					     y1,
@@ -1953,7 +1956,8 @@ render_layer(
 					     0,
 					     src_width,
 					     src_height,
-					     layer_alpha[layer]);
+					     layer_alpha[layer],
+					     PF_BLEND_ALPHA);
 		}
 		return;
 	}
@@ -1961,16 +1965,17 @@ render_layer(
 	/* Otherwise 2D. */
 	if (layer >= S3_LAYER_CHB && layer <= S3_LAYER_CHC && layer_dim[layer]) {
 		/* Dim blending. */
-		pf_render_texture_dim(layer_x[layer],
-				      layer_y[layer],
-				      (int)((float)src_width * layer_scale_x[layer]),
-				      (int)((float)layer_img->height * layer_scale_y[layer]),
-				      layer_img->tex_id,
-				      src_x,
-				      0,
-				      src_width,
-				      src_height,
-				      layer_alpha[layer]);
+		pf_render_texture(layer_x[layer],
+				  layer_y[layer],
+				  (int)((float)src_width * layer_scale_x[layer]),
+				  (int)((float)layer_img->height * layer_scale_y[layer]),
+				  layer_img->tex_id,
+				  src_x,
+				  0,
+				  src_width,
+				  src_height,
+				  layer_alpha[layer],
+				  PF_BLEND_DIM);
 	} else if (layer_blend[layer] == S3_BLEND_RULE && fade_rule_img != NULL) {
 		/* Rule transition. */
 		pf_render_texture_rule(layer_img->tex_id,
@@ -1983,28 +1988,30 @@ render_layer(
 				       layer_alpha[layer]);
 	} else if (layer_blend[layer] == S3_BLEND_ADD) {
 		/* Add blending. */
-		pf_render_texture_add(layer_x[layer],
-				      layer_y[layer],
-				      (int)((float)src_width * layer_scale_x[layer]),
-				      (int)((float)layer_img->height * layer_scale_y[layer]),
-				      layer_img->tex_id,
-				      src_x,
-				      0,
-				      src_width,
-				      src_height,
-				      layer_alpha[layer]);
+		pf_render_texture(layer_x[layer],
+				  layer_y[layer],
+				  (int)((float)src_width * layer_scale_x[layer]),
+				  (int)((float)layer_img->height * layer_scale_y[layer]),
+				  layer_img->tex_id,
+				  src_x,
+				  0,
+				  src_width,
+				  src_height,
+				  layer_alpha[layer],
+				  PF_BLEND_ADD);
 	} else if (layer_blend[layer] == S3_BLEND_SUB) {
 		/* Sub blending. */
-		pf_render_texture_sub(layer_x[layer],
-				      layer_y[layer],
-				      (int)((float)layer_img->width * layer_scale_x[layer]),
-				      (int)((float)layer_img->height * layer_scale_y[layer]),
-				      layer_img->tex_id,
-				      src_x,
-				      0,
-				      src_width,
-				      src_height,
-				      layer_alpha[layer]);
+		pf_render_texture(layer_x[layer],
+				  layer_y[layer],
+				  (int)((float)layer_img->width * layer_scale_x[layer]),
+				  (int)((float)layer_img->height * layer_scale_y[layer]),
+				  layer_img->tex_id,
+				  src_x,
+				  0,
+				  src_width,
+				  src_height,
+				  layer_alpha[layer],
+				  PF_BLEND_SUB);
 	} else {
 		/* Normal alpha blending. */
 		pf_render_texture(layer_x[layer],
@@ -2016,7 +2023,8 @@ render_layer(
 				  0,
 				  src_width,
 				  src_height,
-				  layer_alpha[layer]);
+				  layer_alpha[layer],
+				  PF_BLEND_ALPHA);
 	}
 }
 
@@ -3360,47 +3368,32 @@ s3_render_image(
 	int alpha,
 	int blend)
 {
+	int pf_blend;
+
 	switch (blend) {
 	case S3_BLEND_ALPHA:
-		pf_render_texture(
-			dst_left,
-			dst_top,
-			dst_width,
-			dst_height,
-			image->tex_id,
-			src_left,
-			src_top,
-			src_width,
-			src_height,
-			alpha);
+		pf_blend = PF_BLEND_ALPHA;
 		break;
 	case S3_BLEND_ADD:
-		pf_render_texture_add(
-			dst_left,
-			dst_top,
-			dst_width,
-			dst_height,
-			image->tex_id,
-			src_left,
-			src_top,
-			src_width,
-			src_height,
-			alpha);
+		pf_blend = PF_BLEND_ADD;
 		break;
 	case S3_BLEND_SUB:
-		pf_render_texture_sub(
-			dst_left,
-			dst_top,
-			dst_width,
-			dst_height,
-			image->tex_id,
-			src_left,
-			src_top,
-			src_width,
-			src_height,
-			alpha);
+		pf_blend = PF_BLEND_SUB;
 		break;
-	}		
+	}
+
+	pf_render_texture(
+		dst_left,
+		dst_top,
+		dst_width,
+		dst_height,
+		image->tex_id,
+		src_left,
+		src_top,
+		src_width,
+		src_height,
+		alpha,
+		pf_blend);
 }
 
 /*
@@ -3424,59 +3417,36 @@ s3_render_image_3d(
 	int alpha,
 	int blend)
 {
+	int pf_blend;
+
 	switch (blend) {
 	case S3_BLEND_ALPHA:
-		pf_render_texture_3d(
-			x1,
-			y1,
-			x2,
-			y2,
-			x3,
-			y3,
-			x4,
-			y4,
-			image->tex_id,
-			src_left,
-			src_top,
-			src_width,
-			src_height,
-			alpha);
+		pf_blend = PF_BLEND_ALPHA;
 		break;
 	case S3_BLEND_ADD:
-		pf_render_texture_3d_add(
-			x1,
-			y1,
-			x2,
-			y2,
-			x3,
-			y3,
-			x4,
-			y4,
-			image->tex_id,
-			src_left,
-			src_top,
-			src_width,
-			src_height,
-			alpha);
+		pf_blend = PF_BLEND_ADD;
 		break;
 	case S3_BLEND_SUB:
-		pf_render_texture_3d_sub(
-			x1,
-			y1,
-			x2,
-			y2,
-			x3,
-			y3,
-			x4,
-			y4,
-			image->tex_id,
-			src_left,
-			src_top,
-			src_width,
-			src_height,
-			alpha);
+		pf_blend = PF_BLEND_SUB;
 		break;
 	}
+
+	pf_render_texture_3d(
+		x1,
+		y1,
+		x2,
+		y2,
+		x3,
+		y3,
+		x4,
+		y4,
+		image->tex_id,
+		src_left,
+		src_top,
+		src_width,
+		src_height,
+		alpha,
+		pf_blend);
 }
 
 /*
@@ -3543,17 +3513,19 @@ s3i_render_kirakira(void)
 				  0,
 				  -1,
 				  -1,
-				  255);
+				  255,
+				  PF_BLEND_ALPHA);
 	} else {
-		pf_render_texture_add(kirakira_x,
-				      kirakira_y,
-				      -1,
-				      -1,
-				      kirakira_image[index]->tex_id,
-				      0,
-				      0,
-				      -1,
-				      -1,
-				      255);
+		pf_render_texture(kirakira_x,
+				  kirakira_y,
+				  -1,
+				  -1,
+				  kirakira_image[index]->tex_id,
+				  0,
+				  0,
+				  -1,
+				  -1,
+				  255,
+				  PF_BLEND_ADD);
 	}
 }

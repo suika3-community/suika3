@@ -37,7 +37,10 @@
 #include "common.h"
 
 /* NoctLang */
-#include "noct/noct.h"
+#include <noct/noct.h>
+
+/* StratoHAL */
+#include <stratohal/platform.h>
 
 /* Standar C */
 #include <stdio.h>
@@ -659,7 +662,8 @@ static bool Engine_renderTexture(NoctEnv *env)
 		src_top,
 		src_width,
 		src_height,
-		alpha);
+		alpha,
+		PF_BLEND_ALPHA);
 
 	return true;
 }
@@ -718,7 +722,8 @@ static bool Engine_renderTexture3D(NoctEnv *env)
 		src_top,
 		src_width,
 		src_height,
-		alpha);
+		alpha,
+		PF_BLEND_ALPHA);
 
 	return true;
 }

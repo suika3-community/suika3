@@ -29,6 +29,7 @@
 
 #include <suika3/suika3.h>
 #include <playfield/playfield.h>
+#include <stratohal/platform.h>
 #include "image.h"
 
 #include <stdlib.h>
@@ -213,9 +214,9 @@ s3_load_glyph_image(
 	int font_type,
 	uint32_t codepoint,
 	int size,
-	hal_pixel_t color,
+	pf_pixel_t color,
 	int outline_width,
-	hal_pixel_t outline_color)
+	pf_pixel_t outline_color)
 {
 	struct s3_image *img;
 	char mbs[6];

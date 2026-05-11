@@ -36,6 +36,9 @@
 #include "common.h"
 #include "vm.h"
 
+#include <noct/noct.h>
+#include <stratohal/platform.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -545,7 +548,8 @@ pf_render_texture(
 	int src_top,
 	int src_width,
 	int src_height,
-	int alpha)
+	int alpha,
+	int blend)
 {
 	struct texture_entry *t;
 
@@ -555,124 +559,56 @@ pf_render_texture(
 	assert(t->is_used);
 	assert(t->img != NULL);
 
-	hal_render_image_normal(dst_left,
-				dst_top,
-				dst_width,
-				dst_height,
-				t->img,
-				src_left,
-				src_top,
-				src_width,
-				src_height,
-				alpha);
-}
-
-/*
- * Render a texture. (add blending)
- */
-void
-pf_render_texture_add(
-	int dst_left,
-	int dst_top,
-	int dst_width,
-	int dst_height,
-	int tex_id,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
-	int alpha)
-{
-	struct texture_entry *t;
-
-	assert(tex_id >= 0 &&  tex_id < TEXTURE_COUNT);
-
-	t = &tex_tbl[tex_id];
-	assert(t->is_used);
-	assert(t->img != NULL);
-
-	hal_render_image_add(dst_left,
-			     dst_top,
-			     dst_width,
-			     dst_height,
-			     t->img,
-			     src_left,
-			     src_top,
-			     src_width,
-			     src_height,
-			     alpha);
-}
-
-/*
- * Render a texture. (sub blending)
- */
-void
-pf_render_texture_sub(
-	int dst_left,
-	int dst_top,
-	int dst_width,
-	int dst_height,
-	int tex_id,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
-	int alpha)
-{
-	struct texture_entry *t;
-
-	assert(tex_id >= 0 &&  tex_id < TEXTURE_COUNT);
-
-	t = &tex_tbl[tex_id];
-	assert(t->is_used);
-	assert(t->img != NULL);
-
-	hal_render_image_sub(dst_left,
-			     dst_top,
-			     dst_width,
-			     dst_height,
-			     t->img,
-			     src_left,
-			     src_top,
-			     src_width,
-			     src_height,
-			     alpha);
-}
-
-/*
- * Render a texture. (dim blending)
- */
-void
-pf_render_texture_dim(
-	int dst_left,
-	int dst_top,
-	int dst_width,
-	int dst_height,
-	int tex_id,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
-	int alpha)
-{
-	struct texture_entry *t;
-
-	assert(tex_id >= 0 &&  tex_id < TEXTURE_COUNT);
-
-	t = &tex_tbl[tex_id];
-	assert(t->is_used);
-	assert(t->img != NULL);
-
-	hal_render_image_dim(dst_left,
-			     dst_top,
-			     dst_width,
-			     dst_height,
-			     t->img,
-			     src_left,
-			     src_top,
-			     src_width,
-			     src_height,
-			     alpha);
+	switch (blend) {
+	case PF_BLEND_ALPHA:
+		hal_render_image_normal(dst_left,
+					dst_top,
+					dst_width,
+					dst_height,
+					t->img,
+					src_left,
+					src_top,
+					src_width,
+					src_height,
+					alpha);
+		break;
+	case PF_BLEND_ADD:
+		hal_render_image_add(dst_left,
+				     dst_top,
+				     dst_width,
+				     dst_height,
+				     t->img,
+				     src_left,
+				     src_top,
+				     src_width,
+				     src_height,
+				     alpha);
+		break;
+	case PF_BLEND_SUB:
+		hal_render_image_sub(dst_left,
+				     dst_top,
+				     dst_width,
+				     dst_height,
+				     t->img,
+				     src_left,
+				     src_top,
+				     src_width,
+				     src_height,
+				     alpha);
+		break;
+	case PF_BLEND_DIM:
+		hal_render_image_dim(dst_left,
+				     dst_top,
+				     dst_width,
+				     dst_height,
+				     t->img,
+				     src_left,
+				     src_top,
+				     src_width,
+				     src_height,
+				     alpha);
+		break;
+	}
 }
 
 /*
@@ -778,7 +714,8 @@ pf_render_texture_3d(
 	int src_top,
 	int src_width,
 	int src_height,
-	int alpha)
+	int alpha,
+	int blend)
 {
 	struct texture_entry *t;
 
@@ -788,112 +725,32 @@ pf_render_texture_3d(
 	assert(t->is_used);
 	assert(t->img != NULL);
 
-	hal_render_image_3d_normal(x1, y1, x2, y2, x3, y3, x4, y4,
-				   t->img,
-				   src_left, src_top, src_width, src_height,
-				   alpha);
-}
-
-/*
- * Render a texture. (3D, add blending)
- */
-void
-pf_render_texture_3d_add(
-	float x1,
-	float y1,
-	float x2,
-	float y2,
-	float x3,
-	float y3,
-	float x4,
-	float y4,
-	int tex_id,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
-	int alpha)
-{
-	struct texture_entry *t;
-
-	assert(tex_id >= 0 &&  tex_id < TEXTURE_COUNT);
-
-	t = &tex_tbl[tex_id];
-	assert(t->is_used);
-	assert(t->img != NULL);
-
-	hal_render_image_3d_add(x1, y1, x2, y2, x3, y3, x4, y4,
-				t->img,
-				src_left, src_top, src_width, src_height,
-				alpha);
-}
-
-/*
- * Render a texture. (3D, sub blending)
- */
-void
-pf_render_texture_3d_sub(
-	float x1,
-	float y1,
-	float x2,
-	float y2,
-	float x3,
-	float y3,
-	float x4,
-	float y4,
-	int tex_id,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
-	int alpha)
-{
-	struct texture_entry *t;
-
-	assert(tex_id >= 0 &&  tex_id < TEXTURE_COUNT);
-
-	t = &tex_tbl[tex_id];
-	assert(t->is_used);
-	assert(t->img != NULL);
-
-	hal_render_image_3d_sub(x1, y1, x2, y2, x3, y3, x4, y4,
-				t->img,
-				src_left, src_top, src_width, src_height,
-				alpha);
-}
-
-/*
- * Render a texture. (3D, dim blending)
- */
-void
-pf_render_texture_3d_dim(
-	float x1,
-	float y1,
-	float x2,
-	float y2,
-	float x3,
-	float y3,
-	float x4,
-	float y4,
-	int tex_id,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
-	int alpha)
-{
-	struct texture_entry *t;
-
-	assert(tex_id >= 0 &&  tex_id < TEXTURE_COUNT);
-
-	t = &tex_tbl[tex_id];
-	assert(t->is_used);
-	assert(t->img != NULL);
-
-	hal_render_image_3d_dim(x1, y1, x2, y2, x3, y3, x4, y4,
-				t->img,
-				src_left, src_top, src_width, src_height,
-				alpha);
+	switch (blend) {
+	case PF_BLEND_ALPHA:
+		hal_render_image_3d_normal(x1, y1, x2, y2, x3, y3, x4, y4,
+					   t->img,
+					   src_left, src_top, src_width, src_height,
+					   alpha);
+		break;
+	case PF_BLEND_ADD:
+		hal_render_image_3d_add(x1, y1, x2, y2, x3, y3, x4, y4,
+					t->img,
+					src_left, src_top, src_width, src_height,
+					alpha);
+		break;
+	case PF_BLEND_SUB:
+		hal_render_image_3d_sub(x1, y1, x2, y2, x3, y3, x4, y4,
+					t->img,
+					src_left, src_top, src_width, src_height,
+					alpha);
+		break;
+	case PF_BLEND_DIM:
+		hal_render_image_3d_dim(x1, y1, x2, y2, x3, y3, x4, y4,
+					t->img,
+					src_left, src_top, src_width, src_height,
+					alpha);
+		break;
+	}
 }
 
 /*
@@ -1597,7 +1454,7 @@ pf_get_vm_int(
  */
 
 /*
- * Install an API function.
+ * Install an API function in the global name space.
  */
 bool
 pf_install_api(
@@ -1610,6 +1467,47 @@ pf_install_api(
 	env = pfi_get_vm_env();
 
 	if (!noct_register_cfunc(env, name, 1, params, (bool (*)(NoctEnv *))func, NULL))
+		return false;
+
+	return true;
+}
+
+/*
+ * Install an API function in a package name space.
+ */
+bool
+pf_install_package_api(
+	const char *package,
+	const char *name,
+	bool (*func)(void *))
+{
+	NoctEnv *env;
+	const char *params[] = {"param"};
+	NoctValue dict;
+	NoctValue funcval;
+	char full_name[256];
+
+	/* Make a global variable "Engine". */
+	if (!noct_check_global(env, package)) {
+		if (!noct_make_empty_dict(env, &dict))
+			return false;
+		if (!noct_set_global(env, package, &dict))
+			return false;
+	}
+
+	/* Make a full name. */
+	snprintf(full_name, sizeof(full_name), "%s.%s", package, name);
+
+	/* Register a cfunc. */
+	if (!noct_register_cfunc(env, full_name, 1, params, (void *)func, NULL))
+		return false;
+
+	/* Get a function value. */
+	if (!noct_get_global(env, full_name, &funcval))
+		return false;
+
+	/* Make a dictionary element. */
+	if (!noct_set_dict_elem(env, &dict, name, &funcval))
 		return false;
 
 	return true;

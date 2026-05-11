@@ -1237,7 +1237,7 @@ parse_tag_callback(
 	/* Copy a tag name. */
 	t->tag_name = strdup(name);
 	if (t->tag_name == NULL) {
-		hal_log_out_of_memory();
+		s3_log_out_of_memory();
 		return false;
 	}
 

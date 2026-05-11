@@ -13,8 +13,6 @@
 #define PLAYFIELD_PLAYFIELD_H
 
 #include <playfield/c89compat.h>
-#include <stratohal/platform.h>
-#include <noct/noct.h>
 
 /*
  * Input States
@@ -127,7 +125,7 @@ extern bool pf_is_f11_key_pressed;
 extern bool pf_is_f12_key_pressed;
 
 /*
- * Texture
+ * Textures
  */
 
 /*
@@ -258,55 +256,8 @@ pf_render_texture(
 	int src_y,
 	int src_width,
 	int src_height,
-	int alpha);
-
-/*
- * Render a texture. (add blending)
- */
-void
-pf_render_texture_add(
-	int dst_left,
-	int dst_top,
-	int dst_width,
-	int dst_height,
-	int tex_id,
-	int src_x,
-	int src_y,
-	int src_width,
-	int src_height,
-	int alpha);
-
-/*
- * Render a texture. (sub blending)
- */
-void
-pf_render_texture_sub(
-	int dst_left,
-	int dst_top,
-	int dst_width,
-	int dst_height,
-	int tex_id,
-	int src_x,
-	int src_y,
-	int src_width,
-	int src_height,
-	int alpha);
-
-/*
- * Render a texture. (dim blending)
- */
-void
-pf_render_texture_dim(
-	int dst_left,
-	int dst_top,
-	int dst_width,
-	int dst_height,
-	int tex_id,
-	int src_x,
-	int src_y,
-	int src_width,
-	int src_height,
-	int alpha);
+	int alpha,
+	int blend);
 
 /*
  * Render textures for 1-bit universal transition.
@@ -357,67 +308,8 @@ pf_render_texture_3d(
 	int src_top,
 	int src_width,
 	int src_height,
-	int alpha);
-
-/*
- * Render a texture. (3D, add blending)
- */
-void
-pf_render_texture_3d_add(
-	float x1,
-	float y1,
-	float x2,
-	float y2,
-	float x3,
-	float y3,
-	float x4,
-	float y4,
-	int tex_id,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
-	int alpha);
-
-/*
- * Render a texture. (3D, sub blending)
- */
-void
-pf_render_texture_3d_sub(
-	float x1,
-	float y1,
-	float x2,
-	float y2,
-	float x3,
-	float y3,
-	float x4,
-	float y4,
-	int tex_id,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
-	int alpha);
-
-/*
- * Render a texture. (3D, dim blending)
- */
-void
-pf_render_texture_3d_dim(
-	float x1,
-	float y1,
-	float x2,
-	float y2,
-	float x3,
-	float y3,
-	float x4,
-	float y4,
-	int tex_id,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
-	int alpha);
+	int alpha,
+	int blend);
 
 /*
  * Render textures for cross fading.
@@ -559,12 +451,16 @@ pf_is_video_playing(void);
 /*
  * Reset a lap timer and initializes it with a current time.
  */
-void pf_reset_lap_timer(uint64_t *origin);
+void
+pf_reset_lap_timer(
+	uint64_t *origin);
 
 /*
  * Get a lap time in milliseconds.
  */
-uint64_t pf_get_lap_timer_millisec(uint64_t *origin);
+uint64_t
+pf_get_lap_timer_millisec(
+	uint64_t *origin);
 
 /*
  * Save Data
@@ -662,10 +558,19 @@ pf_get_vm_int(
  */
 
 /*
- * Install an API function.
+ * Install an API function in the global name space.
  */
 bool
 pf_install_api(
+	const char *name,
+	bool (*func)(void *));
+
+/*
+ * Install an API function in a package name space.
+ */
+bool
+pf_install_package_api(
+	const char *package,
 	const char *name,
 	bool (*func)(void *));
 
@@ -757,7 +662,7 @@ pf_get_call_arg_dict_float(
 	float def_val);
 
 /*
- * Get a string element of an array of a function call parameter.
+ * Get a string element of a dictionary of a function call parameter.
  */
 bool
 pf_get_call_arg_dict_string(
@@ -855,7 +760,7 @@ void
 pf_leave_full_screen_mode(void);
 
 /*
- * Enable/disable message skip by touch move.
+ * Enable/disable continuous moves of swipe gestures.
  */
 void
 pf_set_continuous_swipe_enabled(
