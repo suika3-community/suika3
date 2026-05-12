@@ -12,7 +12,7 @@
  */
 
 extern "C" {
-#include "stratohal/platform.h"
+#include <stratohal/stratohal.h>
 }
 
 #include <assert.h>
@@ -745,7 +745,7 @@ hal_remove_file(
  * Create a save directory.
  */
 bool
-hal_make_save_directory(void)
+make_save_directory(void)
 {
 	std::wstring path = g_local_path;
 	path += L"\\";
@@ -757,7 +757,7 @@ hal_make_save_directory(void)
  * Get a real path of a file.
  */
 char*
-hal_make_real_path(
+make_real_path(
 	const char* fname)
 {
 	std::wstring wpath;

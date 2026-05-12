@@ -31,7 +31,7 @@
 #ifndef STRATOHAL_NDKFILE_H
 #define STRATOHAL_NDKFILE_H
 
-#include "stratohal/c89compat.h"
+#include <stratohal/c89compat.h>
 
 bool init_file(void);
 

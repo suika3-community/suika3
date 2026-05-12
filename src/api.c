@@ -1162,13 +1162,6 @@ pf_write_save_data(
 		return false;
 	}
 
-	/* Make the save directory. */
-	if (!hal_make_save_directory()) {
-		hal_log_error(PF_TR("Cannot make the save directory."));
-		free(fname);
-		return false;
-	}
-
 	/* Open a save file. */
 	if (!hal_open_wfile(fname, &wf)) {
 		hal_log_error(PF_TR("Cannot open a save file."));

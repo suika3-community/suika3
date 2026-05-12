@@ -36,7 +36,7 @@
 #import "GameViewControllerProtocol.h"
 
 // Base
-#import "stratohal/platform.h"
+#import <stratohal/stratohal.h>
 
 // POSIX
 #import <sys/time.h>

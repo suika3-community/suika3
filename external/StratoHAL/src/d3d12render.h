@@ -35,7 +35,7 @@
 extern "C" {
 #endif
 
-#include "stratohal/platform.h"
+#include <stratohal/stratohal.h>
 
 #include <windows.h>
 

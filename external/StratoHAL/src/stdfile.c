@@ -42,7 +42,8 @@
  * u8 file_body[file_count][file_length]; // Obfuscated
  */
 
-#include "stratohal/platform.h"
+#include <stratohal/stratohal.h>
+#include "stdfile.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -170,7 +171,7 @@ init_file(void)
 	int j;
 
 	/* Get a real path to a package file. */
-	package_path = hal_make_real_path(HAL_PACKAGE_FILE);
+	package_path = make_real_path(HAL_PACKAGE_FILE);
 	if (package_path == NULL)
 		return false;
 
@@ -280,7 +281,7 @@ hal_check_file_exist(
 #endif
 
 	/* Make a real file path. */
-	real_path = hal_make_real_path(file);
+	real_path = make_real_path(file);
 	if (real_path == NULL)
 		return false;
 
@@ -415,7 +416,7 @@ open_real(
 	char *real_path;
 
 	/* Make a real path on the OS's file system. */
-	real_path = hal_make_real_path(path);
+	real_path = make_real_path(path);
 	if (real_path == NULL)
 		return false;
 
@@ -804,7 +805,7 @@ hal_open_wfile(
 	}
 
 	/* Make a real file path. */
-	path = hal_make_real_path(file);
+	path = make_real_path(file);
 	if (path == NULL) {
 		hal_log_out_of_memory();
 		free(*wf);
@@ -813,7 +814,7 @@ hal_open_wfile(
 	}
 
 	/* Make a directory. */
-	hal_make_save_directory();
+	make_save_directory();
 
 	/* Open a real file. */
 #ifdef HAL_TARGET_WINDOWS
@@ -910,7 +911,7 @@ hal_remove_file(
 	char *path;
 
 	/* Make a real path. */
-	path = hal_make_real_path(file);
+	path = make_real_path(file);
 	if (path == NULL) {
 		hal_log_out_of_memory();
 		return false;

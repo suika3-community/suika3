@@ -29,7 +29,7 @@
  */
 
 /* HAL */
-#include "stratohal/platform.h"		/* Public Interface */
+#include <stratohal/stratohal.h>		/* Public Interface */
 #include "stdfile.h"			/* Standard C File Implementation */
 #if defined(HAL_TARGET_LINUX)
 #include "asound.h"			/* ALSA Sound Implemenatation */
@@ -1625,8 +1625,8 @@ void update_viewport_size(
 #define hal_log_error_x11			hal_log_error
 #define hal_log_out_of_memory_x11		hal_log_out_of_memory
 #define open_log_file_x11			open_log_file
-#define hal_make_save_directory_x11		hal_make_save_directory
-#define hal_make_real_path_x11			hal_make_real_path
+#define make_save_directory_x11		make_save_directory
+#define make_real_path_x11			make_real_path
 #define hal_reset_lap_timer_x11			hal_reset_lap_timer
 #define hal_get_lap_timer_millisec_x11		hal_get_lap_timer_millisec
 #define hal_notify_image_update_x11		hal_notify_image_update
@@ -1758,7 +1758,7 @@ open_log_file(void)
  * Make a save directory.
  */
 bool
-hal_make_save_directory_x11(void)
+make_save_directory_x11(void)
 {
 	struct stat st = {0};
 
@@ -1772,7 +1772,7 @@ hal_make_save_directory_x11(void)
  * Make an effective path from a directory name and a file name.
  */
 char *
-hal_make_real_path_x11(
+make_real_path_x11(
 	const char *fname)
 {
 	char *buf;
@@ -2180,7 +2180,7 @@ hal_play_video_x11(
 {
 	char *path;
 
-	path = hal_make_real_path(fname);
+	path = make_real_path(fname);
 
 	is_gst_playing = true;
 	is_gst_skippable = is_skippable;

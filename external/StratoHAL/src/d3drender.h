@@ -31,7 +31,7 @@
 #ifndef STRATOHAL_D3DRENDER_H
 #define STRATOHAL_D3DRENDER_H
 
-#include "stratohal/platform.h"
+#include <stratohal/stratohal.h>
 
 #include <windows.h>
 

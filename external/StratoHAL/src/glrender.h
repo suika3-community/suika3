@@ -31,7 +31,7 @@
 #ifndef STRATOHAL_GLRENDER_H
 #define STRATOHAL_GLRENDER_H
 
-#include "stratohal/platform.h"
+#include <stratohal/stratohal.h>
 
 bool init_opengl(int width, int height);
 void cleanup_opengl(void);

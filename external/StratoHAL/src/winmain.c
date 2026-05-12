@@ -29,7 +29,7 @@
  */
 
 /* HAL */
-#include "stratohal/platform.h"
+#include <stratohal/stratohal.h>
 #include "d3drender.h"
 #include "dsound.h"
 #include "dsvideo.h"
@@ -2030,7 +2030,7 @@ win32_utf16_to_utf8(
  * Create a save directory.
  */
 bool
-hal_make_save_directory(void)
+make_save_directory(void)
 {
 #if 0
 	if (0) {
@@ -2055,7 +2055,7 @@ hal_make_save_directory(void)
  * Get a real path of a file.
  */
 char *
-hal_make_real_path(
+make_real_path(
 	const char *fname)
 {
 	wchar_t *buf;
@@ -2124,7 +2124,7 @@ hal_play_video(
 {
 	char *path;
 
-	path = hal_make_real_path(fname);
+	path = make_real_path(fname);
 
 	bVideoSkippable = is_skippable;
 
