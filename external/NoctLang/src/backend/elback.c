@@ -9,7 +9,8 @@
  * elispback: GNU Emacs Lisp translation backend
  */
 
-#include "elback.h"
+#include <noct/noct.h>
+#include "ast.h"
 #include "hir.h"
 
 #include <stdio.h>
@@ -59,6 +60,7 @@ static char elback_error_message[65536];
  * Forward declaration
  */
 
+static bool elback_translate_func(struct hir_block *func);
 static bool is_parameter_name(struct hir_block *func, const char *symbol);
 static bool elback_visit_block(struct hir_block *block);
 static bool elback_visit_basic_block(struct hir_block *block);
@@ -85,19 +87,23 @@ static void elback_fatal(const char *msg, ...);
 static void elback_out_of_memory(void);
 
 /*
- * Clear translator states.
+ * Start EL backend.
  */
+NOCT_DLL
 bool
-elback_init(const char *fname)
+noct_elback_start(
+	const char *fname)
 {
 	indent = 0;
 
-	fp = fopen(fname, "w");
+	fp = fopen(fname, "wb");
 	if (fp == NULL) {
 		elback_fatal(N_TR("Cannot open file %s."));
 		return false;
 	}
 	return true;
+
+	/* For in-memory translation. */
 #if 0
 	if (body != NULL) {
 		free(body);
@@ -117,8 +123,73 @@ elback_init(const char *fname)
 }
 
 /*
- * Translate a HIR function to C.
+ * Translate a file using EL backend.
  */
+NOCT_DLL
+bool
+noct_elback_translate(
+	const char *fname,
+	const char *data)
+{
+	int func_count, i;
+
+	/* Do parse, build AST. */
+	if (!ast_build(fname, data)) {
+		printf(N_TR("Error: %s:%d: %s\n"),
+		       ast_get_file_name(),
+		       ast_get_error_line(),
+		       ast_get_error_message());
+		return false;
+	}
+
+	/* Transform AST to HIR. */
+	if (!hir_build()) {
+		printf(N_TR("Error: %s:%d: %s\n"),
+		       hir_get_file_name(),
+		       hir_get_error_line(),
+		       hir_get_error_message());
+		return false;
+	}
+
+	/* For each HIR function. */
+	func_count = hir_get_function_count();
+	for (i = 0; i < func_count; i++) {
+		struct hir_block *hfunc;
+		struct lir_func *lfunc;
+
+		/* Transform HIR to LIR (bytecode). */
+		hfunc = hir_get_function(i);
+
+		/* Put a C function. */
+		if (!elback_translate_func(hfunc))
+			return false;
+	}
+
+	/* Free intermediated. */
+	hir_cleanup();
+	ast_cleanup();
+
+	return true;
+}
+
+/*
+ * Finalize the EL backend.
+ */
+NOCT_DLL
+bool
+noct_elback_finalize(void)
+{
+	if (fp == NULL)
+		return false;
+
+	fclose(fp);
+	fp = NULL;
+
+	return true;
+}
+
+/* Translate a functoin. */
+static
 bool
 elback_translate_func(
 	struct hir_block *func)
@@ -711,8 +782,6 @@ static bool
 elback_visit_unary_expr(
 	struct hir_expr *expr)
 {
-	int opr_tmpvar;
-
 	assert(expr != NULL);
 	assert(expr->type == HIR_EXPR_NEG);
 
@@ -1019,17 +1088,6 @@ elback_visit_term(
 
 	return true;
 
-}
-
-/*
- * Finalize the file output.
- */
-bool
-elback_finalize(void)
-{
-	fclose(fp);
-	fp = NULL;
-	return true;
 }
 
 /* Put a translated string. */

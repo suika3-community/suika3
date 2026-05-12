@@ -94,7 +94,7 @@ pfi_create_vm(
 #endif
 
 	/* Create a language runtime. */
-	if (!noct_create_vm(&vm, &env))
+	if (!noct_create_vm(&vm, &env, NULL))
 		return false;
 
 	/* Call AOT code registration. */

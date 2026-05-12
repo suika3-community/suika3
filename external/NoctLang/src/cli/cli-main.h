@@ -9,12 +9,6 @@
 #define NOCT_CLI_MAIN_H
 
 #include <noct/noct.h>
-#include "runtime.h"
-#include "ast.h"
-#include "hir.h"
-#include "lir.h"
-#include "cback.h"
-#include "elback.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -33,6 +27,6 @@ int command_transpile_elisp(int argc, char *argv[]);
 int command_run(int argc, char *argv[]);
 int command_repl(void);
 
-bool register_cli_ffi(NoctEnv *env);
+bool register_cli_cfunc(NoctEnv *env);
 
 #endif

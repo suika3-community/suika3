@@ -18,6 +18,7 @@ and a clean C/JS-like syntax featuring a novel Dictionary-based OOP model.
 
 Written in portable ANSI C with no external dependencies, it runs
 everywhere — from desktop PCs down to Raspberry Pi.
+Even on NEC PC-9801, Noct runs well with JIT!
 
 ### Embeddable
 
@@ -37,11 +38,21 @@ The core virtual machine is completed, and is already being used
 through integration with other projects.
 
 - [Playfield Engine](https://github.com/awemorris/PlayfieldEngine)
-- [Suika3](https://github.com/awemorris/suika3).
+    - A framework to build custom 2D game engines that run everywhere.
 
-Roadmap:
+- [Suika3](https://github.com/awemorris/suika3).
+    - A visual novel engine for the mobile era.
+
+The primary objective of this project, "embedded sandbox scripting",
+has been achieved. However, we are continuing to develop this software
+in the hope of finding new applications, e.g.,:
+
+- Declative UI framework for use with C/C++/Rust, inspired by ArkTS.
+- Modern scripting host for retro computers.
+
+Our current roadmap is:
+
 - Expanding the standard library with modular, opt-in API components.
-- Implementing a package management system for the CLI and REPL.
 
 ---
 
@@ -61,6 +72,7 @@ Roadmap:
 - iOS, Android
 - *BSD
 - Game Consoles
+- MS-DOS (with DOS extender)
 - Any POSIX compliant OS
 
 Note: On major smartphones and consoles, runtime code generation (JIT)

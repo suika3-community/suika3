@@ -9,9 +9,9 @@
  * Bytecode Interpreter
  */
 
+#include <noct/noct.h>
 #include "runtime.h"
 #include "interpreter.h"
-#include "execution.h"
 #include "bytecode.h"
 
 #include <stdio.h>
@@ -396,7 +396,7 @@ rt_visit_add_op(
 {
         DEBUG_TRACE(*pc, "ADD");
 
-        BINARY_OP(rt_add_helper);
+        BINARY_OP(ex_add_helper);
 }
 
 /* Visit a OP_SUB instruction. */
@@ -408,7 +408,7 @@ rt_visit_sub_op(
 {
         DEBUG_TRACE(*pc, "SUB");
 
-        BINARY_OP(rt_sub_helper);
+        BINARY_OP(ex_sub_helper);
 }
 
 /* Visit a OP_MUL instruction. */
@@ -420,7 +420,7 @@ rt_visit_mul_op(
 {
         DEBUG_TRACE(*pc, "MUL");
 
-        BINARY_OP(rt_mul_helper);
+        BINARY_OP(ex_mul_helper);
 }
 
 /* Visit a OP_DIV instruction. */
@@ -432,7 +432,7 @@ rt_visit_div_op(
 {
         DEBUG_TRACE(*pc, "DIV");
 
-        BINARY_OP(rt_div_helper);
+        BINARY_OP(ex_div_helper);
 }
 
 /* Visit a OP_MOD instruction. */
@@ -444,7 +444,7 @@ rt_visit_mod_op(
 {
         DEBUG_TRACE(*pc, "MOD");
 
-        BINARY_OP(rt_mod_helper);
+        BINARY_OP(ex_mod_helper);
 }
 
 /* Visit a OP_AND instruction. */
@@ -456,7 +456,7 @@ rt_visit_and_op(
 {
         DEBUG_TRACE(*pc, "AND");
 
-        BINARY_OP(rt_and_helper);
+        BINARY_OP(ex_and_helper);
 }
 
 /* Visit a OP_OR instruction. */
@@ -468,7 +468,7 @@ rt_visit_or_op(
 {
         DEBUG_TRACE(*pc, "OR");
 
-        BINARY_OP(rt_or_helper);
+        BINARY_OP(ex_or_helper);
 }
 
 /* Visit a OP_XOR instruction. */
@@ -480,7 +480,7 @@ rt_visit_xor_op(
 {
         DEBUG_TRACE(*pc, "XOR");
 
-        BINARY_OP(rt_xor_helper);
+        BINARY_OP(ex_xor_helper);
 }
 
 /* Visit a OP_SHL instruction. */
@@ -492,7 +492,7 @@ rt_visit_shl_op(
 {
         DEBUG_TRACE(*pc, "SHL");
 
-        BINARY_OP(rt_shl_helper);
+        BINARY_OP(ex_shl_helper);
 }
 
 /* Visit a OP_SHR instruction. */
@@ -504,7 +504,7 @@ rt_visit_shr_op(
 {
         DEBUG_TRACE(*pc, "SHR");
 
-        BINARY_OP(rt_shr_helper);
+        BINARY_OP(ex_shr_helper);
 }
 
 /* Visit a OP_NEG instruction. */
@@ -516,7 +516,7 @@ rt_visit_neg_op(
 {
         DEBUG_TRACE(*pc, "NEG");
 
-        UNARY_OP(rt_neg_helper);
+        UNARY_OP(ex_neg_helper);
 }
 
 /* Visit a OP_NOT instruction. */
@@ -528,7 +528,7 @@ rt_visit_not_op(
 {
         DEBUG_TRACE(*pc, "NOT");
 
-        UNARY_OP(rt_not_helper);
+        UNARY_OP(ex_not_helper);
 }
 
 /* Visit a OP_LT instruction. */
@@ -540,7 +540,7 @@ rt_visit_lt_op(
 {
         DEBUG_TRACE(*pc, "LT");
 
-        BINARY_OP(rt_lt_helper);
+        BINARY_OP(ex_lt_helper);
 }
 
 /* Visit a OP_LTE instruction. */
@@ -552,7 +552,7 @@ rt_visit_lte_op(
 {
         DEBUG_TRACE(*pc, "LTE");
 
-        BINARY_OP(rt_lte_helper);
+        BINARY_OP(ex_lte_helper);
 }
 
 /* Visit a OP_GT instruction. */
@@ -564,7 +564,7 @@ rt_visit_gt_op(
 {
         DEBUG_TRACE(*pc, "GT");
 
-        BINARY_OP(rt_gt_helper);
+        BINARY_OP(ex_gt_helper);
 }
 
 /* Visit a OP_GTE instruction. */
@@ -576,7 +576,7 @@ rt_visit_gte_op(
 {
         DEBUG_TRACE(*pc, "GTE");
 
-        BINARY_OP(rt_gte_helper);
+        BINARY_OP(ex_gte_helper);
 }
 
 /* Visit a OP_EQ instruction. */
@@ -588,7 +588,7 @@ rt_visit_eq_op(
 {
         DEBUG_TRACE(*pc, "EQ");
 
-        BINARY_OP(rt_eq_helper);
+        BINARY_OP(ex_eq_helper);
 }
 
 /* Visit a OP_NEQ instruction. */
@@ -600,7 +600,7 @@ rt_visit_neq_op(
 {
         DEBUG_TRACE(*pc, "NEQ");
 
-        BINARY_OP(rt_neq_helper);
+        BINARY_OP(ex_neq_helper);
 }
 
 /* Visit a OP_STOREARRAY instruction. */
@@ -612,7 +612,7 @@ rt_visit_storearray_op(
 {
         DEBUG_TRACE(*pc, "STOREARRAY");
 
-        BINARY_OP(rt_storearray_helper);
+        BINARY_OP(ex_storearray_helper);
 }
 
 /* Visit a OP_LOADARRAY instruction. */
@@ -624,7 +624,7 @@ rt_visit_loadarray_op(
 {
         DEBUG_TRACE(*pc, "LOADARRAY");
 
-        BINARY_OP(rt_loadarray_helper);
+        BINARY_OP(ex_loadarray_helper);
 }
 
 /* Visit a OP_LEN instruction. */
@@ -636,7 +636,7 @@ rt_visit_len_op(
 {
         DEBUG_TRACE(*pc, "LEN");
 
-        UNARY_OP(rt_len_helper);
+        UNARY_OP(ex_len_helper);
 }
 
 /* Visit a OP_GETDICTKEYBYINDEX instruction. */
@@ -648,7 +648,7 @@ rt_visit_getdictkeybyindex_op(
 {
         DEBUG_TRACE(*pc, "GETDICTKEYBYINDEX");
 
-        BINARY_OP(rt_getdictkeybyindex_helper);
+        BINARY_OP(ex_getdictkeybyindex_helper);
 }
 
 /* Visit a OP_GETDICTVALBYINDEX instruction. */
@@ -660,7 +660,7 @@ rt_visit_getdictvalbyindex_op(
 {
         DEBUG_TRACE(*pc, "GETDICTVALBYINDEX");
 
-        BINARY_OP(rt_getdictvalbyindex_helper);
+        BINARY_OP(ex_getdictvalbyindex_helper);
 }
 
 /* Visit a OP_LOADYMBOL instruction. */
@@ -679,7 +679,7 @@ rt_visit_loadsymbol_op(
         GET_TMPVAR(&dst);
         GET_STRING(&s, &len, &hash);
 
-        if (!rt_loadsymbol_helper(env, dst, s, len, hash))
+        if (!ex_loadsymbol_helper(env, dst, s, len, hash))
                 return false;
 
         return true;
@@ -701,7 +701,7 @@ rt_visit_storesymbol_op(
         GET_STRING(&s, &len, &hash);
         GET_TMPVAR(&src);
 
-        if (!rt_storesymbol_helper(env, s, len, hash, src))
+        if (!ex_storesymbol_helper(env, s, len, hash, src))
                 return false;
 
         return true;
@@ -724,7 +724,7 @@ rt_visit_loaddot_op(
         GET_TMPVAR(&dict);
         GET_STRING(&field, &len, &hash);
 
-        if (!rt_loaddot_helper(env, dst, dict, field, len, hash))
+        if (!ex_loaddot_helper(env, dst, dict, field, len, hash))
                 return false;
 
         return true;
@@ -747,7 +747,7 @@ rt_visit_storedot_op(
         GET_STRING(&field, &len, &hash);
         GET_TMPVAR(&src);
 
-        if (!rt_storedot_helper(env, dict, field, len, hash, src))
+        if (!ex_storedot_helper(env, dict, field, len, hash, src))
                 return false;
 
         return true;
@@ -777,7 +777,7 @@ rt_visit_call_op(
                 arg[i] = arg_tmpvar;
         }
 
-        if (!rt_call_helper(env, dst_tmpvar, func_tmpvar, arg_count, arg))
+        if (!ex_call_helper(env, dst_tmpvar, func_tmpvar, arg_count, arg))
                 return false;
 
         return true;
@@ -810,7 +810,7 @@ rt_visit_thiscall_op(
                 arg[i] = arg_tmpvar;
         }
 
-        if (!rt_thiscall_helper(env, dst_tmpvar, obj_tmpvar, name, len, hash, arg_count, arg))
+        if (!ex_thiscall_helper(env, dst_tmpvar, obj_tmpvar, name, len, hash, arg_count, arg))
                 return false;
 
         return true;

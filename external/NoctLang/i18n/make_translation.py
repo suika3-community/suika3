@@ -1,11 +1,12 @@
 with open("message.txt") as f:
     lines = f.readlines()
 
+    print("#include <noct/noct.h>")
     print("#include <string.h>")
     print("")
     print("const char *noct_get_system_language(void);")
     print("")
-    print("const char *noct_gettext(const char *msg)")
+    print("NOCT_DLL const char *noct_gettext(const char *msg)")
     print("{")
     print("    const char *lang_code = noct_get_system_language();")
 

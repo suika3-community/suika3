@@ -6,17 +6,13 @@
  */
 
 /*
- * AST: Abstract syntax tree
+ * AST: Abstract Syntax Tree
  */
 
 #ifndef NOCT_AST_H
 #define NOCT_AST_H
 
-#include <noct/c89compat.h>
-
-/*
- * AST
- */
+#include <noct/noct.h>
 
 /* Statement Type */
 enum ast_stmt_type {
@@ -342,11 +338,43 @@ struct ast_arg_list {
 /*
  * Public
  */
-bool ast_build(const char *file_name, const char *text);
-void ast_cleanup(void);
-struct ast_func_list *ast_get_func_list(void);
-const char *ast_get_file_name(void);
-const char *ast_get_error_message(void);
-int ast_get_error_line(void);
+
+/*
+ * Build an AST from a script string.
+ */
+bool
+ast_build(
+	const char *file_name,
+	const char *text);
+
+/*
+ * Free an AST.
+ */
+void
+ast_cleanup(void);
+
+/*
+ * Get an AST.
+ */
+struct ast_func_list *
+ast_get_func_list(void);
+
+/*
+ * Get the file name.
+ */
+const char *
+ast_get_file_name(void);
+
+/*
+ * Get the error message.
+ */
+const char *
+ast_get_error_message(void);
+
+/*
+ * Get the error line.
+ */
+int
+ast_get_error_line(void);
 
 #endif

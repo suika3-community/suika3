@@ -11,21 +11,40 @@
 
 #include <noct/noct.h>
 #include "runtime.h"
+#include "jit.h"
 
 #include <stdio.h>
 #include <stdarg.h>
 #include <assert.h>
 
 NOCT_DLL
+void
+noct_set_default_config(
+	NoctConfig *config)
+{
+	memset(config, 0, sizeof(NoctConfig));
+
+	config->jit_enable             = true;
+	config->jit_threshold          = JIT_DEFAULT_THRESHOLD;
+	config->optimize_level         = 0;
+	config->gc_nursery_size        = RT_GC_DEFAULT_NURSERY_SIZE;
+	config->gc_graduate_size       = RT_GC_DEFAULT_GRADUATE_SIZE;
+	config->gc_tenure_size         = RT_GC_DEFAULT_TENURE_SIZE;
+	config->gc_lop_threshold       = RT_GC_DEFAULT_LOP_THRESHOLD;
+	config->gc_promotion_threshold = RT_GC_DEFAULT_PROMOTION_THRESHOLD;
+}
+
+NOCT_DLL
 bool
 noct_create_vm(
 	NoctVM **vm,
-	NoctEnv **default_env)
+	NoctEnv **default_env,
+	NoctConfig *config)
 {
 	assert(vm != NULL);
 	assert(default_env != NULL);
 
-	if (!rt_create_vm(vm, default_env))
+	if (!rt_create_vm(vm, default_env, config))
 		return false;
 
 	return true;
@@ -244,6 +263,14 @@ noct_make_string(
 		return false;
 
 	return true;
+}
+
+NOCT_DLL
+uint32_t
+noct_string_hash(
+	const char *s)
+{
+	return rt_string_hash(s);
 }
 
 NOCT_DLL

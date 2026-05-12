@@ -6,13 +6,13 @@
  */
 
 /*
- * HIR: High-level intermediate representation
+ * HIR: High-level Intermediate Representation
  */
 
 #ifndef NOCT_HIR_H
 #define NOCT_HIR_H
 
-#include <noct/c89compat.h>
+#include <noct/noct.h>
 
 /* HIR Block Type */
 enum hir_block_type {
@@ -316,28 +316,54 @@ struct hir_local {
 	struct hir_local *next;
 };
 
-/* Build HIR functions from an AST. */
-bool hir_build(void);
+/*
+ * Build HIR functions from an AST.
+ */
+bool
+hir_build(void);
 
-/* Free constructed HIR functions. */
-void hir_cleanup(void);
+/*
+ * Free constructed HIR functions.
+ */
+void
+hir_cleanup(void);
 
-/* Get a number of constructed HIR functions. */
-uint32_t hir_get_function_count(void);
+/*
+ * Get a number of constructed HIR functions.
+ */
+uint32_t
+hir_get_function_count(void);
 
-/* Get a constructed HIR function. */
-struct hir_block *hir_get_function(uint32_t index);
+/*
+ * Get a constructed HIR function.
+ */
+struct hir_block *
+hir_get_function(
+	uint32_t index);
 
-/* Get a file name. */
-const char *hir_get_file_name(void);
+/*
+ * Get a file name.
+ */
+const char *
+hir_get_file_name(void);
 
-/* Get an error line number. */
-int hir_get_error_line(void);
+/*
+ * Get an error line number.
+ */
+int
+hir_get_error_line(void);
 
-/* Get an error message. */
-const char *hir_get_error_message(void);
+/*
+ * Get an error message.
+ */
+const char *
+hir_get_error_message(void);
 
-/* Debug dump. */
-void hir_dump_block(struct hir_block *block);
+/*
+ * Debug dump.
+ */
+void
+hir_dump_block(
+	struct hir_block *block);
 
 #endif

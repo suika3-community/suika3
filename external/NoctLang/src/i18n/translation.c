@@ -5,11 +5,12 @@
  * Copyright (c) 2025, 2026, Awe Morris
  */
 
+#include <noct/noct.h>
 #include <string.h>
 
 const char *noct_get_system_language(void);
 
-const char *noct_gettext(const char *msg)
+NOCT_DLL const char *noct_gettext(const char *msg)
 {
     const char *lang_code = noct_get_system_language();
     if (strcmp(msg, "syntax error") == 0) {
@@ -955,18 +956,18 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "ja", 2) == 0) return "メモリが足りません。\n";
         return "Out of memory.\n";
     }
-    if (strcmp(msg, "Noct Programming Language ") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "Noct Programming Language ";
-        if (strncmp(lang_code, "es", 2) == 0) return "Lenguaje de programación Noct ";
-        if (strncmp(lang_code, "fr", 2) == 0) return "Langage de programmation Noct ";
-        if (strncmp(lang_code, "de", 2) == 0) return "Programmiersprache Noct ";
-        if (strncmp(lang_code, "it", 2) == 0) return "Linguaggio di programmazione Noct ";
-        if (strncmp(lang_code, "el", 2) == 0) return "Γλώσσα προγραμματισμού Noct ";
-        if (strncmp(lang_code, "ru", 2) == 0) return "Язык программирования Noct ";
-        if (strncmp(lang_code, "zh", 2) == 0) return "Noct 编程语言 ";
-        if (strncmp(lang_code, "tw", 2) == 0) return "Noct 程式語言 ";
-        if (strncmp(lang_code, "ja", 2) == 0) return "Noct プログラミング言語 ";
-        return "Noct Programming Language ";
+    if (strcmp(msg, "Noct Programming Language\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Noct Programming Language\n";
+        if (strncmp(lang_code, "es", 2) == 0) return "Lenguaje de programación Noct\n";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Langage de programmation Noct\n";
+        if (strncmp(lang_code, "de", 2) == 0) return "Programmiersprache Noct\n";
+        if (strncmp(lang_code, "it", 2) == 0) return "Linguaggio di programmazione Noct\n";
+        if (strncmp(lang_code, "el", 2) == 0) return "Γλώσσα προγραμματισμού Noct\n";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Язык программирования Noct\n";
+        if (strncmp(lang_code, "zh", 2) == 0) return "Noct 编程语言\n";
+        if (strncmp(lang_code, "tw", 2) == 0) return "Noct 程式語言\n";
+        if (strncmp(lang_code, "ja", 2) == 0) return "Noct プログラミング言語\n";
+        return "Noct Programming Language\n";
     }
     if (strcmp(msg, "Version %s\n") == 0) {
         if (strncmp(lang_code, "en", 2) == 0) return "Version %s\n";
@@ -981,19 +982,6 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "ja", 2) == 0) return "バージョン %s\n";
         return "Version %s\n";
     }
-    if (strcmp(msg, "JIT compilation is enabled. Starting the fast VM...\n") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "JIT compilation is enabled. Starting the fast VM...\n";
-        if (strncmp(lang_code, "es", 2) == 0) return "La compilación JIT está activada. Iniciando la máquina virtual rápida...\n";
-        if (strncmp(lang_code, "fr", 2) == 0) return "La compilation JIT est activée. Démarrage de la machine virtuelle rapide...\n";
-        if (strncmp(lang_code, "de", 2) == 0) return "JIT-Kompilierung ist aktiviert. Starte die schnelle VM...\n";
-        if (strncmp(lang_code, "it", 2) == 0) return "La compilazione JIT è attivata. Avvio della VM veloce...\n";
-        if (strncmp(lang_code, "el", 2) == 0) return "Η μεταγλώττιση JIT είναι ενεργοποιημένη. Εκκίνηση της γρήγορης εικονικής μηχανής...\n";
-        if (strncmp(lang_code, "ru", 2) == 0) return "JIT-компиляция включена. Запуск быстрой виртуальной машины...\n";
-        if (strncmp(lang_code, "zh", 2) == 0) return "JIT 编译已启用。正在启动快速虚拟机…\n";
-        if (strncmp(lang_code, "tw", 2) == 0) return "JIT 編譯已啟用。正在啟動快速虛擬機器…\n";
-        if (strncmp(lang_code, "ja", 2) == 0) return "JITコンパイルが有効 ... 高速仮想マシン実行を開始します。\n";
-        return "JIT compilation is enabled. Starting the fast VM...\n";
-    }
     if (strcmp(msg, "Entering REPL mode.\n") == 0) {
         if (strncmp(lang_code, "en", 2) == 0) return "Entering REPL mode.\n";
         if (strncmp(lang_code, "es", 2) == 0) return "Entrando en modo REPL.\n";
@@ -1006,6 +994,19 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "tw", 2) == 0) return "進入 REPL 模式。\n";
         if (strncmp(lang_code, "ja", 2) == 0) return "REPLモードに入ります。\n";
         return "Entering REPL mode.\n";
+    }
+    if (strcmp(msg, "JIT compilation is enabled. Starting the fast VM...\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "JIT compilation is enabled. Starting the fast VM...\n";
+        if (strncmp(lang_code, "es", 2) == 0) return "La compilación JIT está activada. Iniciando la máquina virtual rápida...\n";
+        if (strncmp(lang_code, "fr", 2) == 0) return "La compilation JIT est activée. Démarrage de la machine virtuelle rapide...\n";
+        if (strncmp(lang_code, "de", 2) == 0) return "JIT-Kompilierung ist aktiviert. Starte die schnelle VM...\n";
+        if (strncmp(lang_code, "it", 2) == 0) return "La compilazione JIT è attivata. Avvio della VM veloce...\n";
+        if (strncmp(lang_code, "el", 2) == 0) return "Η μεταγλώττιση JIT είναι ενεργοποιημένη. Εκκίνηση της γρήγορης εικονικής μηχανής...\n";
+        if (strncmp(lang_code, "ru", 2) == 0) return "JIT-компиляция включена. Запуск быстрой виртуальной машины...\n";
+        if (strncmp(lang_code, "zh", 2) == 0) return "触发编译已启用。正在启动快速虚拟机...\n";
+        if (strncmp(lang_code, "tw", 2) == 0) return "觸發編譯已啟用。正在啟動快速虛擬機器...\n";
+        if (strncmp(lang_code, "ja", 2) == 0) return "JIT コンパイルが有効です。高速仮想マシンを開始します...\n";
+        return "JIT compilation is enabled. Starting the fast VM...\n";
     }
     if (strcmp(msg, "Usage\n") == 0) {
         if (strncmp(lang_code, "en", 2) == 0) return "Usage\n";
@@ -1020,57 +1021,162 @@ const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "ja", 2) == 0) return "使い方\n";
         return "Usage\n";
     }
-    if (strcmp(msg, "  noct <file>                        ... run a program\n") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "  noct <file>                        ... run a program\n";
-        if (strncmp(lang_code, "es", 2) == 0) return "  noct <file>                        ... ejecutar un programa\n";
-        if (strncmp(lang_code, "fr", 2) == 0) return "  noct <file>                        ... exécuter un programme\n";
-        if (strncmp(lang_code, "de", 2) == 0) return "  noct <file>                        ... ein Programm ausführen\n";
-        if (strncmp(lang_code, "it", 2) == 0) return "  noct <file>                        ... eseguire un programma\n";
-        if (strncmp(lang_code, "el", 2) == 0) return "  noct <file>                        ... εκτέλεση προγράμματος\n";
-        if (strncmp(lang_code, "ru", 2) == 0) return "  noct <file>                        ... запуск программы\n";
-        if (strncmp(lang_code, "zh", 2) == 0) return "  noct <file>                        ... 运行程序\n";
-        if (strncmp(lang_code, "tw", 2) == 0) return "  noct <file>                        ... 執行程式\n";
-        if (strncmp(lang_code, "ja", 2) == 0) return "  noct <ファイル>                    ... プログラムを実行します\n";
-        return "  noct <file>                        ... run a program\n";
+    if (strcmp(msg, "  noct <vm-options> <files>          ... run a program\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "  noct <vm-options> <files>          ... run a program\n";
+        if (strncmp(lang_code, "es", 2) == 0) return "  noct <vm-options> <files>          ... ejecutar un programa\n";
+        if (strncmp(lang_code, "fr", 2) == 0) return "  noct <vm-options> <files>          ... exécuter un programme\n";
+        if (strncmp(lang_code, "de", 2) == 0) return "  noct <vm-options> <files>          ... ein Programm ausführen\n";
+        if (strncmp(lang_code, "it", 2) == 0) return "  noct <vm-options> <files>          ... eseguire un programma\n";
+        if (strncmp(lang_code, "el", 2) == 0) return "  noct <vm-options> <files>          ... εκτέλεση προγράμματος\n";
+        if (strncmp(lang_code, "ru", 2) == 0) return "  noct <vm-options> <files>          ... запуск программы\n";
+        if (strncmp(lang_code, "zh", 2) == 0) return "  noct <vm-options> <files>          ... 运行程序\n";
+        if (strncmp(lang_code, "tw", 2) == 0) return "  noct <vm-options> <files>          ... 執行程式\n";
+        if (strncmp(lang_code, "ja", 2) == 0) return "  noct <vm-options> <入力...>        ... プログラムを実行します\n";
+        return "  noct <vm-options> <files>          ... run a program\n";
     }
-    if (strcmp(msg, "  noct --compile <files>             ... convert to bytecode files\n") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "  noct --compile <files>             ... convert to bytecode files\n";
-        if (strncmp(lang_code, "es", 2) == 0) return "  noct --compile <files>             ... convertir en archivos de bytecode\n";
-        if (strncmp(lang_code, "fr", 2) == 0) return "  noct --compile <files>             ... convertir en fichiers bytecode\n";
-        if (strncmp(lang_code, "de", 2) == 0) return "  noct --compile <files>             ... in Bytecode-Dateien umwandeln\n";
-        if (strncmp(lang_code, "it", 2) == 0) return "  noct --compile <files>             ... convertire in file di bytecode\n";
-        if (strncmp(lang_code, "el", 2) == 0) return "  noct --compile <files>             ... μετατροπή σε αρχεία bytecode\n";
-        if (strncmp(lang_code, "ru", 2) == 0) return "  noct --compile <files>             ... преобразовать в байткод-файлы\n";
-        if (strncmp(lang_code, "zh", 2) == 0) return "  noct --compile <files>             ... 转换为字节码文件\n";
-        if (strncmp(lang_code, "tw", 2) == 0) return "  noct --compile <files>             ... 轉換為位元組碼檔案\n";
-        if (strncmp(lang_code, "ja", 2) == 0) return "  noct --compile <ファイル...>       ... バイトコードに変換します\n";
-        return "  noct --compile <files>             ... convert to bytecode files\n";
+        if (strncmp(lang_code, "  ", 2) == 0) return "  noct --compile <in-files>          ... convert to bytecode files\n\"));";
+    if (strcmp(msg, "  noct --compile <in-files>          ... convert to bytecode files\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "  noct --compile <in-files>          ... convert to bytecode files\n";
+        if (strncmp(lang_code, "es", 2) == 0) return "  noct --compile <in-files>          ... convertir en archivos de bytecode\n";
+        if (strncmp(lang_code, "fr", 2) == 0) return "  noct --compile <in-files>          ... convertir en fichiers bytecode\n";
+        if (strncmp(lang_code, "de", 2) == 0) return "  noct --compile <in-files>          ... in Bytecode-Dateien umwandeln\n";
+        if (strncmp(lang_code, "it", 2) == 0) return "  noct --compile <in-files>          ... convertire in file di bytecode\n";
+        if (strncmp(lang_code, "el", 2) == 0) return "  noct --compile <in-files>          ... μετατροπή σε αρχεία bytecode\n";
+        if (strncmp(lang_code, "ru", 2) == 0) return "  noct --compile <in-files>          ... преобразовать в байткод-файлы\n";
+        if (strncmp(lang_code, "zh", 2) == 0) return "  noct --compile <in-files>          ... 转换为字节码文件\n";
+        if (strncmp(lang_code, "tw", 2) == 0) return "  noct --compile <in-files>          ... 轉換為位元組碼檔案\n";
+        if (strncmp(lang_code, "ja", 2) == 0) return "  noct --compile <入力...>           ... バイトコードに変換します\n";
+        return "  noct --compile <in-files>          ... convert to bytecode files\n";
     }
-    if (strcmp(msg, "  noct --ansic <out file> <in files> ... convert to a C source file\n") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "  noct --ansic <out file> <in files> ... convert to a C source file\n";
-        if (strncmp(lang_code, "es", 2) == 0) return "  noct --ansic <out file> <in files> ... convertir en un archivo fuente en C\n";
-        if (strncmp(lang_code, "fr", 2) == 0) return "  noct --ansic <out file> <in files> ... convertir en un fichier source C\n";
-        if (strncmp(lang_code, "de", 2) == 0) return "  noct --ansic <out file> <in files> ... in eine C-Quelldatei umwandeln\n";
-        if (strncmp(lang_code, "it", 2) == 0) return "  noct --ansic <out file> <in files> ... convertire in un file sorgente C\n";
-        if (strncmp(lang_code, "el", 2) == 0) return "  noct --ansic <out file> <in files> ... μετατροπή σε αρχείο πηγαίου κώδικα C\n";
-        if (strncmp(lang_code, "ru", 2) == 0) return "  noct --ansic <out file> <in files> ... преобразовать в исходный файл C\n";
-        if (strncmp(lang_code, "zh", 2) == 0) return "  noct --ansic <out file> <in files> ... 转换为 C 源代码文件\n";
-        if (strncmp(lang_code, "tw", 2) == 0) return "  noct --ansic <out file> <in files> ... 轉換為 C 原始碼檔案\n";
-        if (strncmp(lang_code, "ja", 2) == 0) return "  noct --ansic <出力> <入力...>      ... Cソースに変換します\n";
-        return "  noct --ansic <out file> <in files> ... convert to a C source file\n";
+    if (strcmp(msg, "  noct --ansic <out-file> <in-files> ... convert to a C source file\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "  noct --ansic <out-file> <in-files> ... convert to a C source file\n";
+        if (strncmp(lang_code, "es", 2) == 0) return "  noct --ansic <out-file> <in-files> ... convertir en un archivo fuente en C\n";
+        if (strncmp(lang_code, "fr", 2) == 0) return "  noct --ansic <out-file> <in-files> ... convertir en un fichier source C\n";
+        if (strncmp(lang_code, "de", 2) == 0) return "  noct --ansic <out-file> <in-files> ... in eine C-Quelldatei umwandeln\n";
+        if (strncmp(lang_code, "it", 2) == 0) return "  noct --ansic <out-file> <in-files> ... convertire in un file sorgente C\n";
+        if (strncmp(lang_code, "el", 2) == 0) return "  noct --ansic <out-file> <in-files> ... μετατροπή σε αρχείο πηγαίου κώδικα C\n";
+        if (strncmp(lang_code, "ru", 2) == 0) return "  noct --ansic <out-file> <in-files> ... преобразовать в исходный файл C\n";
+        if (strncmp(lang_code, "zh", 2) == 0) return "  noct --ansic <out-file> <in-files> ... 转换为 C 源代码文件\n";
+        if (strncmp(lang_code, "tw", 2) == 0) return "  noct --ansic <out-file> <in-files> ... 轉換為 C 原始碼檔案\n";
+        if (strncmp(lang_code, "ja", 2) == 0) return "  noct --ansic <出力> <入力...>      ... C ソースに変換します\n";
+        return "  noct --ansic <out-file> <in-files> ... convert to a C source file\n";
     }
-    if (strcmp(msg, "  noct --elisp <out file> <in files> ... convert to an Emacs Lisp source file\n") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "  noct --elisp <out file> <in files> ... convert to an Emacs Lisp source file\n";
-        if (strncmp(lang_code, "es", 2) == 0) return "  noct --elisp <out file> <in files> ... convertir en un archivo fuente Emacs Lisp\n";
-        if (strncmp(lang_code, "fr", 2) == 0) return "  noct --elisp <out file> <in files> ... convertir en un fichier source Emacs Lisp\n";
-        if (strncmp(lang_code, "de", 2) == 0) return "  noct --elisp <out file> <in files> ... in eine Emacs-Lisp-Quelldatei umwandeln\n";
-        if (strncmp(lang_code, "it", 2) == 0) return "  noct --elisp <out file> <in files> ... convertire in un file sorgente Emacs Lisp\n";
-        if (strncmp(lang_code, "el", 2) == 0) return "  noct --elisp <out file> <in files> ... μετατροπή σε αρχείο πηγαίου κώδικα Emacs Lisp\n";
-        if (strncmp(lang_code, "ru", 2) == 0) return "  noct --elisp <out file> <in files> ... преобразовать в исходный файл Emacs Lisp\n";
-        if (strncmp(lang_code, "zh", 2) == 0) return "  noct --elisp <out file> <in files> ... 转换为 Emacs Lisp 源代码文件\n";
-        if (strncmp(lang_code, "tw", 2) == 0) return "  noct --elisp <out file> <in files> ... 轉換為 Emacs Lisp 原始碼檔案\n";
-        if (strncmp(lang_code, "ja", 2) == 0) return "  noct --elisp <出力> <入力...>      ... Emacs Lispソースに変換します\n";
-        return "  noct --elisp <out file> <in files> ... convert to an Emacs Lisp source file\n";
+    if (strcmp(msg, "  noct --elisp <out-file> <in-files> ... convert to an Emacs Lisp source file\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "  noct --elisp <out-file> <in-files> ... convert to an Emacs Lisp source file\n";
+        if (strncmp(lang_code, "es", 2) == 0) return "  noct --elisp <out-file> <in-files> ... convertir en un archivo fuente Emacs Lisp\n";
+        if (strncmp(lang_code, "fr", 2) == 0) return "  noct --elisp <out-file> <in-files> ... convertir en un fichier source Emacs Lisp\n";
+        if (strncmp(lang_code, "de", 2) == 0) return "  noct --elisp <out-file> <in-files> ... in eine Emacs-Lisp-Quelldatei umwandeln\n";
+        if (strncmp(lang_code, "it", 2) == 0) return "  noct --elisp <out-file> <in-files> ... convertire in un file sorgente Emacs Lisp\n";
+        if (strncmp(lang_code, "el", 2) == 0) return "  noct --elisp <out-file> <in-files> ... μετατροπή σε αρχείο πηγαίου κώδικα Emacs Lisp\n";
+        if (strncmp(lang_code, "ru", 2) == 0) return "  noct --elisp <out-file> <in-files> ... преобразовать в исходный файл Emacs Lisp\n";
+        if (strncmp(lang_code, "zh", 2) == 0) return "  noct --elisp <out-file> <in-files> ... 转换为 Emacs Lisp 源代码文件\n";
+        if (strncmp(lang_code, "tw", 2) == 0) return "  noct --elisp <out-file> <in-files> ... 轉換為 Emacs Lisp 原始碼檔案\n";
+        if (strncmp(lang_code, "ja", 2) == 0) return "  noct --elisp <出力> <入力...>      ... Emacs Lisp ソースに変換します\n";
+        return "  noct --elisp <out-file> <in-files> ... convert to an Emacs Lisp source file\n";
+    }
+    if (strcmp(msg, "  --disable-jit        ... disable JIT\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "  --disable-jit        ... disable JIT\n";
+        if (strncmp(lang_code, "es", 2) == 0) return "  --disable-jit        ... desactivar JIT\n";
+        if (strncmp(lang_code, "fr", 2) == 0) return "  --disable-jit        ... désactiver le JIT\n";
+        if (strncmp(lang_code, "de", 2) == 0) return "  --disable-jit        ... JIT deaktivieren\n";
+        if (strncmp(lang_code, "it", 2) == 0) return "  --disable-jit        ... disabilita JIT\n";
+        if (strncmp(lang_code, "el", 2) == 0) return "  --disable-jit        ... απενεργοποίηση JIT\n";
+        if (strncmp(lang_code, "ru", 2) == 0) return "  --disable-jit        ... отключить JIT\n";
+        if (strncmp(lang_code, "zh", 2) == 0) return "  --disable-jit        ... 禁用 JIT\n";
+        if (strncmp(lang_code, "tw", 2) == 0) return "  --disable-jit        ... 停用 JIT\n";
+        if (strncmp(lang_code, "ja", 2) == 0) return "  --disable-jit        ... JIT を無効にする\n";
+        return "  --disable-jit        ... disable JIT\n";
+    }
+    if (strcmp(msg, "  --force-jit          ... equivalent to --jit-threshold=0\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "  --force-jit          ... equivalent to --jit-threshold=0\n";
+        if (strncmp(lang_code, "es", 2) == 0) return "  --force-jit          ... equivalente a --jit-threshold=0\n";
+        if (strncmp(lang_code, "fr", 2) == 0) return "  --force-jit          ... équivalent à --jit-threshold=0\n";
+        if (strncmp(lang_code, "de", 2) == 0) return "  --force-jit          ... entspricht --jit-threshold=0\n";
+        if (strncmp(lang_code, "it", 2) == 0) return "  --force-jit          ... equivalente a --jit-threshold=0\n";
+        if (strncmp(lang_code, "el", 2) == 0) return "  --force-jit          ... ισοδύναμο με --jit-threshold=0\n";
+        if (strncmp(lang_code, "ru", 2) == 0) return "  --force-jit          ... эквивалентно --jit-threshold=0\n";
+        if (strncmp(lang_code, "zh", 2) == 0) return "  --force-jit          ... 等同于 --jit-threshold=0\n";
+        if (strncmp(lang_code, "tw", 2) == 0) return "  --force-jit          ... 等同於 --jit-threshold=0\n";
+        if (strncmp(lang_code, "ja", 2) == 0) return "  --force-jit          ... --jit-threshold=0 と同等\n";
+        return "  --force-jit          ... equivalent to --jit-threshold=0\n";
+    }
+    if (strcmp(msg, "  --jit-threshold=N    ... call-count threshold for compilation\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "  --jit-threshold=N    ... call-count threshold for compilation\n";
+        if (strncmp(lang_code, "es", 2) == 0) return "  --jit-threshold=N    ... umbral de número de llamadas para la compilación\n";
+        if (strncmp(lang_code, "fr", 2) == 0) return "  --jit-threshold=N    ... seuil du nombre d'appels pour la compilation\n";
+        if (strncmp(lang_code, "de", 2) == 0) return "  --jit-threshold=N    ... Aufrufanzahl-Schwellenwert für die Kompilierung\n";
+        if (strncmp(lang_code, "it", 2) == 0) return "  --jit-threshold=N    ... soglia del numero di chiamate per la compilazione\n";
+        if (strncmp(lang_code, "el", 2) == 0) return "  --jit-threshold=N    ... όριο αριθμού κλήσεων για μεταγλώττιση\n";
+        if (strncmp(lang_code, "ru", 2) == 0) return "  --jit-threshold=N    ... порог количества вызовов для компиляции\n";
+        if (strncmp(lang_code, "zh", 2) == 0) return "  --jit-threshold=N    ... 触发编译的调用次数阈值\n";
+        if (strncmp(lang_code, "tw", 2) == 0) return "  --jit-threshold=N    ... 觸發編譯的呼叫次數閾值\n";
+        if (strncmp(lang_code, "ja", 2) == 0) return "  --jit-threshold=N    ... コンパイルを行う呼び出し回数のしきい値\n";
+        return "  --jit-threshold=N    ... call-count threshold for compilation\n";
+    }
+    if (strcmp(msg, "  --optimize-level=N   ... optimize level (0/1)\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "  --optimize-level=N   ... optimize level (0/1)\n";
+        if (strncmp(lang_code, "es", 2) == 0) return "  --optimize-level=N   ... nivel de optimización (0/1)\n";
+        if (strncmp(lang_code, "fr", 2) == 0) return "  --optimize-level=N   ... niveau d’optimisation (0/1)\n";
+        if (strncmp(lang_code, "de", 2) == 0) return "  --optimize-level=N   ... Optimierungsstufe (0/1)\n";
+        if (strncmp(lang_code, "it", 2) == 0) return "  --optimize-level=N   ... livello di ottimizzazione (0/1)\n";
+        if (strncmp(lang_code, "el", 2) == 0) return "  --optimize-level=N   ... επίπεδο βελτιστοποίησης (0/1)\n";
+        if (strncmp(lang_code, "ru", 2) == 0) return "  --optimize-level=N   ... уровень оптимизации (0/1)\n";
+        if (strncmp(lang_code, "zh", 2) == 0) return "  --optimize-level=N   ... 优化级别 (0/1)\n";
+        if (strncmp(lang_code, "tw", 2) == 0) return "  --optimize-level=N   ... 最佳化等級 (0/1)\n";
+        if (strncmp(lang_code, "ja", 2) == 0) return "  --optimize-level=N   ... 最適化レベル (0/1)\n";
+        return "  --optimize-level=N   ... optimize level (0/1)\n";
+    }
+    if (strcmp(msg, "  --gc-nursery-size=N  ... first GC space size in bytes\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "  --gc-nursery-size=N  ... first GC space size in bytes\n";
+        if (strncmp(lang_code, "es", 2) == 0) return "  --gc-nursery-size=N  ... tamaño del primer espacio GC en bytes\n";
+        if (strncmp(lang_code, "fr", 2) == 0) return "  --gc-nursery-size=N  ... taille du premier espace GC en octets\n";
+        if (strncmp(lang_code, "de", 2) == 0) return "  --gc-nursery-size=N  ... Größe des ersten GC-Speicherbereichs in Byte\n";
+        if (strncmp(lang_code, "it", 2) == 0) return "  --gc-nursery-size=N  ... dimensione del primo spazio GC in byte\n";
+        if (strncmp(lang_code, "el", 2) == 0) return "  --gc-nursery-size=N  ... μέγεθος του πρώτου χώρου GC σε byte\n";
+        if (strncmp(lang_code, "ru", 2) == 0) return "  --gc-nursery-size=N  ... размер первой области GC в байтах\n";
+        if (strncmp(lang_code, "zh", 2) == 0) return "  --gc-nursery-size=N  ... 第一 GC 空间大小（字节）\n";
+        if (strncmp(lang_code, "tw", 2) == 0) return "  --gc-nursery-size=N  ... 第一 GC 空間大小（位元組）\n";
+        if (strncmp(lang_code, "ja", 2) == 0) return "  --gc-nursery-size=N  ... 第 1 GC 領域のサイズ（バイト単位）\n";
+        return "  --gc-nursery-size=N  ... first GC space size in bytes\n";
+    }
+    if (strcmp(msg, "  --gc-graduate-size=N ... second GC space size in bytes\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "  --gc-graduate-size=N ... second GC space size in bytes\n";
+        if (strncmp(lang_code, "es", 2) == 0) return "  --gc-graduate-size=N ... tamaño del segundo espacio GC en bytes\n";
+        if (strncmp(lang_code, "fr", 2) == 0) return "  --gc-graduate-size=N ... taille du second espace GC en octets\n";
+        if (strncmp(lang_code, "de", 2) == 0) return "  --gc-graduate-size=N ... Größe des zweiten GC-Speicherbereichs in Byte\n";
+        if (strncmp(lang_code, "it", 2) == 0) return "  --gc-graduate-size=N ... dimensione del secondo spazio GC in byte\n";
+        if (strncmp(lang_code, "el", 2) == 0) return "  --gc-graduate-size=N ... μέγεθος του δεύτερου χώρου GC σε byte\n";
+        if (strncmp(lang_code, "ru", 2) == 0) return "  --gc-graduate-size=N ... размер второй области GC в байтах\n";
+        if (strncmp(lang_code, "zh", 2) == 0) return "  --gc-graduate-size=N ... 第二 GC 空间大小（字节）\n";
+        if (strncmp(lang_code, "tw", 2) == 0) return "  --gc-graduate-size=N ... 第二 GC 空間大小（位元組）\n";
+        if (strncmp(lang_code, "ja", 2) == 0) return "  --gc-graduate-size=N ... 第 2 GC 領域のサイズ（バイト単位）\n";
+        return "  --gc-graduate-size=N ... second GC space size in bytes\n";
+    }
+    if (strcmp(msg, "  --gc-tenure-size=N   ... final GC space size in bytes\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "  --gc-tenure-size=N   ... final GC space size in bytes\n";
+        if (strncmp(lang_code, "es", 2) == 0) return "  --gc-tenure-size=N   ... tamaño del espacio GC final en bytes\n";
+        if (strncmp(lang_code, "fr", 2) == 0) return "  --gc-tenure-size=N   ... taille de l’espace GC final en octets\n";
+        if (strncmp(lang_code, "de", 2) == 0) return "  --gc-tenure-size=N   ... Größe des finalen GC-Speicherbereichs in Byte\n";
+        if (strncmp(lang_code, "it", 2) == 0) return "  --gc-tenure-size=N   ... dimensione dello spazio GC finale in byte\n";
+        if (strncmp(lang_code, "el", 2) == 0) return "  --gc-tenure-size=N   ... μέγεθος του τελικού χώρου GC σε byte\n";
+        if (strncmp(lang_code, "ru", 2) == 0) return "  --gc-tenure-size=N   ... размер финальной области GC в байтах\n";
+        if (strncmp(lang_code, "zh", 2) == 0) return "  --gc-tenure-size=N   ... 最终 GC 空间大小（字节）\n";
+        if (strncmp(lang_code, "tw", 2) == 0) return "  --gc-tenure-size=N   ... 最終 GC 空間大小（位元組）\n";
+        if (strncmp(lang_code, "ja", 2) == 0) return "  --gc-tenure-size=N   ... 最終 GC 領域のサイズ（バイト単位）\n";
+        return "  --gc-tenure-size=N   ... final GC space size in bytes\n";
+    }
+    if (strcmp(msg, "  --gc-lop-threshold=N ... move objects larger than N-bytes to final GC space\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "  --gc-lop-threshold=N ... move objects larger than N-bytes to final GC space\n";
+        if (strncmp(lang_code, "es", 2) == 0) return "  --gc-lop-threshold=N ... mover objetos mayores de N bytes al espacio GC final\n";
+        if (strncmp(lang_code, "fr", 2) == 0) return "  --gc-lop-threshold=N ... deplacer les objets de plus de N octets vers lespace GC final\n";
+        if (strncmp(lang_code, "de", 2) == 0) return "  --gc-lop-threshold=N ... Objekte groser als N Byte in den finalen GC-Speicherbereich verschieben\n";
+        if (strncmp(lang_code, "it", 2) == 0) return "  --gc-lop-threshold=N ... sposta gli oggetti più grandi di N byte nello spazio GC finale\n";
+        if (strncmp(lang_code, "el", 2) == 0) return "  --gc-lop-threshold=N ... μεταφορά αντικειμένων μεγαλύτερων από N byte στον τελικό χώρο GC\n";
+        if (strncmp(lang_code, "ru", 2) == 0) return "  --gc-lop-threshold=N ... перемещать объекты больше N байт в финальную область GC\n";
+        if (strncmp(lang_code, "zh", 2) == 0) return "  --gc-lop-threshold=N ... 将大于 N 字节的对象移动到最终 GC 空间\n";
+        if (strncmp(lang_code, "tw", 2) == 0) return "  --gc-lop-threshold=N ... 將大於 N 位元組的物件移動到最終 GC 空間\n";
+        if (strncmp(lang_code, "ja", 2) == 0) return "  --gc-lop-threshold=N ... N バイトを超えるオブジェクトを最終 GC 領域へ移動\n";
+        return "  --gc-lop-threshold=N ... move objects larger than N-bytes to final GC space\n";
     }
     return msg;
 }

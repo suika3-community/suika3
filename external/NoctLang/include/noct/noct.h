@@ -15,56 +15,19 @@
 #include <noct/c89compat.h>
 
 /*
- * Definition of the import/export keyword.
+ * Constants
  */
-#if defined(USE_DLL)
-#if defined(__GNUC__)
-#define NOCT_DLL		__attribute__((visibility("default")))
-#elif defined(_MSC_VER)
-#if defined(DLL_IMPL)
-#define NOCT_DLL		__declspec(dllexport)
-#else
-#define NOCT_DLL		__declspec(dllimport)
-#endif
-#endif
-#else
-#define NOCT_DLL
-#endif
 
-/*
- * Maximum arguments of a call.
- */
+/* Maximum arguments of a call. */
 #define NOCT_ARG_MAX		32
 
-/*
- * Bytecode File Header
- */
+/* Bytecode file header. */
 #define NOCT_BYTECODE_HEADER	"Noct Bytecode"
 
-/*
- * Forward declaration of internal structs.
- */
-struct rt_runtime;
-struct rt_env;
-struct rt_frame;
-struct rt_gc_object;
-struct rt_value;
-struct rt_string;
-struct rt_array;
-struct rt_dict;
-struct rt_func;
+/* Zero value. */
+#define NOCT_ZERO	{0, 0}
 
-/*
- * Friendly-names.
- */
-typedef struct rt_vm     NoctVM;	/* A sandbox.        */
-typedef struct rt_env    NoctEnv;	/* A thread context. */
-typedef struct rt_value  NoctValue;	/* A value.          */
-typedef struct rt_func   NoctFunc;	/* A function.       */
-
-/*
- * Value type.
- */
+/* Value type. */
 enum NoctValueType {
 	NOCT_VALUE_INT    = 0,
 	NOCT_VALUE_FLOAT  = 1,
@@ -75,22 +38,46 @@ enum NoctValueType {
 };
 
 /*
- * Zero value.
+ * Structures
  */
-#define NOCT_ZERO	{0, 0}
+
+/* Forward declaration. (private) */
+struct rt_vm;
+struct rt_env;
+struct rt_value;
+struct rt_string;
+struct rt_array;
+struct rt_dict;
+struct rt_func;
+struct rt_gc_object;
+
+/* A sandbox instance. */
+typedef struct rt_vm NoctVM;
+
+/* A thread context. */
+typedef struct rt_env NoctEnv;
+
+/* A value. */
+typedef struct rt_value NoctValue;
+
+/* A function. */
+typedef struct rt_func NoctFunc;
 
 /*
- * NoctValue implementation.
+ * A value.
+ *  - Members are private.
  *  - If a value is zero-cleared, it shows an integer zero.
  *  - This struct has 8 bytes on 32-bit architecture and 16 bytes on 64-bit architecture.
- *  - This struct is public for declarations of variables that have NoctValue type.
  */
 struct rt_value {
 	/* Offset 0: */
 	int type;
 
-	/* 32-bit padding for 64-bit architecture excluding MIPS64. */
-#if defined(ARCH_ARM64) || defined(ARCH_X86_64) || defined(ARCH_PPC64)
+#if defined(NOCT_ARCH_ARM64)  || \
+    defined(NOCT_ARCH_X86_64) || \
+    defined(NOCT_ARCH_PPC64)  || \
+    defined(NOCT_ARCH_RISCV64)
+	/* 32-bit padding for 64-bit architectures excluding MIPS64. */
 	int padding;
 #endif
 
@@ -105,31 +92,49 @@ struct rt_value {
 		struct rt_gc_object *obj;
 	} val;
 };
+typedef struct rt_value NoctValue;
 
-/*
- * Allocators
- *  - Override the macros and make your own custom build.
- */
+/* Configuration  */
+struct rt_config {
+	/* Enable JIT. */
+	bool jit_enable;
 
-#ifndef noct_malloc
-#define noct_malloc	malloc
-#endif
+	/* JIT threshold. */
+	int jit_threshold;
 
-#ifndef noct_calloc
-#define noct_calloc	calloc
-#endif
+	/* Optimization level. */
+	int optimize_level;
 
-#ifndef noct_strdup
-#define noct_strdup	strdup
-#endif
+	/* GC nursery region size. */
+	size_t gc_nursery_size;
 
-#ifndef noct_free
-#define noct_free	free
-#endif
+	/* GC graduate region size. */
+	size_t gc_graduate_size;
+
+	/* GC tenure region size. */
+	size_t gc_tenure_size;
+
+	/* GC large-object-promotion threshold. */
+	size_t gc_lop_threshold;
+
+	/* GC tenure-promotion threshold. */
+	size_t gc_promotion_threshold;
+
+	uint64_t reserved[56];
+};
+typedef struct rt_config NoctConfig;
 
 /*
  * Core Functions
  */
+
+/*
+ * Fill the config struct by default values.
+ */
+NOCT_DLL
+void
+noct_set_default_config(
+	NoctConfig *config);
 
 /*
  * Creates a new sandboxed VM instance.
@@ -140,7 +145,8 @@ NOCT_DLL
 bool
 noct_create_vm(
 	NoctVM **vm,
-	NoctEnv **default_env);
+	NoctEnv **default_env,
+	NoctConfig *conf);
 
 /*
  * Destroys the given sandboxed VM instance and releases associated resources.
@@ -377,7 +383,7 @@ bool
 noct_get_func(
 	NoctEnv *env,
 	NoctValue *val,
-	NoctFunc **ret);
+	NoctFunc **f);
 
 /*
  * Arrays
@@ -1239,54 +1245,442 @@ noct_set_return_make_string(
 	NoctValue *val,
 	const char *data);
 
-/*
- * Configuration
- */
-
-/* Enable JIT. */
-extern bool noct_conf_jit_enable;
-
-/* JIT threshold. */
-extern int noct_conf_jit_threshold;
-
-/* Optimization level. */
-extern int noct_conf_optimize;
-
-/* GC nursery region size. */
-extern size_t noct_conf_gc_nursery_size;
-
-/* GC graduate region size. */
-extern size_t noct_conf_gc_graduate_size;
-
-/* GC tenure region size. */
-extern size_t noct_conf_gc_tenure_size;
-
-/* GC large-object-promotion threshold. */
-extern size_t noct_conf_gc_lop_threshold;
-
-/* GC tenure-promotion threshold. */
-extern size_t noct_conf_gc_promotion_threshold;
+/* Hash */
 
 /*
- * Library Installation
+ * Get a string hash.
  */
+NOCT_DLL
+uint32_t
+noct_string_hash(
+	const char *s);
 
-#define NOCT_REGISTER_ALL_APIS(env)	do { 			\
-		if (!noct_register_api_system(env))		\
-			return false;				\
-		if (!noct_register_api_console(env))		\
-			return false;				\
-		if (!noct_register_api_math(env))		\
-			return false;				\
-	} while (0)
+/*
+ * Get a string hash and length.
+ */
+NOCT_DLL
+void
+noct_string_hash_and_len(
+	const char *s,
+	uint32_t *hash,
+	uint32_t *len);
+
+/* Library Installation */
 
 /* Register the "System.*" APIs. */
-bool noct_register_api_system(NoctEnv *env);
+NOCT_DLL
+bool
+noct_register_api_system(
+	NoctEnv *env);
 
 /* Register the "Console.*" APIs. */
-bool noct_register_api_console(NoctEnv *env);
+NOCT_DLL
+bool
+noct_register_api_console(
+	NoctEnv *env);
 
 /* Register the "Math.*" APIs. */
-bool noct_register_api_math(NoctEnv *env);
+NOCT_DLL
+bool
+noct_register_api_math(
+	NoctEnv *env);
+
+/*
+ * AOT Execution Helpers
+ *
+ * Some exotic compilers for x86 including Watcom utilize registers to
+ * pass function arguments. However, our JIT-generated code for x86
+ * passes function arguments via the stack. To bridge this gap, we use
+ * the CDECL keyword in these helpers to be properly called from the
+ * JIT-generated code.
+ */
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_make_string_with_hash(
+	NoctEnv *env,
+	NoctValue *val,
+	const char *data,
+	size_t len,
+	uint32_t hash);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_make_empty_array(
+	NoctEnv *env,
+	NoctValue *val);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_make_empty_dict(
+	NoctEnv *env,
+	NoctValue *val);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_assign_helper(
+	NoctEnv *rt,
+	int dst,
+	int src);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_add_helper(
+	NoctEnv *rt,
+	int dst,
+	int src1,
+	int src2);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_sub_helper(
+	NoctEnv *rt,
+	int dst,
+	int src1,
+	int src2);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_mul_helper(
+	NoctEnv *rt,
+	int dst,
+	int src1,
+	int src2);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_div_helper(
+	NoctEnv *rt,
+	int dst,
+	int src1,
+	int src2);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_mod_helper(
+	NoctEnv *rt,
+	int dst,
+	int src1,
+	int src2);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_and_helper(
+	NoctEnv *rt,
+	int dst,
+	int src1,
+	int src2);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_or_helper(
+	NoctEnv *rt,
+	int dst,
+	int src1,
+	int src2);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_xor_helper(
+	NoctEnv *rt,
+	int dst,
+	int src1,
+	int src2);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_shl_helper(
+	NoctEnv *rt,
+	int dst,
+	int src1,
+	int src2);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_shr_helper(
+	NoctEnv *rt,
+	int dst,
+	int src1,
+	int src2);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_neg_helper(
+	NoctEnv *rt,
+	int dst,
+	int src);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_not_helper(
+	NoctEnv *rt,
+	int dst,
+	int src);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_lt_helper(
+	NoctEnv *rt,
+	int dst,
+	int src1,
+	int src2);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_lte_helper(
+	NoctEnv *rt,
+	int dst,
+	int src1,
+	int src2);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_eq_helper(
+	NoctEnv *rt,
+	int dst,
+	int src1,
+	int src2);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_neq_helper(
+	NoctEnv *rt,
+	int dst,
+	int src1,
+	int src2);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_gte_helper(
+	NoctEnv *rt,
+	int dst,
+	int src1,
+	int src2);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_gt_helper(
+	NoctEnv *rt,
+	int dst,
+	int src1,
+	int src2);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_storearray_helper(
+	NoctEnv *rt,
+	int arr,
+	int subscr,
+	int val);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_loadarray_helper(
+	NoctEnv *rt,
+	int dst,
+	int arr,
+	int subscr);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_len_helper(
+	NoctEnv *rt,
+	int dst,
+	int src);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_getdictkeybyindex_helper(
+	NoctEnv *rt,
+	int dst,
+	int dict,
+	int subscr);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_getdictvalbyindex_helper(
+	NoctEnv *rt,
+	int dst,
+	int dict,
+	int subscr);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_loadsymbol_helper(
+	NoctEnv *rt,
+	int dst,
+	const char *symbol,
+	uint32_t symbol_len,
+	uint32_t symbol_hash);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_storesymbol_helper(
+	NoctEnv *rt,
+	const char *symbol,
+	uint32_t symbol_len,
+	uint32_t symbol_hash,
+	int src);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_loaddot_helper(
+	NoctEnv *rt,
+	int dst,
+	int dict,
+	const char *field,
+	uint32_t field_len,
+	uint32_t field_hash);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_storedot_helper(
+	NoctEnv *rt,
+	int dict,
+	const char *field,
+	uint32_t field_len,
+	uint32_t field_hash,
+	int src);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_call_helper(
+	NoctEnv *rt,
+	int dst,
+	int func,
+	int arg_count,
+	int *arg);
+
+NOCT_DLL
+bool
+CDECL
+noct_ex_thiscall_helper(
+	NoctEnv *rt,
+	int dst,
+	int obj,
+	const char *name,
+	uint32_t name_len,
+	uint32_t name_hash,
+	int arg_count,
+	int *arg);
+
+/*
+ * Bytecode Backend
+ */
+
+/* Start the BC backend. */
+NOCT_DLL
+bool
+noct_bcback_start(
+	const char *out_file_name);
+
+/* Translate a file using BC backend. */
+NOCT_DLL
+bool
+noct_bcback_translate(
+	const char *source_file_name,
+	const char *source_data);
+
+/* Finalize the BC backend. */
+NOCT_DLL
+bool
+noct_bcback_finalize(void);
+
+/*
+ * C Backend
+ */
+
+/* Start the C backend. */
+NOCT_DLL
+bool
+noct_cback_start(
+	const char *fname);
+
+/* Translate a file using C backend. */
+NOCT_DLL
+bool
+noct_cback_translate(
+	const char *fname,
+	const char *data);
+
+/* Finalize the C backend. */
+NOCT_DLL
+bool
+noct_cback_finalize(void);
+
+/*
+ * Emacs Lisp Backend
+ */
+
+/* Start EL backend. */
+NOCT_DLL
+bool
+noct_elback_start(
+	const char *fname);
+
+/* Translate a file using EL backend. */
+NOCT_DLL
+bool
+noct_elback_translate(
+	const char *fname,
+	const char *data);
+
+/* Finalize the EL backend. */
+NOCT_DLL
+bool
+noct_elback_finalize(void);
+
+/*
+ * Custom Allocators
+ *  - Override the macros and build a custom library.
+ */
+
+#ifndef noct_malloc
+#define noct_malloc	malloc
+#endif
+
+#ifndef noct_calloc
+#define noct_calloc	calloc
+#endif
+
+#ifndef noct_strdup
+#define noct_strdup	strdup
+#endif
+
+#ifndef noct_free
+#define noct_free	free
+#endif
 
 #endif

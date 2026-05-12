@@ -6,14 +6,13 @@
  */
 
 /*
- * LIR: Low-level intermediate representation
+ * LIR: Low-level Intermediate Representation
  */
 
 #include <noct/noct.h>
 #include "lir.h"
 #include "hir.h"
 #include "bytecode.h"
-#include "hash.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,11 +27,6 @@
 /* Debug print */
 #undef DEBUG_BLOCK_ORDER
 #undef DEBUG_DUMP_LIR
-
-/*
- * Config
- */
-extern int noct_conf_optimize;
 
 /*
  * Target LIR.
@@ -90,6 +84,11 @@ static int lir_error_line;
 static char lir_error_message[1024];
 
 /*
+ * Optimize lelve.
+ */
+int lir_optimize_level = 0;
+
+/*
  * Forward declaration.
  */
 static uint32_t lir_count_local(struct hir_block *func);
@@ -138,9 +137,8 @@ static void lir_fatal(const char *msg, ...);
 static void lir_out_of_memory(void);
 
 /*
- * Build
+ * Build a LIR function from a HIR function.
  */
-
 bool
 lir_build(
 	struct hir_block *hir_func,
@@ -327,15 +325,13 @@ lir_visit_basic_block(
 	/* Store the block address. */
 	block->addr = (uint32_t)bytecode_top;
 
-#if 0
 	/* Put a line number. */
-	if (conf_optimize == 0) {
-		if (!lir_put_opcode(LOP_LINEINFO))
+	if (lir_optimize_level == 0) {
+		if (!lir_put_opcode(OP_LINEINFO))
 			return false;
 		if (!lir_put_imm32((uint32_t)block->line))
 			return false;
 	}
-#endif
 
 	/* Visit statements. */
 	stmt = block->val.basic.stmt_list;
@@ -417,7 +413,7 @@ lir_visit_if_block(
 	block->addr = (uint32_t)bytecode_top;
 
 	/* Put a line number. */
-	if (noct_conf_optimize == 0) {
+	if (lir_optimize_level == 0) {
 		if (!lir_put_opcode(OP_LINEINFO))
 			return false;
 		if (!lir_put_imm32((uint32_t)block->line))
@@ -540,7 +536,7 @@ lir_visit_for_range_block(
 	block->addr = (uint32_t)bytecode_top;
 
 	/* Put a line number. */
-	if (noct_conf_optimize == 0) {
+	if (lir_optimize_level == 0) {
 		if (!lir_put_opcode(OP_LINEINFO))
 			return false;
 		if (!lir_put_imm32((uint32_t)block->line))
@@ -638,7 +634,7 @@ lir_visit_for_kv_block(
 	block->addr = (uint32_t)bytecode_top;
 
 	/* Put a line number. */
-	if (noct_conf_optimize == 0) {
+	if (lir_optimize_level == 0) {
 		if (!lir_put_opcode(OP_LINEINFO))
 			return false;
 		if (!lir_put_imm32((uint32_t)block->line))
@@ -756,7 +752,7 @@ lir_visit_for_v_block(
 	block->addr = (uint32_t)bytecode_top;
 
 	/* Put a line number. */
-	if (noct_conf_optimize == 0) {
+	if (lir_optimize_level == 0) {
 		if (!lir_put_opcode(OP_LINEINFO))
 			return false;
 		if (!lir_put_imm32((uint32_t)block->line))
@@ -888,7 +884,7 @@ lir_visit_while_block(
 	block->addr = (uint32_t)bytecode_top;
 
 	/* Put a line number. */
-	if (noct_conf_optimize == 0) {
+	if (lir_optimize_level == 0) {
 		if (!lir_put_opcode(OP_LINEINFO))
 			return false;
 		if (!lir_put_imm32((uint32_t)block->line))
@@ -940,7 +936,7 @@ lir_visit_stmt(
 	assert(stmt->rhs != NULL);
 
 	/* Put a line number. */
-	if (noct_conf_optimize == 0) {
+	if (lir_optimize_level == 0) {
 		if (!lir_put_opcode(OP_LINEINFO))
 			return false;
 		if (!lir_put_imm32((uint32_t)stmt->line))
@@ -1946,7 +1942,7 @@ lir_put_string(
 		return false;
 
 	/* Put the hash. */
-	hash = string_hash(s);
+	hash = noct_string_hash(s);
 	if (!lir_put_u32(hash))
 		return false;
 
@@ -2110,8 +2106,6 @@ lir_out_of_memory(void)
  * Dump
  */
 
-#ifdef DEBUG_DUMP_LIR
-
 /* IMM 1-byte */
 #define IMM1(d) imm1(&pc, &d)
 static INLINE void imm1(uint8_t **pc, uint8_t *ret)
@@ -2247,7 +2241,24 @@ lir_dump(
 			printf("%04d: INC(dst:%d)\n", ofs, dst);
 			break;
 		}
-		//case OP_NEG:
+		case OP_NOT:
+		{
+			uint16_t dst;
+			uint16_t src;
+			IMM2(dst);
+			IMM2(src);
+			printf("%04d: NOT(dst:%d, src:%d)\n", ofs, dst, src);
+			break;
+		}
+		case OP_NEG:
+		{
+			uint16_t dst;
+			uint16_t src;
+			IMM2(dst);
+			IMM2(src);
+			printf("%04d: NEG(dst:%d, src:%d)\n", ofs, dst, src);
+			break;
+		}
 		case OP_ADD:
 		{
 			uint16_t dst;
@@ -2259,16 +2270,116 @@ lir_dump(
 			printf("%04d: ADD(dst:%d, src1:%d, src2: %d)\n", ofs, dst, src1, src2);
 			break;
 		}
-		//case OP_SUB:
-		//case OP_MUL:
-		//case OP_DIV:
-		//case OP_MOD:
-		//case OP_AND:
-		//case OP_OR:
-		//case OP_XOR:
-		//case OP_LT:
-		//case OP_LTE:
-		//case OP_GT:
+		case OP_SUB:
+		{
+			uint16_t dst;
+			uint16_t src1;
+			uint16_t src2;
+			IMM2(dst);
+			IMM2(src1);
+			IMM2(src2);
+			printf("%04d: SUB(dst:%d, src1:%d, src2: %d)\n", ofs, dst, src1, src2);
+			break;
+		}
+		case OP_MUL:
+		{
+			uint16_t dst;
+			uint16_t src1;
+			uint16_t src2;
+			IMM2(dst);
+			IMM2(src1);
+			IMM2(src2);
+			printf("%04d: MUL(dst:%d, src1:%d, src2: %d)\n", ofs, dst, src1, src2);
+			break;
+		}
+		case OP_DIV:
+		{
+			uint16_t dst;
+			uint16_t src1;
+			uint16_t src2;
+			IMM2(dst);
+			IMM2(src1);
+			IMM2(src2);
+			printf("%04d: DIV(dst:%d, src1:%d, src2: %d)\n", ofs, dst, src1, src2);
+			break;
+		}
+		case OP_MOD:
+		{
+			uint16_t dst;
+			uint16_t src1;
+			uint16_t src2;
+			IMM2(dst);
+			IMM2(src1);
+			IMM2(src2);
+			printf("%04d: MOD(dst:%d, src1:%d, src2: %d)\n", ofs, dst, src1, src2);
+			break;
+		}
+		case OP_AND:
+		{
+			uint16_t dst;
+			uint16_t src1;
+			uint16_t src2;
+			IMM2(dst);
+			IMM2(src1);
+			IMM2(src2);
+			printf("%04d: AND(dst:%d, src1:%d, src2: %d)\n", ofs, dst, src1, src2);
+			break;
+		}
+		case OP_OR:
+		{
+			uint16_t dst;
+			uint16_t src1;
+			uint16_t src2;
+			IMM2(dst);
+			IMM2(src1);
+			IMM2(src2);
+			printf("%04d: OR(dst:%d, src1:%d, src2: %d)\n", ofs, dst, src1, src2);
+			break;
+		}
+		case OP_XOR:
+		{
+			uint16_t dst;
+			uint16_t src1;
+			uint16_t src2;
+			IMM2(dst);
+			IMM2(src1);
+			IMM2(src2);
+			printf("%04d: XOR(dst:%d, src1:%d, src2: %d)\n", ofs, dst, src1, src2);
+			break;
+		}
+		case OP_LT:
+		{
+			uint16_t dst;
+			uint16_t src1;
+			uint16_t src2;
+			IMM2(dst);
+			IMM2(src1);
+			IMM2(src2);
+			printf("%04d: LT(dst:%d, src1:%d, src2: %d)\n", ofs, dst, src1, src2);
+			break;
+		}
+		case OP_LTE:
+		{
+			uint16_t dst;
+			uint16_t src1;
+			uint16_t src2;
+			IMM2(dst);
+			IMM2(src1);
+			IMM2(src2);
+			printf("%04d: LTE(dst:%d, src1:%d, src2: %d)\n", ofs, dst, src1, src2);
+			break;
+		}
+		case OP_GT:
+		{
+			uint16_t dst;
+			uint16_t src1;
+			uint16_t src2;
+			IMM2(dst);
+			IMM2(src1);
+			IMM2(src2);
+			printf("%04d: GT(dst:%d, src1:%d, src2: %d)\n", ofs, dst, src1, src2);
+			break;
+		}
 		case OP_GTE:
 		{
 			uint16_t dst;
@@ -2302,7 +2413,17 @@ lir_dump(
 			printf("%04d: EQI(dst:%d, src1:%d, src2:%d)\n", ofs, dst, src1, src2);
 			break;
 		}
-		//case OP_NEQ:
+		case OP_NEQ:
+		{
+			uint16_t dst;
+			uint16_t src1;
+			uint16_t src2;
+			IMM2(dst);
+			IMM2(src1);
+			IMM2(src2);
+			printf("%04d: NEQ(dst:%d, src1:%d, src2: %d)\n", ofs, dst, src1, src2);
+			break;
+		}
 		case OP_LOADARRAY:
 		{
 			uint16_t dst;
@@ -2356,8 +2477,26 @@ lir_dump(
 			printf("%04d: GETDICTKEYBYINDEX(dst:%d, dict:%d, index:%d)\n", ofs, dst, dict, index);
 			break;
 		}
-		//case OP_STOREDOT:
-		//case OP_LOADDOT:
+		case OP_STOREDOT:
+		{
+			const char *symbol;
+			uint16_t obj, src;
+			IMM2(obj);
+			IMMS(symbol);
+			IMM2(src);
+			printf("%04d: STOREDOT(obj:%d, symbol:%s, src:%d)\n", ofs, obj, symbol, src);
+			break;
+		}
+		case OP_LOADDOT:
+		{
+			const char *symbol;
+			uint16_t dst, obj;
+			IMM2(dst);
+			IMM2(obj);
+			IMMS(symbol);
+			printf("%04d: LOADDOT(dst: %d, obj:%d, symbol:%s)\n", ofs, dst, obj, symbol);
+			break;
+		}
 		case OP_STORESYMBOL:
 		{
 			const char *symbol;
@@ -2394,7 +2533,25 @@ lir_dump(
 			printf(")\n");
 			break;
 		}
-		//case OP_THISCALL:
+		case OP_THISCALL:
+		{
+			uint16_t dst;
+			uint16_t obj;
+			uint16_t func;
+			uint8_t arg_count;
+			uint16_t arg;
+			int i;
+			IMM2(dst);
+			IMM2(func);
+			IMM1(arg_count);
+			printf("%04d: THISCALL(dst: %d, obj: %d,arg_count:%d", ofs, dst, obj, arg_count);
+			for (i = 0; i < arg_count; i++) {
+				IMM2(arg);
+				printf(", %d", arg);
+			}
+			printf(")\n");
+			break;
+		}
 		case OP_JMP:
 		{
 			uint32_t target;
@@ -2435,5 +2592,3 @@ lir_dump(
 		}
 	}
 }
-
-#endif /* DEBUG_DUMP_LIR */

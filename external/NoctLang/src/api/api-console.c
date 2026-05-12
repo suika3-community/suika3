@@ -42,7 +42,10 @@ static struct ffi_item ffi_items[] = {
 /*
  * Register "Console.*" functions.
  */
-bool noct_register_api_console(NoctEnv *env)
+NOCT_DLL
+bool
+noct_register_api_console(
+	NoctEnv *env)
 {
 	NoctValue dict;
 	int i;

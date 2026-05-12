@@ -14,9 +14,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef NOCT_TARGET_WINDOWS
+#if defined(NOCT_TARGET_WINDOWS)
 #include <windows.h>
 #include <fcntl.h>
+#elif defined(NOCT_TARGET_DOS4G)
+#include <io.h>
 #else
 #include <unistd.h>
 #include <string.h>
@@ -80,7 +82,10 @@ static struct ffi_item ffi_items[] = {
 /*
  * Register "System.*" functions.
  */
-bool noct_register_api_system(NoctEnv *env)
+NOCT_DLL
+bool
+noct_register_api_system(
+	NoctEnv *env)
 {
 	NoctValue dict;
 	int i;
@@ -170,6 +175,8 @@ cfunc_System_runCommand(
 	if (!noct_get_arg_check_int(env, 2, &tmp, &wait_for_finish))
 		return false;
 
+	ret = 0;
+
 #if defined(NOCT_TARGET_WINDOWS)
 	{
 		STARTUPINFOW si;
@@ -210,7 +217,7 @@ cfunc_System_runCommand(
 		if (pi.hProcess != NULL)
 			CloseHandle(pi.hProcess);
 	}
-#else
+#elif defined(NOCT_TARGET_POSIX)
 	{
 		pid_t pid = fork();
 		if (pid < 0) {

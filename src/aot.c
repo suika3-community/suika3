@@ -31,13 +31,8 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#include "playfield/playfield.h"
-#include "noct/noct.h"
-#include "runtime.h"
-#include "ast.h"
-#include "hir.h"
-#include "lir.h"
-#include "cback.h"
+#include <playfield/playfield.h>
+#include <noct/noct.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -120,7 +115,7 @@ static bool do_transpile_c(const char *out_file, int in_file_count, const char *
 	int i;
 
 	/* Initialize the backend. */
-	if (!cback_init(out_file))
+	if (!noct_cback_start(out_file))
 		return false;
 
 	/* For each input file or directory. */
@@ -131,7 +126,7 @@ static bool do_transpile_c(const char *out_file, int in_file_count, const char *
 	}
 
 	/* Put a epilogue code. */
-	if (!cback_finalize_dll())
+	if (!noct_cback_finalize())
 		return false;
 
 	return true;
@@ -148,54 +143,12 @@ static bool add_file_hook_c(const char *fname)
 	if (!load_file_content(fname, &data, &len))
 		return false;
 
-	/* Do parse, build AST. */
-	if (!ast_build(fname, data)) {
-		wide_printf(PF_TR("Error: %s:%d: %s"),
-			    ast_get_file_name(),
-			    ast_get_error_line(),
-			    ast_get_error_message());
-		wide_printf("\n");
+	/* Translate. */
+	if (!noct_cback_translate(fname, data)) {
+		free(data);
 		return false;
 	}
-
-	/* Transform AST to HIR. */
-	if (!hir_build()) {
-		wide_printf(PF_TR("Error: %s:%d: %s"),
-			    hir_get_file_name(),
-			    hir_get_error_line(),
-			    hir_get_error_message());
-		wide_printf("\n");
-		return false;
-	}
-
-	/* For each HIR function. */
-	func_count = hir_get_function_count();
-	for (j = 0; j < func_count; j++) {
-		struct hir_block *hfunc;
-		struct lir_func *lfunc;
-
-		/* Transform HIR to LIR (bytecode). */
-		hfunc = hir_get_function(j);
-		if (!lir_build(hfunc, &lfunc)) {
-			wide_printf(PF_TR("Error: %s:%d: %s"),
-				    lir_get_file_name(),
-				    lir_get_error_line(),
-				    lir_get_error_message());
-			wide_printf("\n");
-			return false;;
-		}
-
-		/* Put a C function. */
-		if (!cback_translate_func(lfunc))
-			return false;
-
-		/* Free a single LIR. */
-		lir_cleanup(lfunc);
-	}
-
-	/* Free intermediated. */
-	hir_cleanup();
-	ast_cleanup();
+	free(data);
 
 	return true;
 }

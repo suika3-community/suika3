@@ -23,15 +23,16 @@ static bool ffi_print(NoctEnv *env);
 void call_noct(const char *file_name, const char *file_text)
 {
     // Create a VM with an environment.
-    // The environment is the default thread handle.
-    // All operations exclude VM destruction are done through a thread handle.
+    //  - An environment is a handle for a thread context.
+    //  - All operations exclude VM construction and destruction are done
+    //    through an environment.
     noct_create_vm(&vm, &env);
 
     // Install a Native API function "print(msg)" to the VM.
     const char *param_name = {"msg"};
     noct_register_cfunc(env, "print", 1, param_name, napi_print, NULL);
 
-    // Compile source and install it to the VM.
+    // Compile source and install compiled functions to the VM.
     noct_register_source(env, file_name, file_text);
 
     // Call the main() function with no arguments.
@@ -48,19 +49,21 @@ static bool napi_print(NoctEnv *env)
     NoctValue param;
     const char *s;
 
-    // Pin a value to avoid GC.
+    // Pin a NoctValue to avoid GC.
     if (!noct_pin_local(env, 1, &param))
         return false;
 
-    // Get the parameter.
+    // Get the parameter. This gets a "const char *" pointer via "s",
+    // and the pointer is backed by "param" for avoiding GC to collect it.
     if (!noct_get_arg_check_string(env, 0, &param, &s)) {
         noct_unpin_local(env, 1, &value);
         return false;
     }
 
+    // Do something.
     printf("%s\n", s);
 
-    // Unpin a value.
+    // Unpin a NoctValue.
     noct_unpin_local(env, 1, &value);
 
     return true;

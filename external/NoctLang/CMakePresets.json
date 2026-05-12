@@ -5,23 +5,26 @@
     },
     "configurePresets": [
         {
-            "name":           "pc98",
-            "displayName":    "NEC PC-9800 Series DOS/4G OpenWatcom V2",
+            "name":           "msdos",
+            "displayName":    "MS-DOS",
             "generator":      "Ninja",
-            "binaryDir":      "${sourceDir}/build-pc98",
+            "binaryDir":      "${sourceDir}/build-msdos",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/openwatcom-dos4gw.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":        "Release",
-                "PLAYFIELD_TARGET_PC98":   "ON",
-                "PLAYFIELD_ENABLE_JIT":    "ON",
-                "PLAYFIELD_ENABLE_BIN":    "ON",
-                "PLAYFIELD_ENABLE_MAIN2":  "ON"
+                "CMAKE_BUILD_TYPE":          "Release",
+                "NOCT_TARGET_DOS4G":         "ON",
+                "NOCT_ENABLE_CLI":           "ON",
+                "NOCT_ENABLE_JIT":           "ON",
+                "NOCT_ENABLE_I18N":          "OFF",
+                "NOCT_ENABLE_API":           "ON"
 	    }
+        }
     ],
     "buildPresets": [
         {
-            "name": "pc98",
-            "configurePreset": "pc98"
+            "name": "msdos",
+            "configurePreset": "msdos",
+            "configuration": "Release"
         }
     ]
 }

@@ -9,13 +9,12 @@
  * JIT (mips32): Just-In-Time native code generation
  */
 
-#include <noct/c89compat.h>     /* NOCT_ARCH_MIPS32 */
+#include <noct/noct.h>
 
 #if defined(NOCT_ARCH_MIPS32) && defined(NOCT_USE_JIT)
 
 #include "runtime.h"
 #include "jit.h"
-#include "execution.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -235,10 +234,10 @@ static INLINE uint32_t exc(uint32_t handler, uint32_t cur)
                 /* li $a3, src2 */              IW(0x24070000 | tvar16(src2));                  \
                                                                                                 \
                 /* Call f(). */                                                                 \
-                /* lui  $t0, f@h */             IW(0x3c080000 | hi16((uint32_t)f));             \
-                /* ori  $t0, $t0, f@l */        IW(0x35080000 | lo16((uint32_t)f));             \
+                /* lui  $t9, f@h */             IW(0x3c190000 | hi16((uint32_t)f));             \
+                /* ori  $t9, $t9, f@l */        IW(0x37390000 | lo16((uint32_t)f));             \
                 /* move $s2, $ra */             IW(0x03e09025);                                 \
-                /* jalr $t0 */                  IW(0x0100f809);                                 \
+                /* jalr $t9 */                  IW(0x0320f809);                                 \
                 /* nop */                       IW(0x00000000);                                 \
                 /* move $ra, $s2 */             IW(0x0240f825);                                 \
                                                                                                 \
@@ -262,10 +261,10 @@ static INLINE uint32_t exc(uint32_t handler, uint32_t cur)
                 /* li $a2, src */               IW(0x24060000 | tvar16(src));                   \
                                                                                                 \
                 /* Call f(). */                                                                 \
-                /* lui  $t0, f@h */             IW(0x3c080000 | hi16((uint32_t)f));             \
-                /* ori  $t0, $t0, f@l */        IW(0x35080000 | lo16((uint32_t)f));             \
+                /* lui  $t9, f@h */             IW(0x3c190000 | hi16((uint32_t)f));             \
+                /* ori  $t9, $t9, f@l */        IW(0x37390000 | lo16((uint32_t)f));             \
                 /* move $s2, $ra */             IW(0x03e09025);                                 \
-                /* jalr $t0 */                  IW(0x0100f809);                                 \
+                /* jalr $t9 */                  IW(0x0320f809);                                 \
                 /* nop */                       IW(0x00000000);                                 \
                 /* move $ra, $s2 */             IW(0x0240f825);                                 \
                                                                                                 \
@@ -419,17 +418,17 @@ jit_visit_sconst_op(
         CONSUME_TMPVAR(dst);
         CONSUME_STRING(val, len, hash);
 
-        f = (uint32_t)rt_make_string_with_hash;
+        f = (uint32_t)ex_make_string_with_hash;
         dst *= (int)sizeof(struct rt_value);
 
-        /* rt_make_string_with_hash(env, &env->frame->tmpvar[dst], val, len, hash); */
+        /* ex_make_string_with_hash(env, &env->frame->tmpvar[dst], val, len, hash); */
         ASM {
                 /* $s0: env */
                 /* $s1: &env->frame->tmpvar[0] */
 
                 /* addiu $sp, $sp, -32 */       IW(0x27bdffe0);
 
-                /* Arg1 $a0 = [sp+0] = rt */
+                /* Arg1 $a0 = [sp+0] = env */
                 /* move $a0, $s0 */             IW(0x02002025);
                 /* sw $a0, 0($sp) */            IW(0xafa40000);
 
@@ -453,11 +452,11 @@ jit_visit_sconst_op(
                 /* ori $t0, $t0, hash@l */      IW(0x35080000 | lo16(hash));
                 /* sw $t0, 16($sp) */           IW(0xafa80010);
 
-                /* Call rt_make_string_with_hash(). */
-                /* lui  $t0, f@h */             IW(0x3c080000 | hi16(f));
-                /* ori  $t0, $t0, f@l */        IW(0x35080000 | lo16(f));
+                /* Call ex_make_string_with_hash(). */
+                /* lui  $t9, f@h */             IW(0x3c190000 | hi16(f));
+                /* ori  $t9, $t9, f@l */        IW(0x37390000 | lo16(f));
                 /* move $s2, $ra */             IW(0x03e09025);
-                /* jalr $t0 */                  IW(0x0100f809);
+                /* jalr $t9 */                  IW(0x0320f809);
                 /* nop */                       IW(0x00000000);
                 /* move $ra, $s2 */             IW(0x0240f825);
                 /* addiu $sp, $sp, 32 */        IW(0x27bd0020);
@@ -480,10 +479,10 @@ jit_visit_aconst_op(
 
         CONSUME_TMPVAR(dst);
 
-        f = (uint32_t)rt_make_empty_array;
+        f = (uint32_t)ex_make_empty_array;
         dst *= (int)sizeof(struct rt_value);
 
-        /* rt_make_empty_array(env, &env->frame->tmpvar[dst]); */
+        /* ex_make_empty_array(env, &env->frame->tmpvar[dst]); */
         ASM {
                 /* $s0: env */
                 /* $s1: &env->frame->tmpvar[0] */
@@ -495,11 +494,11 @@ jit_visit_aconst_op(
                 /* li $a1, dst */               IW(0x24050000 | lo16((uint32_t)dst));
                 /* addu $a1, $a1, $s1 */        IW(0x00b12821);
 
-                /* Call rt_make_empty_array(). */
-                /* lui  $t0, f@h */             IW(0x3c080000 | hi16(f));
-                /* ori  $t0, $t0, f@l */        IW(0x35080000 | lo16(f));
+                /* Call ex_make_empty_array(). */
+                /* lui  $t9, f@h */             IW(0x3c190000 | hi16(f));
+                /* ori  $t9, $t9, f@l */        IW(0x37390000 | lo16(f));
                 /* move $s2, $ra */             IW(0x03e09025);
-                /* jalr $t0 */                  IW(0x0100f809);
+                /* jalr $t9 */                  IW(0x0320f809);
                 /* nop */                       IW(0x00000000);
                 /* move $ra, $s2 */             IW(0x0240f825);
 
@@ -521,10 +520,10 @@ jit_visit_dconst_op(
 
         CONSUME_TMPVAR(dst);
 
-        f = (uint32_t)rt_make_empty_dict;
+        f = (uint32_t)ex_make_empty_dict;
         dst *= (int)sizeof(struct rt_value);
 
-        /* rt_make_empty_dict(env, &env->frame->tmpvar[dst]); */
+        /* ex_make_empty_dict(env, &env->frame->tmpvar[dst]); */
         ASM {
                 /* $s0: env */
                 /* $s1: &env->frame->tmpvar[0] */
@@ -536,11 +535,11 @@ jit_visit_dconst_op(
                 /* li $a1, dst */               IW(0x24050000 | lo16((uint32_t)dst));
                 /* addu $a1, $a1, $s1 */        IW(0x00b12821);
 
-                /* Call rt_make_empty_dict(). */
-                /* lui  $t0, f@h */             IW(0x3c080000 | hi16(f));
-                /* ori  $t0, $t0, f@l */        IW(0x35080000 | lo16(f));
+                /* Call ex_make_empty_dict(). */
+                /* lui  $t9, f@h */             IW(0x3c190000 | hi16(f));
+                /* ori  $t9, $t9, f@l */        IW(0x37390000 | lo16(f));
                 /* move $s2, $ra */             IW(0x03e09025);
-                /* jalr $t0 */                  IW(0x0100f809);
+                /* jalr $t9 */                  IW(0x0320f809);
                 /* nop */                       IW(0x00000000);
                 /* move $ra, $s2 */             IW(0x0240f825);
 
@@ -594,8 +593,8 @@ jit_visit_add_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_add_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_add_helper);
+        /* if (!ex_add_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_add_helper);
 
         return true;
 }
@@ -613,8 +612,8 @@ jit_visit_sub_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_sub_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_sub_helper);
+        /* if (!ex_sub_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_sub_helper);
 
         return true;
 }
@@ -632,8 +631,8 @@ jit_visit_mul_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_mul_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_mul_helper);
+        /* if (!ex_mul_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_mul_helper);
 
         return true;
 }
@@ -651,8 +650,8 @@ jit_visit_div_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_div_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_div_helper);
+        /* if (!ex_div_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_div_helper);
 
         return true;
 }
@@ -670,8 +669,8 @@ jit_visit_mod_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_mod_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_mod_helper);
+        /* if (!ex_mod_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_mod_helper);
 
         return true;
 }
@@ -689,8 +688,8 @@ jit_visit_and_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_and_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_and_helper);
+        /* if (!ex_and_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_and_helper);
 
         return true;
 }
@@ -708,8 +707,8 @@ jit_visit_or_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_or_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_or_helper);
+        /* if (!ex_or_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_or_helper);
 
         return true;
 }
@@ -727,8 +726,8 @@ jit_visit_xor_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_xor_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_xor_helper);
+        /* if (!ex_xor_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_xor_helper);
 
         return true;
 }
@@ -747,7 +746,7 @@ jit_visit_shl_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!jit_shl_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_shl_helper);
+        ASM_BINARY_OP(ex_shl_helper);
 
         return true;
 }
@@ -766,7 +765,7 @@ jit_visit_shr_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!jit_shr_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_shr_helper);
+        ASM_BINARY_OP(ex_shr_helper);
 
         return true;
 }
@@ -782,8 +781,8 @@ jit_visit_neg_op(
         CONSUME_TMPVAR(dst);
         CONSUME_TMPVAR(src);
 
-        /* if (!rt_neg_helper(env, dst, src)) return false; */
-        ASM_UNARY_OP(rt_neg_helper);
+        /* if (!ex_neg_helper(env, dst, src)) return false; */
+        ASM_UNARY_OP(ex_neg_helper);
 
         return true;
 }
@@ -799,8 +798,8 @@ jit_visit_not_op(
         CONSUME_TMPVAR(dst);
         CONSUME_TMPVAR(src);
 
-        /* if (!rt_not_helper(env, dst, src)) return false; */
-        ASM_UNARY_OP(rt_not_helper);
+        /* if (!ex_not_helper(env, dst, src)) return false; */
+        ASM_UNARY_OP(ex_not_helper);
 
         return true;
 }
@@ -818,8 +817,8 @@ jit_visit_lt_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_lt_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_lt_helper);
+        /* if (!ex_lt_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_lt_helper);
 
         return true;
 }
@@ -837,8 +836,8 @@ jit_visit_lte_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_lte_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_lte_helper);
+        /* if (!ex_lte_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_lte_helper);
 
         return true;
 }
@@ -856,8 +855,8 @@ jit_visit_eq_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_eq_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_eq_helper);
+        /* if (!ex_eq_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_eq_helper);
 
         return true;
 }
@@ -875,8 +874,8 @@ jit_visit_neq_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_neq_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_neq_helper);
+        /* if (!ex_neq_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_neq_helper);
 
         return true;
 }
@@ -894,8 +893,8 @@ jit_visit_gte_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_gte_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_gte_helper);
+        /* if (!ex_gte_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_gte_helper);
 
         return true;
 }
@@ -913,8 +912,8 @@ jit_visit_gt_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_gt_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_gt_helper);
+        /* if (!ex_gt_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_gt_helper);
 
         return true;
 }
@@ -971,8 +970,8 @@ jit_visit_loadarray_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_loadarray_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_loadarray_helper);
+        /* if (!ex_loadarray_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_loadarray_helper);
 
         return true;
 }
@@ -991,7 +990,7 @@ jit_visit_storearray_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!jit_storearray_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_storearray_helper);
+        ASM_BINARY_OP(ex_storearray_helper);
 
         return true;
 }
@@ -1008,7 +1007,7 @@ jit_visit_len_op(
         CONSUME_TMPVAR(src);
 
         /* if (!jit_len_helper(env, dst, src)) return false; */
-        ASM_UNARY_OP(rt_len_helper);
+        ASM_UNARY_OP(ex_len_helper);
 
         return true;
 }
@@ -1027,7 +1026,7 @@ jit_visit_getdictkeybyindex_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!jit_getdictkeybyindex_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_getdictkeybyindex_helper);
+        ASM_BINARY_OP(ex_getdictkeybyindex_helper);
 
         return true;
 }
@@ -1046,7 +1045,7 @@ jit_visit_getdictvalbyindex_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!jit_getdictvalbyindex_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_getdictvalbyindex_helper);
+        ASM_BINARY_OP(ex_getdictvalbyindex_helper);
 
         return true;
 }
@@ -1066,7 +1065,7 @@ jit_visit_loadsymbol_op(
         CONSUME_STRING(src_s, len, hash);
 
         src = (uint32_t)(intptr_t)src_s;
-        f = (uint32_t)rt_loadsymbol_helper;
+        f = (uint32_t)ex_loadsymbol_helper;
 
         /* if (!jit_loadsymbol_helper(env, dst, src, len, hash)) return false; */
         ASM {
@@ -1098,11 +1097,11 @@ jit_visit_loadsymbol_op(
                 /* ori $t0, $t0, hash@l */      IW(0x35080000 | lo16(hash));
                 /* sw $t0, 16($sp) */           IW(0xafa80010);
 
-                /* Call rt_loadsymbol_helper(). */
-                /* lui  $t0, f@h */             IW(0x3c080000 | hi16(f));
-                /* ori  $t0, $t0, f@l */        IW(0x35080000 | lo16(f));
+                /* Call ex_loadsymbol_helper(). */
+                /* lui  $t9, f@h */             IW(0x3c190000 | hi16(f));
+                /* ori  $t9, $t9, f@l */        IW(0x37390000 | lo16(f));
                 /* move $s2, $ra */             IW(0x03e09025);
-                /* jalr $t0 */                  IW(0x0100f809);
+                /* jalr $t9 */                  IW(0x0320f809);
                 /* nop */                       IW(0x00000000);
                 /* move $ra, $s2 */             IW(0x0240f825);
                 /* addiu $sp, $sp, 32 */        IW(0x27bd0020);
@@ -1129,9 +1128,9 @@ jit_visit_storesymbol_op(
         CONSUME_TMPVAR(src);
 
         dst = (uint32_t)(intptr_t)dst_s;
-        f = (uint32_t)rt_storesymbol_helper;
+        f = (uint32_t)ex_storesymbol_helper;
 
-        /* if (!rt_storesymbol_helper(env, dst, len, hash, src)) return false; */
+        /* if (!ex_storesymbol_helper(env, dst, len, hash, src)) return false; */
         ASM {
                 /* $s0: env */
                 /* $s1: &env->frame->tmpvar[0] */
@@ -1161,11 +1160,11 @@ jit_visit_storesymbol_op(
                 /* ori $t0, $zero, src */       IW(0x24080000 | tvar16(src));
                 /* sw $t0, 16($sp) */           IW(0xafa80010);
 
-                /* Call rt_storesymbol_helper(). */
-                /* lui  $t0, f@h */             IW(0x3c080000 | hi16(f));
-                /* ori  $t0, $t0, f@l */        IW(0x35080000 | lo16(f));
+                /* Call ex_storesymbol_helper(). */
+                /* lui  $t9, f@h */             IW(0x3c190000 | hi16(f));
+                /* ori  $t9, $t9, f@l */        IW(0x37390000 | lo16(f));
                 /* move $s2, $ra */             IW(0x03e09025);
-                /* jalr $t0 */                  IW(0x0100f809);
+                /* jalr $t9 */                  IW(0x0320f809);
                 /* nop */                       IW(0x00000000);
                 /* move $ra, $s2 */             IW(0x0240f825);
                 /* addiu $sp, $sp, 32 */        IW(0x27bd0020);
@@ -1194,9 +1193,9 @@ jit_visit_loaddot_op(
         CONSUME_STRING(field_s, len, hash);
 
         field = (uint32_t)(intptr_t)field_s;
-        f = (uint32_t)rt_loaddot_helper;
+        f = (uint32_t)ex_loaddot_helper;
 
-        /* if (!rt_loaddot_helper(env, dst, dict, field, len, hash)) return false; */
+        /* if (!ex_loaddot_helper(env, dst, dict, field, len, hash)) return false; */
         ASM {
                 /* $s0: env */
                 /* $s1: &env->frame->tmpvar[0] */
@@ -1230,11 +1229,11 @@ jit_visit_loaddot_op(
                 /* ori $t0, $t0, hash@l */      IW(0x35080000 | lo16(hash));
                 /* sw $t0, 16($sp) */           IW(0xafa80014);
 
-                /* Call rt_loaddot_helper(). */
-                /* lui  $t0, f@h */             IW(0x3c080000 | hi16(f));
-                /* ori  $t0, $t0, f@l */        IW(0x35080000 | lo16(f));
+                /* Call ex_loaddot_helper(). */
+                /* lui  $t9, f@h */             IW(0x3c190000 | hi16(f));
+                /* ori  $t9, $t9, f@l */        IW(0x37390000 | lo16(f));
                 /* move $s2, $ra */             IW(0x03e09025);
-                /* jalr $t0 */                  IW(0x0100f809);
+                /* jalr $t9 */                  IW(0x0320f809);
                 /* nop */                       IW(0x00000000);
                 /* move $ra, $s2 */             IW(0x0240f825);
                 /* addiu $sp, $sp, 32 */        IW(0x27bd0020);
@@ -1263,7 +1262,7 @@ jit_visit_storedot_op(
         CONSUME_TMPVAR(src);
 
         field = (uint32_t)(intptr_t)field_s;
-        f = (uint32_t)rt_storedot_helper;
+        f = (uint32_t)ex_storedot_helper;
 
         /* if (!jit_storedot_helper(env, dict, field, len, hash, src)) return false; */
         ASM {
@@ -1299,11 +1298,11 @@ jit_visit_storedot_op(
                 /* ori $t0, $zero, src */       IW(0x24080000 | lo16(src));
                 /* sw $t0, 20($sp) */           IW(0xafa80014);
 
-                /* Call rt_storedot_helper(). */
-                /* lui  $t0, f@h */             IW(0x3c080000 | hi16(f));
-                /* ori  $t0, $t0, f@l */        IW(0x35080000 | lo16(f));
+                /* Call ex_storedot_helper(). */
+                /* lui  $t9, f@h */             IW(0x3c190000 | hi16(f));
+                /* ori  $t9, $t9, f@l */        IW(0x37390000 | lo16(f));
                 /* move $s2, $ra */             IW(0x03e09025);
-                /* jalr $t0 */                  IW(0x0100f809);
+                /* jalr $t9 */                  IW(0x0320f809);
                 /* nop */                       IW(0x00000000);
                 /* move $ra, $s2 */             IW(0x0240f825);
                 /* addiu $sp, $sp, 32 */        IW(0x27bd0020);
@@ -1355,9 +1354,9 @@ jit_visit_call_op(
                 arg_addr = 0;
         }
 
-        f = (uint32_t)rt_call_helper;
+        f = (uint32_t)ex_call_helper;
 
-        /* if (!rt_call_helper(env, dst, func, arg_count, arg)) return false; */
+        /* if (!ex_call_helper(env, dst, func, arg_count, arg)) return false; */
         ASM {
                 /* $s0: env */
                 /* $s1: &env->frame->tmpvar[0] */
@@ -1377,17 +1376,17 @@ jit_visit_call_op(
                 /* Arg5 arg */
                 /* lui $t0, arg@h */            IW(0x3c080000 | hi16(arg_addr));
                 /* ori $t0, $t0, arg@l */       IW(0x35080000 | lo16(arg_addr));
-                /* addiu $sp, $sp, -24 */       IW(0x27bdffe8);
+                /* addiu $sp, $sp, -32 */       IW(0x27bdffe0);
                 /* sw $t0, 16($sp) */           IW(0xafa80010);
 
-                /* Call rt_call_helper(). */
-                /* lui  $t0, f@h */             IW(0x3c080000 | hi16(f));
-                /* ori  $t0, $t0, f@l */        IW(0x35080000 | lo16(f));
+                /* Call ex_call_helper(). */
+                /* lui  $t9, f@h */             IW(0x3c190000 | hi16(f));
+                /* ori  $t9, $t9, f@l */        IW(0x37390000 | lo16(f));
                 /* move $s2, $ra */             IW(0x03e09025);
-                /* jalr $t0 */                  IW(0x0100f809);
+                /* jalr $t9 */                  IW(0x0320f809);
                 /* nop */                       IW(0x00000000);
                 /* move $ra, $s2 */             IW(0x0240f825);
-                /* addiu $sp, $sp, 24 */        IW(0x27bd0018);
+                /* addiu $sp, $sp, 32 */        IW(0x27bd0020);
 
                 /* If failed: */
                 /* beqz $v0, $zero, exc */      IW(0x10400000 | EXC());
@@ -1439,9 +1438,9 @@ jit_visit_thiscall_op(
                 arg_addr = 0;
         }
 
-        f = (uint32_t)rt_thiscall_helper;
+        f = (uint32_t)ex_thiscall_helper;
 
-        /* if (!rt_thiscall_helper(env, dst, obj, symbol, len, hash, arg_count, arg)) return false; */
+        /* if (!ex_thiscall_helper(env, dst, obj, symbol, len, hash, arg_count, arg)) return false; */
         ASM {
                 /* $s0: env */
                 /* $s1: &env->frame->tmpvar[0] */
@@ -1484,11 +1483,11 @@ jit_visit_thiscall_op(
                 /* ori $t0, $t0, arg@l */       IW(0x35080000 | lo16(arg_addr));
                 /* sw $t0, 28($sp) */           IW(0xafa8001c);
 
-                /* Call rt_thiscall_helper(). */
-                /* lui  $t0, f@h */             IW(0x3c080000 | hi16(f));
-                /* ori  $t0, $t0, f@l */        IW(0x35080000 | lo16(f));
+                /* Call ex_thiscall_helper(). */
+                /* lui  $t9, f@h */             IW(0x3c190000 | hi16(f));
+                /* ori  $t9, $t9, f@l */        IW(0x37390000 | lo16(f));
                 /* move $s2, $ra */             IW(0x03e09025);
-                /* jalr $t0 */                  IW(0x0100f809);
+                /* jalr $t9 */                  IW(0x0320f809);
                 /* nop */                       IW(0x00000000);
                 /* move $ra, $s2 */             IW(0x0240f825);
                 /* addiu $sp, $sp, 32 */        IW(0x27bd0020);
@@ -1652,7 +1651,7 @@ jit_visit_bytecode(
 
         /* Put a prologue. */
         ASM {
-                /* s0: rt */
+                /* s0: env */
                 /* s1: &env->frame->tmpvar[0] */
 
                 /* Push the general-purpose registers. */

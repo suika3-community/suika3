@@ -33,7 +33,7 @@ func arch_test(name, toolchain, qemu) {
 
     // Build a binary for a specified architecture.
     if (System.shell("cd .. && " +
-                     "cmake -B build-" + name + " .  -DCMAKE_TOOLCHAIN_FILE=cmake/" + toolchain + " && " +
+                     "cmake -B build-" + name + " .  -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/" + toolchain + " && " +
                      "cmake --build build-" + name + " --parallel") != 0) {
         print("Build failed.");
         return 0;

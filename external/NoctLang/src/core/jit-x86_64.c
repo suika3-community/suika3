@@ -9,13 +9,13 @@
  * JIT (x86_64): Just-In-Time native code generation
  */
 
-#include <noct/c89compat.h>        /* NOCT_ARCH_X86_64 */
+#include <noct/noct.h>
 
 #if defined(NOCT_ARCH_X86_64) && defined(NOCT_USE_JIT)
 
+#include <noct/noct.h>
 #include "runtime.h"
 #include "jit.h"
-#include "execution.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -635,7 +635,7 @@ jit_visit_add_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!rt_add_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_add_helper);
+        ASM_BINARY_OP(ex_add_helper);
 
         return true;
 }
@@ -654,7 +654,7 @@ jit_visit_sub_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!rt_sub_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_sub_helper);
+        ASM_BINARY_OP(ex_sub_helper);
 
         return true;
 }
@@ -673,7 +673,7 @@ jit_visit_mul_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!rt_mul_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_mul_helper);
+        ASM_BINARY_OP(ex_mul_helper);
 
         return true;
 }
@@ -692,7 +692,7 @@ jit_visit_div_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!rt_div_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_div_helper);
+        ASM_BINARY_OP(ex_div_helper);
 
         return true;
 }
@@ -711,7 +711,7 @@ jit_visit_mod_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!rt_mod_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_mod_helper);
+        ASM_BINARY_OP(ex_mod_helper);
 
         return true;
 }
@@ -730,7 +730,7 @@ jit_visit_and_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!rt_and_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_and_helper);
+        ASM_BINARY_OP(ex_and_helper);
 
         return true;
 }
@@ -749,7 +749,7 @@ jit_visit_or_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!rt_or_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_or_helper);
+        ASM_BINARY_OP(ex_or_helper);
 
         return true;
 }
@@ -768,7 +768,7 @@ jit_visit_xor_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!rt_xor_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_xor_helper);
+        ASM_BINARY_OP(ex_xor_helper);
 
         return true;
 }
@@ -787,7 +787,7 @@ jit_visit_shl_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!rt_shl_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_shl_helper);
+        ASM_BINARY_OP(ex_shl_helper);
 
         return true;
 }
@@ -806,7 +806,7 @@ jit_visit_shr_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!rt_shr_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_shr_helper);
+        ASM_BINARY_OP(ex_shr_helper);
 
         return true;
 }
@@ -823,7 +823,7 @@ jit_visit_neg_op(
         CONSUME_TMPVAR(src);
 
         /* if (!rt_neg_helper(env, dst, src)) return false; */
-        ASM_UNARY_OP(rt_neg_helper);
+        ASM_UNARY_OP(ex_neg_helper);
 
         return true;
 }
@@ -840,7 +840,7 @@ jit_visit_not_op(
         CONSUME_TMPVAR(src);
 
         /* if (!rt_not_helper(env, dst, src)) return false; */
-        ASM_UNARY_OP(rt_not_helper);
+        ASM_UNARY_OP(ex_not_helper);
 
         return true;
 }
@@ -859,7 +859,7 @@ jit_visit_lt_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!rt_lt_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_lt_helper);
+        ASM_BINARY_OP(ex_lt_helper);
 
         return true;
 }
@@ -878,7 +878,7 @@ jit_visit_lte_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!rt_lte_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_lte_helper);
+        ASM_BINARY_OP(ex_lte_helper);
 
         return true;
 }
@@ -897,7 +897,7 @@ jit_visit_eq_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!rt_eq_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_eq_helper);
+        ASM_BINARY_OP(ex_eq_helper);
 
         return true;
 }
@@ -916,7 +916,7 @@ jit_visit_neq_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!rt_neq_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_neq_helper);
+        ASM_BINARY_OP(ex_neq_helper);
 
         return true;
 }
@@ -935,7 +935,7 @@ jit_visit_gte_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!rt_gte_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_gte_helper);
+        ASM_BINARY_OP(ex_gte_helper);
 
         return true;
 }
@@ -994,7 +994,7 @@ jit_visit_gt_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!rt_gt_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_gt_helper);
+        ASM_BINARY_OP(ex_gt_helper);
 
         return true;
 }
@@ -1013,7 +1013,7 @@ jit_visit_loadarray_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!rt_loadarray_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_loadarray_helper);
+        ASM_BINARY_OP(ex_loadarray_helper);
 
         return true;
 }
@@ -1032,7 +1032,7 @@ jit_visit_storearray_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!rt_storearray_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_storearray_helper);
+        ASM_BINARY_OP(ex_storearray_helper);
 
         return true;
 }
@@ -1049,7 +1049,7 @@ jit_visit_len_op(
         CONSUME_TMPVAR(src);
 
         /* if (!rt_len_helper(env, dst, src)) return false; */
-        ASM_UNARY_OP(rt_len_helper);
+        ASM_UNARY_OP(ex_len_helper);
 
         return true;
 }
@@ -1068,7 +1068,7 @@ jit_visit_getdictkeybyindex_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!rt_getdictkeybyindex_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_getdictkeybyindex_helper);
+        ASM_BINARY_OP(ex_getdictkeybyindex_helper);
 
         return true;
 }
@@ -1087,7 +1087,7 @@ jit_visit_getdictvalbyindex_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!rt_getdictvalbyindex_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_getdictvalbyindex_helper);
+        ASM_BINARY_OP(ex_getdictvalbyindex_helper);
 
         return true;
 }
@@ -1119,7 +1119,7 @@ jit_visit_loadsymbol_op(
                         /* (3rd) movabs $src -> %r8 */            IB(0x49); IB(0xb8); IQ((uint64_t)src);
                         /* (4th) movq $src_len -> %r9 */          IB(0x49); IB(0xc7); IB(0xc1); ID((uint32_t)src_len);
                         /* (5th) movq $src_hash -> 32(%rsp) */    IB(0x48); IB(0xc7); IB(0x44); IB(0x24); IB(0x20); ID((uint32_t)src_hash);
-                        /* movabs rt_loadsymbol_helper -> %rax */ IB(0x48); IB(0xb8); IQ((uint64_t)rt_loadsymbol_helper);
+                        /* movabs rt_loadsymbol_helper -> %rax */ IB(0x48); IB(0xb8); IQ((uint64_t)ex_loadsymbol_helper);
                         /* call *%rax */                          IB(0xff); IB(0xd0);
                         /* addq %rsp, 64 */                       IB(0x48); IB(0x83); IB(0xc4); IB(0x40);
 
@@ -1140,7 +1140,7 @@ jit_visit_loadsymbol_op(
                         /* (3rd) movabs %src, %rdx */             IB(0x48); IB(0xba); IQ(src);
                         /* (4th) movq $src_len, %rcx */           IB(0x48); IB(0xc7); IB(0xc1); ID((uint32_t)src_len);
                         /* (5th) movq $src_hash, %r8 */           IB(0x49); IB(0xc7); IB(0xc0); ID((uint32_t)src_hash);
-                        /* movabs rt_loadsymbol_helper -> %rax */ IB(0x48); IB(0xb8); IQ((uint64_t)rt_loadsymbol_helper);
+                        /* movabs rt_loadsymbol_helper -> %rax */ IB(0x48); IB(0xb8); IQ((uint64_t)ex_loadsymbol_helper);
                         /* call *%rax */                          IB(0xff); IB(0xd0);
 
                         /* testl %eax, %eax */                    IB(0x83); IB(0xf8); IB(0x00);
@@ -1180,7 +1180,7 @@ jit_visit_storesymbol_op(
                         /* (3rd) movq $dst_len -> %r8 */           IB(0x49); IB(0xc7); IB(0xc0); ID((uint32_t)dst_len);
                         /* (4th) movq $dst_hash -> %r9 */          IB(0x49); IB(0xc7); IB(0xc1); ID((uint32_t)dst_hash);
                         /* (5th) movq $src -> 32(%rsp) */          IB(0x48); IB(0xc7); IB(0x44); IB(0x24); IB(0x20); ID((uint32_t)src);
-                        /* movabs rt_storesymbol_helper -> %rax */ IB(0x48); IB(0xb8); IQ((uint64_t)rt_storesymbol_helper);
+                        /* movabs rt_storesymbol_helper -> %rax */ IB(0x48); IB(0xb8); IQ((uint64_t)ex_storesymbol_helper);
                         /* call *%rax */                           IB(0xff); IB(0xd0);
                         /* addq %rsp, $64 */                       IB(0x48); IB(0x83); IB(0xc4); IB(0x40);
 
@@ -1201,7 +1201,7 @@ jit_visit_storesymbol_op(
                         /* (3rd) movq $dst_len, %rdx */            IB(0x48); IB(0xc7); IB(0xc2); ID((uint32_t)dst_len);
                         /* (4th) movq $dst_hash, %rcx */           IB(0x48); IB(0xc7); IB(0xc1); ID((uint32_t)dst_hash);
                         /* (5th) movq $src, %r8 */                 IB(0x49); IB(0xc7); IB(0xc0); ID((uint32_t)src);
-                        /* movabs rt_storesymbol_helper -> %rax */ IB(0x48); IB(0xb8); IQ((uint64_t)rt_storesymbol_helper);
+                        /* movabs rt_storesymbol_helper -> %rax */ IB(0x48); IB(0xb8); IQ((uint64_t)ex_storesymbol_helper);
                         /* call *%rax */                           IB(0xff); IB(0xd0);
 
                         /* testl %eax, %eax */                     IB(0x83); IB(0xf8); IB(0x00);
@@ -1245,7 +1245,7 @@ jit_visit_loaddot_op(
                         /* (4th) movabs $field -> %r9 */          IB(0x49); IB(0xb9); IQ((uint64_t)field);
                         /* (5th) movq $field_len -> 32(%rsp) */   IB(0x48); IB(0xc7); IB(0x44); IB(0x24); IB(0x20); ID((uint32_t)field_len);
                         /* (6th) movq $field_hash -> 40(%rsp) */  IB(0x48); IB(0xc7); IB(0x44); IB(0x24); IB(0x28); ID((uint32_t)field_hash);
-                        /* movabs rt_loaddot_helper -> %rax */    IB(0x48); IB(0xb8); IQ((uint64_t)rt_loaddot_helper);
+                        /* movabs rt_loaddot_helper -> %rax */    IB(0x48); IB(0xb8); IQ((uint64_t)ex_loaddot_helper);
                         /* call *%rax */                          IB(0xff); IB(0xd0);
                         /* addq %rsp, $64 */                      IB(0x48); IB(0x83); IB(0xc4); IB(0x40);
 
@@ -1267,7 +1267,7 @@ jit_visit_loaddot_op(
                         /* (4th) movabs $field, %rcx */           IB(0x48); IB(0xb9); IQ(field);
                         /* (5th) movq $field_len, %r8 */          IB(0x49); IB(0xc7); IB(0xc0); ID((uint32_t)field_len);
                         /* (6th) movq $field_hash, %r9 */         IB(0x49); IB(0xc7); IB(0xc1); ID((uint32_t)field_hash);
-                        /* movabs rt_loaddot_helper -> %rax */    IB(0x48); IB(0xb8); IQ((uint64_t)rt_loaddot_helper);
+                        /* movabs rt_loaddot_helper -> %rax */    IB(0x48); IB(0xb8); IQ((uint64_t)ex_loaddot_helper);
                         /* call *%rax */                          IB(0xff); IB(0xd0);
 
                         /* testl %eax, %eax */                    IB(0x83); IB(0xf8); IB(0x00);
@@ -1311,7 +1311,7 @@ jit_visit_storedot_op(
                         /* (4th) movq $field_len -> %r9 */       IB(0x49); IB(0xc7); IB(0xc1); ID((uint32_t)field_len);
                         /* (5th) movq $field_hash -> 32(%rsp) */ IB(0x48); IB(0xc7); IB(0x44); IB(0x24); IB(0x20); ID((uint32_t)field_hash);
                         /* (6th) movq $src -> 40(%rsp) */        IB(0x48); IB(0xc7); IB(0x44); IB(0x24); IB(0x28); ID((uint32_t)src);
-                        /* movabs rt_storedot_helper -> %rax */  IB(0x48); IB(0xb8); IQ((uint64_t)rt_storedot_helper);
+                        /* movabs rt_storedot_helper -> %rax */  IB(0x48); IB(0xb8); IQ((uint64_t)ex_storedot_helper);
                         /* call *%rax */                         IB(0xff); IB(0xd0);
                         /* addq %rsp, $64 */                     IB(0x48); IB(0x83); IB(0xc4); IB(0x40);
 
@@ -1333,7 +1333,7 @@ jit_visit_storedot_op(
                         /* (4th) movq $field_len -> %rcx */      IB(0x48); IB(0xc7); IB(0xc1); ID((uint32_t)field_len);
                         /* (5th) movq $field_hash -> %r8 */      IB(0x49); IB(0xc7); IB(0xc0); ID((uint32_t)field_hash);
                         /* (6th) movq $src -> %r9 */             IB(0x49); IB(0xc7); IB(0xc1); ID((uint32_t)src);
-                        /* movabs rt_storedot_helper -> %rax */  IB(0x48); IB(0xb8); IQ((uint64_t)rt_storedot_helper);
+                        /* movabs ex_storedot_helper -> %rax */  IB(0x48); IB(0xb8); IQ((uint64_t)ex_storedot_helper);
                         /* call *%rax */                         IB(0xff); IB(0xd0);
 
                         /* testl %eax, %eax */                   IB(0x83); IB(0xf8); IB(0x00);
@@ -1397,7 +1397,7 @@ jit_visit_call_op(
                         /* (4th) movq $arg_count -> %r9 */       IB(0x49); IB(0xc7); IB(0xc1); ID((uint32_t)arg_count);
                         /* (5th) movabs $arg_addr -> %rax */     IB(0x48); IB(0xB8); IQ((uint64_t)arg_addr);
                         /*       movq %rax -> 32(%rsp) */        IB(0x48); IB(0x89); IB(0x44); IB(0x24); IB(0x20);
-                        /* movabs rt_call_helper -> rax */       IB(0x48); IB(0xB8); IQ((uint64_t)rt_call_helper);
+                        /* movabs ex_call_helper -> rax */       IB(0x48); IB(0xB8); IQ((uint64_t)ex_call_helper);
                         /* call *%rax */                         IB(0xFF); IB(0xD0);
                         /* addq %rsp, $64 */                     IB(0x48); IB(0x83); IB(0xC4); IB(0x40);
 
@@ -1418,7 +1418,7 @@ jit_visit_call_op(
                         /* (3rd) movq $func, %rdx */             IB(0x48); IB(0xc7); IB(0xc2); ID((uint32_t)func);
                         /* (4th) movq $arg_count, %rcx */        IB(0x48); IB(0xc7); IB(0xc1); ID((uint32_t)arg_count);
                         /* (5th) movabs $arg_addr, %r8 */        IB(0x49); IB(0xb8); IQ(arg_addr);
-                        /* movabs rt_call_helper -> rax */       IB(0x48); IB(0xB8); IQ((uint64_t)rt_call_helper);
+                        /* movabs ex_call_helper -> rax */       IB(0x48); IB(0xB8); IQ((uint64_t)ex_call_helper);
                         /* call *%rax */                         IB(0xFF); IB(0xD0);
 
                         /* cmpl $0, %eax */                      IB(0x83); IB(0xf8); IB(0x00);
@@ -1485,7 +1485,7 @@ jit_visit_thiscall_op(
                         /* (7th) movq $arg_count -> 48(%rsp) */        IB(0x48); IB(0xc7); IB(0x44); IB(0x24); IB(0x30); ID((uint32_t)arg_count);
                         /* (8th) movabs $arg_addr -> %rax */           IB(0x48); IB(0xb8); IQ((uint64_t)arg_addr);
                         /*       movq %rax -> 56(%rsp) */              IB(0x48); IB(0x89); IB(0x44); IB(0x24); IB(0x38);
-                        /* movabs rt_thiscall_helper -> %rax */        IB(0x48); IB(0xb8); IQ((uint64_t)rt_thiscall_helper);
+                        /* movabs ex_thiscall_helper -> %rax */        IB(0x48); IB(0xb8); IQ((uint64_t)ex_thiscall_helper);
                         /* call *%rax */                               IB(0xff); IB(0xd0);
                         /* addq %rsp, $64 */                           IB(0x48); IB(0x83); IB(0xc4); IB(0x40);
 
@@ -1511,7 +1511,7 @@ jit_visit_thiscall_op(
                         /* (7th) movq $arg_count -> 0(%rsp) */        IB(0x48); IB(0xc7); IB(0x04); IB(0x24); ID((uint32_t)arg_count);
                         /* (8th) movabs $arg -> %rax */               IB(0x48); IB(0xB8); IQ((uint64_t)arg_addr);
                         /*       movq %rax -> 8(%rsp) */              IB(0x48); IB(0x89); IB(0x44); IB(0x24); IB(0x08);
-                        /* movabs rt_thiscall_helper -> %r10 */       IB(0x49); IB(0xba); IQ((uint64_t)rt_thiscall_helper);
+                        /* movabs ex_thiscall_helper -> %r10 */       IB(0x49); IB(0xba); IQ((uint64_t)ex_thiscall_helper);
                         /* call *%r10 */                              IB(0x41); IB(0xff); IB(0xd2);
                         /* add %rsp, 32 */                            IB(0x48); IB(0x83); IB(0xc4); IB(0x20);
 

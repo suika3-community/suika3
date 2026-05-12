@@ -379,6 +379,32 @@ typedef unsigned long uintptr_t;
 #endif
 
 /*
+ * Definition of the CDECL keyword
+ */
+#if defined(NOCT_TARGET_DOS4G)
+#define CDECL __cdecl
+#else
+#define CDECL
+#endif
+
+/*
+ * Definition of the import/export keyword.
+ */
+#if defined(NOCT_USE_DLL)
+#if defined(__GNUC__)
+#define NOCT_DLL		__attribute__((visibility("default")))
+#elif defined(_MSC_VER)
+#if defined(DLL_IMPL)
+#define NOCT_DLL		__declspec(dllexport)
+#else
+#define NOCT_DLL		__declspec(dllimport)
+#endif
+#endif
+#else
+#define NOCT_DLL
+#endif
+
+/*
  * size_t
  */
 #include <stddef.h>
@@ -441,7 +467,7 @@ typedef unsigned long uintptr_t;
 #endif
 
 /*
- * math
+ * math.h
  */
 #if defined(__WATCOMC__)
 #if !defined(lroundf)
