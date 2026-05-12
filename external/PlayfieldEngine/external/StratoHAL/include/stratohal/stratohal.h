@@ -31,18 +31,20 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#ifndef STRATOHAL_PLATFORM_H
-#define STRATOHAL_PLATFORM_H
+#ifndef STRATOHAL_STRATOHAL_H
+#define STRATOHAL_STRATOHAL_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "stratohal/c89compat.h"
+#include <stratohal/c89compat.h>
 
-/*************************
- * Files and Directories *
- *************************/
+/* --- */
+
+/*
+ * Files and Directories
+ */
 
 /* Package file name */
 #define HAL_PACKAGE_FILE	"assets.arc"
@@ -50,15 +52,21 @@ extern "C" {
 /* Save directory name */
 #define HAL_SAVE_DIR		"save"
 
-/*************
- * File Read *
- *************/
+/* --- */
 
+/*
+ * File Read
+ */
+
+/*
+ * File read handle.
+ */
 struct hal_rfile;
 
 /*
  * Check whether a file exists.
  */
+HAL_DLL
 bool
 hal_check_file_exist(
 	const char *file);
@@ -66,6 +74,7 @@ hal_check_file_exist(
 /*
  * Open a file stream.
  */
+HAL_DLL
 bool
 hal_open_rfile(
 	const char *file,
@@ -74,6 +83,7 @@ hal_open_rfile(
 /*
  * Enable de-obfuscation on a read file stream.
  */
+HAL_DLL
 void
 hal_decode_rfile(
 	struct hal_rfile *f);
@@ -81,6 +91,7 @@ hal_decode_rfile(
 /*
  * Get a file size.
  */
+HAL_DLL
 bool
 hal_get_rfile_size(
 	struct hal_rfile *rf,
@@ -89,6 +100,7 @@ hal_get_rfile_size(
 /*
  * Read from a file stream.
  */
+HAL_DLL
 bool
 hal_read_rfile(
 	struct hal_rfile *rf,
@@ -99,6 +111,7 @@ hal_read_rfile(
 /*
  * Read a u64 from a file stream.
  */
+HAL_DLL
 bool
 hal_get_rfile_u64(
 	struct hal_rfile *rf,
@@ -107,6 +120,7 @@ hal_get_rfile_u64(
 /*
  * Read a u32 from a file stream.
  */
+HAL_DLL
 bool
 hal_get_rfile_u32(
 	struct hal_rfile *rf,
@@ -115,6 +129,7 @@ hal_get_rfile_u32(
 /*
  * Read a u16 from a file stream.
  */
+HAL_DLL
 bool
 hal_get_rfile_u16(
 	struct hal_rfile *rf,
@@ -123,6 +138,7 @@ hal_get_rfile_u16(
 /*
  * Read a u8 from a file stream.
  */
+HAL_DLL
 bool
 hal_get_rfile_u8(
 	struct hal_rfile *rf,
@@ -131,6 +147,7 @@ hal_get_rfile_u8(
 /*
  * Read a string from a file stream.
  */
+HAL_DLL
 bool
 hal_get_rfile_string(
 	struct hal_rfile *rf,
@@ -140,6 +157,7 @@ hal_get_rfile_string(
 /*
  * Close a file stream.
  */
+HAL_DLL
 void
 hal_close_rfile(
 	struct hal_rfile *rf);
@@ -147,19 +165,26 @@ hal_close_rfile(
 /*
  * Rewind a file stream.
  */
+HAL_DLL
 void
 hal_rewind_rfile(
 	struct hal_rfile *rf);
 
-/**************
- * File Write *
- **************/
+/* --- */
 
+/*
+ * File Write
+ */
+
+/*
+ * File write handle.
+ */
 struct hal_wfile;
 
 /*
  * Open a write file stream.
  */
+HAL_DLL
 bool
 hal_open_wfile(
 	const char *file,
@@ -168,6 +193,7 @@ hal_open_wfile(
 /*
  * Write to a file stream.
  */
+HAL_DLL
 bool
 hal_write_wfile(
 	struct hal_wfile *wf,
@@ -178,6 +204,7 @@ hal_write_wfile(
 /*
  * Close a write file stream.
  */
+HAL_DLL
 void
 hal_close_wfile(
 	struct hal_wfile *wf);
@@ -185,16 +212,19 @@ hal_close_wfile(
 /*
  * Remove a file.
  */
+HAL_DLL
 bool
 hal_remove_file(
 	const char *file);
 
-/*********
- * Image *
- *********/
+/* --- */
 
 /*
- * Pixel value type.
+ * Image
+ */
+
+/*
+ * Pixel value.
  */
 typedef uint32_t hal_pixel_t;
 
@@ -227,6 +257,9 @@ struct hal_image {
 	int context;
 };
 
+/*
+ * Determine the pixel byte order.
+ */
 #if !defined(HAL_USE_QT) && \
     ( \
         defined(HAL_TARGET_WINDOWS) || \
@@ -237,9 +270,11 @@ struct hal_image {
         defined(HAL_TARGET_HAIKU) || \
 	defined(HAL_TARGET_UNITY) \
     )
-#define ORDER_BGRA	/* Use BGRA on Direct3D and Metal. */
+	/* Use BGRA on Direct3D, Metal, Unit, and Soft3D. */
+#define ORDER_BGRA
 #else
-#define ORDER_RGBA	/* Use RGBA on OpenGL. */
+	/* Use RGBA on OpenGL. */
+#define ORDER_RGBA
 #define HAL_ORDER_OPENGL
 #endif
 
@@ -314,6 +349,7 @@ hal_get_pixel_b(
 /*
  * Create an image.
  */
+HAL_DLL
 bool
 hal_create_image(
 	int w,
@@ -323,6 +359,7 @@ hal_create_image(
 /*
  * Create an image with a pixel buffer.
  */
+HAL_DLL
 bool
 hal_create_image_with_pixels(
 	int w,
@@ -333,6 +370,7 @@ hal_create_image_with_pixels(
 /*
  * Create an image with a PNG file.
  */
+HAL_DLL
 bool
 hal_create_image_with_png(
 	const uint8_t *data,
@@ -342,6 +380,7 @@ hal_create_image_with_png(
 /*
  * Create an image with a JPEG file.
  */
+HAL_DLL
 bool
 hal_create_image_with_jpeg(
 	const uint8_t *data,
@@ -351,6 +390,7 @@ hal_create_image_with_jpeg(
 /*
  * Create an image with a WebP file.
  */
+HAL_DLL
 bool
 hal_create_image_with_webp(
 	const uint8_t *data,
@@ -360,6 +400,7 @@ hal_create_image_with_webp(
 /*
  * Destroy an image.
  */
+HAL_DLL
 void
 hal_destroy_image(
 	struct hal_image *img);
@@ -367,6 +408,7 @@ hal_destroy_image(
 /*
  * Get an image width.
  */
+HAL_DLL
 int
 hal_get_image_width(
 	struct hal_image *img);
@@ -374,6 +416,7 @@ hal_get_image_width(
 /*
  * Get an image height.
  */
+HAL_DLL
 int
 hal_get_image_height(
 	struct hal_image *img);
@@ -381,6 +424,7 @@ hal_get_image_height(
 /*
  * Get image pixels.
  */
+HAL_DLL
 hal_pixel_t *
 hal_get_image_pixels(
 	struct hal_image *img);
@@ -388,6 +432,7 @@ hal_get_image_pixels(
 /*
  * Clear an image with a uniform color.
  */
+HAL_DLL
 void
 hal_clear_image(
 	struct hal_image *img,
@@ -396,6 +441,7 @@ hal_clear_image(
 /*
  * Clear an image rectangle with a uniform color.
  */
+HAL_DLL
 void
 hal_clear_image_rect(
 	struct hal_image *img,
@@ -408,6 +454,7 @@ hal_clear_image_rect(
 /*
  * Clear alpha channel with 255.
  */
+HAL_DLL
 void
 hal_fill_image_alpha(
 	struct hal_image *img);
@@ -415,6 +462,7 @@ hal_fill_image_alpha(
 /*
  * Draw an image on an image. (copy)
  */
+HAL_DLL
 void
 hal_draw_image_copy(
 	struct hal_image *dst_image,
@@ -429,6 +477,7 @@ hal_draw_image_copy(
 /*
  * Draw an image on an image. (alpha-blending, dst_alpha=255)
  */
+HAL_DLL
 void
 hal_draw_image_alpha(
 	struct hal_image *dst_image,
@@ -444,6 +493,7 @@ hal_draw_image_alpha(
 /*
  * Draw an image on an image. (add-blending)
  */
+HAL_DLL
 void
 hal_draw_image_add(
 	struct hal_image *dst_image,
@@ -459,6 +509,7 @@ hal_draw_image_add(
 /*
  * Draw an image on an image. (add-blending)
  */
+HAL_DLL
 void
 hal_draw_image_sub(
 	struct hal_image *dst_image,
@@ -474,6 +525,7 @@ hal_draw_image_sub(
 /*
  * Draw a glyph image on an image. (alphablending, special alpha value)
  */
+HAL_DLL
 void
 hal_draw_image_glyph(
 	struct hal_image *dst_image,
@@ -489,6 +541,7 @@ hal_draw_image_glyph(
 /*
  * Draw an emoji image on an image. (alphablending, special alpha value)
  */
+HAL_DLL
 void
 hal_draw_image_emoji(
 	struct hal_image *dst_image,
@@ -504,6 +557,7 @@ hal_draw_image_emoji(
 /*
  * Draw an image on an image. (50% dimming)
  */
+HAL_DLL
 void
 hal_draw_image_dim(
 	struct hal_image *dst_image,
@@ -519,6 +573,7 @@ hal_draw_image_dim(
 /*
  * Draw an image with 1-bit rule image.
  */
+HAL_DLL
 void
 hal_draw_image_rule(
 	struct hal_image *dst_image,
@@ -529,6 +584,7 @@ hal_draw_image_rule(
 /*
  * Draw an image with 8-bit rule image.
  */
+HAL_DLL
 void
 hal_draw_image_melt(
 	struct hal_image *dst_image,
@@ -539,6 +595,7 @@ hal_draw_image_melt(
 /*
  * Draw two images for a cross fading.
  */
+HAL_DLL
 void
 hal_draw_image_cross(
 	struct hal_image *dst_image,
@@ -553,6 +610,7 @@ hal_draw_image_cross(
 /*
  * Draw an image on an image. (3D)
  */
+HAL_DLL
 void
 hal_draw_image_3d_alpha(
 	struct hal_image *dst_image,
@@ -574,6 +632,7 @@ hal_draw_image_3d_alpha(
 /*
  * Draw an image on an image. (3D)
  */
+HAL_DLL
 void
 hal_draw_image_3d_add(
 	struct hal_image *dst_image,
@@ -595,6 +654,7 @@ hal_draw_image_3d_add(
 /*
  * Draw an image on an image. (3D)
  */
+HAL_DLL
 void
 hal_draw_image_3d_sub(
 	struct hal_image *dst_image,
@@ -616,6 +676,7 @@ hal_draw_image_3d_sub(
 /*
  * Draw an image on an image. (3D)
  */
+HAL_DLL
 void
 hal_draw_image_3d_dim(
 	struct hal_image *dst_image,
@@ -637,6 +698,7 @@ hal_draw_image_3d_dim(
 /*
  * Draw two images for a cross fading.
  */
+HAL_DLL
 void
 hal_draw_image_3d_cross(
 	struct hal_image *dst_img,
@@ -663,6 +725,7 @@ hal_draw_image_3d_cross(
 /*
  * Clip a rectangle by a source size.
  */
+HAL_DLL
 bool
 hal_clip_by_source(
 	int src_cx,
@@ -672,7 +735,10 @@ hal_clip_by_source(
 	int *dst_x,
 	int *dst_y, int *src_x, int *src_y);
 
-/* Clip a rectangle by a destination size. */
+/*
+ * Clip a rectangle by a destination size.
+ */
+HAL_DLL
 bool
 hal_clip_by_dest(
 	int dst_cx,
@@ -684,37 +750,40 @@ hal_clip_by_dest(
 	int *src_x,
 	int *src_y);
 
-/*********
- * Glyph *
- *********/
-
 /*
- * Unicode Codepoints
+ * Notify an image update.
+ *  - This function tells a HAL that an image needs to be uploaded to GPU.
  */
-#define HAL_CHAR_TOUTEN		(0x3001)
-#define HAL_CHAR_KUTEN		(0x3002)
-#define HAL_CHAR_YENSIGN	(0x00a5)
+HAL_DLL
+void
+hal_notify_image_update(
+	struct hal_image *img);
 
 /*
- * Maximum Font Index
+ * Notify an image free.
+ *  - This function tells a HAL that an image is no longer used.
+ *  - This function must be called from destroy_image() only.
+ */
+HAL_DLL
+void
+hal_notify_image_free(
+	struct hal_image *img);
+
+/* --- */
+
+/*
+ * Glyph
+ */
+
+/*
+ * Maximum font count.
  */
 #define HAL_GLYPH_DATA_COUNT	(4)
 
 /*
- * Initialize the font renderer.
- */
-bool
-hal_init_glyph(void);
-
-/*
- * Cleanup the font renderer.
- */
-void
-hal_cleanup_glyph(void);
-
-/*
  * Load a glyph data. (TTF)
  */
+HAL_DLL
 bool
 hal_load_glyph_data(
 	int slot,
@@ -724,6 +793,7 @@ hal_load_glyph_data(
 /*
  * Destroy a glyph data.
  */
+HAL_DLL
 void
 hal_destroy_glyph_data(
 	int index);
@@ -731,6 +801,7 @@ hal_destroy_glyph_data(
 /*
  * Get a top character of a utf-8 string as utf-32.
  */
+HAL_DLL
 int
 hal_utf8_to_utf32(
 	const char *mbs,
@@ -739,6 +810,7 @@ hal_utf8_to_utf32(
 /*
  * Get a character count of a utf-8 string.
  */
+HAL_DLL
 int
 hal_count_utf8_chars(
 	const char *mbs);
@@ -746,6 +818,7 @@ hal_count_utf8_chars(
 /*
  * Get a width for a character.
  */
+HAL_DLL
 int
 hal_get_glyph_width(
 	int slot,
@@ -755,6 +828,7 @@ hal_get_glyph_width(
 /*
  * Get a height for a character.
  */
+HAL_DLL
 int
 hal_get_glyph_height(
 	int slot,
@@ -764,6 +838,7 @@ hal_get_glyph_height(
 /*
  * Get a width and a height for a character.
  */
+HAL_DLL
 void
 hal_get_glyph_width_and_height(
 	int slot,
@@ -775,6 +850,7 @@ hal_get_glyph_width_and_height(
 /*
  * Get a width for a string.
  */
+HAL_DLL
 int
 hal_get_string_width(
 	int font_type,
@@ -784,6 +860,7 @@ hal_get_string_width(
 /*
  * Get a height for a string.
  */
+HAL_DLL
 int
 hal_get_string_height(
 	int font_type,
@@ -793,6 +870,7 @@ hal_get_string_height(
 /*
  * Get a width and a height for a string.
  */
+HAL_DLL
 void
 hal_get_string_width_and_height(
 	int slot,
@@ -804,6 +882,7 @@ hal_get_string_width_and_height(
 /*
  * Draw a character.
  */
+HAL_DLL
 bool
 hal_draw_glyph(
 	struct hal_image *img,
@@ -820,18 +899,21 @@ hal_draw_glyph(
 	int *ret_h,
 	bool is_dim);
 
-/*********
- * Sound *
- *********/
+/* --- */
 
 /*
- * PCM Stream
+ * PCM Sound Stream
+ */
+
+/*
+ * PCM stream handle.
  */
 struct hal_wave;
 
 /*
  * Create a wave stream from a file.
  */
+HAL_DLL
 bool
 hal_create_wave_from_file(
 	const char *file,
@@ -841,6 +923,7 @@ hal_create_wave_from_file(
 /*
  * Destroy a wave stream.
  */
+HAL_DLL
 void
 hal_destroy_wave(
 	struct hal_wave *w);
@@ -848,6 +931,7 @@ hal_destroy_wave(
 /*
  * Set a repeat count of a wave stream.
  */
+HAL_DLL
 void
 hal_set_wave_repeat_times(
 	struct hal_wave *w,
@@ -856,6 +940,7 @@ hal_set_wave_repeat_times(
 /*
  * Get whether a wave stream is reached end-of-stream or not.
  */
+HAL_DLL
 bool
 hal_is_wave_eos(
 	struct hal_wave *w);
@@ -863,52 +948,24 @@ hal_is_wave_eos(
 /*
  * Get PCM samples from a wave stream.
  */
+HAL_DLL
 int
 hal_get_wave_samples(
 	struct hal_wave *w,
 	uint32_t *buf,
 	int samples);
 
-/************************
- * Texture Manipulation *
- ************************/
+/* --- */
 
 /*
- * Notify an image update.
- *  - This function tells a HAL that an image needs to be uploaded to GPU.
+ * On-Screen Rendering
  */
-void
-hal_notify_image_update(
-	struct hal_image *img);
-
-/*
- * Notify an image free.
- *  - This function tells a HAL that an image is no longer used.
- *  - This function must be called from destroy_image() only.
- */
-void
-hal_notify_image_free(
-	struct hal_image *img);
-
-/*
- * Return if RGBA values have to be reversed to BGRA.
- */
-#if defined(HAL_TARGET_ANDROID) || \
-    defined(HAL_TARGET_WASM) || \
-    (defined(HAL_TARGET_LINUX) && (defined(HAL_USE_X11_OPENGL) || defined(HAL_USE_QT)))
-#define IS_OPENGL_BYTE_ORDER()	true
-#else
-#define IS_OPENGL_BYTE_ORDER()	false
-#endif
-
-/*************
- * Rendering *
- *************/
 
 /*
  * Render an image to the screen with the "normal" shader pipeline.
  *  - The "normal" shader pipeline renders pixels with alpha blending.
  */
+HAL_DLL
 void
 hal_render_image_normal(
 	int dst_left,			/* The X coordinate of the screen */
@@ -926,6 +983,7 @@ hal_render_image_normal(
  * Render an image to the screen with the "add" shader pipeline.
  *  - The "add" shader pipeline renders pixels with add blending.
  */
+HAL_DLL
 void
 hal_render_image_add(
 	int dst_left,			/* The X coordinate of the screen */
@@ -943,6 +1001,7 @@ hal_render_image_add(
  * Render an image to the screen with the "sub" shader pipeline.
  *  - The "sub" shader pipeline renders pixels with subtract blending.
  */
+HAL_DLL
 void
 hal_render_image_sub(
 	int dst_left,			/* The X coordinate of the screen */
@@ -960,6 +1019,7 @@ hal_render_image_sub(
  * Render an image to the screen with the "dim" shader pipeline.
  *  - The "dim" shader pipeline renders pixels at 50% value for each RGB component.
  */
+HAL_DLL
 void
 hal_render_image_dim(
 	int dst_left,			/* The X coordinate of the screen */
@@ -978,6 +1038,7 @@ hal_render_image_dim(
  *  - The "rule" shader pipeline is a variation of "universal transition" with a threshold value.
  *  - A rule image must have the same size as the screen.
  */
+HAL_DLL
 void
 hal_render_image_rule(
 	struct hal_image *src_img,	/* [IN] The source image */
@@ -989,6 +1050,7 @@ hal_render_image_rule(
  *  - The "melt" shader pipeline is a variation of "universal transition" with a progress value
  *  - A rule image must have the same size as the screen
  */
+HAL_DLL
 void
 hal_render_image_melt(
 	struct hal_image *src_img,	/* [IN] The source image */
@@ -998,6 +1060,7 @@ hal_render_image_melt(
 /*
  * Render two images for a cross fading.
  */
+HAL_DLL
 void
 hal_render_image_cross(
 	struct hal_image *src1_img,	/* [IN] The source image 1 */
@@ -1011,6 +1074,7 @@ hal_render_image_cross(
 /*
  * Render an image to the screen as a triangle strip with the "normal" shader pipeline.
  */
+HAL_DLL
 void
 hal_render_image_3d_normal(
 	float x1,			/* x1 */
@@ -1031,6 +1095,7 @@ hal_render_image_3d_normal(
 /*
  * Render an image to the screen as a triangle strip with the "add" shader pipeline.
  */
+HAL_DLL
 void
 hal_render_image_3d_add(
 	float x1,			/* x1 */
@@ -1051,6 +1116,7 @@ hal_render_image_3d_add(
 /*
  * Render an image to the screen as a triangle strip with the "sub" shader pipeline.
  */
+HAL_DLL
 void
 hal_render_image_3d_sub(
 	float x1,			/* x1 */
@@ -1071,6 +1137,7 @@ hal_render_image_3d_sub(
 /*
  * Render an image to the screen as a triangle strip with the "dim" shader pipeline.
  */
+HAL_DLL
 void
 hal_render_image_3d_dim(
 	float x1,			/* x1 */
@@ -1091,6 +1158,7 @@ hal_render_image_3d_dim(
 /*
  * Render two images for a cross fading.
  */
+HAL_DLL
 void
 hal_render_image_3d_cross(
 	struct hal_image *src1_img,
@@ -1113,13 +1181,16 @@ hal_render_image_3d_cross(
 	float src2_y4,
 	int alpha);
 
-/*************
- * Lap Timer *
- *************/
+/* --- */
+
+/*
+ * Lap Timer
+ */
 
 /*
  * Reset a lap timer and initializes it with a current time.
  */
+HAL_DLL
 void
 hal_reset_lap_timer(
 	uint64_t *origin);
@@ -1127,16 +1198,19 @@ hal_reset_lap_timer(
 /*
  * Get a lap time in milliseconds.
  */
+HAL_DLL
 uint64_t
 hal_get_lap_timer_millisec(
 	uint64_t *origin);
 
-/******************
- * Sound Playback *
- ******************/
+/* --- */
 
 /*
- * Sound Tracks
+ * Sound Playback
+ */
+
+/*
+ * Sound tracks.
  */
 #define HAL_SOUND_BGM		(0)
 #define HAL_SOUND_SE		(1)
@@ -1148,6 +1222,7 @@ hal_get_lap_timer_millisec(
 /*
  * Start playing a sound file on a track.
  */
+HAL_DLL
 bool
 hal_play_sound(
 	int stream,		/* A sound stream index */
@@ -1156,6 +1231,7 @@ hal_play_sound(
 /*
  * Stop playing a sound track.
  */
+HAL_DLL
 bool
 hal_stop_sound(
 	int stream);
@@ -1163,6 +1239,7 @@ hal_stop_sound(
 /*
  * Set sound volume.
  */
+HAL_DLL
 bool
 hal_set_sound_volume(
 	int stream,
@@ -1171,6 +1248,7 @@ hal_set_sound_volume(
 /*
  * Return whether a sound playback for a stream is already finished.
  */
+HAL_DLL
 bool
 hal_is_sound_finished(
 	int stream);
@@ -1182,6 +1260,7 @@ hal_is_sound_finished(
 /*
  * Start playing a video file.
  */
+HAL_DLL
 bool
 hal_play_video(
 	const char *fname,	/* File name */
@@ -1190,30 +1269,36 @@ hal_play_video(
 /*
  * Stop playing music stream.
  */
+HAL_DLL
 void
 hal_stop_video(void);
 
 /*
  * Return whether a video playback is running.
  */
+HAL_DLL
 bool
 hal_is_video_playing(void);
 
-/***********************
- * Window Manipulation *
- ***********************/
+/* --- */
+
+/*
+ * Window Manipulation
+ */
 
 /*
  * Return whether the current HAL supports the "full screen mode".
  *  - The "full screen mode" includes the dock-in of some game consoles.
  *  - A HAL can implement the "full screen mode" but it is optional.
  */
+HAL_DLL
 bool
 hal_is_full_screen_supported(void);
 
 /*
  * Return whether the current HAL is in the "full screen mode".
  */
+HAL_DLL
 bool
 hal_is_full_screen_mode(void);
 
@@ -1221,6 +1306,7 @@ hal_is_full_screen_mode(void);
  * Enter the full screen mode.
  *  - A HAL can ignore this call.
  */
+HAL_DLL
 void
 hal_enter_full_screen_mode(void);
 
@@ -1228,29 +1314,15 @@ hal_enter_full_screen_mode(void);
  * Leave the full screen mode.
  *  - A HAL can ignore this call.
  */
+HAL_DLL
 void
 hal_leave_full_screen_mode(void);
 
-/*********************
- * Path Manipulation *
- *********************/
+/* --- */
 
 /*
- * Create a save directory if it does not exist.
+ * Logging
  */
-bool
-hal_make_save_directory(void);
-
-/*
- * Creates a real path string from a file name.
- *  - Return value must be freed by callers with free().
- */
-char *
-hal_make_real_path(const char *fname);
-
-/***********
- * Logging *
- ***********/
 
 /*
  * Note that sound threads cannot use these logging functions.
@@ -1259,6 +1331,7 @@ hal_make_real_path(const char *fname);
 /*
  * Put a "info" level log with printf formats.
  */
+HAL_DLL
 bool
 hal_log_info(
 	const char *s,
@@ -1267,6 +1340,7 @@ hal_log_info(
 /*
  * Put a "warn" level log with printf formats.
  */
+HAL_DLL
 bool
 hal_log_warn(
 	const char *s,
@@ -1275,6 +1349,7 @@ hal_log_warn(
 /*
  * Put an "error" level log with printf formats.
  */
+HAL_DLL
 bool
 hal_log_error(
 	const char *s,
@@ -1283,12 +1358,15 @@ hal_log_error(
 /*
  * Log out-of-memory.
  */
+HAL_DLL
 bool
 hal_log_out_of_memory(void);
 
-/**********
- * Locale *
- **********/
+/* --- */
+
+/*
+ * Locale
+ */
 
 /*
  * Gets the system language.
@@ -1305,23 +1383,29 @@ hal_log_out_of_memory(void);
  *    - "ru": Russian
  *    - "other": Other (must fallback to English)
  */
+HAL_DLL
 const char *
 hal_get_system_language(void);
 
-/****************
- * Touch Screen *
- ****************/
+/* --- */
+
+/*
+ * Touch Screen
+ */
 
 /*
  * Enable/disable message skip by touch move.
  */
+HAL_DLL
 void
 hal_set_continuous_swipe_enabled(
 	bool is_enabled);
 
-/*************
- * Callbacks *
- *************/
+/* --- */
+
+/*
+ * Callbacks
+ */
 
 /*
  * Callbacks are defined outside the HAL.
@@ -1438,9 +1522,11 @@ void hal_callback_on_event_touch_cancel(void);
 void hal_callback_on_event_swipe_down(void);
 void hal_callback_on_event_swipe_up(void);
 
-/***************************
- * Foreign Language Support *
- ***************************/
+/* --- */
+
+/*
+ * Foreign Language Support
+ */
 
 #if !defined(HAL_USE_CSHARP) && !defined(HAL_USE_SWIFT)
 #define UNSAFEPTR(t) t
@@ -1502,6 +1588,7 @@ extern void (*wrap_close_save_file)(void);
 #define __cdecl
 #endif
 
+HAL_DLL
 void hal_init_func_table(
 	void __cdecl (*p_log_info)(UNSAFEPTR(const char *) s),
 	void __cdecl (*p_log_warn)(UNSAFEPTR(const char *) s),
@@ -1557,8 +1644,15 @@ void hal_init_func_table(
  ***********/
 
 #if defined(HAL_TARGET_WINDOWS)
-const wchar_t *win32_utf8_to_utf16(const char *s);
-const char *win32_utf16_to_utf8(const wchar_t *s);
+HAL_DLL
+const wchar_t
+*win32_utf8_to_utf16(
+	const char *s);
+
+HAL_DLL
+const char *
+win32_utf16_to_utf8(
+	const wchar_t *s);
 #endif
 
 #ifdef __cplusplus

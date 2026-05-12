@@ -31,7 +31,7 @@
 #ifndef STRATOHAL_AUNIT_H
 #define STRATOHAL_AUNIT_H
 
-#include "stratohal/c89compat.h"
+#include <stratohal/c89compat.h>
 
 bool init_aunit(void);
 void cleanup_aunit(void);

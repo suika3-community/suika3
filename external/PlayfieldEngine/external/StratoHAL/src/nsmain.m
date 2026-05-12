@@ -37,7 +37,7 @@
     #define USE_GAMECONTROLLER 1
 #endif
 
-#import <stratohal/platform.h>
+#import <stratohal/stratohal.h>
 #import "stdfile.h"
 #import "nsmain.h"
 #import "aunit.h"
@@ -1009,7 +1009,7 @@ putTextToLogWindow(
 
 // Make a save directory.
 bool
-hal_make_save_directory(void)
+make_save_directory(void)
 {
     @autoreleasepool {
         if (!is_bundled) {
@@ -1050,7 +1050,7 @@ hal_make_save_directory(void)
 
 // Get a real path for a file.
 char *
-hal_make_real_path(
+make_real_path(
         const char *fname)
 {
     @autoreleasepool {
@@ -1330,7 +1330,7 @@ hal_play_video(
         bool is_skippable)
 {
     // Make a path.
-    char *cpath = hal_make_real_path(fname);
+    char *cpath = make_real_path(fname);
     assert(cpath != NULL);
     NSString *path = [[NSString alloc] initWithUTF8String:cpath];
     free(cpath);

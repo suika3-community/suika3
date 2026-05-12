@@ -31,7 +31,7 @@
 #ifndef STRATOHAL_ALSOUND_H
 #define STRATOHAL_ALSOUND_H
 
-#include "stratohal/platform.h"
+#include <stratohal/stratohal.h>
 
 bool init_openal(void);
 void cleanup_openal(void);

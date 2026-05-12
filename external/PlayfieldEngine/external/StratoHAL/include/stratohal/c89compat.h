@@ -182,8 +182,8 @@ extern "C" {
  * |HAL_TARGET_SOLARIS11|Solaris 11            |                            |
  * |HAL_TARGET_SOLARIS10|Solaris 10            |                            |
  * |HAL_TARGET_BEOS     |BeOS and Haiku        |                            |
- * |HAL_TARGET_PCAT     |PC/AT DOS4G           |                            |
- * |HAL_TARGET_PC98     |PC-9801 DOS4G         |                            |
+ * |HAL_TARGET_PC98     |NEC PC-9801 DOS4G     |Watcom                      |
+ * |HAL_TARGET_PCAT     |PC/AT DOS4G           |Watcom                      |
  *
  * |Macro               |Description                     |
  * |--------------------|--------------------------------|
@@ -375,6 +375,32 @@ typedef unsigned long long uint64_t;
 #else
 #define RESTRICT				/* Not supported */
 #endif
+#endif
+
+/*
+ * Definition of the CDECL keyword
+ */
+#if defined(STRATO_TARGET_PC98) || defined(STRATO_TARGET_PCAT)
+#define CDECL __cdecl
+#else
+#define CDECL
+#endif
+
+/*
+ * Definition of the import/export keyword.
+ */
+#if defined(HAL_USE_DLL)
+#if defined(__GNUC__)
+#define HAL_DLL		__attribute__((visibility("default")))
+#elif defined(_MSC_VER)
+#if defined(DLL_IMPL)
+#define HAL_DLL		__declspec(dllexport)
+#else
+#define HAL_DLL		__declspec(dllimport)
+#endif
+#endif
+#else
+#define HAL_DLL
 #endif
 
 /*

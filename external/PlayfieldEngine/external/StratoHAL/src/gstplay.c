@@ -311,7 +311,7 @@ gstplay_loop_iteration(void)
 
 #else /* #ifndef NO_GST */
 
-#include "stratohal/c89compat.h"
+#include <stratohal/c89compat.h>
 
 void
 gstplay_init (int argc, char *argv[])

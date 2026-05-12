@@ -28,7 +28,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#include "stratohal/platform.h"
+#include <stratohal/stratohal.h>
 
 #include <intrin.h>
 

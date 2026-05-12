@@ -33,7 +33,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <GameController/GameController.h>
 
-#import "stratohal/platform.h"
+#import <stratohal/stratohal.h>
 #import "stdfile.h"
 #import "uimain.h"
 #import "aunit.h"
@@ -623,7 +623,7 @@ hal_log_out_of_memory(void)
 
 // Make a save directory.
 bool
-hal_make_save_directory(void)
+make_save_directory(void)
 {
     @autoreleasepool {
         NSString *path = [NSString stringWithFormat:@"%@/%@/%s/save",
@@ -645,7 +645,7 @@ hal_make_save_directory(void)
 
 // Get a real path for a file.
 char *
-hal_make_real_path(
+make_real_path(
         const char *fname)
 {
     @autoreleasepool {
@@ -727,7 +727,7 @@ hal_play_video(
         bool is_skippable)
 {
     // Make a path.
-    char *cpath = hal_make_real_path(fname);
+    char *cpath = make_real_path(fname);
     assert(cpath != NULL);
     NSString *path = [[NSString alloc] initWithUTF8String:cpath];
     free(cpath);

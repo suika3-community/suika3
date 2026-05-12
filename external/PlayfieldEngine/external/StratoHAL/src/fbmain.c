@@ -29,7 +29,7 @@
  */
 
 /* HAL */
-#include "stratohal/platform.h"	/* Public Interface */
+#include <stratohal/stratohal.h>	/* Public Interface */
 #include "stdfile.h"		/* Standard C File Implementation */
 #include "asound.h"		/* ALSA Sound Implemenatation */
 
@@ -897,7 +897,7 @@ hal_play_video(
 {
 	char *path;
 
-	path = hal_make_real_path(fname);
+	path = make_real_path(fname);
 
 	is_gst_playing = true;
 	is_gst_skippable = is_skippable;
@@ -946,13 +946,13 @@ hal_leave_full_screen_mode(void)
 }
 
 bool
-hal_make_save_directory(void)
+make_save_directory(void)
 {
 	return true;
 }
 
 char *
-hal_make_real_path(const char *fname)
+make_real_path(const char *fname)
 {
 	return strdup(fname);
 }

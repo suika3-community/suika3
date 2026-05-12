@@ -38,7 +38,7 @@
 #include <QIODevice>
 
 extern "C" {
-#include "stratohal/platform.h"
+#include <stratohal/stratohal.h>
 };
 
 class GameWidget : public QOpenGLWidget, public QOpenGLFunctions

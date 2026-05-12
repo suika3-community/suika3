@@ -28,7 +28,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#include "stratohal/platform.h"
+#include <stratohal/stratohal.h>
 
 /* OpenGL */
 #include "glrender.h"
@@ -1028,7 +1028,7 @@ hal_render_image_3d_cross(
 }
 
 bool
-hal_make_save_directory(void)
+make_save_directory(void)
 {
 	return true;
 }
@@ -1074,7 +1074,7 @@ hal_play_video(
 {
 	char *path;
 
-	path = hal_make_real_path(fname);
+	path = make_real_path(fname);
 
 	EM_ASM_({
 		document.getElementById("canvas").style.display = "none";

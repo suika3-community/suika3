@@ -29,7 +29,7 @@
  */
 
 /* HAL */
-#include "stratohal/platform.h"	/* Public Interface */
+#include <stratohal/stratohal.h>	/* Public Interface */
 #include "stdfile.h"		/* Standard C File Implementation */
 
 /* Standard C */
@@ -782,13 +782,13 @@ hal_leave_full_screen_mode(void)
 }
 
 bool
-hal_make_save_directory(void)
+make_save_directory(void)
 {
 	return true;
 }
 
 char *
-hal_make_real_path(const char *fname)
+make_real_path(const char *fname)
 {
 	char *s, *t;
 

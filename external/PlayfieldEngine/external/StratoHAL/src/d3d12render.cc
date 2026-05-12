@@ -30,7 +30,7 @@
 
 // Base
 extern "C" {
-#include <stratohal/platform.h>
+#include <stratohal/stratohal.h>
 #include "d3drender.h"
 };
 

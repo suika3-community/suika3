@@ -61,7 +61,7 @@ using namespace Windows::System;
 using namespace Windows::Foundation;
 
 extern "C" {
-#include "stratohal/platform.h"
+#include <stratohal/stratohal.h>
 };
 #include "d3d12.h"
 

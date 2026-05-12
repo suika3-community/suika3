@@ -30,7 +30,7 @@
 
 #if defined(__linux__) || defined(__FreeBSD__)
 
-#include "stratohal/platform.h"
+#include <stratohal/stratohal.h>
 
 #define _GNU_SOURCE
 #include <stdio.h>

@@ -62,41 +62,98 @@ application via the callback functions. User application must
 implement the following.
 
 ```
+#include <stratohal/stratohal.h>
+
+static bool need_exit;
+
 /*
  * Called back when the app boots to determine the window title, width, and height.
  */
-bool hal_callback_on_event_boot(char **title, int *width, int *height);
+bool hal_callback_on_event_boot(char **title, int *width, int *height)
+{
+        *title = strdup("Hello");
+	*width = 640;
+	*height = 480;
+}
 
 /*
  * Called back when the game start.
  */
-bool hal_callback_on_event_start(void);
+bool hal_callback_on_event_start(void)
+{
+        return true;
+}
 
 /*
  * Called back when the game stops.
  */
-void hal_callback_on_event_stop(void);
+void hal_callback_on_event_stop(void)
+{
+}
 
 /*
  * Called back every frame.
  */
-bool hal_callback_on_event_frame(void);
+bool hal_callback_on_event_frame(void)
+{
+        if (need_exit)
+            return false;
+
+        return true;
+}
 
 /*
  * Called back when an input happened.
  */
-void hal_callback_on_event_key_press(int key);
-void hal_callback_on_event_key_release(int key);
-void hal_callback_on_event_mouse_press(int button, int x, int y);
-void hal_callback_on_event_mouse_release(int button, int x, int y);
-void hal_callback_on_event_mouse_move(int x, int y);
-void hal_callback_on_event_analog_input(int input, int val);
-void hal_callback_on_event_touch_cancel(void);
-void hal_callback_on_event_swipe_down(void);
-void hal_callback_on_event_swipe_up(void);
+void hal_callback_on_event_mouse_press(int button, int x, int y)
+{
+        if (button == HAL_MOUSE_LEFT)
+                need_exit = true;
+}
+
+void hal_callback_on_event_mouse_release(int button, int x, int y)
+{
+}
+
+void hal_callback_on_event_key_press(int key)
+{
+        if (key == HAL_KEY_RETURN ||
+            key == HAL_KEY_GAMEPAD_A)
+                need_exit = true;
+}
+
+void hal_callback_on_event_key_release(int key)
+{
+}
+
+void hal_callback_on_event_mouse_move(int x, int y)
+{
+}
+
+void hal_callback_on_event_analog_input(int input, int val)
+{
+        float v = 0.0f;
+
+        if (input == HAL_ANALOG_X1)
+                val = v;
+
+        // Do something.
+}
+
+void hal_callback_on_event_touch_cancel(void)
+{
+}
+
+void hal_callback_on_event_swipe_down(void)
+{
+}
+
+void hal_callback_on_event_swipe_up(void)
+{
+}
 ```
 
 Graphic and audio APIs are self-described in
-[include/stratohal/platform.h](include/stratohal/platform.h).
+[include/stratohal/stratohal.h](include/stratohal/stratohal.h).
 
 Examples are found in [Playfield Engine](https://github.com/awemorris/PlayfieldEngine).

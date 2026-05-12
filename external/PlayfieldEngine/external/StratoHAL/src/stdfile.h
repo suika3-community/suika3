@@ -31,9 +31,18 @@
 #ifndef STRATOHAL_STDFILE_H
 #define STRATOHAL_STDFILE_H
 
-#include "stratohal/c89compat.h"
+#include <stratohal/c89compat.h>
 
-bool init_file(void);
-void cleanup_file(void);
+bool
+init_file(void);
+
+void
+cleanup_file(void);
+
+bool
+make_save_directory(void);
+
+char *
+make_real_path(const char *fname);
 
 #endif

@@ -31,7 +31,7 @@
 #ifndef STRATOHAL_OHMAIN_H
 #define STRATOHAL_OHMAIN_H
 
-#include "stratohal/c89compat.h"
+#include <stratohal/c89compat.h>
 
 #ifdef __cplusplus
 extern "C" {

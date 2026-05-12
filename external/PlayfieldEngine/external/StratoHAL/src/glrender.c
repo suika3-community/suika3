@@ -29,7 +29,7 @@
  */
 
 /* HAL */
-#include "stratohal/platform.h"
+#include <stratohal/stratohal.h>
 #include "glrender.h"
 
 /* Standard C */

@@ -29,7 +29,7 @@
  */
 
 /* HAL */
-#include "stratohal/platform.h"		/* Public Interface */
+#include <stratohal/stratohal.h>		/* Public Interface */
 #include "stdfile.h"			/* Standard C File Implementation */
 #if defined(HAL_TARGET_LINUX)
 #include "asound.h"			/* ALSA Sound Implemenatation */
@@ -1007,7 +1007,7 @@ open_log_file(void)
  * Make a save directory.
  */
 bool
-hal_make_save_directory(void)
+make_save_directory(void)
 {
 	struct stat st = {0};
 
@@ -1021,7 +1021,7 @@ hal_make_save_directory(void)
  * Make an effective path from a directory name and a file name.
  */
 char *
-hal_make_real_path(
+make_real_path(
 	const char *fname)
 {
 	char *buf;
@@ -1418,7 +1418,7 @@ hal_play_video(
 {
 	char *path;
 
-	path = hal_make_real_path(fname);
+	path = make_real_path(fname);
 
 	is_gst_playing = true;
 	is_gst_skippable = is_skippable;

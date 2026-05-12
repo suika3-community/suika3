@@ -29,7 +29,7 @@
  */
 
 /* Base */
-#include "stratohal/platform.h"
+#include <stratohal/stratohal.h>
 
 /* Windows */
 #include <windows.h>

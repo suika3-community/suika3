@@ -167,11 +167,6 @@ endif()
 # Build Type
 #
 
-# Use "Release" build type by default.
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type (Debug or Release)" FORCE)
-endif()
-
 # Debug Configuration
 if(MSVC)
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /Od /Zi /DDEBUG /UNDEBUG")
@@ -710,10 +705,16 @@ add_library(
 )
 
 # .so versioning.
-set_target_properties(strato PROPERTIES 
-    VERSION 1.0.0
-    SOVERSION 1
-)
+if(STRATO_ENABLE_SHARED)
+  set_target_properties(strato PROPERTIES 
+      VERSION 1.0.0
+      SOVERSION 1
+  )
+  set_target_properties(strato PROPERTIES
+    C_VISIBILITY_PRESET hidden
+    VISIBILITY_INLINES_HIDDEN ON
+  )
+endif()
 
 # ---
 

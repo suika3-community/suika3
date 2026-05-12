@@ -30,7 +30,7 @@
 
 // Base
 extern "C" {
-#include "stratohal/platform.h"
+#include <stratohal/stratohal.h>
 };
 
 // HAL
@@ -996,7 +996,7 @@ hal_render_image_3d_cross(
 }
 
 bool
-hal_make_save_directory(void)
+make_save_directory(void)
 {
     // Note: not used on HarmonyOS.
     return true;

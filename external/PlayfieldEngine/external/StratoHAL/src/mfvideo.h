@@ -31,7 +31,7 @@
 #ifndef STRATOHAL_MFVIDEO_H
 #define STRATOHAL_MFVIDEO_H
 
-#include "stratohal/platform.h"
+#include <stratohal/stratohal.h>
 
 #include <windows.h>
 
