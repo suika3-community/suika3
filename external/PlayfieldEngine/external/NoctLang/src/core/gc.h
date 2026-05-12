@@ -40,30 +40,30 @@
  * Region Size
  */
 #if defined(NOCT_TARGET_DOS4G)
-#define RT_GC_NURSERY_SIZE		(1 * 1024 * 1024)
-#define RT_GC_GRADUATE_SIZE		(256 * 1024)
-#define RT_GC_TENURE_SIZE		(8 * 1024 * 1024)
+#define RT_GC_DEFAULT_NURSERY_SIZE		(64 * 1024)
+#define RT_GC_DEFAULT_GRADUATE_SIZE		(256 * 1024)
+#define RT_GC_DEFAULT_TENURE_SIZE		(1 * 1024 * 1024)
 #elif defined(NOCT_TARGET_WASM)
-#define RT_GC_NURSERY_SIZE		(2 * 1024 * 1024)
-#define RT_GC_GRADUATE_SIZE		(256 * 1024)
-#define RT_GC_TENURE_SIZE		(64 * 1024 * 1024)
+#define RT_GC_DEFAULT_NURSERY_SIZE		(2 * 1024 * 1024)
+#define RT_GC_DEFAULT_GRADUATE_SIZE		(256 * 1024)
+#define RT_GC_DEFAULT_TENURE_SIZE		(64 * 1024 * 1024)
 #else
-#define RT_GC_NURSERY_SIZE		(2 * 1024 * 1024)
-#define RT_GC_GRADUATE_SIZE		(256 * 1024)
-#define RT_GC_TENURE_SIZE		(256 * 1024 * 1024)
+#define RT_GC_DEFAULT_NURSERY_SIZE		(2 * 1024 * 1024)
+#define RT_GC_DEFAULT_GRADUATE_SIZE		(256 * 1024)
+#define RT_GC_DEFAULT_TENURE_SIZE		(256 * 1024 * 1024)
 #endif
 
 /*
  * Large Object Promotion Threshold - A new object that has a size
  * beyond this value will be allocated directly in the tenure region.
  */
-#define RT_GC_LOP_THRESHOLD		(32 * 1024)
+#define RT_GC_DEFAULT_LOP_THRESHOLD		(32 * 1024)
 
 /*
  * Survivor Promotion Threshold - A graduate object that survived the
  * young GC beyond this value will be promoted to the tenure region.
  */
-#define RT_GC_PROMOTION_THRESHOLD	(2)
+#define RT_GC_DEFAULT_PROMOTION_THRESHOLD	(2)
 
 /*
  * Regions.

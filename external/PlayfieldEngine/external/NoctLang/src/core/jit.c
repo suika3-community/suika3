@@ -85,7 +85,7 @@ jit_map_memory_region(
 	*region = malloc(size);
 	{
 		union REGS regs;
-		unsigned short current_cs;
+		unsigned short current_cs = 0;
 		_asm { mov current_cs, cs }
 		regs.w.ax = 0x0008;
 		regs.w.bx = current_cs;

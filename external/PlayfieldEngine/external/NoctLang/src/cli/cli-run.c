@@ -9,6 +9,7 @@
  * CLI: Run Mode
  */
 
+#include <noct/noct.h>
 #include "cli-main.h"
 
 /*
@@ -16,6 +17,7 @@
  */
 int command_run(int argc, char *argv[])
 {
+	NoctConfig config;
 	NoctVM *vm;
 	NoctEnv *env;
 	NoctValue ret;
@@ -26,19 +28,56 @@ int command_run(int argc, char *argv[])
 	int arg_count;
 	NoctValue *arg_value;
 
+	noct_set_default_config(&config);
+
 	/* Parse options. */
 	file_arg = 1;
 	for (i = 1; i < argc; i++) {
 		if (argv[i][0] != '-')
 			break;
 
-		if (strcmp(argv[1], "--disable-jit") == 0) {
-			noct_conf_jit_enable = false;
+		if (strcmp(argv[i], "--disable-jit") == 0) {
+			config.jit_enable = false;
 			file_arg++;
 			continue;
 		}
-		if (strcmp(argv[1], "--force-jit") == 0) {
-			noct_conf_jit_threshold = 0;
+		if (strcmp(argv[i], "--force-jit") == 0) {
+			config.jit_threshold = 0;
+			file_arg++;
+			continue;
+		}
+		if (strncmp(argv[i], "--jit-threshold=", 16) == 0) {
+			config.jit_threshold = atoi(argv[i] + 16);
+			file_arg++;
+			continue;
+		}
+		if (strncmp(argv[i], "--optimize-level=", 17) == 0) {
+			config.optimize_level = atoi(argv[i] + 17);
+			file_arg++;
+			continue;
+		}
+		if (strncmp(argv[i], "--gc-nursery-size=", 18) == 0) {
+			config.gc_nursery_size = atoi(argv[i] + 18);
+			file_arg++;
+			continue;
+		}
+		if (strncmp(argv[i], "--gc-graduate-size=", 21) == 0) {
+			config.gc_graduate_size = atoi(argv[i] + 21);
+			file_arg++;
+			continue;
+		}
+		if (strncmp(argv[i], "--gc-tenure-size=", 17) == 0) {
+			config.gc_tenure_size = atoi(argv[i] + 17);
+			file_arg++;
+			continue;
+		}
+		if (strncmp(argv[i], "--gc-lop-threshold=", 18) == 0) {
+			config.gc_lop_threshold = atoi(argv[i] + 18);
+			file_arg++;
+			continue;
+		}
+		if (strncmp(argv[i], "--gc-promotion-threshold=", 25) == 0) {
+			config.gc_promotion_threshold = atoi(argv[i] + 25);
 			file_arg++;
 			continue;
 		}
@@ -56,43 +95,64 @@ int command_run(int argc, char *argv[])
 	}
 
 	/* Create a runtime. */
-	if (!noct_create_vm(&vm, &env))
+	if (!noct_create_vm(&vm, &env, &config)) {
+		wide_printf(N_TR("Out of memory.\n"));
 		return 1;
+	}
 
 	/* Register libraries. */
-	NOCT_REGISTER_ALL_APIS(env);
+	if (!noct_register_api_math(env)) {
+		wide_printf(N_TR("Out of memory.\n"));
+		return false;
+	}
+	if (!noct_register_api_system(env)) {
+		wide_printf(N_TR("Out of memory.\n"));
+		return false;
+	}
+	if (!noct_register_api_console(env)) {
+		wide_printf(N_TR("Out of memory.\n"));
+		return false;
+	}
 
-	/* Register FFI functions. */
-	if (!register_cli_ffi(env))
+	/* Register native functions. */
+	if (!register_cli_cfunc(env)) {
+		wide_printf(N_TR("Out of memory.\n"));
 		return 1;
+	}
 
-	/* Load a file content. */
-	if (!load_file_content(argv[i], &data, &len))
-		return 1;
+	for (i = file_arg; i < argc; i++) {
+		/* Load a file content. */
+		if (!load_file_content(argv[i], &data, &len))
+			return 1;
 
-	/* Check for the bytecode header. */
-	if (strncmp(data, NOCT_BYTECODE_HEADER, strlen(NOCT_BYTECODE_HEADER)) != 0) {
-		/* It's a source file. */
-		if (!noct_register_source(env, argv[i], data)) {
-			const char *file, *msg;
-			int line;
-			noct_get_error_file(env, &file);
-			noct_get_error_line(env, &line);
-			noct_get_error_message(env, &msg);
-			wide_printf(N_TR("%s:%d: Error: %s\n"), file, line, msg);
-			return 1;
+		/* Check for the bytecode header. */
+		if (strncmp(data, NOCT_BYTECODE_HEADER, strlen(NOCT_BYTECODE_HEADER)) != 0) {
+			/* It's a source file. */
+			if (!noct_register_source(env, argv[i], data)) {
+				const char *file, *msg;
+				int line;
+				noct_get_error_file(env, &file);
+				noct_get_error_line(env, &line);
+				noct_get_error_message(env, &msg);
+				wide_printf(N_TR("%s:%d: Error: %s\n"), file, line, msg);
+				free(data);
+				return 1;
+			}
+		} else {
+			/* It's a bytecode file. */
+			if (!noct_register_bytecode(env, (void *)data, len)) {
+				const char *file, *msg;
+				int line;
+				noct_get_error_file(env, &file);
+				noct_get_error_line(env, &line);
+				noct_get_error_message(env, &msg);
+				wide_printf(N_TR("%s:%d: Error: %s\n"), file, line, msg);
+				free(data);
+				return 1;
+			}
 		}
-	} else {
-		/* It's a bytecode file. */
-		if (!noct_register_bytecode(env, (void *)data, len)) {
-			const char *file, *msg;
-			int line;
-			noct_get_error_file(env, &file);
-			noct_get_error_line(env, &line);
-			noct_get_error_message(env, &msg);
-			wide_printf(N_TR("%s:%d: Error: %s\n"), file, line, msg);
-			return 1;
-		}
+
+		free(data);
 	}
 
 	/* Make the arguments for "main()". */
@@ -102,8 +162,10 @@ int command_run(int argc, char *argv[])
 		if (arg_value == NULL)
 			return 1;
 		for (i = 0; i < arg_count; i++) {
-			if (!noct_make_string(env, &arg_value[i], argv[file_arg + i + 1]))
+			if (!noct_make_string(env, &arg_value[i], argv[file_arg + i + 1])) {
+				wide_printf(N_TR("Out of memory.\n"));
 				return 1;
+			}
 		}
 	} else {
 		arg_value = NULL;

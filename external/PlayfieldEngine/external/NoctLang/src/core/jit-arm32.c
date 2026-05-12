@@ -9,13 +9,12 @@
  * JIT (arm32): Just-In-Time native code generation
  */
 
-#include <noct/c89compat.h>     /* NOCT_ARCH_ARM64 */
+#include <noct/noct.h>
 
 #if defined(NOCT_ARCH_ARM32) && defined(NOCT_USE_JIT)
 
 #include "runtime.h"
 #include "jit.h"
-#include "execution.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -686,7 +685,7 @@ jit_visit_sconst_op(
 
         dst *= (int)sizeof(struct rt_value);
 
-        /* rt_make_string(env, &env->frame->tmpvar[dst], val, len, hash); */
+        /* ex_make_string(env, &env->frame->tmpvar[dst], val, len, hash); */
         ASM {
                 /* r11 = env */
                 /* r12 = &env->frame->tmpvar[0] */
@@ -717,9 +716,9 @@ jit_visit_sconst_op(
                 SUB_IMM         (REG_SP, REG_SP, 16);
                 STR             (REG_R4, REG_SP, 0);
 
-                /* Call rt_make_string_with_hash(). */
-                MOVW            (REG_R4, ((uint32_t)rt_make_string_with_hash) & 0xffff);
-                MOVT            (REG_R4, (((uint32_t)rt_make_string_with_hash) >> 16) & 0xffff);
+                /* Call ex_make_string_with_hash(). */
+                MOVW            (REG_R4, ((uint32_t)ex_make_string_with_hash) & 0xffff);
+                MOVT            (REG_R4, (((uint32_t)ex_make_string_with_hash) >> 16) & 0xffff);
                 BLX             (REG_R4);
                 ADD_IMM         (REG_SP, REG_SP, IMM16(16));
         
@@ -746,7 +745,7 @@ jit_visit_aconst_op(
 
         dst *= (int)sizeof(struct rt_value);
 
-        /* rt_make_empty_array(env, &env->frame->tmpvar[dst]); */
+        /* ex_make_empty_array(env, &env->frame->tmpvar[dst]); */
         ASM {
                 /* r11 = env */
                 /* r12 = &env->frame->tmpvar[0] */
@@ -763,9 +762,9 @@ jit_visit_aconst_op(
                 MOVW            (REG_R1, (uint32_t)dst);
                 ADD             (REG_R1, REG_R1, REG_R12);
 
-                /* Call rt_make_empty_array(). */
-                MOVW            (REG_R3, ((uint32_t)rt_make_empty_array) & 0xffff);
-                MOVT            (REG_R3, (((uint32_t)rt_make_empty_array) >> 16) & 0xffff);
+                /* Call ex_make_empty_array(). */
+                MOVW            (REG_R3, ((uint32_t)ex_make_empty_array) & 0xffff);
+                MOVT            (REG_R3, (((uint32_t)ex_make_empty_array) >> 16) & 0xffff);
                 BLX             (REG_R3);
 
                 /* If failed: */
@@ -808,9 +807,9 @@ jit_visit_dconst_op(
                 MOVW            (REG_R1, (uint32_t)dst);
                 ADD             (REG_R1, REG_R1, REG_R12);
 
-                /* Call rt_make_empty_array(). */
-                MOVW            (REG_R3, ((uint32_t)rt_make_empty_dict) & 0xffff);
-                MOVT            (REG_R3, (((uint32_t)rt_make_empty_dict) >> 16) & 0xffff);
+                /* Call ex_make_empty_array(). */
+                MOVW            (REG_R3, ((uint32_t)ex_make_empty_dict) & 0xffff);
+                MOVT            (REG_R3, (((uint32_t)ex_make_empty_dict) >> 16) & 0xffff);
                 BLX             (REG_R3);
 
                 /* If failed: */
@@ -867,8 +866,8 @@ jit_visit_add_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_add_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_add_helper);
+        /* if (!ex_add_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_add_helper);
 
         return true;
 }
@@ -886,8 +885,8 @@ jit_visit_sub_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_sub_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_sub_helper);
+        /* if (!ex_sub_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_sub_helper);
 
         return true;
 }
@@ -905,8 +904,8 @@ jit_visit_mul_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_mul_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_mul_helper);
+        /* if (!ex_mul_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_mul_helper);
 
         return true;
 }
@@ -924,8 +923,8 @@ jit_visit_div_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_div_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_div_helper);
+        /* if (!ex_div_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_div_helper);
 
         return true;
 }
@@ -943,8 +942,8 @@ jit_visit_mod_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_mod_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_mod_helper);
+        /* if (!ex_mod_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_mod_helper);
 
         return true;
 }
@@ -962,8 +961,8 @@ jit_visit_and_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_and_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_and_helper);
+        /* if (!ex_and_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_and_helper);
 
         return true;
 }
@@ -981,8 +980,8 @@ jit_visit_or_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_or_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_or_helper);
+        /* if (!ex_or_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_or_helper);
 
         return true;
 }
@@ -1000,8 +999,8 @@ jit_visit_xor_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_xor_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_xor_helper);
+        /* if (!ex_xor_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_xor_helper);
 
         return true;
 }
@@ -1020,7 +1019,7 @@ jit_visit_shl_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!jit_shl_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_shl_helper);
+        ASM_BINARY_OP(ex_shl_helper);
 
         return true;
 }
@@ -1039,7 +1038,7 @@ jit_visit_shr_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!jit_shr_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_shr_helper);
+        ASM_BINARY_OP(ex_shr_helper);
 
         return true;
 }
@@ -1055,8 +1054,8 @@ jit_visit_neg_op(
         CONSUME_TMPVAR(dst);
         CONSUME_TMPVAR(src);
 
-        /* if (!rt_neg_helper(env, dst, src)) return false; */
-        ASM_UNARY_OP(rt_neg_helper);
+        /* if (!ex_neg_helper(env, dst, src)) return false; */
+        ASM_UNARY_OP(ex_neg_helper);
 
         return true;
 }
@@ -1072,8 +1071,8 @@ jit_visit_not_op(
         CONSUME_TMPVAR(dst);
         CONSUME_TMPVAR(src);
 
-        /* if (!rt_not_helper(env, dst, src)) return false; */
-        ASM_UNARY_OP(rt_not_helper);
+        /* if (!ex_not_helper(env, dst, src)) return false; */
+        ASM_UNARY_OP(ex_not_helper);
 
         return true;
 }
@@ -1091,8 +1090,8 @@ jit_visit_lt_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_lt_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_lt_helper);
+        /* if (!ex_lt_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_lt_helper);
 
         return true;
 }
@@ -1110,8 +1109,8 @@ jit_visit_lte_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_lte_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_lte_helper);
+        /* if (!ex_lte_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_lte_helper);
 
         return true;
 }
@@ -1129,8 +1128,8 @@ jit_visit_eq_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_eq_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_eq_helper);
+        /* if (!ex_eq_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_eq_helper);
 
         return true;
 }
@@ -1148,8 +1147,8 @@ jit_visit_neq_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_neq_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_neq_helper);
+        /* if (!ex_neq_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_neq_helper);
 
         return true;
 }
@@ -1167,8 +1166,8 @@ jit_visit_gte_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_gte_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_gte_helper);
+        /* if (!ex_gte_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_gte_helper);
 
         return true;
 }
@@ -1186,8 +1185,8 @@ jit_visit_gt_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_gt_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_gt_helper);
+        /* if (!ex_gt_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_gt_helper);
 
         return true;
 }
@@ -1243,8 +1242,8 @@ jit_visit_loadarray_op(
         CONSUME_TMPVAR(src1);
         CONSUME_TMPVAR(src2);
 
-        /* if (!rt_loadarray_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_loadarray_helper);
+        /* if (!ex_loadarray_helper(env, dst, src1, src2)) return false; */
+        ASM_BINARY_OP(ex_loadarray_helper);
 
         return true;
 }
@@ -1263,7 +1262,7 @@ jit_visit_storearray_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!jit_storearray_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_storearray_helper);
+        ASM_BINARY_OP(ex_storearray_helper);
 
         return true;
 }
@@ -1280,7 +1279,7 @@ jit_visit_len_op(
         CONSUME_TMPVAR(src);
 
         /* if (!jit_len_helper(env, dst, src)) return false; */
-        ASM_UNARY_OP(rt_len_helper);
+        ASM_UNARY_OP(ex_len_helper);
 
         return true;
 }
@@ -1299,7 +1298,7 @@ jit_visit_getdictkeybyindex_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!jit_getdictkeybyindex_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_getdictkeybyindex_helper);
+        ASM_BINARY_OP(ex_getdictkeybyindex_helper);
 
         return true;
 }
@@ -1318,7 +1317,7 @@ jit_visit_getdictvalbyindex_op(
         CONSUME_TMPVAR(src2);
 
         /* if (!jit_getdictvalbyindex_helper(env, dst, src1, src2)) return false; */
-        ASM_BINARY_OP(rt_getdictvalbyindex_helper);
+        ASM_BINARY_OP(ex_getdictvalbyindex_helper);
 
         return true;
 }
@@ -1336,7 +1335,7 @@ jit_visit_loadsymbol_op(
         CONSUME_STRING(src_s, len, hash);
         src = (uint32_t)src_s;
 
-        /* if (!rt_loadsymbol_helper(env, dst, src, len, hash)) return false; */
+        /* if (!ex_loadsymbol_helper(env, dst, src, len, hash)) return false; */
         ASM {
                 /* r11 = env */
                 /* r12 = &env->frame->tmpvar[0] */
@@ -1366,9 +1365,9 @@ jit_visit_loadsymbol_op(
                 SUB_IMM         (REG_SP, REG_SP, 16);
                 STR             (REG_R4, REG_SP, 0);
 
-                /* Call rt_loadsymbol_helper(). */
-                MOVW            (REG_R4, (uint32_t)rt_loadsymbol_helper & 0xffff);
-                MOVT            (REG_R4, ((uint32_t)rt_loadsymbol_helper >> 16) & 0xffff);
+                /* Call ex_loadsymbol_helper(). */
+                MOVW            (REG_R4, (uint32_t)ex_loadsymbol_helper & 0xffff);
+                MOVT            (REG_R4, ((uint32_t)ex_loadsymbol_helper >> 16) & 0xffff);
                 BLX             (REG_R4);
                 ADD_IMM         (REG_SP, REG_SP, IMM16(16));
 
@@ -1397,7 +1396,7 @@ jit_visit_storesymbol_op(
         CONSUME_TMPVAR(src);
         dst = (uint32_t)dst_s;
 
-        /* if (!rt_storesymbol_helper(env, dst, len, hash, src)) return false; */
+        /* if (!ex_storesymbol_helper(env, dst, len, hash, src)) return false; */
         ASM {
                 /* r11 = env */
                 /* r12 = &env->frame->tmpvar[0] */
@@ -1427,9 +1426,9 @@ jit_visit_storesymbol_op(
                 SUB_IMM         (REG_SP, REG_SP, 16);
                 STR             (REG_R4, REG_SP, 0);
 
-                /* Call rt_storesymbol_helper(). */
-                MOVW            (REG_R4, (uint32_t)rt_storesymbol_helper & 0xffff);
-                MOVT            (REG_R4, ((uint32_t)rt_storesymbol_helper >> 16) & 0xffff);
+                /* Call ex_storesymbol_helper(). */
+                MOVW            (REG_R4, (uint32_t)ex_storesymbol_helper & 0xffff);
+                MOVT            (REG_R4, ((uint32_t)ex_storesymbol_helper >> 16) & 0xffff);
                 BLX             (REG_R4);
                 ADD_IMM         (REG_SP, REG_SP, IMM16(16));
 
@@ -1460,7 +1459,7 @@ jit_visit_loaddot_op(
         CONSUME_STRING(field_s, len, hash);
         field = (uint32_t)field_s;
 
-        /* if (!rt_loaddot_helper(env, dst, dict, field, len, hash)) return false; */
+        /* if (!ex_loaddot_helper(env, dst, dict, field, len, hash)) return false; */
         ASM {
                 /* r11 = env */
                 /* r12 = &env->frame->tmpvar[0] */
@@ -1494,9 +1493,9 @@ jit_visit_loaddot_op(
                 MOVT            (REG_R4, (hash >> 16) & 0xffff);
                 STR             (REG_R4, REG_SP, 4);
 
-                /* Call rt_loaddot_helper(). */
-                MOVW            (REG_R4, (uint32_t)rt_loaddot_helper & 0xffff);
-                MOVT            (REG_R4, ((uint32_t)rt_loaddot_helper >> 16) & 0xffff);
+                /* Call ex_loaddot_helper(). */
+                MOVW            (REG_R4, (uint32_t)ex_loaddot_helper & 0xffff);
+                MOVT            (REG_R4, ((uint32_t)ex_loaddot_helper >> 16) & 0xffff);
                 BLX             (REG_R4);
                 ADD_IMM         (REG_SP, REG_SP, IMM16(16));
 
@@ -1527,7 +1526,7 @@ jit_visit_storedot_op(
         CONSUME_TMPVAR(src);
         field = (uint32_t)field_s;
 
-        /* if (!rt_storedot_helper(env, dict, field, len, hash, src)) return false; */
+        /* if (!ex_storedot_helper(env, dict, field, len, hash, src)) return false; */
         ASM {
                 /* r11 = env */
                 /* r12 = &env->frame->tmpvar[0] */
@@ -1561,9 +1560,9 @@ jit_visit_storedot_op(
                 MOVW            (REG_R4, (uint32_t)src);
                 STR             (REG_R4, REG_SP, 4);
 
-                /* Call rt_storedot_helper(). */
-                MOVW            (REG_R4, (uint32_t)rt_storedot_helper & 0xffff);
-                MOVT            (REG_R4, ((uint32_t)rt_storedot_helper >> 16) & 0xffff);
+                /* Call ex_storedot_helper(). */
+                MOVW            (REG_R4, (uint32_t)ex_storedot_helper & 0xffff);
+                MOVT            (REG_R4, ((uint32_t)ex_storedot_helper >> 16) & 0xffff);
                 BLX             (REG_R4);
                 ADD_IMM         (REG_SP, REG_SP, IMM16(16));
 
@@ -1614,7 +1613,7 @@ jit_visit_call_op(
                 arg_addr = 0;
         }
 
-        /* if (!rt_call_helper(env, dst, func, arg_count, arg)) return false; */
+        /* if (!ex_call_helper(env, dst, func, arg_count, arg)) return false; */
         ASM {
                 /* r11 = env */
                 /* r12 = &env->frame->tmpvar[0] */
@@ -1642,9 +1641,9 @@ jit_visit_call_op(
                 SUB_IMM         (REG_SP, REG_SP, 16);
                 STR             (REG_R4, REG_SP, 0);
 
-                /* Call rt_call_helper(). */
-                MOVW            (REG_R4, (uint32_t)rt_call_helper & 0xffff);
-                MOVT            (REG_R4, ((uint32_t)rt_call_helper >> 16) & 0xffff);
+                /* Call ex_call_helper(). */
+                MOVW            (REG_R4, (uint32_t)ex_call_helper & 0xffff);
+                MOVT            (REG_R4, ((uint32_t)ex_call_helper >> 16) & 0xffff);
                 BLX             (REG_R4);
                 ADD_IMM         (REG_SP, REG_SP, 16);
 
@@ -1694,7 +1693,7 @@ jit_visit_thiscall_op(
                 ctx->code = (uint32_t *)ctx->code + 1;
         }
 
-        /* if (!rt_thiscall_helper(env, dst, obj, symbol, len, hash, arg_count, arg)) return false; */
+        /* if (!ex_thiscall_helper(env, dst, obj, symbol, len, hash, arg_count, arg)) return false; */
         ASM {
                 /* r11 = env */
                 /* r12 = &env->frame->tmpvar[0] */
@@ -1737,9 +1736,9 @@ jit_visit_thiscall_op(
                 MOVT            (REG_R4, (arg_addr >> 16) & 0xffff);
                 STR             (REG_R4, REG_SP, 12);
 
-                /* Call rt_thiscall_helper(). */
-                MOVW            (REG_R4, (uint32_t)rt_thiscall_helper & 0xffff);
-                MOVT            (REG_R4, ((uint32_t)rt_thiscall_helper >> 16) & 0xffff);
+                /* Call ex_thiscall_helper(). */
+                MOVW            (REG_R4, (uint32_t)ex_thiscall_helper & 0xffff);
+                MOVT            (REG_R4, ((uint32_t)ex_thiscall_helper >> 16) & 0xffff);
                 BLX             (REG_R4);
 
                 /* If failed: */

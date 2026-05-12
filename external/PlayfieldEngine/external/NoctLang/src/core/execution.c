@@ -9,23 +9,74 @@
  * Execution Helpers
  */
 
-#include <noct/c89compat.h>
+#include <noct/noct.h>
 #include "runtime.h"
-#include "execution.h"
 #include "intrinsics.h"
-#include "hash.h"
 
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
 
 /*
- * Add helper.
+ * Some exotic compilers for x86 including Watcom utilize registers to
+ * pass function arguments. However, our JIT-generated code for x86
+ * uses the stack for function arguments. To bridge this gap, we use
+ * the CDECL keyword in this module.
  */
+
+/*
+ * Make a string.
+ */
+NOCT_DLL
 bool
 CDECL
-rt_add_helper(
-	struct rt_env *env,
+noct_ex_make_string_with_hash(
+	NoctEnv *env,
+	NoctValue *val,
+	const char *data,
+	size_t len,
+	uint32_t hash)
+{
+	/* Be careful: calling convention may be different. */
+	return rt_make_string_with_hash(env, val, data, len, hash);
+}
+
+/*
+ * Make an empty array.
+ */
+NOCT_DLL
+bool
+CDECL
+noct_ex_make_empty_array(
+	NoctEnv *env,
+	NoctValue *val)
+{
+	/* Be careful: calling convention may be different. */
+	return rt_make_empty_array(env, val);
+}
+
+/*
+ * Make an empty dictionary.
+ */
+NOCT_DLL
+bool
+CDECL
+noct_ex_make_empty_dict(
+	NoctEnv *env,
+	NoctValue *val)
+{
+	/* Be careful: calling convention may be different. */
+	return rt_make_empty_dict(env, val);
+}
+
+/*
+ * Add helper.
+ */
+NOCT_DLL
+bool
+CDECL
+noct_ex_add_helper(
+	NoctEnv *env,
 	int dst,
 	int src1,
 	int src2)
@@ -107,10 +158,11 @@ rt_add_helper(
 /*
  * Subtract helper.
  */
+NOCT_DLL
 bool
 CDECL
-rt_sub_helper(
-	struct rt_env *env,
+noct_ex_sub_helper(
+	NoctEnv *env,
 	int dst,
 	int src1,
 	int src2)
@@ -165,10 +217,11 @@ rt_sub_helper(
 /*
  * Multiply helper.
  */
+NOCT_DLL
 bool
 CDECL
-rt_mul_helper(
-	struct rt_env *env,
+noct_ex_mul_helper(
+	NoctEnv *env,
 	int dst,
 	int src1,
 	int src2)
@@ -223,10 +276,11 @@ rt_mul_helper(
 /*
  * Multiply helper.
  */
+NOCT_DLL
 bool
 CDECL
-rt_div_helper(
-	struct rt_env *env,
+noct_ex_div_helper(
+	NoctEnv *env,
 	int dst,
 	int src1,
 	int src2)
@@ -297,10 +351,11 @@ rt_div_helper(
 /*
  * MOD helper. (modulo)
  */
+NOCT_DLL
 bool
 CDECL
-rt_mod_helper(
-	struct rt_env *env,
+noct_ex_mod_helper(
+	NoctEnv *env,
 	int dst,
 	int src1,
 	int src2)
@@ -336,10 +391,11 @@ rt_mod_helper(
 /*
  * AND helper.
  */
+NOCT_DLL
 bool
 CDECL
-rt_and_helper(
-	struct rt_env *env,
+noct_ex_and_helper(
+	NoctEnv *env,
 	int dst,
 	int src1,
 	int src2)
@@ -375,10 +431,11 @@ rt_and_helper(
 /*
  * OR helper.
  */
+NOCT_DLL
 bool
 CDECL
-rt_or_helper(
-	struct rt_env *env,
+noct_ex_or_helper(
+	NoctEnv *env,
 	int dst,
 	int src1,
 	int src2)
@@ -414,10 +471,11 @@ rt_or_helper(
 /*
  * XOR helper.
  */
+NOCT_DLL
 bool
 CDECL
-rt_xor_helper(
-	struct rt_env *env,
+noct_ex_xor_helper(
+	NoctEnv *env,
 	int dst,
 	int src1,
 	int src2)
@@ -453,10 +511,11 @@ rt_xor_helper(
 /*
  * SHL helper.
  */
+NOCT_DLL
 bool
 CDECL
-rt_shl_helper(
-	struct rt_env *env,
+noct_ex_shl_helper(
+	NoctEnv *env,
 	int dst,
 	int src1,
 	int src2)
@@ -492,10 +551,11 @@ rt_shl_helper(
 /*
  * SHR helper.
  */
+NOCT_DLL
 bool
 CDECL
-rt_shr_helper(
-	struct rt_env *env,
+noct_ex_shr_helper(
+	NoctEnv *env,
 	int dst,
 	int src1,
 	int src2)
@@ -531,10 +591,11 @@ rt_shr_helper(
 /*
  * NEG helper.
  */
+NOCT_DLL
 bool
 CDECL
-rt_neg_helper(
-	struct rt_env *env,
+noct_ex_neg_helper(
+	NoctEnv *env,
 	int dst,
 	int src)
 {
@@ -562,12 +623,13 @@ rt_neg_helper(
 }
 
 /*
- * NEG helper.
+ * NOT helper.
  */
+NOCT_DLL
 bool
 CDECL
-rt_not_helper(
-	struct rt_env *env,
+noct_ex_not_helper(
+	NoctEnv *env,
 	int dst,
 	int src)
 {
@@ -593,10 +655,11 @@ rt_not_helper(
 /*
  * LT helper.
  */
+NOCT_DLL
 bool
 CDECL
-rt_lt_helper(
-	struct rt_env *env,
+noct_ex_lt_helper(
+	NoctEnv *env,
 	int dst,
 	int src1,
 	int src2)
@@ -662,10 +725,11 @@ rt_lt_helper(
 /*
  * LTE helper.
  */
+NOCT_DLL
 bool
 CDECL
-rt_lte_helper(
-	struct rt_env *env,
+noct_ex_lte_helper(
+	NoctEnv *env,
 	int dst,
 	int src1,
 	int src2)
@@ -731,10 +795,11 @@ rt_lte_helper(
 /*
  * GT helper.
  */
+NOCT_DLL
 bool
 CDECL
-rt_gt_helper(
-	struct rt_env *env,
+noct_ex_gt_helper(
+	NoctEnv *env,
 	int dst,
 	int src1,
 	int src2)
@@ -800,10 +865,11 @@ rt_gt_helper(
 /*
  * GTE helper.
  */
+NOCT_DLL
 bool
 CDECL
-rt_gte_helper(
-	struct rt_env *env,
+noct_ex_gte_helper(
+	NoctEnv *env,
 	int dst,
 	int src1,
 	int src2)
@@ -869,10 +935,11 @@ rt_gte_helper(
 /*
  * EQ helper.
  */
+NOCT_DLL
 bool
 CDECL
-rt_eq_helper(
-	struct rt_env *env,
+noct_ex_eq_helper(
+	NoctEnv *env,
 	int dst,
 	int src1,
 	int src2)
@@ -947,10 +1014,11 @@ rt_eq_helper(
 }
 
 /* NEQ helper. */
+NOCT_DLL
 bool
 CDECL
-rt_neq_helper(
-	struct rt_env *env,
+noct_ex_neq_helper(
+	NoctEnv *env,
 	int dst,
 	int src1,
 	int src2)
@@ -1020,10 +1088,11 @@ rt_neq_helper(
 /*
  * STOREARRAY helper.
  */
+NOCT_DLL
 bool
 CDECL
-rt_storearray_helper(
-	struct rt_env *env,
+noct_ex_storearray_helper(
+	NoctEnv *env,
 	int arr,
 	int subscr,
 	int val)
@@ -1076,12 +1145,13 @@ rt_storearray_helper(
 }
 
 /*
- * loadarray helper.
+ * LOADARRAY helper.
  */
+NOCT_DLL
 bool
 CDECL
-rt_loadarray_helper(
-	struct rt_env *env,
+noct_ex_loadarray_helper(
+	NoctEnv *env,
 	int dst,
 	int arr,
 	int subscr)
@@ -1134,10 +1204,11 @@ rt_loadarray_helper(
 /*
  * LEN helper.
  */
+NOCT_DLL
 bool
 CDECL
-rt_len_helper(
-	struct rt_env *env,
+noct_ex_len_helper(
+	NoctEnv *env,
 	int dst,
 	int src)
 {
@@ -1172,11 +1243,14 @@ rt_len_helper(
 	return true;
 }
 
-/* getdictkeybyindex helper. */
+/*
+ * GETDICTKEYBYINDEX helper.
+ */
+NOCT_DLL
 bool
 CDECL
-rt_getdictkeybyindex_helper(
-	struct rt_env *env,
+noct_ex_getdictkeybyindex_helper(
+	NoctEnv *env,
 	int dst,
 	int dict,
 	int subscr)
@@ -1206,12 +1280,13 @@ rt_getdictkeybyindex_helper(
 }
 
 /*
- * getdictvalbyindex helper.
+ * GETDICTVALBYINDEX helper.
  */
+NOCT_DLL
 bool
 CDECL
-rt_getdictvalbyindex_helper(
-	struct rt_env *env,
+noct_ex_getdictvalbyindex_helper(
+	NoctEnv *env,
 	int dst,
 	int dict,
 	int subscr)
@@ -1241,12 +1316,13 @@ rt_getdictvalbyindex_helper(
 }
 
 /*
- * loadsymbol helper.
+ * LOADSYMBOL helper.
  */
+NOCT_DLL
 bool
 CDECL
-rt_loadsymbol_helper(
-	struct rt_env *env,
+noct_ex_loadsymbol_helper(
+	NoctEnv *env,
 	int dst,
 	const char *symbol,
 	uint32_t symbol_len,
@@ -1263,12 +1339,13 @@ rt_loadsymbol_helper(
 }
 
 /*
- * storesymbol helper.
+ * STORESYMBOL helper.
  */
+NOCT_DLL
 bool
 CDECL
-rt_storesymbol_helper(
-	struct rt_env *env,
+noct_ex_storesymbol_helper(
+	NoctEnv *env,
 	const char *symbol,
 	uint32_t symbol_len,
 	uint32_t symbol_hash,
@@ -1281,12 +1358,13 @@ rt_storesymbol_helper(
 }
 
 /*
- * loaddot helper.
+ * LOADDOT helper.
  */
+NOCT_DLL
 bool
 CDECL
-rt_loaddot_helper(
-	struct rt_env *env,
+noct_ex_loaddot_helper(
+	NoctEnv *env,
 	int dst,
 	int dict,
 	const char *field,
@@ -1332,10 +1410,11 @@ rt_loaddot_helper(
 /*
  * STOREDOT helper.
  */
+NOCT_DLL
 bool
 CDECL
-rt_storedot_helper(
-	struct rt_env *env,
+noct_ex_storedot_helper(
+	NoctEnv *env,
 	int dict,
 	const char *field,
 	uint32_t field_len,
@@ -1361,11 +1440,14 @@ rt_storedot_helper(
 	return true;
 }
 
-/* CALL helper. */
+/*
+ * CALL helper.
+ */
+NOCT_DLL
 bool
 CDECL
-rt_call_helper(
-	struct rt_env *env,
+noct_ex_call_helper(
+	NoctEnv *env,
 	int dst,
 	int func,
 	int arg_count,
@@ -1400,10 +1482,11 @@ rt_call_helper(
 /*
  * THISCALL helper.
  */
+NOCT_DLL
 bool
 CDECL
-rt_thiscall_helper(
-	struct rt_env *env,
+noct_ex_thiscall_helper(
+	NoctEnv *env,
 	int dst,
 	int obj,
 	const char *name,

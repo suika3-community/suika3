@@ -80,6 +80,38 @@ jobs:
           name: noct-macos
           path: build/noct-macos
 
+  build-pc98:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake
+      - name: Configure OpenWatcom
+        run: |
+          wget https://noctvm.io/ci/openwatcom-1.9.tar.gz
+          tar xzf openwatcom-1.9.tar.gz
+
+          echo "WATCOM=$PWD/openwatcom-1.9" >> $GITHUB_ENV
+          echo "INCLUDE=$PWD/openwatcom-1.9/h" >> $GITHUB_ENV
+          echo "EDPATH=$PWD/openwatcom-1.9/eddat" >> $GITHUB_ENV
+
+          echo "$PWD/openwatcom-1.9/binw" >> $GITHUB_PATH
+          echo "$PWD/openwatcom-1.9/binl" >> $GITHUB_PATH
+
+      - name: Build
+        run: |
+          cmake --preset msdos
+          cmake --build --preset msdos
+          mv build-msdos/noct.exe build-msdos/noct98.exe
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: noct-pc98
+          path: build-msdos/noct98.exe
+
   release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
@@ -87,6 +119,7 @@ jobs:
       - build-linux
       - build-windows-mingw
       - build-macos
+      - build-pc98
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
@@ -106,5 +139,6 @@ jobs:
             - Linux
             - Windows (MinGW)
             - macOS
+            - NEC PC-9801
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -11,13 +11,19 @@
 
 #if defined(NOCT_USE_TRANSLATION) && defined(NOCT_USE_GETTEXT)
 
-void noct_init_locale(void)
+#include <noct/noct.h>
+
+NOCT_DLL
+void
+noct_init_locale(void)
 {
 	bindtextdomain("libnoct", LOCALEDIR);
 	bind_textdomain_codeset("libnoct", "UTF-8");
 }
 
 #elif defined(NOCT_USE_TRANSLATION) && !defined(NOCT_USE_GETTEXT)
+
+#include <noct/noct.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,7 +37,7 @@ void noct_init_locale(void)
 /*
  * Language code for translation.
  */
-const char *noct_lang_code = "en";
+static const char *noct_lang_code = "en";
 
 /*
  * Called from noct_gettext().
@@ -44,7 +50,9 @@ const char *noct_get_system_language(void)
 /*
  * Initialized the locale.
  */
-void noct_init_locale(void)
+NOCT_DLL
+void
+noct_init_locale(void)
 {
 #if !defined(_WIN32)
 	const char *locale = setlocale(LC_MESSAGES, "");

@@ -34,17 +34,15 @@ option(NOCT_ENABLE_MULTITHREAD  "Enable multithread support"  OFF)
 # Debug/Release
 #
 
-# Use "Release" build type by default.
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type (Debug or Release)" FORCE)
-endif()
-
 # Debug Configuration
 if(MSVC)
+    # MSVC
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /Od /Zi /DDEBUG /UNDEBUG")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Od /Zi /DDEBUG /UNDEBUG")
-else()
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_RELEASE} -O0 -g3 -UNDEBUG")
+elseif(CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU")
+    # GCC/Clang
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -g3 -DDEBUG -Wall -Werror -Wextra -Wundef -Wconversion")
+    set(CMAKE_OBJC_FLAGS_DEBUG "${CMAKE_OBJC_FLAGS_DEBUG} -O0 -g3 -DNDEBUG -Wall -Werror -Wextra -Wundef -Wconversion")
 endif()
 
 # Release Configuration
@@ -55,6 +53,7 @@ if(MSVC)
 elseif(CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU")
   # GCC/Clang
   set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O2 -g -DNDEBUG")
+  set(CMAKE_OBJC_FLAGS_RELEASE "${CMAKE_OBJC_FLAGS_RELEASE} -O2 -g -DNDEBUG")
 endif()
 
 # ---
@@ -130,11 +129,18 @@ endif()
 
 # Determine the i18n files.
 if(NOCT_ENABLE_I18N)
-  set(
-    NOCT_I18N_SOURCE
-    src/i18n/i18n.c
-    src/i18n/translation.c
-  )
+  if(NOT NOCT_ENABLE_I18N_LIBINTL)
+    set(
+      NOCT_I18N_SOURCE
+      src/i18n/i18n.c
+      src/i18n/translation.c
+    )
+  else()
+    set(
+      NOCT_I18N_SOURCE
+      src/i18n/i18n.c
+    )
+  endif()
 endif()
 
 # Determine the base files.
@@ -150,9 +156,11 @@ set(
   src/core/execution.c
   src/core/intrinsics.c
   src/core/gc.c
-  src/core/hash.c
   src/core/lexer.yy.c
   src/core/parser.tab.c
+  src/backend/cback.c
+  src/backend/elback.c
+  src/backend/bcback.c
   ${FLEX_Lexer_OUTPUTS}
   ${BISON_Parser_OUTPUT_SOURCE}
 )
@@ -177,10 +185,16 @@ add_library(
   # Mandatory libraries here.
   src/api/api-math.c
 )
-set_target_properties(noct PROPERTIES 
-  VERSION 1.0.0 
-  SOVERSION 1
-)
+if(NOCT_ENABLE_SHARED)
+  set_target_properties(noct PROPERTIES 
+    VERSION 1.0.0 
+    SOVERSION 1
+  )
+  set_target_properties(noct PROPERTIES
+    C_VISIBILITY_PRESET hidden
+    VISIBILITY_INLINES_HIDDEN ON
+  )
+endif()
 
 # Add the target "libnoctapi", the standard library.
 if(NOCT_ENABLE_API)
@@ -192,10 +206,16 @@ if(NOCT_ENABLE_API)
     src/api/api-system.c
     src/api/api-console.c
   )
-  set_target_properties(noctapi PROPERTIES 
-    VERSION 1.0.0 
-    SOVERSION 1
-  )
+  if(NOCT_ENABLE_SHARED)
+    set_target_properties(noctapi PROPERTIES 
+      VERSION 1.0.0 
+      SOVERSION 1
+    )
+    set_target_properties(noct PROPERTIES
+      C_VISIBILITY_PRESET hidden
+      VISIBILITY_INLINES_HIDDEN ON
+    )
+  endif()
 endif()
 
 # ---
@@ -339,15 +359,13 @@ set(NOCT_LIBRARIES    ${NOCT_LIBRARY})
 if(NOCT_ENABLE_CLI)
   add_executable(
     noctcli
-    src/backend/cback.c
-    src/backend/elback.c
     src/cli/cli-main.c
     src/cli/cli-run.c
     src/cli/cli-compile.c
     src/cli/cli-ctrans.c
     src/cli/cli-eltrans.c
     src/cli/cli-repl.c
-    src/cli/cli-ffi.c
+    src/cli/cli-cfunc.c
   )
 
   # Set the executable name.
@@ -363,6 +381,10 @@ if(NOCT_ENABLE_CLI)
   if(NOCT_ENABLE_I18N)
     target_compile_definitions(noctcli PRIVATE NOCT_USE_TRANSLATION)
   endif()  
+  if(NOCT_ENABLE_I18N_LIBINTL)
+    target_compile_definitions(noctcli PRIVATE NOCT_USE_LIBINTL)
+  endif()
+  target_compile_definitions(noctcli PRIVATE NOCT_VERSION="${NOCT_VERSION}")
 
   # Include include/noct/, src/core/, and src/backend/
   target_include_directories(noctcli PRIVATE

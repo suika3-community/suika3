@@ -219,30 +219,51 @@ msgstr "%s:%d: Fehler: %s\n"
 msgid "Out of memory.\n"
 msgstr "Nicht genügend Speicher.\n"
 
-msgid "Noct Programming Language"
-msgstr "Programmiersprache Noct"
+msgid "Noct Programming Language\n"
+msgstr "Programmiersprache Noct\n"
 
 msgid "Version %s\n"
 msgstr "Version %s\n"
 
-msgid "JIT compilation is enabled. Starting the fast VM...\n"
-msgstr "JIT-Kompilierung ist aktiviert. Starte die schnelle VM...\n"
-
 msgid "Entering REPL mode.\n"
 msgstr "REPL-Modus wird gestartet.\n"
+
+msgid "JIT compilation is enabled. Starting the fast VM...\n"
+msgstr "JIT-Kompilierung ist aktiviert. Starte die schnelle VM...\n"
 
 msgid "Usage\n"
 msgstr "Verwendung\n"
 
-msgid "noct <file>                        ... run a program\n"
-msgstr "noct <file>                        ... ein Programm ausführen\n"
+msgid "noct <vm-options> <files>          ... run a program\n"
+msgstr "noct <vm-options> <files>          ... ein Programm ausführen\n"
 
-msgid "noct --compile <files>             ... convert to bytecode files\n"
-msgstr "noct --compile <files>             ... in Bytecode-Dateien umwandeln\n"
+msgid "noct --ansic <out-file> <in-files> ... convert to a C source file\n"
+msgstr "noct --ansic <out-file> <in-files> ... in eine C-Quelldatei umwandeln\n"
 
-msgid "noct --ansic <out file> <in files> ... convert to a C source file\n"
-msgstr "noct --ansic <out file> <in files> ... in eine C-Quelldatei umwandeln\n"
+msgid "noct --elisp <out-file> <in-files> ... convert to an Emacs Lisp source file\n"
+msgstr "noct --elisp <out-file> <in-files> ... in eine Emacs-Lisp-Quelldatei umwandeln\n"
 
-msgid "noct --elisp <out file> <in files> ... convert to an Emacs Lisp source file\n"
-msgstr "noct --elisp <out file> <in files> ... in eine Emacs-Lisp-Quelldatei umwandeln\n"
+msgid "--disable-jit        ... disable JIT\n"
+msgstr "--disable-jit        ... JIT deaktivieren\n"
+
+msgid "--force-jit          ... equivalent to --jit-threshold=0\n"
+msgstr "--force-jit          ... entspricht --jit-threshold=0\n"
+
+msgid "--jit-threshold=N    ... call-count threshold for compilation\n"
+msgstr "--jit-threshold=N    ... Aufrufanzahl-Schwellenwert für die Kompilierung\n"
+
+msgid "--optimize-level=N   ... optimize level (0/1)\n"
+msgstr "--optimize-level=N   ... Optimierungsstufe (0/1)\n"
+
+msgid "--gc-nursery-size=N  ... first GC space size in bytes\n"
+msgstr "--gc-nursery-size=N  ... Größe des ersten GC-Speicherbereichs in Byte\n"
+
+msgid "--gc-graduate-size=N ... second GC space size in bytes\n"
+msgstr "--gc-graduate-size=N ... Größe des zweiten GC-Speicherbereichs in Byte\n"
+
+msgid "--gc-tenure-size=N   ... final GC space size in bytes\n"
+msgstr "--gc-tenure-size=N   ... Größe des finalen GC-Speicherbereichs in Byte\n"
+
+msgid "--gc-lop-threshold=N ... move objects larger than N-bytes to final GC space\n"
+msgstr "--gc-lop-threshold=N ... Objekte groser als N Byte in den finalen GC-Speicherbereich verschieben\n"
 

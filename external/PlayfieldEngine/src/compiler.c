@@ -31,12 +31,8 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#include "playfield/playfield.h"
-#include "noct/noct.h"
-#include "runtime.h"
-#include "ast.h"
-#include "hir.h"
-#include "lir.h"
+#include <playfield/playfield.h>
+#include <noct/noct.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -123,99 +119,37 @@ static int command_compile(int argc, char *argv[])
 static bool compile_source(const char *file_name)
 {
 	char bc_fname[1024];
-	FILE *fp;
 	char *source_data, *dot;
 	size_t source_length;
-	uint32_t func_count, i, j;
 
 	/* Load an argument source file. */
 	if (!load_file_content(file_name, &source_data, &source_length))
 		return false;
 
-	/* Do parse, build AST. */
-	if (!ast_build(file_name, source_data)) {
-		wide_printf(PF_TR("Error: %s:%d: %s"),
-			    ast_get_file_name(),
-			    ast_get_error_line(),
-			    ast_get_error_message());
-		wide_printf("\n");
-		return false;
-	}
-
-	/* Transform AST to HIR. */
-	if (!hir_build()) {
-		wide_printf(PF_TR("Error: %s:%d: %s"),
-			    hir_get_file_name(),
-			    hir_get_error_line(),
-			    hir_get_error_message());
-		wide_printf("\n");
-		return false;
-	}
-
-	/* Make an output file name. (*.pfc) */
+	/* Make an output file name. (*.raybc) */
 	strcpy(bc_fname, file_name);
 	dot = strstr(bc_fname, ".");
 	if (dot != NULL)
-		strcpy(dot, ".pfc");
+		strcpy(dot, ".raybc");
 	else
-		strcat(bc_fname, ".pfc");
+		strcat(bc_fname, ".raybc");
 
-	/* Open an output .nb bytecode file. */
-	fp = fopen(bc_fname, "wb");
-	if (fp == NULL) {
-		wide_printf(PF_TR("Cannot open file \"%s\"."), bc_fname);
-		wide_printf("\n");
+	/* Start translation. */
+	if (!noct_bcback_start(bc_fname)) {
+		free(source_data);
 		return false;
 	}
 
-	/* Put a file header. */
-	func_count = hir_get_function_count();
-	fprintf(fp, "Noct Bytecode 1.0\n");
-	fprintf(fp, "Source\n");
-	fprintf(fp, "%s\n", file_name);
-	fprintf(fp, "Number Of Functions\n");
-	fprintf(fp, "%d\n", func_count);
-
-	/* For each HIR function. */
-	for (i = 0; i < func_count; i++) {
-		struct hir_block *hfunc;
-		struct lir_func *lfunc;
-
-		/* Transform HIR to LIR (bytecode). */
-		hfunc = hir_get_function(i);
-		if (!lir_build(hfunc, &lfunc)) {
-			wide_printf(PF_TR("Error: %s:%d: %s"),
-				    lir_get_file_name(),
-				    lir_get_error_line(),
-				    lir_get_error_message());
-			wide_printf("\n");
-			return false;
-		}
-
-		/* Put a bytcode. */
-		fprintf(fp, "Begin Function\n");
-		fprintf(fp, "Name\n");
-		fprintf(fp, "%s\n", lfunc->func_name);
-		fprintf(fp, "Parameters\n");
-		fprintf(fp, "%d\n", lfunc->param_count);
-		for (j = 0; j < lfunc->param_count; j++)
-			fprintf(fp, "%s\n", lfunc->param_name[j]);
-		fprintf(fp, "Temporary Size\n");
-		fprintf(fp, "%d\n", lfunc->tmpvar_size);
-		fprintf(fp, "Bytecode Size\n");
-		fprintf(fp, "%d\n", lfunc->bytecode_size);
-		fwrite(lfunc->bytecode, (size_t)lfunc->bytecode_size, 1, fp);
-		fprintf(fp, "\nEnd Function\n");
-
-		/* Free a single LIR. */
-		lir_cleanup(lfunc);
+	/* Translate. */
+	if (!noct_bcback_translate(file_name, source_data)) {
+		free(source_data);
+		return false;
 	}
+	free(source_data);
 
-	fclose(fp);
-
-	/* Free intermediates. */
-	hir_cleanup();
-	ast_cleanup();
+	/* Finalize. */
+	if (!noct_bcback_finalize())
+		return false;
 
 	return true;
 }

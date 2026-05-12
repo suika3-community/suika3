@@ -93,8 +93,7 @@ static bool serialize_printer(
 	int ival;
 	float fval;
 	const char *sval;
-	int items;
-	int i;
+	uint32_t items, i;
 	char digits[1024];
 
 	if (!noct_get_value_type(env, value, &type))

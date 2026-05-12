@@ -219,30 +219,51 @@ msgstr "%s:%d: エラー: %s\n"
 msgid "Out of memory.\n"
 msgstr "メモリが足りません。\n"
 
-msgid "Noct Programming Language"
-msgstr "Noct プログラミング言語"
+msgid "Noct Programming Language\n"
+msgstr "Noct プログラミング言語\n"
 
 msgid "Version %s\n"
 msgstr "バージョン %s\n"
 
-msgid "JIT compilation is enabled. Starting the fast VM...\n"
-msgstr "JITコンパイルが有効 ... 高速仮想マシン実行を開始します。\n"
-
 msgid "Entering REPL mode.\n"
 msgstr "REPLモードに入ります。\n"
+
+msgid "JIT compilation is enabled. Starting the fast VM...\n"
+msgstr "JIT コンパイルが有効です。高速仮想マシンを開始します...\n"
 
 msgid "Usage\n"
 msgstr "使い方\n"
 
-msgid "noct <file>                        ... run a program\n"
-msgstr "noct <ファイル>                    ... プログラムを実行します\n"
+msgid "noct <vm-options> <files>          ... run a program\n"
+msgstr "noct <vm-options> <入力...>        ... プログラムを実行します\n"
 
-msgid "noct --compile <files>             ... convert to bytecode files\n"
-msgstr "noct --compile <ファイル...>       ... バイトコードに変換します\n"
+msgid "noct --ansic <out-file> <in-files> ... convert to a C source file\n"
+msgstr "noct --ansic <出力> <入力...>      ... C ソースに変換します\n"
 
-msgid "noct --ansic <out file> <in files> ... convert to a C source file\n"
-msgstr "noct --ansic <出力> <入力...>      ... Cソースに変換します\n"
+msgid "noct --elisp <out-file> <in-files> ... convert to an Emacs Lisp source file\n"
+msgstr "noct --elisp <出力> <入力...>      ... Emacs Lisp ソースに変換します\n"
 
-msgid "noct --elisp <out file> <in files> ... convert to an Emacs Lisp source file\n"
-msgstr "noct --elisp <出力> <入力...>      ... Emacs Lispソースに変換します\n"
+msgid "--disable-jit        ... disable JIT\n"
+msgstr "--disable-jit        ... JIT を無効にする\n"
+
+msgid "--force-jit          ... equivalent to --jit-threshold=0\n"
+msgstr "--force-jit          ... --jit-threshold=0 と同等\n"
+
+msgid "--jit-threshold=N    ... call-count threshold for compilation\n"
+msgstr "--jit-threshold=N    ... コンパイルを行う呼び出し回数のしきい値\n"
+
+msgid "--optimize-level=N   ... optimize level (0/1)\n"
+msgstr "--optimize-level=N   ... 最適化レベル (0/1)\n"
+
+msgid "--gc-nursery-size=N  ... first GC space size in bytes\n"
+msgstr "--gc-nursery-size=N  ... 第 1 GC 領域のサイズ（バイト単位）\n"
+
+msgid "--gc-graduate-size=N ... second GC space size in bytes\n"
+msgstr "--gc-graduate-size=N ... 第 2 GC 領域のサイズ（バイト単位）\n"
+
+msgid "--gc-tenure-size=N   ... final GC space size in bytes\n"
+msgstr "--gc-tenure-size=N   ... 最終 GC 領域のサイズ（バイト単位）\n"
+
+msgid "--gc-lop-threshold=N ... move objects larger than N-bytes to final GC space\n"
+msgstr "--gc-lop-threshold=N ... N バイトを超えるオブジェクトを最終 GC 領域へ移動\n"
 

@@ -11,12 +11,15 @@
 
 #include "cli-main.h"
 
-#ifdef _WIN32
+#if defined(NOCT_TARGET_WINDOWS)
 #include <windows.h>
-#else
+#elif defined(NOCT_TARGET_POSIX) || defined(NOCT_TARGET_MACOS)
 #include <sys/stat.h>
 #include <dirent.h>
 #include <unistd.h>
+#elif defined(NOCT_TARGET_DOS4G)
+#include <dos.h>
+#include <sys/stat.h>
 #endif
 
 /* i18n.c */
@@ -29,8 +32,6 @@ void noct_init_locale(void);
  */
 int main(int argc, char *argv[])
 {
-	char *first_arg;
-
 #if defined(NOCT_USE_TRANSLATION)
 	noct_init_locale();
 #endif
@@ -38,8 +39,12 @@ int main(int argc, char *argv[])
 	if (argc <= 1)
 		return command_repl();
 
-	if (strcmp(argv[1], "--help") == 0 ||
-	    strcmp(argv[1], "-h") == 0) {
+	if (strcmp(argv[1], "--version") == 0) {
+		wide_printf("Noct " NOCT_VERSION "\n");
+		return 0;
+	}
+
+	if (strcmp(argv[1], "--help") == 0) {
 		show_usage();
 		return 1;
 	}
@@ -81,10 +86,21 @@ void show_usage(void)
 {
 	wide_printf(N_TR("Noct Programming Language\n"));
 	wide_printf(N_TR("Usage\n"));
-	wide_printf(N_TR("  noct <file>                        ... run a program\n"));
-	wide_printf(N_TR("  noct --compile <files>             ... convert to bytecode files\n"));
-	wide_printf(N_TR("  noct --ansic <out file> <in files> ... convert to a C source file\n"));
-	wide_printf(N_TR("  noct --elisp <out file> <in files> ... convert to an Emacs Lisp source file\n"));
+	wide_printf(N_TR("  noct <vm-options> <files>          ... run a program\n"));
+	wide_printf(N_TR("  noct --compile <in-files>          ... convert to bytecode files\n"));
+	wide_printf(N_TR("  noct --ansic <out-file> <in-files> ... convert to a C source file\n"));
+	wide_printf(N_TR("  noct --elisp <out-file> <in-files> ... convert to an Emacs Lisp source file\n"));
+	wide_printf("\n");
+	wide_printf(N_TR("vm-options:\n"));
+	wide_printf(N_TR("  --disable-jit        ... disable JIT\n"));
+	wide_printf(N_TR("  --force-jit          ... equivalent to --jit-threshold=0\n"));
+	wide_printf(N_TR("  --jit-threshold=N    ... call-count threshold for compilation\n"));
+	wide_printf(N_TR("  --optimize-level=N   ... optimize level (0/1)\n"));
+	wide_printf(N_TR("  --gc-nursery-size=N  ... first GC space size in bytes\n"));
+	wide_printf(N_TR("  --gc-graduate-size=N ... second GC space size in bytes\n"));
+	wide_printf(N_TR("  --gc-tenure-size=N   ... final GC space size in bytes\n"));
+	wide_printf(N_TR("  --gc-lop-threshold=N ... move objects larger than N-bytes to final GC space\n"));
+	wide_printf("\n");
 }
 
 /*
@@ -156,7 +172,7 @@ int wide_printf(const char *format, ...)
 /*
  * For POSIX
  */
-#if !defined(_WIN32)
+#if defined(NOCT_TARGET_POSIX) || defined(NOCT_TARGET_MACOS)
 
 /*
  * Recursively add files.
@@ -204,10 +220,12 @@ bool add_file(const char *fname, bool (*add_file_hook)(const char *))
 	return true;
 }
 
+#endif
+
 /*
  * For Windows
  */
-#else
+#if defined(NOCT_TARGET_WINDOWS)
 
 #define BUF_SIZE	1024
 
@@ -276,4 +294,66 @@ bool add_file(const char *fname, bool (*add_file_hook)(const char *))
 	return true;
 }
 
-#endif	/* !defined(_WIN32) */
+#endif
+
+#if defined(NOCT_TARGET_DOS4G)
+
+#ifndef _A_SUBDIR
+#define _A_SUBDIR 0x10
+#endif
+
+/*
+ * Recursively add files.
+ */
+bool add_file(const char *fname, bool (*add_file_hook)(const char *))
+{
+        struct stat st;
+
+        if (stat(fname, &st) != 0) {
+                printf(N_TR("Cannot find %s.\n"), fname);
+                return false;
+        }
+
+        if (st.st_mode & S_IFDIR) {
+                struct find_t find;
+                char pattern[256 + 1];
+                unsigned rc;
+
+                printf(N_TR("Searching directory %s.\n"), fname);
+
+                snprintf(pattern, sizeof(pattern), "%s\\*.*", fname);
+
+                rc = _dos_findfirst(pattern, _A_NORMAL | _A_RDONLY | _A_HIDDEN |
+                                             _A_SYSTEM | _A_SUBDIR | _A_ARCH,
+                                    &find);
+                if (rc != 0) {
+                        wide_printf(N_TR("Skipping empty directory %s.\n"), fname);
+                        return false;
+                }
+
+                do {
+                        char next_path[256 + 1];
+
+                        if (strcmp(find.name, ".") == 0)
+                                continue;
+                        if (strcmp(find.name, "..") == 0)
+                                continue;
+
+                        snprintf(next_path, sizeof(next_path), "%s\\%s", fname, find.name);
+
+                        if (!add_file(next_path, add_file_hook))
+                                return false;
+
+                } while (_dos_findnext(&find) == 0);
+
+        } else if (st.st_mode & S_IFREG) {
+                wide_printf(N_TR("Adding file %s.\n"), fname);
+
+                if (!add_file_hook(fname))
+                        return false;
+        }
+
+        return true;
+}
+
+#endif

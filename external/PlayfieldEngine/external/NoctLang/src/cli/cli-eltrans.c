@@ -37,7 +37,7 @@ static bool do_transpile_elisp(const char *out_file, int in_file_count, const ch
 	int i;
 
 	/* Initialize the backend. */
-	if (!elback_init(out_file))
+	if (!noct_elback_start(out_file))
 		return false;
 
 	/* For each input file or directory. */
@@ -47,7 +47,7 @@ static bool do_transpile_elisp(const char *out_file, int in_file_count, const ch
 	}
 
 	/* Put a epilogue code. */
-	if (!elback_finalize())
+	if (!noct_elback_finalize())
 		return false;
 
 	return true;
@@ -58,47 +58,17 @@ static bool add_file_hook_elisp(const char *fname)
 {
 	char *data;
 	size_t len;
-	int func_count, j;
 
 	/* Load a file. */
 	if (!load_file_content(fname, &data, &len))
 		return false;
 
-	/* Do parse, build AST. */
-	if (!ast_build(fname, data)) {
-		wide_printf(N_TR("Error: %s: %d: %s\n"),
-			    ast_get_file_name(),
-			    ast_get_error_line(),
-			    ast_get_error_message());
+	/* Translate. */
+	if (!noct_elback_translate(fname, data)) {
+		free(data);
 		return false;
 	}
 
-	/* Transform AST to HIR. */
-	if (!hir_build()) {
-		wide_printf(N_TR("Error: %s: %d: %s\n"),
-			    hir_get_file_name(),
-			    hir_get_error_line(),
-			    hir_get_error_message());
-		return false;
-	}
-
-	/* For each HIR function. */
-	func_count = hir_get_function_count();
-	for (j = 0; j < func_count; j++) {
-		struct hir_block *hfunc;
-
-		/* Put Emacs Lisp. */
-		hfunc = hir_get_function(j);
-		if (!elback_translate_func(hfunc))
-			return false;
-	}
-
-	/* Free entire HIR. */
-	hir_cleanup();
-
-	/* Free intermediates. */
-	hir_cleanup();
-	ast_cleanup();
-
+	free(data);
 	return true;
 }

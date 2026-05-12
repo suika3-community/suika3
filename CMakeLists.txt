@@ -1034,7 +1034,6 @@ if(SUIKA_ENABLE_AOTC)
   add_executable(
     suika3-aotc
     external/PlayfieldEngine/src/aot.c
-    external/PlayfieldEngine/external/NoctLang/src/backend/cback.c
     ${SUIKA_AOTC_RESOURCE}
   )
 
@@ -1045,8 +1044,6 @@ if(SUIKA_ENABLE_AOTC)
     external/PlayfieldEngine/include
     external/PlayfieldEngine/external/StratoHAL/include
     external/PlayfieldEngine/external/NoctLang/include
-    external/PlayfieldEngine/external/NoctLang/src/core
-    external/PlayfieldEngine/external/NoctLang/src/backend
   )
 
   if(NOT SUIKA_ENABLE_DIST)
