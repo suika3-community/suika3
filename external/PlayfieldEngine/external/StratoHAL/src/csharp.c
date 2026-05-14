@@ -178,7 +178,11 @@ void init_hal_func_table(
  */
 
 static struct hal_callback hal_callback;
+#if !defined(HAL_USE_DLL)
+HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback) = hal_bootstrap;
+#else
 HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback);
+#endif
 
 static int screen_width;
 static int screen_height;
