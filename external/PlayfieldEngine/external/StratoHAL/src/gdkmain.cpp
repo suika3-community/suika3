@@ -35,7 +35,7 @@
 
 // HAL
 extern "C" {
-#include <stratohal/stratohal.h>
+#include <strato/strato.h>
 #include "gdkfile.h"
 #include "d3drender.h"
 #include "xa2sound.h"

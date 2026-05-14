@@ -29,7 +29,7 @@
  */
 
 /* HAL */
-#include <stratohal/stratohal.h>
+#include <strato/strato.h>
 #include "glrender.h"
 
 /* Standard C */
@@ -52,18 +52,30 @@
 #endif
 
 /*
- * Linux and POSIX variant (OpenGL 3.2)
+ * Linux OpenGL 3.2
  */
-#if (defined(HAL_TARGET_LINUX) && !defined(HAL_USE_GLES)) || defined(HAL_TARGET_POSIX)
+#if (defined(HAL_TARGET_LINUX) || \
+     defined(HAL_TARGET_FREEBSD) || \
+     defined(HAL_TARGET_NETBSD) || \
+     defined(HAL_TARGET_OPENBSD)) && \
+    !defined(HAL_USE_GLES) && \
+    !defined(HAL_TARGET_ANDROID) && \
+    !defined(HAL_TARGET_OPENHARMONY)
 #include <GL/gl.h>
 #include <GL/glext.h>
 #include "glhelper.h"
 #endif
 
 /*
- * Linux GBM (OpenGL ES 2.0/3.0)
+ * Linux OpenGL ES 2.0/3.0
  */
-#if (defined(HAL_TARGET_LINUX) || defined(HAL_TARGET_FREEBSD)) && defined(HAL_USE_GLES)
+#if (defined(HAL_TARGET_LINUX) || \
+     defined(HAL_TARGET_FREEBSD) || \
+     defined(HAL_TARGET_NETBSD) || \
+     defined(HAL_TARGET_OPENBSD)) && \
+    defined(HAL_USE_GLES) && \
+    !defined(HAL_TARGET_ANDROID) && \
+    !defined(HAL_TARGET_OPENHARMONY)
 #include <GLES3/gl3.h>
 #include <GLES2/gl2ext.h>
 #include "glhelper.h"

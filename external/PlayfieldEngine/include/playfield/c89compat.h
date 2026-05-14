@@ -42,23 +42,23 @@ extern "C" {
  * Here, we define two macros that indicates the target architecture
  * and the byte order.
  *
- * |Macro               |Architecture           |
- * |--------------------|-----------------------|
- * |PF_ARCH_X86         |x86 32-bit             |
- * |PF_ARCH_X86_64      |x86 64-bit             |
- * |PF_ARCH_ARM32       |ARMv7                  |
- * |PF_ARCH_ARM64       |Armv8 / Armv9          |
- * |PF_ARCH_PPC32       |PowerPC 32-bit         |
- * |PF_ARCH_PPC64       |PowerPC 64-bit / POWER |
- * |PF_ARCH_MIPS32      |MIPS 32-bit            |
- * |PF_ARCH_MIPS64      |MIPS 64-bit            |
- * |PF_ARCH_RISCV32     |RISC-V 32-bit          |
- * |PF_ARCH_RISCV64     |RISC-V 64-bit          |
+ * | Macro               | Architecture           |
+ * |---------------------|------------------------|
+ * | PF_ARCH_X86         | x86 32-bit             |
+ * | PF_ARCH_X86_64      | x86 64-bit             |
+ * | PF_ARCH_ARM32       | ARMv7                  |
+ * | PF_ARCH_ARM64       | Armv8 / Armv9          |
+ * | PF_ARCH_PPC32       | PowerPC 32-bit         |
+ * | PF_ARCH_PPC64       | PowerPC 64-bit / POWER |
+ * | PF_ARCH_MIPS32      | MIPS 32-bit            |
+ * | PF_ARCH_MIPS64      | MIPS 64-bit            |
+ * | PF_ARCH_RISCV32     | RISC-V 32-bit          |
+ * | PF_ARCH_RISCV64     | RISC-V 64-bit          |
  *
- * |Macro               |Byte-Order             |
- * |--------------------|-----------------------|
- * |PF_ARCH_LE          |Little Endian          |
- * |PF_ARCH_BE          |Big Endian             |
+ * | Macro               | Byte-Order             |
+ * |---------------------|------------------------|
+ * | PF_ARCH_LE          | Little Endian          |
+ * | PF_ARCH_BE          | Big Endian             |
  */
 
 #if (defined(__i386__) && !defined(__x86_64__)) || defined(_M_IX86)
@@ -77,116 +77,113 @@ extern "C" {
 
 /* Arm64 */
 #define PF_ARCH_ARM64
-
 #if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-#define PF_ARCH_BE	/* Can be BE*/
+#define PF_ARCH_BE		/* May be BE*/
 #else
-#define PF_ARCH_LE	/* Default, always LE on MSVC */
+#define PF_ARCH_LE		/* Default, always LE on MSVC */
 #endif
 
 #elif defined(__arm__)
 
 /* Arm32 */
 #define PF_ARCH_ARM32
-
 #if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-#define PF_ARCH_BE	/* Can be BE */
+#define PF_ARCH_BE		/* May be BE */
 #else
-#define PF_ARCH_LE	/* Default, always LE on MSVC */
+#define PF_ARCH_LE		/* Default, always LE on MSVC */
 #endif
 
 #elif defined(_ARCH_PPC64)
 
 /* PowerPC 64 / POWER */
 #define PF_ARCH_PPC64
-
 #if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-#define PF_ARCH_BE	/* Can be BE optionally */
+#define PF_ARCH_BE		/* May be BE optionally */
 #else
-#define PF_ARCH_LE	/* Default, no MSVC support */
+#define PF_ARCH_LE		/* Default, no MSVC support */
 #endif
 
 #elif defined(_ARCH_PPC)
 
 /* PowerPC */
 #define PF_ARCH_PPC32
-
 #if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-#define PF_ARCH_LE	/* Can be LE optionally */
+#define PF_ARCH_LE		/* May be LE optionally */
 #else
-#define PF_ARCH_BE	/* Default, always BE on MSVC */
+#define PF_ARCH_BE		/* Default, always BE on MSVC */
 #endif
 
 #elif defined(__mips64) || defined(__mips64__)
 
 /* MIPS64 */
 #define PF_ARCH_MIPS64
-
 #if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-#define PF_ARCH_LE	/* Can be LE */
+#define PF_ARCH_LE		/* May be LE */
 #else
-#define PF_ARCH_BE	/* Default, no MSVC support */
+#define PF_ARCH_BE		/* Default, no MSVC support */
 #endif
 
 #elif defined(__mips__)
 
 /* MIPS32 */
 #define PF_ARCH_MIPS32
-
 #if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-#define PF_ARCH_LE	/* Can be BE optionally */
+#define PF_ARCH_LE		/* May be BE optionally */
 #else
-#define PF_ARCH_BE	/* Default, always BE on MSVC */
+#define PF_ARCH_BE		/* Default, always BE on MSVC */
 #endif
 
 #elif defined(__riscv) && (__riscv_xlen == 64)
 
 /* RISC-V 64bit */
 #define PF_ARCH_RISCV64
-
 #if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-#define PF_ARCH_BE	/* Can be BE optionally */
+#define PF_ARCH_BE		/* May be BE optionally */
 #else
-#define PF_ARCH_LE	/* Default, no MSVC support yet */
+#define PF_ARCH_LE		/* Default, no MSVC support yet */
 #endif
 
 #elif defined(__riscv) && (__riscv_xlen == 32)
 
 /* RISC-V 32bit */
 #define PF_ARCH_RISCV32
-
 #if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-#define PF_ARCH_BE	/* Can be BE optionally */
+#define PF_ARCH_BE		/* May be BE optionally */
 #else
-#define PF_ARCH_LE	/* Default, no MSVC support yet */
+#define PF_ARCH_LE		/* Default, no MSVC support yet */
 #endif
 
 #endif
 
 /*
- * Here, we define two macros that indicates the target platform and
+ * Here, we define a macro that indicates the target platform and
  * its characteristics.
  *
- * |Macro               |Platform              |Description                 |
- * |--------------------|----------------------|----------------------------|
- * |PF_TARGET_WINDOWS   |Windows               |                            |
- * |PF_TARGET_MACOS     |macOS                 |                            |
- * |PF_TARGET_LINUX     |Linux                 |Excluding Android           |
- * |PF_TARGET_IOS       |iOS                   |                            |
- * |PF_TARGET_ANDROID   |Android NDK           |                            |
- * |PF_TARGET_WASM      |Wasm                  |Emscripten                  |
- * |PF_TARGET_UNITY     |Unity                 |Gaming Consoles             |
- * |PF_TARGET_FREEBSD   |FreeBSD               |Excluding Gaming Consoles   |
- * |PF_TARGET_NETBSD    |NetBSD                |                            |
- * |PF_TARGET_OPENBSD   |OpenBSD               |                            |
- * |PF_TARGET_SOLARIS   |Solaris               |                            |
- * |PF_TARGET_BEOS      |BeOS and Haiku        |                            |
- * |PF_TARGET_PCAT      |PC/AT DOS4G           |                            |
- * |PF_TARGET_PC98      |PC-9801 DOS4G         |                            |
+ * | Macr  o               | Platform          | Description                        |
+ * |-----------------------|-------------------|------------------------------------|
+ * | PF_TARGET_WINDOWS     | Windows           | Win32 and Win64                    |
+ * | PF_TARGET_MACOS       | macOS             | Mac OS 10.0+                       |
+ * | PF_TARGET_LINUX       | Linux             | Excluding Android                  |
+ * | PF_TARGET_IOS         | iOS               | iOS/iPadOS/visionOS/watchOS/tvOS   |
+ * | PF_TARGET_ANDROID     | Android NDK       | Android 4.4+                       |
+ * | PF_TARGET_OPENHARMONY | OpenHarmony SDK   | HarmonyOS NEXT and compatible OSes |
+ * | PF_TARGET_WASM        | Wasm              | Emscripten                         |
+ * | PF_TARGET_UNITY       | Unity             | Gaming Consoles                    |
+ * | PF_TARGET_FREEBSD     | FreeBSD           | Excluding PS4/5                    |
+ * | PF_TARGET_NETBSD      | NetBSD            |                                    |
+ * | PF_TARGET_OPENBSD     | OpenBSD           |                                    |
+ * | PF_TARGET_SOLARIS11   | Solaris 11        |                                    |
+ * | PF_TARGET_SOLARIS10   | Solaris 10        |                                    |
+ * | PF_TARGET_GENERICUNIX | Old UNIX          |                                    |
+ * | PF_TARGET_HAIKU       | BeOS and Haiku    |                                    |
+ * | PF_TARGET_PC98        | NEC PC-9801 DOS4G | Watcom                             |
+ * | PF_TARGET_PCAT        | PC/AT DOS4G       | Watcom                             |
  *
- * |Macro               |Description                     |
- * |--------------------|--------------------------------|
- * |PF_TARGET_POSIX     |Generic POSIX compliant systems |
+ * In addition, the following is defined for Linux and *BSD (excluding Apple)
+ *
+ * | Macro              | Description             |
+ * |--------------------|-------------------------|
+ * | PF_TARGET_POSIX    | POSIX compliant systems |
  */
 
 /* Windows */
@@ -208,8 +205,11 @@ extern "C" {
 #endif
 #endif
 
-/* Linux (non-Android) */
-#if defined(__linux) && !defined(__ANDROID__) && !defined(PF_TARGET_UNITY)
+/* Linux */
+#if defined(__linux) && \
+    !defined(__ANDROID__) && \
+    !defined(PF_TARGET_OPENHARMONY) && \
+    !defined(PF_TARGET_UNITY)
 #define PF_TARGET_LINUX
 #ifndef PF_TARGET_POSIX
 #define PF_TARGET_POSIX
@@ -217,15 +217,12 @@ extern "C" {
 #endif
 
 /* FreeBSD */
-#if defined(__FreeBSD__) && !defined(PF_TARGET_UNITY)
+#if defined(__FreeBSD__) && \
+    !defined(PF_TARGET_UNITY)
 #define PF_TARGET_FREEBSD
 #ifndef PF_TARGET_POSIX
 #define PF_TARGET_POSIX
 #endif
-#endif
-
-/* Unity */
-#if defined(PF_TARGET_UNITY)
 #endif
 
 /* NetBSD */
@@ -244,9 +241,13 @@ extern "C" {
 #endif
 #endif
 
-/* Solaris */
-#if defined(__sun)
-#define PF_TARGET_SOLARIS
+/* SunOS/Solaris */
+#if defined(__sun) 
+#if defined(__SunOS_5_11)
+#define PF_TARGET_SOLARIS11
+#else
+#define PF_TARGET_SOLARIS10
+#endif
 #ifndef PF_TARGET_POSIX
 #define PF_TARGET_POSIX
 #endif
@@ -267,6 +268,22 @@ extern "C" {
 #define PF_TARGET_BEOS
 #endif
 
+/* Unity */
+#if defined(PF_TARGET_UNITY)
+#endif
+
+/* OpenHarmony */
+#if defined(PF_TARGET_OPENHARMONY)
+#endif
+
+/* PC98 */
+#if defined(PF_TARGET_PC98)
+#endif
+
+/* PC/AT */
+#if defined(PF_TARGET_PCAT)
+#endif
+
 /* Error: No target detected. */
 #if !defined(PF_TARGET_WINDOWS) &&              \
     !defined(PF_TARGET_MACOS) &&                \
@@ -274,7 +291,8 @@ extern "C" {
     !defined(PF_TARGET_FREEBSD) &&              \
     !defined(PF_TARGET_NETBSD) &&               \
     !defined(PF_TARGET_OPENBSD) &&              \
-    !defined(PF_TARGET_SOLARIS) &&              \
+    !defined(PF_TARGET_SOLARIS11) &&            \
+    !defined(PF_TARGET_SOLARIS10) &&            \
     !defined(PF_TARGET_PIOSIX) &&               \
     !defined(PF_TARGET_IOS) &&                  \
     !defined(PF_TARGET_ANDROID) &&              \
@@ -370,6 +388,34 @@ typedef unsigned long long uint64_t;
 #else
 #define RESTRICT				/* Not supported */
 #endif
+#endif
+
+/*
+ * Definition of the CDECL keyword
+ */
+#ifndef CDECL
+#if defined(PF_TARGET_PC98) || defined(PD_TARGET_PCAT)
+#define CDECL __cdecl
+#else
+#define CDECL
+#endif
+#endif
+
+/*
+ * Definition of the import/export keyword.
+ */
+#if defined(PF_USE_DLL)
+  #if defined(__GNUC__)
+    #define PF_DLL		__attribute__((visibility("default")))
+  #elif defined(_MSC_VER)
+    #if defined(DLL_IMPL)
+      #define PF_DLL		__declspec(dllexport)
+    #else
+      #define PF_DLL		__declspec(dllimport)
+    #endif
+  #endif
+#else
+  #define PF_DLL
 #endif
 
 /*

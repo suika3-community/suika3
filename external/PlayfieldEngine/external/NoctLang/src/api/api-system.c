@@ -234,7 +234,7 @@ cfunc_System_runCommand(
 			if (strcmp(work_dir, "") != 0) {
 				if (chdir(work_dir) != 0) {
 					printf("chdir() failed.\n");
-					_exit(EXIT_FAILURE);
+					return EXIT_FAILURE;
 				}
 
 			}
@@ -254,7 +254,7 @@ cfunc_System_runCommand(
 
 			printf("execvp() failed for %s.\n", argv[0]);
 			free(cmd_copy);
-			_exit(EXIT_FAILURE);
+			return EXIT_FAILURE;
 		} else {
 			if (wait_for_finish)
 				waitpid(pid, &ret, 0);

@@ -31,7 +31,7 @@
 #ifndef STRATOHAL_DSVIDEO_H
 #define STRATOHAL_DSVIDEO_H
 
-#include <stratohal/stratohal.h>
+#include <strato/strato.h>
 
 #include <windows.h>
 

@@ -473,7 +473,7 @@ cback_visit_sconst_op(
 	GET_TMPVAR(&dst);
 	GET_STRING(&s, &len, &hash);
 
-	len = strlen(s);
+	len = (uint32_t)strlen(s);
 	hash = noct_string_hash(s);
 
 	fprintf(fp, "    if (!ex_make_string_with_hash(env, &env->frame->tmpvar[%d], \"%s\", %uU, 0x%08x))\n", dst, s, len, hash);

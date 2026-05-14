@@ -28,7 +28,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#include <stratohal/stratohal.h>
+#include <strato/strato.h>
 
 #include <emscripten.h>
 
@@ -294,7 +294,6 @@ hal_get_rfile_string(
 	char c;
 
 	assert(f != NULL);
-	assert(f->fp != NULL);
 	assert(buf != NULL);
 	assert(size > 0);
 

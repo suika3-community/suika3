@@ -29,7 +29,7 @@
  */
 
 /* Base */
-#include <stratohal/stratohal.h>
+#include <strato/strato.h>
 
 /* OpenSLES */
 #include <SLES/OpenSLES.h>
@@ -109,7 +109,11 @@ init_opensl_es(void)
 	for (int i = 0; i < HAL_SOUND_TRACKS; i++)
 		pthread_mutex_init(&sound_mutex[i], NULL);
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 	slCreateEngine(&engine_object, 0, NULL, 0, NULL, NULL);
+#pragma clang diagnostic pop
+
 	(*engine_object)->Realize(engine_object, SL_BOOLEAN_FALSE);
 	(*engine_object)->GetInterface(engine_object, SL_IID_ENGINE, &engine_engine);
 

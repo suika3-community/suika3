@@ -10,19 +10,22 @@ option(NOCT_ENABLE_STATIC       "Build a static library"      OFF)
 option(NOCT_ENABLE_SHARED       "Build a shared library"      OFF)
 option(NOCT_ENABLE_OBJECT       "Build objects only"          OFF)
 
-# Opt-out.
+# Options
 option(NOCT_ENABLE_CLI          "Build a CLI binary"          ON)
 option(NOCT_ENABLE_JIT          "Enable JIT compilation"      ON)
 option(NOCT_ENABLE_I18N         "Enable translation feature"  ON)
 option(NOCT_ENABLE_I18N_LIBINTL "Enable gettext"              OFF)
 option(NOCT_ENABLE_API          "Enable standard API"         ON)
 option(NOCT_ENABLE_INSTALL      "Enable installation"         ON)
-
+option(NOCT_ENABLE_CBACKEND     "Enable C backend"            ON)
+option(NOCT_ENABLE_ELBACKEND    "Enable Emacs Lisp backend"   ON)
+option(NOCT_ENABLE_BCBACKEND    "Enable bytecode backend"     ON)
 option(NOCT_ENABLE_MDOC         "Install mdoc(7) man page"    OFF)
 
 # Choose one if needed.
 option(NOCT_TARGET_WASM         "Build for Emscripten"        OFF)
 option(NOCT_TARGET_UNITY        "Build for Unity"             OFF)
+option(NOCT_TARGET_OPENHARMONY  "Build for OpenHarmony"       OFF)
 option(NOCT_TARGET_DOS4G        "Build for Unity"             OFF)
 
 # Experimental.
@@ -127,20 +130,13 @@ endif()
 # Library Targets
 #
 
-# Determine the i18n files.
-if(NOCT_ENABLE_I18N)
-  if(NOT NOCT_ENABLE_I18N_LIBINTL)
-    set(
-      NOCT_I18N_SOURCE
-      src/i18n/i18n.c
-      src/i18n/translation.c
-    )
-  else()
-    set(
-      NOCT_I18N_SOURCE
-      src/i18n/i18n.c
-    )
-  endif()
+# Determine the library type.
+if(NOCT_ENABLE_SHARED)
+  set(NOCT_LIB_TYPE SHARED)
+elseif(NOCT_ENABLE_OBJECT)
+  set(NOCT_LIB_TYPE OBJECT)
+else()
+  set(NOCT_LIB_TYPE STATIC)
 endif()
 
 # Determine the base files.
@@ -158,20 +154,48 @@ set(
   src/core/gc.c
   src/core/lexer.yy.c
   src/core/parser.tab.c
-  src/backend/cback.c
-  src/backend/elback.c
-  src/backend/bcback.c
   ${FLEX_Lexer_OUTPUTS}
   ${BISON_Parser_OUTPUT_SOURCE}
 )
 
-# Determine the library type.
-if(NOCT_ENABLE_SHARED)
-  set(NOCT_LIB_TYPE SHARED)
-elseif(NOCT_ENABLE_OBJECT)
-  set(NOCT_LIB_TYPE OBJECT)
-else()
-  set(NOCT_LIB_TYPE STATIC)
+# Determine the C backend files.
+if(NOCT_ENABLE_CBACKEND)
+  set(
+    NOCT_CBE_SOURCE
+    src/backend/cback.c
+  )
+endif()
+
+# Determine the bytecode backend files.
+if(NOCT_ENABLE_BCBACKEND)
+  set(
+    NOCT_BCBE_SOURCE
+    src/backend/bcback.c
+  )
+endif()
+
+# Determine the Emacs Lisp backend files.
+if(NOCT_ENABLE_ELBACKEND)
+  set(
+    NOCT_ELBE_SOURCE
+    src/backend/elback.c
+  )
+endif()
+
+# Determine the i18n files.
+if(NOCT_ENABLE_I18N)
+  if(NOT NOCT_ENABLE_I18N_LIBINTL)
+    set(
+      NOCT_I18N_SOURCE
+      src/i18n/i18n.c
+      src/i18n/translation.c
+    )
+  else()
+    set(
+      NOCT_I18N_SOURCE
+      src/i18n/i18n.c
+    )
+  endif()
 endif()
 
 # Add the target "libnoct", the core sandboxed virtual machine.
@@ -180,6 +204,9 @@ add_library(
   ${NOCT_LIB_TYPE}
 
   ${NOCT_BASE_SOURCE}
+  ${NOCT_CBE_SOURCE}
+  ${NOCT_BCBE_SOURCE}
+  ${NOCT_ELBE_SOURCE}
   ${NOCT_I18N_SOURCE}
 
   # Mandatory libraries here.
@@ -215,6 +242,7 @@ if(NOCT_ENABLE_API)
       C_VISIBILITY_PRESET hidden
       VISIBILITY_INLINES_HIDDEN ON
     )
+
   endif()
 endif()
 
@@ -225,9 +253,9 @@ endif()
 #
 
 # -Iinclude
-target_include_directories(noct PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(noct PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 if(NOCT_ENABLE_API)
-  target_include_directories(noctapi PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  target_include_directories(noctapi PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 endif()
 
 # -Isrc/core
@@ -275,6 +303,14 @@ if(NOCT_ENABLE_I18N_LIBINTL)
     target_compile_definitions(noctapi PRIVATE NOCT_USE_LIBINTL)
   endif()
 endif()  
+
+# NOCT_TARGET_OPENHARMONY
+if(NOCT_TARGET_OPENHARMONY)
+  target_compile_definitions(noct PUBLIC NOCT_TARGET_OPENHARMONY)
+  if(NOCT_ENABLE_API)
+    target_compile_definitions(noctapi PUBLIC NOCT_TARGET_OPENHARMONY)
+  endif()
+endif()
 
 # NOCT_TARGET_UNITY
 if(NOCT_TARGET_UNITY)
@@ -332,10 +368,20 @@ endif()
 # LDFLAGS
 #
 
+if(NOT MSVC)
+  target_link_libraries(noct PUBLIC m)
+endif()
+
 if(NOCT_ENABLE_I18N_INTL)
   target_link_libraries(noct PUBLIC ${INTL_LIBRARY})
   if(NOCT_ENABLE_API)
     target_link_libraries(noctapi PUBLIC ${INTL_LIBRARY})
+  endif()
+endif()
+
+if(NOCT_ENABLE_SHARED)
+  if(NOCT_ENABLE_API)
+    target_link_libraries(noctapi PUBLIC noct)
   endif()
 endif()
 
@@ -420,30 +466,71 @@ endif()
 if(NOCT_ENABLE_INSTALL)
   include(GNUInstallDirs)
 
-  install(FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/noct/noct.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/noct/aot.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/noct/c89compat.h
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/noct)
+  # Headers
+  install(
+    FILES
+      "${CMAKE_CURRENT_SOURCE_DIR}/include/noct/noct.h"
+      "${CMAKE_CURRENT_SOURCE_DIR}/include/noct/c89compat.h"
+    DESTINATION
+      "${CMAKE_INSTALL_INCLUDEDIR}/noct"
+  )
 
-  install(TARGETS noct RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR})
+  # libnoct
+  install(
+    TARGETS noct RUNTIME
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+  )
+
+  # libnoctapi
   if(NOCT_ENABLE_API)
-    install(TARGETS noctapi RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(
+      TARGETS noctapi RUNTIME
+      DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    )
   endif()
 
+  # noct
   if(NOCT_ENABLE_CLI)
-    install(TARGETS noctcli RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(
+      TARGETS noctcli RUNTIME
+      DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    )
 
-    if(NOCT_ENABLE_MDOC)
-      set(NOCT_MANPAGE "${CMAKE_SOURCE_DIR}/man/noct.1.mdoc")
+    # man noct.1
+    if(NOT NOCT_ENABLE_MDOC)
+      set(NOCT_MANPAGE "${CMAKE_SOURCE_DIR}/resources/man/noct.1.man")
     else()
-      set(NOCT_MANPAGE "${CMAKE_SOURCE_DIR}/man/noct.1.man")
+      set(NOCT_MANPAGE "${CMAKE_SOURCE_DIR}/resources/man/noct.1.mdoc")
     endif()
-    install(FILES ${NOCT_MANPAGE} DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 RENAME noct.1)
+    install(
+      FILES "${NOCT_MANPAGE}"
+      DESTINATION "${CMAKE_INSTALL_MANDIR}/man1 RENAME noct.1"
+    )
   endif()
 
+  # locales
   if(NOCT_ENABLE_I18N_LIBINTL)
-    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/locale/
-            DESTINATION ${CMAKE_INSTALL_FULL_LOCALEDIR})
+    install(
+      DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/locale/"
+      DESTINATION "${CMAKE_INSTALL_FULL_LOCALEDIR}"
+    )
+  endif()
+
+  # CMake module
+  install(
+    FILES "${CMAKE_SOURCE_DIR}/cmake/modules/FindNoct.cmake"
+    DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/cmake/Modules"
+  )
+
+  # pkgconfig pc
+  install(
+    FILES "${CMAKE_SOURCE_DIR}/resources/pkg-config/noct.pc"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
+  )
+  if(NOCT_ENABLE_API)
+    install(
+      FILES "${CMAKE_SOURCE_DIR}/resources/pkg-config/noctapi.pc"
+      DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
+    )
   endif()
 endif()

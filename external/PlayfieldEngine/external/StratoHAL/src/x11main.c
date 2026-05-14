@@ -28,8 +28,14 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
+/*
+ * If we use Wayland/X11-dual support, we use EGL and OpenGL ES 2 for X11.
+ * If we use X11-only support, we use xgl and OpenGL 3 for X11.
+ */
+
 /* HAL */
-#include <stratohal/stratohal.h>		/* Public Interface */
+#include <strato/strato.h>		/* Public Interface */
+#include "callback.h"
 #include "stdfile.h"			/* Standard C File Implementation */
 #if defined(HAL_TARGET_LINUX)
 #include "asound.h"			/* ALSA Sound Implemenatation */
@@ -86,7 +92,7 @@
 #define FRAME_MILLI	(16)	/* Millisec of a frame */
 #define SLEEP_MILLI	(5)	/* Millisec to sleep */
 
-/* Window Config */
+/* Window config. */
 static char *window_title;
 static int screen_width;
 static int screen_height;
@@ -99,7 +105,7 @@ static bool is_full_screen;
 static int physical_width;
 static int physical_height;
 
-/* X11 Objects */
+/* X11 objects. */
 Display *display;
 Window window = BadAlloc;
 static int screen;
@@ -107,41 +113,46 @@ static Pixmap icon = BadAlloc;
 static Pixmap icon_mask = BadAlloc;
 static Atom delete_message = BadAlloc;
 
-
-/* GLX Objects */
+/* GLX objects. */
 #if defined(HAL_USE_X11_ONLY)
 static GLXWindow glx_window = None;
 static GLXContext glx_context = None;
 #endif
 
-/* EGL Objects */
+/* EGL objects. */
 #if !defined(HAL_USE_X11_ONLY)
 static EGLDisplay egl_display;
 static EGLContext egl_context;
 static EGLSurface egl_surface;
 #endif
 
-/* Frame Start Time */
+/* Frame start time. */
 static struct timeval tv_start;
 
-/* Log File */
+/* Log file. */
 #define LOG_BUF_SIZE	(4096)
 static FILE *log_fp;
 
-/* Locale */
+/* Locale. */
 static const char *lang_code;
 
-/* Flag to indicate whether we are playing a video or not */
+/* Flag to indicate whether we are playing a video or not. */
 static bool is_gst_playing;
 
-/* Flag to indicate whether a video is skippable or not */
+/* Flag to indicate whether a video is skippable or not. */
 static bool is_gst_skippable;
 
 /* Icon */
 extern char *icon_xpm[35];
 
+/* HAL callback. */
 #if defined(HAL_USE_X11_ONLY)
-/* OpenGL 3.0 API */
+struct hal_callback hal_callback;
+HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback);
+#endif
+
+#if defined(HAL_USE_X11_ONLY)
+/* OpenGL 3.0 API. */
 GLuint (APIENTRY *glCreateShader)(GLenum type);
 void (APIENTRY *glShaderSource)(GLuint shader, GLsizei count, const GLchar *const*string, const GLint *length);
 void (APIENTRY *glCompileShader)(GLuint shader);
@@ -241,14 +252,18 @@ static Bool want_configure(Display* d, XEvent* ev, XPointer arg);
  */
 
 #if defined(HAL_USE_X11_ONLY)
-int main(int argc, char *argv[])
+HAL_DLL
+int
+hal_main(
+     int argc,
+     char *argv[])
 {
 	/* Initialize HAL. */
 	if (!init_hal(argc, argv))
 		return 1;
 
 	/* Do a start callback. */
-	if (!hal_callback_on_event_start())
+	if (!hal_callback.on_start())
 		return 1;
 
 	/* Run game loop. */
@@ -263,7 +278,10 @@ int main(int argc, char *argv[])
 	return 0;
 }
 #else
-bool main_init_x11(int argc, char *argv[])
+bool
+main_init_x11(
+	int argc,
+	char *argv[])
 {
 	/* Initialize HAL. */
 	if (!init_hal(argc, argv))
@@ -272,17 +290,18 @@ bool main_init_x11(int argc, char *argv[])
 	return true;
 }
 
-bool main_run_x11(void)
+bool
+main_run_x11(void)
 {
 	/* Do a start callback. */
-	if (!hal_callback_on_event_start())
+	if (!hal_callback.on_start())
 		return false;
 
 	/* Run game loop. */
 	run_game_loop();
 
 	/* Do a stop callback.. */
-	hal_callback_on_event_stop();
+	hal_callback.on_stop();
 
 	/* Cleanup HAL. */
 	cleanup_hal();
@@ -292,7 +311,10 @@ bool main_run_x11(void)
 #endif
 
 /* Initialize HAL. */
-static bool init_hal(int argc, char *argv[])
+static bool
+init_hal(
+	 int argc,
+	 char *argv[])
 {
 #if defined(HAL_USE_LIBINTL)
 	bindtextdomain("libstrato", LOCALEDIR);
@@ -307,7 +329,7 @@ static bool init_hal(int argc, char *argv[])
 		return false;
 
 	/* Do a boot callback. */
-	if (!hal_callback_on_event_boot(&window_title, &screen_width, &screen_height))
+	if (!hal_bootstrap_ptr(&window_title, &screen_width, &screen_height, &hal_callback))
 		return false;
 
 	/* Initialize the sound HAL. */
@@ -1145,7 +1167,9 @@ run_frame(void)
 		opengl_start_rendering();
 
 		/* Call a frame event. */
-		cont = hal_callback_on_event_frame();
+		cont = hal_callback.on_update();
+		if (cont)
+			hal_callback.on_render();
 
 		/* End rendering. */
 		opengl_end_rendering();
@@ -1161,7 +1185,7 @@ run_frame(void)
 		render_video_frame();
 
 		/* Call a frame event. */
-		cont = hal_callback_on_event_frame();
+		cont = hal_callback.on_update();
 
 		/* If the playback is finished. */
 		if (!gstplay_is_playing()) {
@@ -1320,7 +1344,7 @@ event_key_press(
 		return;
 
 	/* Call an event handler. */
-	hal_callback_on_event_key_press(key);
+	hal_callback.on_key_press(key);
 }
 
 /* Process a KeyRelease event. */
@@ -1348,7 +1372,7 @@ event_key_release(
 		return;
 
 	/* Call an event handler. */
-	hal_callback_on_event_key_release(key);
+	hal_callback.on_key_release(key);
 }
 
 /* Convert 'KeySym' to 'enum key_code'. */
@@ -1512,24 +1536,24 @@ event_button_press(
 	/* See the button type and dispatch. */
 	switch (event->xbutton.button) {
 	case Button1:
-		hal_callback_on_event_mouse_press(
+		hal_callback.on_mouse_press(
 			HAL_MOUSE_LEFT,
 			(int)((event->xbutton.x - mouse_ofs_x) * mouse_scale),
 			(int)((event->xbutton.y - mouse_ofs_y) * mouse_scale));
 		break;
 	case Button3:
-		hal_callback_on_event_mouse_press(
+		hal_callback.on_mouse_press(
 			HAL_MOUSE_RIGHT,
 			(int)((event->xbutton.x - mouse_ofs_x) * mouse_scale),
 			(int)((event->xbutton.y - mouse_ofs_y) * mouse_scale));
 		break;
 	case Button4:
-		hal_callback_on_event_key_press(HAL_KEY_UP);
-		hal_callback_on_event_key_release(HAL_KEY_UP);
+		hal_callback.on_key_press(HAL_KEY_UP);
+		hal_callback.on_key_release(HAL_KEY_UP);
 		break;
 	case Button5:
-		hal_callback_on_event_key_press(HAL_KEY_DOWN);
-		hal_callback_on_event_key_release(HAL_KEY_DOWN);
+		hal_callback.on_key_press(HAL_KEY_DOWN);
+		hal_callback.on_key_release(HAL_KEY_DOWN);
 		break;
 	default:
 		break;
@@ -1544,13 +1568,13 @@ event_button_release(
 	/* See the button type and dispatch. */
 	switch (event->xbutton.button) {
 	case Button1:
-		hal_callback_on_event_mouse_release(
+		hal_callback.on_mouse_release(
 			HAL_MOUSE_LEFT,
 			(int)((event->xbutton.x - mouse_ofs_x) * mouse_scale),
 			(int)((event->xbutton.y - mouse_ofs_y) * mouse_scale));
 		break;
 	case Button3:
-		hal_callback_on_event_mouse_release(
+		hal_callback.on_mouse_release(
 			HAL_MOUSE_RIGHT,
 			(int)((event->xbutton.x - mouse_ofs_x) * mouse_scale),
 			(int)((event->xbutton.y - mouse_ofs_y) * mouse_scale));
@@ -1562,7 +1586,7 @@ event_button_release(
 static void event_motion_notify(XEvent *event)
 {
 	/* Call an event handler. */
-	hal_callback_on_event_mouse_move(
+	hal_callback.on_mouse_move(
 		(int)((event->xbutton.x - mouse_ofs_x) * mouse_scale),
 		(int)((event->xbutton.y - mouse_ofs_y) * mouse_scale));
 }
@@ -1620,6 +1644,7 @@ void update_viewport_size(
  */
 
 #if defined(HAL_USE_X11_ONLY)
+#define EXPORT_IF_X11_ONLY			HAL_DLL
 #define hal_log_info_x11			hal_log_info
 #define hal_log_warn_x11			hal_log_warn
 #define hal_log_error_x11			hal_log_error
@@ -1652,11 +1677,14 @@ void update_viewport_size(
 #define hal_leave_full_screen_mode_x11		hal_leave_full_screen_mode
 #define hal_get_system_language_x11		hal_get_system_language
 #define hal_set_continuous_swipe_enabled_x11	hal_set_continuous_swipe_enabled
+#else
+#define EXPORT_IF_X11_ONLY
 #endif
 
 /*
  * Put an INFO log.
  */
+EXPORT_IF_X11_ONLY
 bool
 hal_log_info_x11(
 	const char *s,
@@ -1677,6 +1705,7 @@ hal_log_info_x11(
 /*
  * Put a WARN log.
  */
+EXPORT_IF_X11_ONLY
 bool
 hal_log_warn_x11(
 	const char *s,
@@ -1705,6 +1734,7 @@ hal_log_warn_x11(
 /*
  * Put an ERROR log.
  */
+EXPORT_IF_X11_ONLY
 bool
 hal_log_error_x11(
 	const char *s,
@@ -1755,46 +1785,9 @@ open_log_file(void)
 }
 
 /*
- * Make a save directory.
- */
-bool
-make_save_directory_x11(void)
-{
-	struct stat st = {0};
-
-	if (stat(SAVE_DIR, &st) == -1)
-		mkdir(SAVE_DIR, 0700);
-
-	return true;
-}
-
-/*
- * Make an effective path from a directory name and a file name.
- */
-char *
-make_real_path_x11(
-	const char *fname)
-{
-	char *buf;
-	size_t len;
-
-	/* Allocate a path buffer. */
-	len = strlen(fname) + 1;
-	buf = malloc(len);
-	if (buf == NULL) {
-		hal_log_out_of_memory();
-		return NULL;
-	}
-
-	/* Copy as is. */
-	snprintf(buf, len, "%s", fname);
-
-	return buf;
-}
-
-/*
  * Reset a timer.
  */
+EXPORT_IF_X11_ONLY
 void
 hal_reset_lap_timer_x11(
 	uint64_t *t)
@@ -1814,6 +1807,7 @@ hal_reset_lap_timer_x11(
 /*
  * Get a timer lap.
  */
+EXPORT_IF_X11_ONLY
 uint64_t
 hal_get_lap_timer_millisec_x11(
 	uint64_t *t)
@@ -1837,6 +1831,7 @@ hal_get_lap_timer_millisec_x11(
 /*
  * Notify an image update.
  */
+EXPORT_IF_X11_ONLY
 void
 hal_notify_image_update_x11(
 	struct hal_image *img)
@@ -1847,6 +1842,7 @@ hal_notify_image_update_x11(
 /*
  * Notify an image free.
  */
+EXPORT_IF_X11_ONLY
 void
 hal_notify_image_free_x11(
 	struct hal_image *img)
@@ -1857,6 +1853,7 @@ hal_notify_image_free_x11(
 /*
  * Render an image. (alpha blend)
  */
+EXPORT_IF_X11_ONLY
 void
 hal_render_image_normal_x11(
 	int dst_left,
@@ -1887,6 +1884,7 @@ hal_render_image_normal_x11(
 /*
  * Render an image. (add blend)
  */
+EXPORT_IF_X11_ONLY
 void
 hal_render_image_add_x11(
 	int dst_left,
@@ -1917,6 +1915,7 @@ hal_render_image_add_x11(
 /*
  * Render an image. (sub blend)
  */
+EXPORT_IF_X11_ONLY
 void
 hal_render_image_sub_x11(
 	int dst_left,
@@ -1947,6 +1946,7 @@ hal_render_image_sub_x11(
 /*
  * Render an image. (dim blend)
  */
+EXPORT_IF_X11_ONLY
 void
 hal_render_image_dim_x11(
 	int dst_left,
@@ -1977,6 +1977,7 @@ hal_render_image_dim_x11(
 /*
  * Render an image. (rule universal transition)
  */
+EXPORT_IF_X11_ONLY
 void
 hal_render_image_rule_x11(
 	struct hal_image *src_img,
@@ -1989,6 +1990,7 @@ hal_render_image_rule_x11(
 /*
  * Render an image. (melt universal transition)
  */
+EXPORT_IF_X11_ONLY
 void
 hal_render_image_melt_x11(
 	struct hal_image *src_img,
@@ -2001,6 +2003,7 @@ hal_render_image_melt_x11(
 /*
  * Render two images for a cross fading.
  */
+EXPORT_IF_X11_ONLY
 void
 hal_render_image_cross_x11(
 	struct hal_image *src1_img,
@@ -2023,6 +2026,7 @@ hal_render_image_cross_x11(
 /*
  * Render an image. (3d transform, alpha blending)
  */
+EXPORT_IF_X11_ONLY
 void
 hal_render_image_3d_normal_x11(
 	float x1,
@@ -2049,6 +2053,7 @@ hal_render_image_3d_normal_x11(
 /*
  * Render an image. (3d transform, add blending)
  */
+EXPORT_IF_X11_ONLY
 void
 hal_render_image_3d_add_x11(
 	float x1,
@@ -2075,6 +2080,7 @@ hal_render_image_3d_add_x11(
 /*
  * Render an image. (3d transform, sub blending)
  */
+EXPORT_IF_X11_ONLY
 void
 hal_render_image_3d_sub_x11(
 	float x1,
@@ -2101,6 +2107,7 @@ hal_render_image_3d_sub_x11(
 /*
  * Render an image. (3d transform, dim blending)
  */
+EXPORT_IF_X11_ONLY
 void
 hal_render_image_3d_dim_x11(
 	float x1,
@@ -2127,6 +2134,7 @@ hal_render_image_3d_dim_x11(
 /*
  * Render two images for a cross fading.
  */
+EXPORT_IF_X11_ONLY
 void
 hal_render_image_3d_cross_x11(
 	struct hal_image *src1_img,
@@ -2173,6 +2181,7 @@ hal_render_image_3d_cross_x11(
 /*
  * Play a video.
  */
+EXPORT_IF_X11_ONLY
 bool
 hal_play_video_x11(
 	const char *fname,
@@ -2195,6 +2204,7 @@ hal_play_video_x11(
 /*
  * Stop the video.
  */
+EXPORT_IF_X11_ONLY
 void
 hal_stop_video_x11(void)
 {
@@ -2206,6 +2216,7 @@ hal_stop_video_x11(void)
 /*
  * Check whether a video is playing.
  */
+EXPORT_IF_X11_ONLY
 bool
 hal_is_video_playing_x11(void)
 {
@@ -2215,6 +2226,7 @@ hal_is_video_playing_x11(void)
 /*
  * Check whether full screen mode is supported.
  */
+EXPORT_IF_X11_ONLY
 bool
 hal_is_full_screen_supported_x11(void)
 {
@@ -2224,6 +2236,7 @@ hal_is_full_screen_supported_x11(void)
 /*
  * Check whether we are in full screen mode.
  */
+EXPORT_IF_X11_ONLY
 bool
 hal_is_full_screen_mode_x11(void)
 {
@@ -2233,6 +2246,7 @@ hal_is_full_screen_mode_x11(void)
 /*
  * Enter full screen mode.
  */
+EXPORT_IF_X11_ONLY
 void
 hal_enter_full_screen_mode_x11(void)
 {
@@ -2267,6 +2281,7 @@ hal_enter_full_screen_mode_x11(void)
 /*
  * Leave full screen mode.
  */
+EXPORT_IF_X11_ONLY
 void
 hal_leave_full_screen_mode_x11(void)
 {
@@ -2301,6 +2316,7 @@ hal_leave_full_screen_mode_x11(void)
 /*
  * Get the system locale.
  */
+EXPORT_IF_X11_ONLY
 const char *
 hal_get_system_language_x11(void)
 {
@@ -2368,9 +2384,48 @@ hal_get_system_language_x11(void)
 /*
  * Enable/disable message skip by touch move.
  */
+EXPORT_IF_X11_ONLY
 void
 hal_set_continuous_swipe_enabled_x11(
 	bool is_enabled)
 {
 	UNUSED_PARAMETER(is_enabled);
+}
+
+/*
+ * Make a save directory.
+ */
+bool
+make_save_directory_x11(void)
+{
+	struct stat st = {0};
+
+	if (stat(SAVE_DIR, &st) == -1)
+		mkdir(SAVE_DIR, 0700);
+
+	return true;
+}
+
+/*
+ * Make an effective path from a directory name and a file name.
+ */
+char *
+make_real_path_x11(
+	const char *fname)
+{
+	char *buf;
+	size_t len;
+
+	/* Allocate a path buffer. */
+	len = strlen(fname) + 1;
+	buf = malloc(len);
+	if (buf == NULL) {
+		hal_log_out_of_memory();
+		return NULL;
+	}
+
+	/* Copy as is. */
+	snprintf(buf, len, "%s", fname);
+
+	return buf;
 }

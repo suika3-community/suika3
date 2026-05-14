@@ -29,7 +29,8 @@
  */
 
 /* HAL */
-#include <stratohal/stratohal.h>	/* Public Interface */
+#include <strato/strato.h>		/* Public Interface */
+#include "callback.h"
 #include "stdfile.h"			/* Standard C File Implementation */
 #if defined(HAL_TARGET_LINUX)
 #include "asound.h"			/* ALSA Sound Implemenatation */
@@ -133,6 +134,12 @@ static bool is_gst_playing;
 /* Flag to indicate whether a video is skippable or not */
 static bool is_gst_skippable;
 
+/* HAL callback. */
+#if defined(HAL_USE_X11_ONLY)
+struct hal_callback hal_callback;
+HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback);
+#endif
+
 /* forward declaration */
 static bool init_hal(int argc, char *argv[]);
 static void init_locale(void);
@@ -222,21 +229,25 @@ static struct libdecor_interface decor_iface = {
  */
 
 #if defined(HAL_USE_WAYLAND_ONLY)
-int main(int argc, char *argv[])
+HAL_DLL
+int
+hal_main(
+	int argc,
+	char *argv[])
 {
 	/* Initialize HAL. */
 	if (!init_hal(argc, argv))
 		return 1;
 
 	/* Do a start callback. */
-	if (!hal_callback_on_event_start())
+	if (!hal_callback.on_start())
 		return 1;
 
 	/* Run game loop. */
 	run_game_loop();
 
 	/* Do a stop callback.. */
-	hal_callback_on_event_stop();
+	hal_callback.on_stop();
 
 	/* Cleanup HAL. */
 	cleanup_hal();
@@ -244,7 +255,10 @@ int main(int argc, char *argv[])
 	return 0;
 }
 #else
-bool main_init_wl(int argc, char *argv[])
+bool
+main_init_wl(
+	int argc,
+	char *argv[])
 {
 	/* Initialize HAL. */
 	if (!init_hal(argc, argv))
@@ -253,17 +267,18 @@ bool main_init_wl(int argc, char *argv[])
 	return true;
 }
 
-bool main_run_wl(void)
+bool
+main_run_wl(void)
 {
 	/* Do a start callback. */
-	if (!hal_callback_on_event_start())
+	if (!hal_callback.on_start())
 		return false;
 
 	/* Run game loop. */
 	run_game_loop();
 
 	/* Do a stop callback.. */
-	hal_callback_on_event_stop();
+	hal_callback.on_stop();
 
 	/* Cleanup HAL. */
 	cleanup_hal();
@@ -291,7 +306,7 @@ init_hal(
 		return false;
 
 	/* Do a boot callback. */
-	if (!hal_callback_on_event_boot(&window_title, &screen_width, &screen_height))
+	if (!hal_bootstrap_ptr(&window_title, &screen_width, &screen_height, &hal_callback))
 		return false;
 
 	/* Initialize the sound HAL. */
@@ -606,7 +621,8 @@ open_display(void)
 }
 
 /* Cleanup the subsystems. */
-static void cleanup_hal(void)
+static void
+cleanup_hal(void)
 {
 	/* Cleanup sound. */
 	cleanup_sound();
@@ -619,7 +635,8 @@ static void cleanup_hal(void)
 }
 
 /* Close the display. */
-static void close_display(void)
+static void
+close_display(void)
 {
 	eglMakeCurrent(egl_dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 	eglDestroySurface(egl_dpy, egl_surf);
@@ -637,14 +654,16 @@ static void close_display(void)
 }
 
 /* Close the log file. */
-static void close_log_file(void)
+static void
+close_log_file(void)
 {
 	if (log_fp != NULL)
 		fclose(log_fp);
 }
 
 /* Run the event loop. */
-static void run_game_loop(void)
+static void
+run_game_loop(void)
 {
 	/* Get the frame start time. */
 	gettimeofday(&tv_start, NULL);
@@ -665,7 +684,8 @@ static void run_game_loop(void)
 }
 
 /* Run a frame. */
-static bool run_frame(void)
+static bool
+run_frame(void)
 {
 	bool cont;
 
@@ -689,7 +709,9 @@ static bool run_frame(void)
 		opengl_start_rendering();
 
 		/* Call a frame event. */
-		cont = hal_callback_on_event_frame();
+		cont = hal_callback.on_update();
+		if (cont)
+			hal_callback.on_render();
 
 		/* End rendering. */
 		opengl_end_rendering();
@@ -702,7 +724,7 @@ static bool run_frame(void)
 		render_video_frame();
 
 		/* Call a frame event. */
-		cont = hal_callback_on_event_frame();
+		cont = hal_callback.on_update();
 
 		/* If the playback is finished. */
 		if (!gstplay_is_playing()) {
@@ -1017,7 +1039,7 @@ pointer_motion(
 	last_mouse_x = (int)((wl_fixed_to_double(sx) - mouse_ofs_x) * mouse_scale);
 	last_mouse_y = (int)((wl_fixed_to_double(sy) - mouse_ofs_y) * mouse_scale);
 
-	hal_callback_on_event_mouse_move(last_mouse_x, last_mouse_y);
+	hal_callback.on_mouse_move(last_mouse_x, last_mouse_y);
 }
 
 static void
@@ -1036,14 +1058,14 @@ pointer_button(
 
 	if (button == 272) {
 		if (state == WL_POINTER_BUTTON_STATE_PRESSED)
-			hal_callback_on_event_mouse_press(HAL_MOUSE_LEFT, last_mouse_x, last_mouse_y);
+			hal_callback.on_mouse_press(HAL_MOUSE_LEFT, last_mouse_x, last_mouse_y);
 		else
-			hal_callback_on_event_mouse_release(HAL_MOUSE_LEFT, last_mouse_x, last_mouse_y);
+			hal_callback.on_mouse_release(HAL_MOUSE_LEFT, last_mouse_x, last_mouse_y);
 	} else if (button == 273) {
 		if (state == WL_POINTER_BUTTON_STATE_PRESSED)
-			hal_callback_on_event_mouse_press(HAL_MOUSE_RIGHT, last_mouse_x, last_mouse_y);
+			hal_callback.on_mouse_press(HAL_MOUSE_RIGHT, last_mouse_x, last_mouse_y);
 		else
-			hal_callback_on_event_mouse_release(HAL_MOUSE_RIGHT, last_mouse_x, last_mouse_y);
+			hal_callback.on_mouse_release(HAL_MOUSE_RIGHT, last_mouse_x, last_mouse_y);
 	}
 }
 
@@ -1121,9 +1143,9 @@ keyboard_key(
 	}
 
 	if (state == WL_KEYBOARD_KEY_STATE_PRESSED)
-		hal_callback_on_event_key_press(keycode);
+		hal_callback.on_key_press(keycode);
 	else
-		hal_callback_on_event_key_release(keycode);
+		hal_callback.on_key_release(keycode);
 }
 
 static int get_keycode(
@@ -1238,6 +1260,7 @@ keyboard_repeat_info(
  */
 
 #if defined(HAL_USE_WAYLAND_ONLY)
+#define EXPORT_IF_WL_ONLY			HAL_DLL
 #define hal_log_info_wl				hal_log_info
 #define hal_log_warn_wl				hal_log_warn
 #define hal_log_error_wl			hal_log_error
@@ -1269,11 +1292,14 @@ keyboard_repeat_info(
 #define hal_leave_full_screen_mode_wl		hal_leave_full_screen_mode
 #define hal_get_system_language_wl		hal_get_system_language
 #define hal_set_continuous_swipe_enabled_wl	hal_set_continuous_swipe_enabled
+#else
+#define EXPORT_IF_WL_ONLY
 #endif
 
 /*
  * Put an INFO log.
  */
+EXPORT_IF_WL_ONLY
 bool
 hal_log_info_wl(
 	const char *s,
@@ -1304,6 +1330,7 @@ hal_log_info_wl(
 /*
  * Put a WARN log.
  */
+EXPORT_IF_WL_ONLY
 bool
 hal_log_warn_wl(
 	const char *s,
@@ -1332,6 +1359,7 @@ hal_log_warn_wl(
 /*
  * Put an ERROR log.
  */
+EXPORT_IF_WL_ONLY
 bool
 hal_log_error_wl(
 	const char *s,
@@ -1360,6 +1388,7 @@ hal_log_error_wl(
 /*
  * Put an out-of-memory error.
  */
+EXPORT_IF_WL_ONLY
 bool
 hal_log_out_of_memory_wl(void)
 {
@@ -1368,6 +1397,7 @@ hal_log_out_of_memory_wl(void)
 }
 
 /* Open the log file. */
+EXPORT_IF_WL_ONLY
 static bool
 open_log_file(void)
 {
@@ -1382,45 +1412,9 @@ open_log_file(void)
 }
 
 /*
- * Make a save directory.
- */
-bool
-make_save_directory_wl(void)
-{
-	struct stat st = {0};
-
-	if (stat(SAVE_DIR, &st) == -1)
-		mkdir(SAVE_DIR, 0700);
-
-	return true;
-}
-
-/*
- * Make an effective path from a directory name and a file name.
- */
-char *
-make_real_path_wl(const char *fname)
-{
-	char *buf;
-	size_t len;
-
-	/* Allocate a path buffer. */
-	len = strlen(fname) + 1;
-	buf = malloc(len);
-	if (buf == NULL) {
-		hal_log_out_of_memory();
-		return NULL;
-	}
-
-	/* Copy as is. */
-	snprintf(buf, len, "%s", fname);
-
-	return buf;
-}
-
-/*
  * Reset a timer.
  */
+EXPORT_IF_WL_ONLY
 void
 hal_reset_lap_timer_wl(
 	uint64_t *t)
@@ -1435,6 +1429,7 @@ hal_reset_lap_timer_wl(
 /*
  * Get a timer lap.
  */
+EXPORT_IF_WL_ONLY
 uint64_t
 hal_get_lap_timer_millisec_wl(
 	uint64_t *t)
@@ -1452,6 +1447,7 @@ hal_get_lap_timer_millisec_wl(
 /*
  * Notify an image update.
  */
+EXPORT_IF_WL_ONLY
 void
 hal_notify_image_update_wl(
 	struct hal_image *img)
@@ -1462,6 +1458,7 @@ hal_notify_image_update_wl(
 /*
  * Notify an image free.
  */
+EXPORT_IF_WL_ONLY
 void
 hal_notify_image_free_wl(
 	struct hal_image *img)
@@ -1472,6 +1469,7 @@ hal_notify_image_free_wl(
 /*
  * Render an image. (alpha blend)
  */
+EXPORT_IF_WL_ONLY
 void
 hal_render_image_normal_wl(
 	int dst_left,
@@ -1502,6 +1500,7 @@ hal_render_image_normal_wl(
 /*
  * Render an image. (add blend)
  */
+EXPORT_IF_WL_ONLY
 void
 hal_render_image_add_wl(
 	int dst_left,
@@ -1532,6 +1531,7 @@ hal_render_image_add_wl(
 /*
  * Render an image. (sub blend)
  */
+EXPORT_IF_WL_ONLY
 void
 hal_render_image_sub_wl(
 	int dst_left,
@@ -1562,6 +1562,7 @@ hal_render_image_sub_wl(
 /*
  * Render an image. (dim blend)
  */
+EXPORT_IF_WL_ONLY
 void
 hal_render_image_dim_wl(
 	int dst_left,
@@ -1592,6 +1593,7 @@ hal_render_image_dim_wl(
 /*
  * Render an image. (rule universal transition)
  */
+EXPORT_IF_WL_ONLY
 void
 hal_render_image_rule_wl(
 	struct hal_image *src_img,
@@ -1604,6 +1606,7 @@ hal_render_image_rule_wl(
 /*
  * Render an image. (melt universal transition)
  */
+EXPORT_IF_WL_ONLY
 void
 hal_render_image_melt_wl(
 	struct hal_image *src_img,
@@ -1616,6 +1619,7 @@ hal_render_image_melt_wl(
 /*
  * Render two images for a cross fading.
  */
+EXPORT_IF_WL_ONLY
 void
 hal_render_image_cross_wl(
 	struct hal_image *src1_img,
@@ -1638,6 +1642,7 @@ hal_render_image_cross_wl(
 /*
  * Render an image. (3d transform, alpha blending)
  */
+EXPORT_IF_WL_ONLY
 void
 hal_render_image_3d_normal_wl(
 	float x1,
@@ -1664,6 +1669,7 @@ hal_render_image_3d_normal_wl(
 /*
  * Render an image. (3d transform, alpha blending)
  */
+EXPORT_IF_WL_ONLY
 void
 hal_render_image_3d_add_wl(
 	float x1,
@@ -1690,6 +1696,7 @@ hal_render_image_3d_add_wl(
 /*
  * Render an image. (3d transform, sub blending)
  */
+EXPORT_IF_WL_ONLY
 void
 hal_render_image_3d_sub_wl(
 	float x1,
@@ -1716,6 +1723,7 @@ hal_render_image_3d_sub_wl(
 /*
  * Render an image. (3d transform, dim blending)
  */
+EXPORT_IF_WL_ONLY
 void
 hal_render_image_3d_dim_wl(
 	float x1,
@@ -1742,6 +1750,7 @@ hal_render_image_3d_dim_wl(
 /*
  * Render two images for a cross fading.
  */
+EXPORT_IF_WL_ONLY
 void
 hal_render_image_3d_cross_wl(
 	struct hal_image *src1_img,
@@ -1788,6 +1797,7 @@ hal_render_image_3d_cross_wl(
 /*
  * Play a video.
  */
+EXPORT_IF_WL_ONLY
 bool
 hal_play_video_wl(
 	const char *fname,
@@ -1810,6 +1820,7 @@ hal_play_video_wl(
 /*
  * Stop the video.
  */
+EXPORT_IF_WL_ONLY
 void
 hal_stop_video_wl(void)
 {
@@ -1821,6 +1832,7 @@ hal_stop_video_wl(void)
 /*
  * Check whether a video is playing.
  */
+EXPORT_IF_WL_ONLY
 bool
 hal_is_video_playing_wl(void)
 {
@@ -1830,6 +1842,7 @@ hal_is_video_playing_wl(void)
 /*
  * Check whether full screen mode is supported.
  */
+EXPORT_IF_WL_ONLY
 bool
 hal_is_full_screen_supported_wl(void)
 {
@@ -1839,6 +1852,7 @@ hal_is_full_screen_supported_wl(void)
 /*
  * Check whether we are in full screen mode.
  */
+EXPORT_IF_WL_ONLY
 bool
 hal_is_full_screen_mode_wl(void)
 {
@@ -1848,6 +1862,7 @@ hal_is_full_screen_mode_wl(void)
 /*
  * Enter full screen mode.
  */
+EXPORT_IF_WL_ONLY
 void
 hal_enter_full_screen_mode_wl(void)
 {
@@ -1861,6 +1876,7 @@ hal_enter_full_screen_mode_wl(void)
 /*
  * Leave full screen mode.
  */
+EXPORT_IF_WL_ONLY
 void
 hal_leave_full_screen_mode_wl(void)
 {
@@ -1874,6 +1890,7 @@ hal_leave_full_screen_mode_wl(void)
 /*
  * Get the system locale.
  */
+EXPORT_IF_WL_ONLY
 const char *
 hal_get_system_language_wl(void)
 {
@@ -1883,9 +1900,48 @@ hal_get_system_language_wl(void)
 /*
  * Enable/disable message skip by touch move.
  */
+EXPORT_IF_WL_ONLY
 void
 hal_set_continuous_swipe_enabled_wl(
 	bool is_enabled)
 {
 	UNUSED_PARAMETER(is_enabled);
+}
+
+/*
+ * Make a save directory.
+ */
+bool
+make_save_directory_wl(void)
+{
+	struct stat st = {0};
+
+	if (stat(SAVE_DIR, &st) == -1)
+		mkdir(SAVE_DIR, 0700);
+
+	return true;
+}
+
+/*
+ * Make an effective path from a directory name and a file name.
+ */
+char *
+make_real_path_wl(
+	const char *fname)
+{
+	char *buf;
+	size_t len;
+
+	/* Allocate a path buffer. */
+	len = strlen(fname) + 1;
+	buf = malloc(len);
+	if (buf == NULL) {
+		hal_log_out_of_memory();
+		return NULL;
+	}
+
+	/* Copy as is. */
+	snprintf(buf, len, "%s", fname);
+
+	return buf;
 }

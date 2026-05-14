@@ -31,7 +31,7 @@ dbg_pre_hook(
 		       rt_get_error_file(rt),
 		       rt_get_error_line(rt),
 		       rt_get_error_message(rt));
-		exit(1);
+		return;
 	}
 
 	while (true) {

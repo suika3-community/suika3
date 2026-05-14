@@ -29,7 +29,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#include <stratohal/stratohal.h>
+#include <strato/strato.h>
 #include <assert.h>
 
 extern bool is_avx2_available;

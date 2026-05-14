@@ -1,7 +1,7 @@
 /* -*- tab-width: 8; indent-tabs-mode: t; -*- */
 
 /*
- * StratoHAL
+ * Strato HAL
  * Main code for NEC PC-9800 series (DOS/4G)
  */
 
@@ -29,7 +29,7 @@
  */
 
 /* HAL */
-#include <stratohal/stratohal.h>	/* Public Interface */
+#include <strato/strato.h>	/* Public Interface */
 #include "stdfile.h"		/* Standard C File Implementation */
 
 /* Standard C */
@@ -75,6 +75,10 @@ static uint8_t *fb;
 /* Log */
 static FILE *log_fp;
 
+/* Callback. */
+static struct hal_callback hal_callback;
+HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback);
+
 /* Forward Declaration */
 static void init_vram(void);
 static void cleanup_vram(void);
@@ -82,7 +86,7 @@ static void process_input(void);
 static void flip(void);
 static bool open_log_file(void);
 
-int main2(int argc, char *argv[])
+int hal_main(int argc, char *argv[])
 {
 	printf("\n"
 	       "Suika3 Game Engine for PC-9801\n"
@@ -100,10 +104,11 @@ int main2(int argc, char *argv[])
 		return 1;
 	}
 
-	if (!hal_callback_on_event_boot(
+	if (!hal_bootstrap_ptr(
 		    &game_title,
 		    &game_width,
-		    &game_height)) {
+		    &game_height,
+		    &hal_callback)) {
 		printf("Error on boot.\n");
 		return 1;
 	}
@@ -113,7 +118,7 @@ int main2(int argc, char *argv[])
 		return 1;
 	}
 
-	if (!hal_callback_on_event_start()) {
+	if (!hal_callback.on_start()) {
 		printf("Error on start.\n");
 		return 1;
 	}
@@ -125,8 +130,9 @@ int main2(int argc, char *argv[])
 
 		hal_clear_image(back_image, 0);
 
-		if (!hal_callback_on_event_frame())
+		if (!hal_callback.on_update())
 			break;
+		hal_callback.on_render();
 
 		flip();
 	}
@@ -302,39 +308,39 @@ static void process_input(void)
 	}
 
 	if (!is_return_key_pressed && next_is_return_key_pressed)
-		hal_callback_on_event_key_press(HAL_KEY_RETURN);
+		hal_callback.on_key_press(HAL_KEY_RETURN);
 	if (is_return_key_pressed && !next_is_return_key_pressed)
-		hal_callback_on_event_key_release(HAL_KEY_RETURN);
+		hal_callback.on_key_release(HAL_KEY_RETURN);
 	is_return_key_pressed = next_is_return_key_pressed;
 
 	if (!is_space_key_pressed && next_is_space_key_pressed)
-		hal_callback_on_event_key_press(HAL_KEY_SPACE);
+		hal_callback.on_key_press(HAL_KEY_SPACE);
 	if (is_space_key_pressed && !next_is_space_key_pressed)
-		hal_callback_on_event_key_release(HAL_KEY_SPACE);
+		hal_callback.on_key_release(HAL_KEY_SPACE);
 	is_space_key_pressed = next_is_space_key_pressed;
 
 	if (!is_up_key_pressed && next_is_up_key_pressed)
-		hal_callback_on_event_key_press(HAL_KEY_UP);
+		hal_callback.on_key_press(HAL_KEY_UP);
 	if (is_up_key_pressed && !next_is_up_key_pressed)
-		hal_callback_on_event_key_release(HAL_KEY_UP);
+		hal_callback.on_key_release(HAL_KEY_UP);
 	is_up_key_pressed = next_is_up_key_pressed;
 		
 	if (!is_down_key_pressed && next_is_down_key_pressed)
-		hal_callback_on_event_key_press(HAL_KEY_DOWN);
+		hal_callback.on_key_press(HAL_KEY_DOWN);
 	if (is_down_key_pressed && !next_is_down_key_pressed)
-		hal_callback_on_event_key_release(HAL_KEY_DOWN);
+		hal_callback.on_key_release(HAL_KEY_DOWN);
 	is_down_key_pressed = next_is_down_key_pressed;
 
 	if (!is_left_key_pressed && next_is_left_key_pressed)
-		hal_callback_on_event_key_press(HAL_KEY_LEFT);
+		hal_callback.on_key_press(HAL_KEY_LEFT);
 	if (is_left_key_pressed && !next_is_left_key_pressed)
-		hal_callback_on_event_key_release(HAL_KEY_LEFT);
+		hal_callback.on_key_release(HAL_KEY_LEFT);
 	is_left_key_pressed = next_is_left_key_pressed;
 
 	if (!is_right_key_pressed && next_is_right_key_pressed)
-		hal_callback_on_event_key_press(HAL_KEY_RIGHT);
+		hal_callback.on_key_press(HAL_KEY_RIGHT);
 	if (is_right_key_pressed && !next_is_right_key_pressed)
-		hal_callback_on_event_key_release(HAL_KEY_RIGHT);
+		hal_callback.on_key_release(HAL_KEY_RIGHT);
 	is_right_key_pressed = next_is_right_key_pressed;
 }
 

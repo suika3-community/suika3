@@ -49,8 +49,7 @@ noct_bcback_translate(
 	const char *source_file_name,
 	const char *source_data)
 {
-	size_t source_length;
-	int func_count, i, j;
+	uint32_t func_count, i, j;
 
 	/* Do parse, build AST. */
 	if (!ast_build(source_file_name, source_data)) {

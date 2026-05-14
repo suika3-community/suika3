@@ -31,7 +31,7 @@
 #ifndef STRATOHAL_NDKMAIN_H
 #define STRATOHAL_NDKMAIN_H
 
-#include <stratohal/c89compat.h>
+#include <strato/c89compat.h>
 #include <jni.h>
 
 struct hal_rfile {

@@ -1,8 +1,8 @@
-// -*- coding: utf-8; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4; -*-
+/* -*- coding: utf-8; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4; -*- */
 
 /*
- * StratoHAL
- * View implementation for Apple Metal
+ * Strato HAL
+ * MtkViewDelegate implementation for Apple Metal
  */
 
 /*-
@@ -36,12 +36,13 @@
 #import "GameViewControllerProtocol.h"
 
 // Base
-#import <stratohal/stratohal.h>
+#import <strato/strato.h>
 
 // POSIX
 #import <sys/time.h>
 
 // HAL implementation
+#import "callback.h"
 #import "aunit.h"
 
 //
@@ -355,8 +356,9 @@ static void drawPrimitives3D(float x1, float y1, float x2, float y2, float x3, f
 static BOOL
 runFrame(void)
 {
-    if(!hal_callback_on_event_frame())
+    if(!hal_callback.on_update())
         return FALSE;
+    hal_callback.on_render();
 
     return TRUE;
 }

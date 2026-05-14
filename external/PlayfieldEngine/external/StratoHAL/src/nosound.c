@@ -30,7 +30,7 @@
 
 #if !defined(__linux__) && !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__) && !defined(__sun)
 
-#include <stratohal/stratohal.h>
+#include <strato/strato.h>
 
 /*
  * Initialize sound.

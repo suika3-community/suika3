@@ -12,7 +12,7 @@
  */
 
 extern "C" {
-#include <stratohal/stratohal.h>
+#include <strato/strato.h>
 }
 
 #include <assert.h>

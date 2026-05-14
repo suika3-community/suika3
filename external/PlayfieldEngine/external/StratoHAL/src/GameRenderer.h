@@ -1,8 +1,8 @@
-// -*- coding: utf-8; tab-width: 4; indent-tabs-mode: nil; -*-
+/* -*- coding: utf-8; tab-width: 4; indent-tabs-mode: nil; -*- */
 
 /*
- * StratoHAL
- * View implementation for Apple Metal
+ * Strato HAL
+ * MtkViewDelegate implementation for Apple Metal
  */
 
 /*-

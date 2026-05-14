@@ -29,7 +29,7 @@
  */
 
 /* Base */
-#include <stratohal/stratohal.h>
+#include <strato/strato.h>
 
 /* HAL */
 #include "ndkmain.h"
@@ -89,7 +89,7 @@ hal_check_file_exist(
 	snprintf(path, sizeof(path), "%s", file);
 
 	/* Get a file content. */
-	cls = (*jni_env)->FindClass(jni_env, "io/noctvm/playfield/engineandroid/MainActivity");
+	cls = (*jni_env)->FindClass(jni_env, "io/noctvm/strato/MainActivity");
 	mid = (*jni_env)->GetMethodID(jni_env, cls, "bridgeCheckFileExists", "(Ljava/lang/String;)Z");
 	ret = (*jni_env)->CallBooleanMethod(jni_env, main_activity, mid, (*jni_env)->NewStringUTF(jni_env, path));
 	if (ret) {
@@ -118,7 +118,7 @@ hal_open_rfile(
 	snprintf(path, sizeof(path), "%s", file);
 
 	/* Get a file content. */
-	cls = (*jni_env)->FindClass(jni_env, "io/noctvm/playfield/engineandroid/MainActivity");
+	cls = (*jni_env)->FindClass(jni_env, "io/noctvm/strato/MainActivity");
 	mid = (*jni_env)->GetMethodID(jni_env, cls, "bridgeGetFileContent", "(Ljava/lang/String;)[B");
 	ret = (*jni_env)->CallObjectMethod(jni_env, main_activity, mid, (*jni_env)->NewStringUTF(jni_env, path));
 	if (ret == NULL) {
@@ -296,7 +296,7 @@ hal_open_wfile(
 	}
 
 	/* Open a file. */
-	jclass cls = (*jni_env)->FindClass(jni_env, "io/noctvm/playfield/engineandroid/MainActivity");
+	jclass cls = (*jni_env)->FindClass(jni_env, "io/noctvm/strato/MainActivity");
 	jmethodID mid = (*jni_env)->GetMethodID(jni_env, cls, "bridgeOpenSaveFile", "(Ljava/lang/String;)Ljava/io/OutputStream;");
 	jobject ret = (*jni_env)->CallObjectMethod(jni_env, main_activity, mid, (*jni_env)->NewStringUTF(jni_env, file));
 	if (ret == NULL) {
@@ -319,21 +319,33 @@ hal_write_wfile(
 	size_t size,
 	size_t *ret)
 {
-	jclass cls = (*jni_env)->FindClass(jni_env, "io/noctvm/playfield/engineandroid/MainActivity");
-	jmethodID mid = (*jni_env)->GetMethodID(jni_env, cls, "bridgeWriteSaveFile", "(Ljava/io/OutputStream;I)Z");
+	jclass cls = (*jni_env)->FindClass(jni_env, "io/noctvm/strato/MainActivity");
+	jmethodID mid = (*jni_env)->GetMethodID(jni_env, cls, "bridgeWriteSaveFile", "(Ljava/io/OutputStream;[B)Z");
 
-	size_t i;
-	for (i = 0; i < size; i++) {
-		int c = (unsigned char)*((char *)buf + i);
-		jboolean ret = (*jni_env)->CallBooleanMethod(jni_env, main_activity, mid, wf->os, c);
-		if (ret != JNI_TRUE)
-			return false;
-	}
+	// Make a byte array.
+        jobject array = (*jni_env)->NewByteArray(jni_env, (jsize)size);
+	if (array == NULL)
+		return false;
+
+	// Fill the byte array.
+        (*jni_env)->SetByteArrayRegion(jni_env, array, 0, (jsize)size, (const jbyte *)buf);
+        if ((*jni_env)->ExceptionCheck(jni_env)) {
+                (*jni_env)->DeleteLocalRef(jni_env, array);
+                return false;
+        }
+
+	// Call mainActivity.bridgeWriteSaveFile(os, array);
+	jboolean ok = (*jni_env)->CallBooleanMethod(jni_env, main_activity, mid, wf->os, array);
 
 	/* Release, otherwise `local reference table` will overflow. */
+        (*jni_env)->DeleteLocalRef(jni_env, array);
 	(*jni_env)->DeleteLocalRef(jni_env, cls);
 
-	*ret = i;
+	if (ok != JNI_TRUE) {
+		*ret = 0;
+		return false;
+	}
+
 	return true;
 }
 
@@ -344,7 +356,7 @@ void
 hal_close_wfile(
 	struct hal_wfile *wf)
 {
-	jclass cls = (*jni_env)->FindClass(jni_env, "io/noctvm/playfield/engineandroid/MainActivity");
+	jclass cls = (*jni_env)->FindClass(jni_env, "io/noctvm/strato/MainActivity");
 	jmethodID mid = (*jni_env)->GetMethodID(jni_env, cls, "bridgeCloseSaveFile", "(Ljava/io/OutputStream;)V");
 	(*jni_env)->CallVoidMethod(jni_env, main_activity, mid, wf->os);
 	(*jni_env)->DeleteGlobalRef(jni_env, wf->os);
@@ -358,7 +370,7 @@ bool
 hal_remove_file(
 	const char *file)
 {
-	jclass cls = (*jni_env)->FindClass(jni_env, "io/noctvm/playfield/engineandroid/MainActivity");
+	jclass cls = (*jni_env)->FindClass(jni_env, "io/noctvm/strato/MainActivity");
 	jmethodID mid = (*jni_env)->GetMethodID(jni_env, cls, "bridgeRemoveSaveFile", "(Ljava/lang/String;)V;");
 	(*jni_env)->CallObjectMethod(jni_env, main_activity, mid, (*jni_env)->NewStringUTF(jni_env, file));
 

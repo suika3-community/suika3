@@ -1,0 +1,12 @@
+prefix=${pcfiledir}/../..
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: Noct API
+Description: Noct programming language standard API library
+Version: 1.0.0
+Cflags: -I${includedir}/noct
+Libs: -L${libdir} -lnoctapi
+
+Requires.private: noct

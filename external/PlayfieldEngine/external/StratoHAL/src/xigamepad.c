@@ -28,8 +28,9 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#include <stratohal/stratohal.h>
+#include <strato/strato.h>
 #include "xigamepad.h"
+#include "callback.h"
 
 #include <windows.h>
 #include <xinput.h>
@@ -60,60 +61,60 @@ VOID XInputUpdate(VOID)
     if (result != ERROR_SUCCESS)
         return;
 
-    hal_callback_on_event_analog_input(HAL_ANALOG_X1, state.Gamepad.sThumbLX);
-    hal_callback_on_event_analog_input(HAL_ANALOG_Y1, state.Gamepad.sThumbLY);
-    hal_callback_on_event_analog_input(HAL_ANALOG_X2, state.Gamepad.sThumbRX);
-    hal_callback_on_event_analog_input(HAL_ANALOG_Y2, state.Gamepad.sThumbRY);
-    hal_callback_on_event_analog_input(HAL_ANALOG_L, state.Gamepad.bLeftTrigger);
-    hal_callback_on_event_analog_input(HAL_ANALOG_R, state.Gamepad.bRightTrigger);
+    hal_callback.on_analog_input(HAL_ANALOG_X1, state.Gamepad.sThumbLX);
+    hal_callback.on_analog_input(HAL_ANALOG_Y1, state.Gamepad.sThumbLY);
+    hal_callback.on_analog_input(HAL_ANALOG_X2, state.Gamepad.sThumbRX);
+    hal_callback.on_analog_input(HAL_ANALOG_Y2, state.Gamepad.sThumbRY);
+    hal_callback.on_analog_input(HAL_ANALOG_L, state.Gamepad.bLeftTrigger);
+    hal_callback.on_analog_input(HAL_ANALOG_R, state.Gamepad.bRightTrigger);
 
     if (state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP)
-        hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_UP);
+        hal_callback.on_key_press(HAL_KEY_GAMEPAD_UP);
     else
-        hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_UP);
+        hal_callback.on_key_release(HAL_KEY_GAMEPAD_UP);
 
     if (state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN)
-        hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_DOWN);
+        hal_callback.on_key_press(HAL_KEY_GAMEPAD_DOWN);
     else
-        hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_DOWN);
+        hal_callback.on_key_release(HAL_KEY_GAMEPAD_DOWN);
 
     if (state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT)
-        hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_LEFT);
+        hal_callback.on_key_press(HAL_KEY_GAMEPAD_LEFT);
     else
-        hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_LEFT);
+        hal_callback.on_key_release(HAL_KEY_GAMEPAD_LEFT);
 
     if (state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT)
-        hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_RIGHT);
+        hal_callback.on_key_press(HAL_KEY_GAMEPAD_RIGHT);
     else
-        hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_RIGHT);
+        hal_callback.on_key_release(HAL_KEY_GAMEPAD_RIGHT);
 
     if (state.Gamepad.wButtons & XINPUT_GAMEPAD_A)
-        hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_A);
+        hal_callback.on_key_press(HAL_KEY_GAMEPAD_A);
     else
-        hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_A);
+        hal_callback.on_key_release(HAL_KEY_GAMEPAD_A);
 
     if (state.Gamepad.wButtons & XINPUT_GAMEPAD_B)
-        hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_B);
+        hal_callback.on_key_press(HAL_KEY_GAMEPAD_B);
     else
-        hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_B);
+        hal_callback.on_key_release(HAL_KEY_GAMEPAD_B);
 
     if (state.Gamepad.wButtons & XINPUT_GAMEPAD_X)
-        hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_X);
+        hal_callback.on_key_press(HAL_KEY_GAMEPAD_X);
     else
-        hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_X);
+        hal_callback.on_key_release(HAL_KEY_GAMEPAD_X);
 
     if (state.Gamepad.wButtons & XINPUT_GAMEPAD_Y)
-        hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_Y);
+        hal_callback.on_key_press(HAL_KEY_GAMEPAD_Y);
     else
-        hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_Y);
+        hal_callback.on_key_release(HAL_KEY_GAMEPAD_Y);
 
     if (state.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
-        hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_L);
+        hal_callback.on_key_press(HAL_KEY_GAMEPAD_L);
     else
-        hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_L);
+        hal_callback.on_key_release(HAL_KEY_GAMEPAD_L);
 
     if (state.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
-        hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_R);
+        hal_callback.on_key_press(HAL_KEY_GAMEPAD_R);
     else
-        hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_R);
+        hal_callback.on_key_release(HAL_KEY_GAMEPAD_R);
 }

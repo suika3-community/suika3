@@ -61,7 +61,7 @@ using namespace Windows::System;
 using namespace Windows::Foundation;
 
 extern "C" {
-#include <stratohal/stratohal.h>
+#include <strato/strato.h>
 };
 #include "d3d12.h"
 
@@ -282,7 +282,8 @@ void UWPFrameworkView::Run()
             window->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
 
             D3D12StartFrame();
-            hal_callback_on_event_frame();
+            hal_callback.on_updaet();
+            hal_callback.on_render();
             D3D12EndFrame();
         }
         else

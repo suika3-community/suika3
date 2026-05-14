@@ -2542,6 +2542,7 @@ lir_dump(
 			uint16_t arg;
 			int i;
 			IMM2(dst);
+			IMM2(obj);
 			IMM2(func);
 			IMM1(arg_count);
 			printf("%04d: THISCALL(dst: %d, obj: %d,arg_count:%d", ofs, dst, obj, arg_count);

@@ -427,6 +427,26 @@
             }
         },
         {
+            "name":           "linux-debian",
+            "displayName":    "Linux Wayland/X11 Dual OpenGL",
+            "generator":      "Unix Makefiles",
+            "binaryDir":      "${sourceDir}/build-linux-debian",
+            "cacheVariables": {
+                "PLAYFIELD_TARGET_LINUX":        "ON",
+                "PLAYFIELD_ENABLE_SHARED":       "ON",
+                "PLAYFIELD_ENABLE_DIST":         "ON",
+                "PLAYFIELD_ENABLE_INSTALL":      "ON",
+                "PLAYFIELD_ENABLE_JIT":          "ON",
+                "PLAYFIELD_ENABLE_BIN":          "ON",
+                "PLAYFIELD_ENABLE_I18N":         "ON",
+                "PLAYFIELD_ENABLE_I18N_LIBINTL": "ON",
+                "PLAYFIELD_ENABLE_PACK":         "ON",
+                "PLAYFIELD_ENABLE_BCC":          "ON",
+                "PLAYFIELD_ENABLE_AOTC":         "ON",
+                "PLAYFIELD_ENABLE_UNSAFE":       "ON"
+            }
+        },
+        {
             "name":           "linux-x11",
             "displayName":    "Linux X11-only OpenGL",
             "generator":      "Ninja",
@@ -762,13 +782,13 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-freebsd-x11",
             "cacheVariables": {
-                "PLAYFIELD_TARGET_FREEBSD":    "ON",
-                "PLAYFIELD_ENABLE_JIT":        "ON",
-                "PLAYFIELD_ENABLE_I18N":       "ON",
-                "PLAYFIELD_ENABLE_BIN":        "ON",
-                "PLAYFIELD_ENABLE_PACK":       "ON",
-                "PLAYFIELD_ENABLE_BCC":        "ON",
-                "PLAYFIELD_ENABLE_AOTC":       "ON"
+                "PLAYFIELD_TARGET_FREEBSD_X11": "ON",
+                "PLAYFIELD_ENABLE_JIT":         "ON",
+                "PLAYFIELD_ENABLE_I18N":        "ON",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
+                "PLAYFIELD_ENABLE_PACK":        "ON",
+                "PLAYFIELD_ENABLE_BCC":         "ON",
+                "PLAYFIELD_ENABLE_AOTC":        "ON"
             }
         },
         {
@@ -1085,6 +1105,11 @@
         {
             "name": "linux",
             "configurePreset": "linux",
+	    "configuration":   "Release"
+        },
+        {
+            "name": "linux-debian",
+            "configurePreset": "linux-debian",
 	    "configuration":   "Release"
         },
         {

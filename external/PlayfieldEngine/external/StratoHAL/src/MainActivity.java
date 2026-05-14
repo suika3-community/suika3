@@ -1,9 +1,12 @@
 /* -*- coding: utf-8; tab-width: 4; indent-tabs-mode: t; -*- */
 
 /*
- * StratoHAL
- * Android port's Java part
- * (See also ndkmain.c and ndkfile.c for the C part.)
+ * Strato HAL
+ * Android Java main code.
+ */
+
+/*
+ * See also ndkmain.c and ndkfile.c for the C part.
  */
 
 /*-
@@ -29,7 +32,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-package io.noctvm.playfield.engineandroid;
+package io.noctvm.strato;
 
 import static android.opengl.GLSurfaceView.RENDERMODE_CONTINUOUSLY;
 import static android.opengl.GLSurfaceView.RENDERMODE_WHEN_DIRTY;
@@ -67,8 +70,6 @@ import android.view.SurfaceHolder;
 import android.view.WindowManager.LayoutParams;
 import android.widget.LinearLayout;
 
-import androidx.annotation.RequiresApi;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -88,33 +89,35 @@ public class MainActivity extends Activity {
     //
 
     // Window title
-    private static final String APP_NAME = "App";
+    public static String appName;
 
     // Window width
-    private static int VIEWPORT_WIDTH = 1280;
+    public static int viewportWidth = 1280;
 
     // Window height
-    private static int VIEWPORT_HEIGHT = 720;
+    public static int viewportHeight = 720;
 
 	// Language
 	private static String language = "en";
 
     //
-    // JNI (do not touch)
+    // JNI
     //
 
-    // Load an Android NDK library.
-    static {
-        System.loadLibrary("playfield");
-    }
+	static {
+		// Load an Android NDK library.
+        System.loadLibrary("libstrato");
+	}
 
     // These are the native methods implemented in ndk*.c
-    private native void nativeInitGame();
+    private native void nativeOnBootstrap();
+    private native void nativeOnStart();
     private native int nativeGetScreenWidth();
     private native int nativeGetScreenHeight();
-    private native void nativeReinitOpenGL();
-    private native void nativeCleanup();
-    private native boolean nativeRunFrame();
+    private native String nativeGetTitle();
+    private native void nativeOnRestart();
+    private native void nativeOnStop();
+    private native boolean nativeOnFrame();
     private native boolean nativeOnPause();
     private native boolean nativeOnResume();
     private native void nativeOnTouchStart(int x, int y, int points);
@@ -196,6 +199,20 @@ public class MainActivity extends Activity {
 	private static int KEY_GAMEPAD_L = 20;
 	private static int KEY_GAMEPAD_R = 21;
 
+	//
+	// Constructor
+	//
+	public MainActivity() {
+        // Get the language.
+        language = getResources().getConfiguration().locale.getLanguage();
+
+		// Call the native code.
+		nativeOnBootstrap();
+		viewportWidth = nativeGetScreenWidth();
+		viewportHeight = nativeGetScreenHeight();
+		appName = nativeGetTitle();
+	}
+
     //
     // Called when the app instance is created.
     //
@@ -205,9 +222,6 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         isFinished = false;
-
-        // Get the language.
-        language = getResources().getConfiguration().locale.getLanguage();
 
         // Do full screen settings. (step1)
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -269,7 +283,7 @@ public class MainActivity extends Activity {
 
         if(!isFinished) {
             synchronized (syncObj) {
-                nativeCleanup();
+                nativeOnStop();
             }
             isFinished = true;
         }
@@ -313,9 +327,7 @@ public class MainActivity extends Activity {
 					}
 				}
 				try {
-					nativeInitGame();
-					VIEWPORT_WIDTH = nativeGetScreenWidth();
-					VIEWPORT_HEIGHT = nativeGetScreenHeight();
+					nativeOnStart();
 					isLoaded = true;
 				} finally {
 					synchronized(syncObj) {
@@ -338,7 +350,7 @@ public class MainActivity extends Activity {
 					}
 				}
 				try {
-                    nativeReinitOpenGL();
+                    nativeOnRestart();
 				} finally {
 					synchronized(syncObj) {
 						in_flight = false;
@@ -354,12 +366,12 @@ public class MainActivity extends Activity {
         @Override
         public void onSurfaceChanged(GL10 gl, int width, int height) {
             // Get the aspect ratio.
-            float aspect = (float)VIEWPORT_HEIGHT / (float)VIEWPORT_WIDTH;
+            float aspect = (float)viewportHeight / (float)viewportWidth;
 
             // Width-first.
             float w = width;
             float h = width * aspect;
-            scale = w / (float)VIEWPORT_WIDTH;
+            scale = w / (float)viewportWidth;
             offsetX = 0;
             offsetY = (int)((float)(height - h) / 2.0f);
 
@@ -367,7 +379,7 @@ public class MainActivity extends Activity {
             if(h > height) {
                 h = height;
                 w = height / aspect;
-                scale = h / (float)VIEWPORT_HEIGHT;
+                scale = h / (float)viewportHeight;
                 offsetX = (int)((float)(width - w) / 2.0f);
                 offsetY = 0;
             }
@@ -392,10 +404,9 @@ public class MainActivity extends Activity {
 				in_flight = true;
 			}
 			try {
-				boolean ret = nativeRunFrame();
-				if(!ret)
-					nativeCleanup();
-				if (!ret) {
+				boolean ret = nativeOnFrame();
+				if(!ret) {
+					nativeOnStop();
 					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
 						finishAndRemoveTask();
 					isFinished = true;
@@ -665,12 +676,12 @@ public class MainActivity extends Activity {
         //
         @Override
         public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-            int width = getDefaultSize(VIEWPORT_WIDTH, widthMeasureSpec);
-            int height = getDefaultSize(VIEWPORT_HEIGHT, heightMeasureSpec);
-            if(VIEWPORT_WIDTH > VIEWPORT_HEIGHT)
-                width = (int)(height * ((float)VIEWPORT_WIDTH / (float)VIEWPORT_HEIGHT));
+            int width = getDefaultSize(viewportWidth, widthMeasureSpec);
+            int height = getDefaultSize(viewportHeight, heightMeasureSpec);
+            if(viewportWidth > viewportHeight)
+                width = (int)(height * ((float)viewportWidth / (float)viewportHeight));
             else
-                height = (int)(width * ((float)VIEWPORT_HEIGHT / (float)VIEWPORT_WIDTH));
+                height = (int)(width * ((float)viewportHeight / (float)viewportWidth));
             setMeasuredDimension(width, height);
             setForegroundGravity(Gravity.CENTER);
         }
@@ -699,9 +710,9 @@ public class MainActivity extends Activity {
 				in_flight = true;
 			}
 			try {
-				boolean ret = nativeRunFrame();
+				boolean ret = nativeOnFrame();
 				if(!ret)
-					nativeCleanup();
+					nativeOnStop();
 				if (!ret) {
 					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
 						finishAndRemoveTask();
@@ -804,12 +815,12 @@ public class MainActivity extends Activity {
 					synchronized(syncObj) {
 						view.setRenderMode(RENDERMODE_WHEN_DIRTY);
 						setContentView(videoLayout);
-						videoView.measure(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+						videoView.measure(viewportWidth, viewportHeight);
 						video.start();
 					}
 				});
 			} catch(IOException e) {
-				Log.e(APP_NAME, "Failed to play video " + fileName);
+				Log.e(appName, "Failed to play video " + fileName);
 			}
 		} finally {
 			synchronized(syncObj) {
@@ -952,7 +963,7 @@ public class MainActivity extends Activity {
             is.read(buf);
             is.close();
         } catch(IOException e) {
-            Log.e(APP_NAME, "Failed to read file " + fileName);
+            Log.e(appName, "Failed to read file " + fileName);
         }
         return buf;
     }
@@ -976,7 +987,7 @@ public class MainActivity extends Activity {
             OutputStream os = openFileOutput(fileName, 0);
             return os;
         } catch(IOException e) {
-            Log.e(APP_NAME, "Failed to write file " + fileName);
+            Log.e(appName, "Failed to write file " + fileName);
         }
         return null;
     }
@@ -984,12 +995,12 @@ public class MainActivity extends Activity {
     //
     // Write a byte to the opened save file.
     //
-    private boolean bridgeWriteSaveFile(OutputStream os, int b) {
+    private boolean bridgeWriteSaveFile(OutputStream os, byte[] b) {
         try {
             os.write(b);
             return true;
         } catch(IOException e) {
-            Log.e(APP_NAME, "Failed to write file.");
+            Log.e(appName, "Failed to write file.");
         }
         return false;
     }
@@ -1001,7 +1012,7 @@ public class MainActivity extends Activity {
         try {
             os.close();
         } catch(IOException e) {
-            Log.e(APP_NAME, "Failed to write file.");
+            Log.e(appName, "Failed to write file.");
         }
     }
 }

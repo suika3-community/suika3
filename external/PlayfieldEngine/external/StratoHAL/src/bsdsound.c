@@ -30,7 +30,7 @@
 
 #if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__SunOS)
 
-#include <stratohal/stratohal.h>
+#include <strato/strato.h>
 
 #if defined(__FreeBSD__)
 #include <sys/soundcard.h>

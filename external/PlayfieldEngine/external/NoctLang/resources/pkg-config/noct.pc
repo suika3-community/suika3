@@ -1,0 +1,10 @@
+prefix=${pcfiledir}/../..
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: Noct
+Description: Noct programming language core library
+Version: 1.0.0
+Cflags: -I${includedir}/noct
+Libs: -L${libdir} -lnoct

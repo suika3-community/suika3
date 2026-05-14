@@ -31,7 +31,7 @@
 #ifndef STRATOHAL_ASOUND_H
 #define STRATOHAL_ASOUND_H
 
-#include <stratohal/c89compat.h>
+#include <strato/c89compat.h>
 
 /* Initialize ALSA. */
 bool init_sound(void);

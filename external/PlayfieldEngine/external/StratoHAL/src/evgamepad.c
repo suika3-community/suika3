@@ -1,4 +1,4 @@
-/* -*- coding: utf-8; indent-tabs-mode: t; tab-width: 4; c-basic-offset: 4; -*- */
+/* -*- coding: utf-8; indent-tabs-mode: t; tab-width: 8; c-basic-offset: 8; -*- */
 
 /*
  * StratoHAL
@@ -30,7 +30,8 @@
 
 #if defined(__linux__) || defined(__FreeBSD__)
 
-#include <stratohal/stratohal.h>
+#include <strato/strato.h>
+#include "callback.h"
 
 #define _GNU_SOURCE
 #include <stdio.h>
@@ -157,22 +158,22 @@ static void on_press_button(int button)
 {
 	switch (button) {
 	case 304:
-		hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_A);
+		hal_callback.on_key_press(HAL_KEY_GAMEPAD_A);
 		break;
 	case 305:
-		hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_B);
+		hal_callback.on_key_press(HAL_KEY_GAMEPAD_B);
 		break;
 	case 307:
-		hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_X);
+		hal_callback.on_key_press(HAL_KEY_GAMEPAD_X);
 		break;
 	case 308:
-		hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_Y);
+		hal_callback.on_key_press(HAL_KEY_GAMEPAD_Y);
 		break;
 	case 310:
-		hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_L);
+		hal_callback.on_key_press(HAL_KEY_GAMEPAD_L);
 		break;
 	case 311:
-		hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_R);
+		hal_callback.on_key_press(HAL_KEY_GAMEPAD_R);
 		break;
 	default:
 		break;
@@ -183,22 +184,22 @@ static void on_release_button(int button)
 {
 	switch (button) {
 	case 304:
-		hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_A);
+		hal_callback.on_key_release(HAL_KEY_GAMEPAD_A);
 		break;
 	case 305:
-		hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_B);
+		hal_callback.on_key_release(HAL_KEY_GAMEPAD_B);
 		break;
 	case 307:
-		hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_X);
+		hal_callback.on_key_release(HAL_KEY_GAMEPAD_X);
 		break;
 	case 308:
-		hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_Y);
+		hal_callback.on_key_release(HAL_KEY_GAMEPAD_Y);
 		break;
 	case 310:
-		hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_L);
+		hal_callback.on_key_release(HAL_KEY_GAMEPAD_L);
 		break;
 	case 311:
-		hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_R);
+		hal_callback.on_key_release(HAL_KEY_GAMEPAD_R);
 		break;
 	default:
 		break;
@@ -209,45 +210,45 @@ static void on_change_analog(int axis, int value)
 {
 	switch (axis) {
 	case 0:
-		hal_callback_on_event_analog_input(HAL_ANALOG_X1, value);
+		hal_callback.on_analog_input(HAL_ANALOG_X1, value);
 		break;
 	case 1:
-		hal_callback_on_event_analog_input(HAL_ANALOG_Y1, value);
+		hal_callback.on_analog_input(HAL_ANALOG_Y1, value);
 		break;
 	case 2:
-		hal_callback_on_event_analog_input(HAL_ANALOG_L, value * 256);
+		hal_callback.on_analog_input(HAL_ANALOG_L, value * 256);
 		break;
 	case 3:
-		hal_callback_on_event_analog_input(HAL_ANALOG_X2, value);
+		hal_callback.on_analog_input(HAL_ANALOG_X2, value);
 		break;
 	case 4:
-		hal_callback_on_event_analog_input(HAL_ANALOG_Y2, value);
+		hal_callback.on_analog_input(HAL_ANALOG_Y2, value);
 		break;
 	case 5:
-		hal_callback_on_event_analog_input(HAL_ANALOG_R, value * 256);
+		hal_callback.on_analog_input(HAL_ANALOG_R, value * 256);
 		break;
 	case 16:
 		if (value == -1) {
-			hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_LEFT);
-			hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_RIGHT);
+			hal_callback.on_key_press(HAL_KEY_GAMEPAD_LEFT);
+			hal_callback.on_key_release(HAL_KEY_GAMEPAD_RIGHT);
 		} else if (value == 1) {
-			hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_LEFT);
-			hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_RIGHT);
+			hal_callback.on_key_release(HAL_KEY_GAMEPAD_LEFT);
+			hal_callback.on_key_press(HAL_KEY_GAMEPAD_RIGHT);
 		} else {
-			hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_LEFT);
-			hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_RIGHT);
+			hal_callback.on_key_release(HAL_KEY_GAMEPAD_LEFT);
+			hal_callback.on_key_release(HAL_KEY_GAMEPAD_RIGHT);
 		}
 		break;
 	case 17:
 		if (value == -1) {
-			hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_UP);
-			hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_DOWN);
+			hal_callback.on_key_press(HAL_KEY_GAMEPAD_UP);
+			hal_callback.on_key_release(HAL_KEY_GAMEPAD_DOWN);
 		} else if (value == 1) {
-			hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_UP);
-			hal_callback_on_event_key_press(HAL_KEY_GAMEPAD_DOWN);
+			hal_callback.on_key_release(HAL_KEY_GAMEPAD_UP);
+			hal_callback.on_key_press(HAL_KEY_GAMEPAD_DOWN);
 		} else {
-			hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_UP);
-			hal_callback_on_event_key_release(HAL_KEY_GAMEPAD_DOWN);
+			hal_callback.on_key_release(HAL_KEY_GAMEPAD_UP);
+			hal_callback.on_key_release(HAL_KEY_GAMEPAD_DOWN);
 		}
 		break;
 	default:

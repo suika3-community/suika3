@@ -29,7 +29,7 @@
  */
 
 /* HAL */
-#include <stratohal/stratohal.h>		/* Public Interface */
+#include <strato/strato.h>		/* Public Interface */
 #include "stdfile.h"			/* Standard C File Implementation */
 #if defined(HAL_TARGET_LINUX)
 #include "asound.h"			/* ALSA Sound Implemenatation */
@@ -867,7 +867,9 @@ run_frame(void)
 		flip = true;
 
 		/* Call a frame event. */
-		cont = hal_callback_on_event_frame();
+		cont = hal_callback.on_update();
+		if (cont)
+			hal_callback.on_render();
 	} else {
 		/* Process a video frame. */
 		flip = draw_video_frame();
