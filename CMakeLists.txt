@@ -571,6 +571,7 @@ endif()
 
 if(NOT SUIKA_ENABLE_DIST)
   # Playfield Engine
+  set(NOCT_ENABLE_INSTALL OFF)
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/PlayfieldEngine)
 else()
   # Use system libraries.
@@ -1320,11 +1321,3 @@ if(SUIKA_ENABLE_INSTALL)
     endif() # NOT SUIKA_ENABLE_DIST
   endif() # SUIKA_ENABLE_FREEDESKTOP
 endif()
-
-
-
-
-
-message(STATUS "CMAKE_C_COMPILER=${CMAKE_C_COMPILER}")
-message(STATUS "CMAKE_LINKER=${CMAKE_LINKER}")
-message(STATUS "CMAKE_C_LINK_EXECUTABLE=${CMAKE_C_LINK_EXECUTABLE}")

@@ -1494,6 +1494,10 @@
             "configurePreset": "linux-debug"
         },
         {
+            "name": "linux-debian",
+            "configurePreset": "linux-debian"
+        },
+        {
             "name": "linux-x11",
             "configurePreset": "linux-x11"
         },
