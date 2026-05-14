@@ -29,7 +29,7 @@
 
 #include <suika3/suika3.h>
 #include <playfield/playfield.h>
-#include <stratohal/platform.h>
+#include <strato/strato.h>
 #include "image.h"
 
 #include <stdlib.h>
@@ -49,7 +49,7 @@ struct s3_image *img_tbl[IMAGE_MAX];
  * Initialize the image subsystem.
  */
 bool
-init_image(void)
+s3i_init_image(void)
 {
 	int i;
 
@@ -67,7 +67,7 @@ init_image(void)
  * Cleanup the image subsystem.
  */
 void
-cleanup_image(void)
+s3i_cleanup_image(void)
 {
 	int i;
 

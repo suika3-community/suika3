@@ -577,7 +577,7 @@ else()
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
   find_package(Playfield REQUIRED)
   find_package(StratoHAL REQUIRED)
-  find_package(Noct REQUIRED)
+  find_package(Noct REQUIRED COMPONENTS api)
 endif()
 
 # ---
@@ -856,10 +856,11 @@ if(NOT SUIKA_ENABLE_DIST)
   )
 else()
   target_link_libraries(suika3 PRIVATE
-    ${PLAYFIELD_LIBRARY}
-    ${STRATO_LIBRARY}
-    ${PLAYFIELD_LIBRARY}  # Specify twice to resolve circular references.
-    ${NOCT_LIBRARY}
+    Playfield::playfield
+    StratoHAL::strato
+    Playfield::playfield  # Specify twice to resolve circular references.
+    Noct::noct
+    Noct::api
     noctapi
   )
 endif()

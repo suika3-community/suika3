@@ -723,6 +723,27 @@
             }
         },
         {
+            "name":           "linux-debian",
+            "displayName":    "Linux Debian",
+            "generator":      "Unix Makefiles",
+            "binaryDir":      "${sourceDir}/build-linux-debian",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Release",
+                "SUIKA_TARGET_LINUX":          "ON",
+                "SUIKA_ENABLE_INSTALL":        "ON",
+                "SUIKA_ENABLE_DIST":           "ON",
+                "SUIKA_ENABLE_FREEDESKTOP":    "ON",
+                "SUIKA_ENABLE_JIT":            "ON",
+                "SUIKA_ENABLE_I18N":           "ON",
+                "SUIKA_ENABLE_PACK":           "ON",
+                "SUIKA_ENABLE_BCC":            "ON",
+                "SUIKA_ENABLE_AOTC":           "ON",
+                "SUIKA_ENABLE_GST":            "ON",
+                "SUIKA_ENABLE_PORTAL":         "ON",
+                "SUIKA_ENABLE_UNSAFE":         "ON"
+            }
+        },
+        {
             "name":           "linux-x11",
             "displayName":    "Linux",
             "generator":      "Ninja",

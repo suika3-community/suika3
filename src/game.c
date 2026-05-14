@@ -32,6 +32,7 @@
 #include "cmd.h"
 #include "conf.h"
 #include "gui.h"
+#include "image.h"
 #include "mixer.h"
 #include "stage.h"
 #include "sysbtn.h"
@@ -158,6 +159,9 @@ static int stack_index[S3_CALL_STACK_MAX];
 /* Last tag name. */
 static const char *last_tag_name;
 
+/* Entrypoint. */
+PF_DEFINE_MAIN()
+
 /*
  * Called before the game starts.
  */
@@ -190,6 +194,10 @@ s3i_on_game_start(void)
 
 	/* Initialize the pseudo random number. */
 	srand((unsigned int)time(NULL));
+
+	/* Initialize the image subsystem. */
+	if (!s3i_init_image())
+		return false;
 
 	/* Initialize the config subsystem. */
 	if (!s3i_init_conf())
