@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2; indent-tabs-mode: nil; -*- */
 
 /*
- * Playfield Engine
+ * Strato HAL
  * Video playback HAL for GStreamer on X11
  */
 
@@ -30,6 +30,8 @@
 
 #if defined(HAL_USE_GSTREAMER)
 
+/* StratoHAL */
+#include <strato/strato.h>
 #include "gstplay.h"
 
 /* Gstreamer */
@@ -41,8 +43,6 @@
 #include <gst/app/gstappsink.h>
 #pragma GCC diagnostic pop
 
-/* StratoHAL */
-#include <stratohal/platform.h>
 
 /* Standard C */
 #include <stdio.h>
@@ -311,7 +311,7 @@ gstplay_loop_iteration(void)
 
 #else /* #ifndef NO_GST */
 
-#include <stratohal/c89compat.h>
+#include <strato/c89compat.h>
 
 void
 gstplay_init (int argc, char *argv[])

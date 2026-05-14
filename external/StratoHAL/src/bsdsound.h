@@ -31,7 +31,7 @@
 #ifndef STRATOHAL_BSDSOUND_H
 #define STRATOHAL_BSDSOUND_H
 
-#include <stratohal/c89compat.h>
+#include <strato/c89compat.h>
 
 /* Initialize sound. */
 bool init_sound(void);

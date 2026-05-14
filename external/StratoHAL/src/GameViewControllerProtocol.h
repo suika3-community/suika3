@@ -1,9 +1,14 @@
-// -*- coding: utf-8; tab-width: 4; indent-tabs-mode: nil; -*-
+/* -*- coding: utf-8; tab-width: 4; indent-tabs-mode: nil; -*- */
 
 /*
- * StratoHAL
- * GameViewControllerProtocol is a protocol shared by the macOS and
- * iOS versions of GameViewController's.
+ * Strato HAL
+ * A protocol for GameViewController
+ */
+
+/*
+ * GameViewControllerProtocol is an interface shared by the macOS and
+ * iOS versions of GameViewController. The interface is utilized by
+ * GameRender that is shared by both macOS and iOS.
  */
 
 /*-

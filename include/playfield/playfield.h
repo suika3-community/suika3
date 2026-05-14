@@ -21,108 +21,108 @@
 /*
  * Mouse Position
  */
-extern int pf_mouse_pos_x;
-extern int pf_mouse_pos_y;
+PF_DLL extern int pf_mouse_pos_x;
+PF_DLL extern int pf_mouse_pos_y;
 
 /*
  * Mouse Button
  */
-extern bool pf_is_mouse_left_pressed;
-extern bool pf_is_mouse_right_pressed;
-extern bool pf_is_mouse_left_clicked;
-extern bool pf_is_mouse_right_clicked;
-extern bool pf_is_mouse_dragging;
-extern bool pf_is_touch_canceled;
-extern bool pf_is_swiped;
+PF_DLL extern bool pf_is_mouse_left_pressed;
+PF_DLL extern bool pf_is_mouse_right_pressed;
+PF_DLL extern bool pf_is_mouse_left_clicked;
+PF_DLL extern bool pf_is_mouse_right_clicked;
+PF_DLL extern bool pf_is_mouse_dragging;
+PF_DLL extern bool pf_is_touch_canceled;
+PF_DLL extern bool pf_is_swiped;
 
 /*
  * Gamepad
  */
-extern bool pf_is_gamepad_left_pressed;
-extern bool pf_is_gamepad_right_pressed;
-extern bool pf_is_gamepad_up_pressed;
-extern bool pf_is_gamepad_down_pressed;
-extern bool pf_is_gamepad_a_pressed;
-extern bool pf_is_gamepad_b_pressed;
-extern bool pf_is_gamepad_x_pressed;
-extern bool pf_is_gamepad_y_pressed;
-extern bool pf_is_gamepad_l_pressed;
-extern bool pf_is_gamepad_r_pressed;
-extern int pf_gamepad_analog_x1;
-extern int pf_gamepad_analog_y1;
-extern int pf_gamepad_analog_x2;
-extern int pf_gamepad_analog_y2;
-extern int pf_gamepad_analog_l;
-extern int pf_gamepad_analog_r;
+PF_DLL extern bool pf_is_gamepad_left_pressed;
+PF_DLL extern bool pf_is_gamepad_right_pressed;
+PF_DLL extern bool pf_is_gamepad_up_pressed;
+PF_DLL extern bool pf_is_gamepad_down_pressed;
+PF_DLL extern bool pf_is_gamepad_a_pressed;
+PF_DLL extern bool pf_is_gamepad_b_pressed;
+PF_DLL extern bool pf_is_gamepad_x_pressed;
+PF_DLL extern bool pf_is_gamepad_y_pressed;
+PF_DLL extern bool pf_is_gamepad_l_pressed;
+PF_DLL extern bool pf_is_gamepad_r_pressed;
+PF_DLL extern int pf_gamepad_analog_x1;
+PF_DLL extern int pf_gamepad_analog_y1;
+PF_DLL extern int pf_gamepad_analog_x2;
+PF_DLL extern int pf_gamepad_analog_y2;
+PF_DLL extern int pf_gamepad_analog_l;
+PF_DLL extern int pf_gamepad_analog_r;
 
 /*
  * Key
  */
-extern bool pf_is_escape_key_pressed;
-extern bool pf_is_return_key_pressed;
-extern bool pf_is_space_key_pressed;
-extern bool pf_is_tab_key_pressed;
-extern bool pf_is_backspace_key_pressed;
-extern bool pf_is_delete_key_pressed;
-extern bool pf_is_home_key_pressed;
-extern bool pf_is_end_key_pressed;
-extern bool pf_is_pageup_key_pressed;
-extern bool pf_is_pagedown_key_pressed;
-extern bool pf_is_shift_key_pressed;
-extern bool pf_is_control_key_pressed;
-extern bool pf_is_alt_key_pressed;
-extern bool pf_is_left_key_pressed;
-extern bool pf_is_right_key_pressed;
-extern bool pf_is_up_key_pressed;
-extern bool pf_is_down_key_pressed;
-extern bool pf_is_a_key_pressed;
-extern bool pf_is_b_key_pressed;
-extern bool pf_is_c_key_pressed;
-extern bool pf_is_d_key_pressed;
-extern bool pf_is_e_key_pressed;
-extern bool pf_is_f_key_pressed;
-extern bool pf_is_g_key_pressed;
-extern bool pf_is_h_key_pressed;
-extern bool pf_is_i_key_pressed;
-extern bool pf_is_j_key_pressed;
-extern bool pf_is_k_key_pressed;
-extern bool pf_is_l_key_pressed;
-extern bool pf_is_m_key_pressed;
-extern bool pf_is_n_key_pressed;
-extern bool pf_is_o_key_pressed;
-extern bool pf_is_p_key_pressed;
-extern bool pf_is_q_key_pressed;
-extern bool pf_is_r_key_pressed;
-extern bool pf_is_s_key_pressed;
-extern bool pf_is_t_key_pressed;
-extern bool pf_is_u_key_pressed;
-extern bool pf_is_v_key_pressed;
-extern bool pf_is_w_key_pressed;
-extern bool pf_is_x_key_pressed;
-extern bool pf_is_y_key_pressed;
-extern bool pf_is_z_key_pressed;
-extern bool pf_is_1_key_pressed;
-extern bool pf_is_2_key_pressed;
-extern bool pf_is_3_key_pressed;
-extern bool pf_is_4_key_pressed;
-extern bool pf_is_5_key_pressed;
-extern bool pf_is_6_key_pressed;
-extern bool pf_is_7_key_pressed;
-extern bool pf_is_8_key_pressed;
-extern bool pf_is_9_key_pressed;
-extern bool pf_is_0_key_pressed;
-extern bool pf_is_f1_key_pressed;
-extern bool pf_is_f2_key_pressed;
-extern bool pf_is_f3_key_pressed;
-extern bool pf_is_f4_key_pressed;
-extern bool pf_is_f5_key_pressed;
-extern bool pf_is_f6_key_pressed;
-extern bool pf_is_f7_key_pressed;
-extern bool pf_is_f8_key_pressed;
-extern bool pf_is_f9_key_pressed;
-extern bool pf_is_f10_key_pressed;
-extern bool pf_is_f11_key_pressed;
-extern bool pf_is_f12_key_pressed;
+PF_DLL extern bool pf_is_escape_key_pressed;
+PF_DLL extern bool pf_is_return_key_pressed;
+PF_DLL extern bool pf_is_space_key_pressed;
+PF_DLL extern bool pf_is_tab_key_pressed;
+PF_DLL extern bool pf_is_backspace_key_pressed;
+PF_DLL extern bool pf_is_delete_key_pressed;
+PF_DLL extern bool pf_is_home_key_pressed;
+PF_DLL extern bool pf_is_end_key_pressed;
+PF_DLL extern bool pf_is_pageup_key_pressed;
+PF_DLL extern bool pf_is_pagedown_key_pressed;
+PF_DLL extern bool pf_is_shift_key_pressed;
+PF_DLL extern bool pf_is_control_key_pressed;
+PF_DLL extern bool pf_is_alt_key_pressed;
+PF_DLL extern bool pf_is_left_key_pressed;
+PF_DLL extern bool pf_is_right_key_pressed;
+PF_DLL extern bool pf_is_up_key_pressed;
+PF_DLL extern bool pf_is_down_key_pressed;
+PF_DLL extern bool pf_is_a_key_pressed;
+PF_DLL extern bool pf_is_b_key_pressed;
+PF_DLL extern bool pf_is_c_key_pressed;
+PF_DLL extern bool pf_is_d_key_pressed;
+PF_DLL extern bool pf_is_e_key_pressed;
+PF_DLL extern bool pf_is_f_key_pressed;
+PF_DLL extern bool pf_is_g_key_pressed;
+PF_DLL extern bool pf_is_h_key_pressed;
+PF_DLL extern bool pf_is_i_key_pressed;
+PF_DLL extern bool pf_is_j_key_pressed;
+PF_DLL extern bool pf_is_k_key_pressed;
+PF_DLL extern bool pf_is_l_key_pressed;
+PF_DLL extern bool pf_is_m_key_pressed;
+PF_DLL extern bool pf_is_n_key_pressed;
+PF_DLL extern bool pf_is_o_key_pressed;
+PF_DLL extern bool pf_is_p_key_pressed;
+PF_DLL extern bool pf_is_q_key_pressed;
+PF_DLL extern bool pf_is_r_key_pressed;
+PF_DLL extern bool pf_is_s_key_pressed;
+PF_DLL extern bool pf_is_t_key_pressed;
+PF_DLL extern bool pf_is_u_key_pressed;
+PF_DLL extern bool pf_is_v_key_pressed;
+PF_DLL extern bool pf_is_w_key_pressed;
+PF_DLL extern bool pf_is_x_key_pressed;
+PF_DLL extern bool pf_is_y_key_pressed;
+PF_DLL extern bool pf_is_z_key_pressed;
+PF_DLL extern bool pf_is_1_key_pressed;
+PF_DLL extern bool pf_is_2_key_pressed;
+PF_DLL extern bool pf_is_3_key_pressed;
+PF_DLL extern bool pf_is_4_key_pressed;
+PF_DLL extern bool pf_is_5_key_pressed;
+PF_DLL extern bool pf_is_6_key_pressed;
+PF_DLL extern bool pf_is_7_key_pressed;
+PF_DLL extern bool pf_is_8_key_pressed;
+PF_DLL extern bool pf_is_9_key_pressed;
+PF_DLL extern bool pf_is_0_key_pressed;
+PF_DLL extern bool pf_is_f1_key_pressed;
+PF_DLL extern bool pf_is_f2_key_pressed;
+PF_DLL extern bool pf_is_f3_key_pressed;
+PF_DLL extern bool pf_is_f4_key_pressed;
+PF_DLL extern bool pf_is_f5_key_pressed;
+PF_DLL extern bool pf_is_f6_key_pressed;
+PF_DLL extern bool pf_is_f7_key_pressed;
+PF_DLL extern bool pf_is_f8_key_pressed;
+PF_DLL extern bool pf_is_f9_key_pressed;
+PF_DLL extern bool pf_is_f10_key_pressed;
+PF_DLL extern bool pf_is_f11_key_pressed;
+PF_DLL extern bool pf_is_f12_key_pressed;
 
 /*
  * Textures
@@ -147,6 +147,7 @@ typedef uint32_t pf_pixel_t;
 /*
  * Create a color texture.
  */
+PF_DLL
 bool
 pf_create_color_texture(
 	int width,
@@ -160,6 +161,7 @@ pf_create_color_texture(
 /*
  * Load a texture.
  */
+PF_DLL
 bool
 pf_load_texture(
 	const char *fname,
@@ -170,6 +172,7 @@ pf_load_texture(
 /*
  * Destroy a texture.
  */
+PF_DLL
 void
 pf_destroy_texture(
 	int tex_id);
@@ -177,6 +180,7 @@ pf_destroy_texture(
 /*
  * Notify a texture update.
  */
+PF_DLL
 bool
 pf_notify_texture_update(
 	int tex_id);
@@ -184,6 +188,7 @@ pf_notify_texture_update(
 /*
  * Draw a texture image on a texture image. (copy)
  */
+PF_DLL
 void
 pf_draw_texture(
 	int dst_tex_id,
@@ -200,6 +205,7 @@ pf_draw_texture(
 /*
  * Draw a texture image on a texture image. (3D)
  */
+PF_DLL
 void
 pf_draw_texture_3d(
 	int dst_tex_id,
@@ -222,6 +228,7 @@ pf_draw_texture_3d(
 /*
  * Fill a rectangle on a texture image.
  */
+PF_DLL
 void
 pf_fill_texture_rect(
 	int tex_id,
@@ -234,6 +241,7 @@ pf_fill_texture_rect(
 /*
  * Get a raw pixel pointer.
  */
+PF_DLL
 pf_pixel_t *
 pf_get_texture_pixels(
 	int tex_id);
@@ -245,6 +253,7 @@ pf_get_texture_pixels(
 /*
  * Render a texture. (alpha blending)
  */
+PF_DLL
 void
 pf_render_texture(
 	int dst_left,
@@ -262,6 +271,7 @@ pf_render_texture(
 /*
  * Render textures for 1-bit universal transition.
  */
+PF_DLL
 void
 pf_render_texture_rule(
 	int tex1_id,
@@ -271,6 +281,7 @@ pf_render_texture_rule(
 /*
  * Render textures for 8-bit universal transition.
  */
+PF_DLL
 void
 pf_render_texture_melt(
 	int tex1_id,
@@ -280,6 +291,7 @@ pf_render_texture_melt(
 /*
  * Render textures for cross fading.
  */
+PF_DLL
 void
 pf_render_texture_cross(
 	int tex1_id,
@@ -293,6 +305,7 @@ pf_render_texture_cross(
 /*
  * Render a texture. (3D, alpha blending)
  */
+PF_DLL
 void
 pf_render_texture_3d(
 	float x1,
@@ -314,6 +327,7 @@ pf_render_texture_3d(
 /*
  * Render textures for cross fading.
  */
+PF_DLL
 void
 pf_render_texture_3d_cross(
 	int tex1_id,
@@ -339,6 +353,7 @@ pf_render_texture_3d_cross(
 /*
  * Render a texture.
  */
+PF_DLL
 void
 pf_draw(
 	int tex_id,
@@ -352,6 +367,7 @@ pf_draw(
 /*
  * Load a font.
  */
+PF_DLL
 bool
 pf_load_font(
 	int slot,
@@ -360,6 +376,7 @@ pf_load_font(
 /*
  * Create a text texture.
  */
+PF_DLL
 bool
 pf_create_text_texture(
 	int slot,
@@ -373,6 +390,7 @@ pf_create_text_texture(
 /*
  * Create a text texture with outlining.
  */
+PF_DLL
 bool
 pf_create_text_texture_outline(
 	int slot,
@@ -392,6 +410,7 @@ pf_create_text_texture_outline(
 /*
  * Play a sound on a stream.
  */
+PF_DLL
 bool
 pf_play_sound(
 	int stream,
@@ -401,6 +420,7 @@ pf_play_sound(
 /*
  * Stop a sound on a stream.
  */
+PF_DLL
 bool
 pf_stop_sound(
 	int stream);
@@ -408,6 +428,7 @@ pf_stop_sound(
 /*
  * Set a sound volume on a stream.
  */
+PF_DLL
 bool
 pf_set_sound_volume(
 	int stream,
@@ -416,6 +437,7 @@ pf_set_sound_volume(
 /*
  * Check if a sound stream is completed.
  */
+PF_DLL
 bool
 pf_is_sound_finished(
 	int stream);
@@ -427,6 +449,7 @@ pf_is_sound_finished(
 /*
  * Play a video.
  */
+PF_DLL
 bool
 pf_play_video(
 	const char *file,
@@ -435,12 +458,14 @@ pf_play_video(
 /*
  * Stop the video.
  */
+PF_DLL
 void
 pf_stop_video(void);
 
 /*
  * Check if a video is playing back.
  */
+PF_DLL
 bool
 pf_is_video_playing(void);
 
@@ -451,6 +476,7 @@ pf_is_video_playing(void);
 /*
  * Reset a lap timer and initializes it with a current time.
  */
+PF_DLL
 void
 pf_reset_lap_timer(
 	uint64_t *origin);
@@ -458,6 +484,7 @@ pf_reset_lap_timer(
 /*
  * Get a lap time in milliseconds.
  */
+PF_DLL
 uint64_t
 pf_get_lap_timer_millisec(
 	uint64_t *origin);
@@ -469,6 +496,7 @@ pf_get_lap_timer_millisec(
 /*
  * Write save data.
  */
+PF_DLL
 bool
 pf_write_save_data(
 	const char *key,
@@ -478,6 +506,7 @@ pf_write_save_data(
 /*
  * Read save data.
  */
+PF_DLL
 bool
 pf_read_save_data(
 	const char *key,
@@ -488,6 +517,7 @@ pf_read_save_data(
 /*
  * Check whether save data exist or not.
  */
+PF_DLL
 bool
 pf_check_save_data(
 	const char *key);
@@ -495,6 +525,7 @@ pf_check_save_data(
 /*
  * Get the size of save data.
  */
+PF_DLL
 bool
 pf_get_save_data_size(
 	const char *key,
@@ -507,6 +538,7 @@ pf_get_save_data_size(
 /*
  * Check if a file exists.
  */
+PF_DLL
 bool
 pf_check_file_exists(
 	const char *fname);
@@ -514,6 +546,7 @@ pf_check_file_exists(
 /*
  * Read a file.
  */
+PF_DLL
 bool
 pf_read_file_content(
 	const char *fname,
@@ -527,12 +560,14 @@ pf_read_file_content(
 /*
  * Get the VM environment.
  */
+PF_DLL
 void *
 pf_get_vm_env(void);
 
 /*
  * Call a VM function.
  */
+PF_DLL
 bool
 pf_call_vm_function(
 	const char *func_name);
@@ -540,6 +575,7 @@ pf_call_vm_function(
 /*
  * Set a VM integer.
  */
+PF_DLL
 bool
 pf_set_vm_int(
 	const char *prop_name,
@@ -548,6 +584,7 @@ pf_set_vm_int(
 /*
  * Get a VM integer.
  */
+PF_DLL
 bool
 pf_get_vm_int(
 	const char *prop_name,
@@ -560,6 +597,7 @@ pf_get_vm_int(
 /*
  * Install an API function in the global name space.
  */
+PF_DLL
 bool
 pf_install_api(
 	const char *name,
@@ -568,6 +606,7 @@ pf_install_api(
 /*
  * Install an API function in a package name space.
  */
+PF_DLL
 bool
 pf_install_package_api(
 	const char *package,
@@ -577,6 +616,7 @@ pf_install_package_api(
 /*
  * Get a function call parameter as an integer.
  */
+PF_DLL
 bool
 pf_get_call_arg_int(
 	const char *name,
@@ -587,6 +627,7 @@ pf_get_call_arg_int(
 /*
  * Get a function call parameter as a float.
  */
+PF_DLL
 bool
 pf_get_call_arg_float(
 	const char *name,
@@ -597,6 +638,7 @@ pf_get_call_arg_float(
 /*
  * Get a function call parameter as a string.
  */
+PF_DLL
 bool
 pf_get_call_arg_string(
 	const char *name,
@@ -607,6 +649,7 @@ pf_get_call_arg_string(
 /*
  * Get the length of an array of a function call parameter.
  */
+PF_DLL
 bool
 pf_get_call_arg_array_length(
 	const char *name,
@@ -615,6 +658,7 @@ pf_get_call_arg_array_length(
 /*
  * Get an integer element of an array of a function call parameter.
  */
+PF_DLL
 bool
 pf_get_call_arg_array_int(
 	const char *name,
@@ -624,6 +668,7 @@ pf_get_call_arg_array_int(
 /*
  * Get a float element of an array of a function call parameter.
  */
+PF_DLL
 bool
 pf_get_call_arg_array_float(
 	const char *name,
@@ -633,6 +678,7 @@ pf_get_call_arg_array_float(
 /*
  * Get a string element of an array of a function call parameter.
  */
+PF_DLL
 bool
 pf_get_call_arg_array_string(
 	const char *name,
@@ -642,6 +688,7 @@ pf_get_call_arg_array_string(
 /*
  * Get an integer element of a dictionary of a function call parameter.
  */
+PF_DLL
 bool
 pf_get_call_arg_dict_int(
 	const char *name,
@@ -653,6 +700,7 @@ pf_get_call_arg_dict_int(
 /*
  * Get a float element of a dictionary of a function call parameter.
  */
+PF_DLL
 bool
 pf_get_call_arg_dict_float(
 	const char *name,
@@ -664,6 +712,7 @@ pf_get_call_arg_dict_float(
 /*
  * Get a string element of a dictionary of a function call parameter.
  */
+PF_DLL
 bool
 pf_get_call_arg_dict_string(
 	const char *name,
@@ -675,6 +724,7 @@ pf_get_call_arg_dict_string(
 /*
  * Set an integer return value.
  */
+PF_DLL
 bool
 pf_set_return_int(
 	int val);
@@ -682,6 +732,7 @@ pf_set_return_int(
 /*
  * Set a float return value.
  */
+PF_DLL
 bool
 pf_set_return_float(
 	float val);
@@ -689,6 +740,7 @@ pf_set_return_float(
 /*
  * Set a string return value.
  */
+PF_DLL
 bool
 pf_set_return_string(
 	const char *val);
@@ -696,6 +748,7 @@ pf_set_return_string(
 /*
  * Set an integer array return value.
  */
+PF_DLL
 bool
 pf_set_return_int_array(
 	int *val,
@@ -704,6 +757,7 @@ pf_set_return_int_array(
 /*
  * Set a float array return value.
  */
+PF_DLL
 bool
 pf_set_return_float_array(
 	float *val,
@@ -712,6 +766,7 @@ pf_set_return_float_array(
 /*
  * Set a string array return value.
  */
+PF_DLL
 bool
 pf_set_return_string_array(
 	const char **val,
@@ -724,6 +779,7 @@ pf_set_return_string_array(
  *    "IIS" means 2 integers and 1 string.
  *    "IFS" means 1 integers, 1 float, and 1 string.
  */
+PF_DLL
 bool
 pf_set_return_dictionary(
 	const char *type_desc,
@@ -738,30 +794,35 @@ pf_set_return_dictionary(
 /*
  * Return whether we support the full screen mode.
  */
+PF_DLL
 bool
 pf_is_full_screen_supported(void);
 
 /*
  * Return whether the we are in the full screen mode.
  */
+PF_DLL
 bool
 pf_is_full_screen_mode(void);
 
 /*
  * Enter the full screen mode.
  */
+PF_DLL
 void
 pf_enter_full_screen_mode(void);
 
 /*
  * Leave the full screen mode.
  */
+PF_DLL
 void
 pf_leave_full_screen_mode(void);
 
 /*
  * Enable/disable continuous moves of swipe gestures.
  */
+PF_DLL
 void
 pf_set_continuous_swipe_enabled(
 	bool is_enabled);
@@ -769,12 +830,14 @@ pf_set_continuous_swipe_enabled(
 /*
  * Get the system language.
  */
+PF_DLL
 const char *
 pf_get_system_language(void);
 
 /*
  * Print a debug message.
  */
+PF_DLL
 void
 pf_log_info(
 	const char *msg,
@@ -783,6 +846,7 @@ pf_log_info(
 /*
  * Print a warning message.
  */
+PF_DLL
 void
 pf_log_warn(
 	const char *msg,
@@ -791,6 +855,7 @@ pf_log_warn(
 /*
  * Print an error message.
  */
+PF_DLL
 void
 pf_log_error(
 	const char *msg,
@@ -799,15 +864,31 @@ pf_log_error(
 /*
  * Print an out-of-memory error message.
  */
+PF_DLL
 void
 pf_log_out_of_memory(void);
 
 /*
- * Special initialization function for derived engines.
+ * Initialization callback for derived engines.
  */
-bool
+
+/* DLL side */
+PF_DLL
+extern bool
+(*pf_init_hook_ptr)(
+	int width,
+	int height);
+
+/* App side */
+extern bool
 pf_init_hook(
 	int width,
 	int height);
+
+/*
+ * Entrypoint Definition
+ */
+#include <strato/strato.h>
+#define PF_DEFINE_MAIN() HAL_DEFINE_MAIN_CHAIN(pf_init_hook_ptr, pf_init_hook)
 
 #endif

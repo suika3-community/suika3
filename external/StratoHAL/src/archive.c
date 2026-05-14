@@ -28,7 +28,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#include <stratohal/stratohal.h>
+#include <strato/strato.h>
 
 /* Obfuscation Key */
 #include "key.h"
@@ -95,7 +95,11 @@ static char get_next_random(void);
 /*
  * main
  */
-int command_archive(int argc, char *argv[])
+HAL_DLL
+int
+hal_archive(
+	int argc,
+	char *argv[])
 {
 	int i;
 

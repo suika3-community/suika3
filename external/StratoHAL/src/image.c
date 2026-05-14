@@ -28,7 +28,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#include <stratohal/stratohal.h>
+#include <strato/strato.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -102,12 +102,15 @@ static void wrap_aligned_free(void *p);
  * Initialization
  */
 
-#if defined(HAL_USE_DLL)
+void init_image(void)
+{
+	id_top = 0;
+}
+
 void cleanup_image(void)
 {
 	id_top = 0;
 }
-#endif
 
 /*
  * Create an image.
@@ -1473,8 +1476,8 @@ wrap_aligned_free(
 #define PNG_DEBUG 3
 #if defined(HAL_TARGET_WASM) || \
     defined(HAL_TARGET_ANDROID) || \
-    (defined(HAL_TARGET_MACOS) && defined(HAL_USE_SHARED)) || \
-    (defined(HAL_TARGET_POSIX) && defined(HAL_USE_SHARED)) || \
+    (defined(HAL_TARGET_MACOS) && defined(HAL_USE_EXTDLL)) || \
+    (defined(HAL_TARGET_POSIX) && defined(HAL_USE_EXTDLL)) || \
     defined(HAL_USE_QT)
 #include <png.h>
 #else
@@ -1660,8 +1663,8 @@ png_warning_silent(
  */
 
 #if defined(HAL_TARGET_WASM) || \
-    (defined(HAL_TARGET_MACOS) && defined(HAL_USE_SHARED)) || \
-    (defined(HAL_TARGET_POSIX) && defined(HAL_USE_SHARED)) || \
+    (defined(HAL_TARGET_MACOS) && defined(HAL_USE_EXTDLL)) || \
+    (defined(HAL_TARGET_POSIX) && defined(HAL_USE_EXTDLL)) || \
     defined(HAL_USE_QT)
 #include <jpeglib.h>
 #else

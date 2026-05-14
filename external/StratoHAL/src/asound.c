@@ -31,7 +31,7 @@
 #if defined(__linux__)
 
 /* Base */
-#include <stratohal/stratohal.h>
+#include <strato/strato.h>
 
 /* Standard C */
 #include <math.h>

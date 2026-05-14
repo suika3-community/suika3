@@ -31,7 +31,7 @@
 #ifndef STRATOHAL_SLSOUND_H
 #define STRATOHAL_SLSOUND_H
 
-#include <stratohal/c89compat.h>
+#include <strato/c89compat.h>
 
 void init_opensl_es(void);
 void sl_pause_sound(void);

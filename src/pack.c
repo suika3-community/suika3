@@ -31,7 +31,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-int command_archive(int argc, char *argv[]);
+int hal_archive(int argc, char *argv[]);
 
 #ifdef _WIN32
 #include <windows.h>
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 	}
 #endif
 
-	int ret = command_archive(argc, argv);
+	int ret = hal_archive(argc, argv);
 
 #ifdef _WIN32
 	if (ret != 0)

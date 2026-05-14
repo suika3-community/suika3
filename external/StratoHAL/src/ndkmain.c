@@ -1,8 +1,8 @@
 /* -*- coding: utf-8; tab-width: 8; indent-tabs-mode: t; -*- */
 
 /*
- * StratoHAL
- * Main code for Android (C part, JNI)
+ * Strato HAL
+ * Android NDK main code
  */
 
 /*-
@@ -29,7 +29,8 @@
  */
 
 /* Base */
-#include <stratohal/stratohal.h>
+#include <strato/strato.h>
+#include "callback.h"
 
 /* HAL */
 #include "ndkmain.h"
@@ -54,68 +55,50 @@
 /*
  * Constants
  */
-
-#define LOG_BUF_SIZE		(1024)
-#define SCROLL_DOWN_MARGIN	(5)
+#define LOG_BUF_SIZE			(1024)
+#define SCROLL_DOWN_MARGIN		(5)
+#define DELAYED_RFILE_FREE_SLOTS	(16)
 
 /*
  * Variables
  */
 
-/*
- * The global reference to the MainActivity instance.
- */
+/* The global reference to the MainActivity instance. */
 jobject main_activity;
 
-/*
- * A temporal reference to a JNIEnv.
- */
+/* A temporal reference to a JNIEnv. */
 JNIEnv *jni_env;
 
 /* A flag that indicates if a video is playing back. */
 static bool state_video;
 
-/*
- * Touch status.
- */
+/* Touch status. */
 static int touch_start_x;
 static int touch_start_y;
 static int touch_last_y;
 static bool is_continuous_swipe_enabled;
 
-/*
- * Delayed removal of (struct hal_rfile *) references.
- */
+/* Callback */
+struct hal_callback hal_callback;
+HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback);
 
-#define DELAYED_RFILE_FREE_SLOTS	(16)
-
+/* Delayed removal of (struct hal_rfile *) references. */
 struct hal_rfile *delayed_rfile_free_slot[DELAYED_RFILE_FREE_SLOTS];
 
-/*
- * Locale
- */
-
+/* Locale */
 static const char *lang_code;
 
-/*
- * Window Configuration
- */
-
+/* Window Configuration */
 static char *window_title;
 static int screen_width;
 static int screen_height;
 
-/*
- * Forward declarations.
- */
+/* Forward declarations. */
 static void init_locale(JNIEnv *env);
 static void do_delayed_remove_rfile_ref(void);
 
-/*
- * io.noctvm.playfield.engineandroid.MainActivity.nativeInitGame()
- */
 JNIEXPORT void JNICALL
-Java_io_noctvm_playfield_engineandroid_MainActivity_nativeInitGame(
+Java_io_noctvm_strato_MainActivity_nativeOnBootstrap(
 	JNIEnv *env,
 	jobject instance)
 {
@@ -137,10 +120,50 @@ Java_io_noctvm_playfield_engineandroid_MainActivity_nativeInitGame(
 	}
 
 	/* Do a boot callback to acquire a screen configuration. */
-	if (!hal_callback_on_event_boot(&window_title, &screen_width, &screen_height)) {
+	if (!hal_bootstrap_ptr(&window_title,
+			       &screen_width,
+			       &screen_height,
+			       &hal_callback)) {
 		hal_log_error("Initialization failed.");
 		return;
 	}
+
+	jni_env = NULL;
+}
+
+
+JNIEXPORT jint JNICALL
+Java_io_noctvm_strato_MainActivity_nativeGetScreenWidth(
+	JNIEnv *env,
+	jobject instance)
+{
+	return screen_width;
+}
+
+JNIEXPORT jint JNICALL
+Java_io_noctvm_strato_MainActivity_nativeGetScreenHeight(
+	JNIEnv *env,
+	jobject instance)
+{
+	return screen_height;
+}
+
+JNIEXPORT jstring JNICALL
+Java_io_noctvm_strato_MainActivity_nativeGetTitle(
+	JNIEnv *env,
+	jobject instance)
+{
+	jstring s = (*env)->NewStringUTF(env, window_title);
+
+	return s;
+}
+
+JNIEXPORT void JNICALL
+Java_io_noctvm_strato_MainActivity_nativeOnStart(
+	JNIEnv *env,
+	jobject instance)
+{
+	jni_env = env;
 
 	/* Init the graphics HAL. */
 	if (!init_opengl(screen_width, screen_height)) {
@@ -152,13 +175,258 @@ Java_io_noctvm_playfield_engineandroid_MainActivity_nativeInitGame(
 	init_opensl_es();
 
 	/* Do a start callback. */
-	if(!hal_callback_on_event_start()) {
+	if(!hal_callback.on_start()) {
 		hal_log_error("Failed to initialize event loop.");
 		return;
 	}
 
 	jni_env = NULL;
 }
+
+JNIEXPORT void JNICALL
+Java_io_noctvm_strato_MainActivity_nativeOnRestart(
+        JNIEnv *env,
+	jobject instance)
+{
+	jni_env = env;
+
+	/* Delete the global reference to the main activity instance. */
+	if (main_activity != NULL) {
+		(*env)->DeleteGlobalRef(env, main_activity);
+		main_activity = NULL;
+	}
+
+	/* Retain the main activity instance globally. */
+	main_activity = (*env)->NewGlobalRef(env, instance);
+
+	/* Re-initialize OpenGL. */
+	if (!init_opengl(screen_width, screen_height)) {
+		hal_log_error("Failed to initialize OpenGL.");
+		return;
+	}
+
+	state_video = false;
+
+	jni_env = NULL;
+}
+
+JNIEXPORT void JNICALL
+Java_io_noctvm_strato_MainActivity_nativeOnStop(
+	JNIEnv *env)
+{
+	jni_env = env;
+
+	hal_callback.on_stop();
+
+	/* Delete the global reference to the main activity instance. */
+	if (main_activity != NULL) {
+		(*env)->DeleteGlobalRef(env, main_activity);
+		main_activity = NULL;
+	}
+
+	jni_env = NULL;
+}
+
+JNIEXPORT jboolean JNICALL
+Java_io_noctvm_strato_MainActivity_nativeOnFrame(
+	JNIEnv *env,
+	jobject instance)
+{
+	jni_env = env;
+
+	/* Process a video playback. */
+	if (state_video) {
+		jclass cls = (*jni_env)->FindClass(jni_env, "io/noctvm/strato/MainActivity");
+		jmethodID mid = (*jni_env)->GetMethodID(jni_env, cls, "bridgeIsVideoPlaying", "()Z");
+		state_video = (*jni_env)->CallBooleanMethod(jni_env, main_activity, mid);
+	}
+
+	/* Run a frame. */
+	jboolean ret = JNI_TRUE;
+	if (!hal_callback.on_update())
+		ret = JNI_FALSE;
+
+	/* Do rendering if video is not playing. */
+	if (!state_video) {
+		/* Start a rendering. */
+		opengl_start_rendering();
+
+		/* Do rendering. */
+		hal_callback.on_render();
+
+		/* Finish a rendering. */
+		opengl_end_rendering();
+	}
+
+	/* Do delayed removal of rfile refereces. */
+	do_delayed_remove_rfile_ref();
+
+	jni_env = NULL;
+
+	return ret;
+}
+
+JNIEXPORT void JNICALL
+Java_io_noctvm_strato_MainActivity_nativeOnPause(
+        JNIEnv *env,
+        jobject instance)
+{
+	jni_env = env;
+
+	sl_pause_sound();
+
+	jni_env = NULL;
+}
+
+JNIEXPORT void JNICALL
+Java_io_noctvm_strato_MainActivity_nativeOnResume(
+        JNIEnv *env,
+        jobject instance)
+{
+	jni_env = env;
+
+	sl_resume_sound();
+
+	jni_env = NULL;
+}
+
+JNIEXPORT void JNICALL
+Java_io_noctvm_strato_MainActivity_nativeOnTouchStart(
+        JNIEnv *env,
+        jobject instance,
+        jint x,
+        jint y,
+	jint points)
+{
+	jni_env = env;
+	{
+		touch_start_x = x;
+		touch_start_y = y;
+		touch_last_y = y;
+		hal_callback.on_mouse_press(HAL_MOUSE_LEFT, x, y);
+	}
+	jni_env = NULL;
+}
+
+JNIEXPORT void JNICALL
+Java_io_noctvm_strato_MainActivity_nativeOnTouchMove(
+	JNIEnv *env,
+	jobject instance,
+	jint x,
+	jint y)
+{
+	jni_env = env;
+	do {
+		/* Emulate a wheel down. */
+		const int FLICK_Y_DISTANCE = 30;
+		int delta_y = y - touch_last_y;
+		touch_last_y = y;
+		if (is_continuous_swipe_enabled) {
+			if (delta_y > 0 && delta_y < FLICK_Y_DISTANCE) {
+				hal_callback.on_key_press(HAL_KEY_DOWN);
+				hal_callback.on_key_release(HAL_KEY_DOWN);
+				break;
+			}
+		}
+
+		/* Emulate a mouse move. */
+		hal_callback.on_mouse_move(x, y);
+	} while (0);
+	jni_env = NULL;
+}
+
+JNIEXPORT void JNICALL
+Java_io_noctvm_strato_MainActivity_nativeOnTouchEnd(
+	JNIEnv *env,
+	jobject instance,
+	jint x,
+	jint y,
+	jint points)
+{
+	jni_env = env;
+
+	do {
+		/* Detect a down/up swipe. */
+		const int FLICK_Y_DISTANCE = 50;
+		int delta_y = y - touch_start_y;
+		if (delta_y > FLICK_Y_DISTANCE) {
+			hal_callback.on_touch_cancel();
+			hal_callback.on_swipe_down(0, 0);
+			break;
+		} else if (delta_y < -FLICK_Y_DISTANCE) {
+			hal_callback.on_touch_cancel();
+			hal_callback.on_swipe_up(0, 0);
+			break;
+		}
+
+		/* Emulate a left click. */
+		const int FINGER_DISTANCE = 10;
+		if (points == 1 &&
+		    abs(x - touch_start_x) < FINGER_DISTANCE &&
+		    abs(y - touch_start_y) < FINGER_DISTANCE) {
+			hal_callback.on_touch_cancel();
+			hal_callback.on_mouse_press(HAL_MOUSE_LEFT, x, y);
+			hal_callback.on_mouse_release(HAL_MOUSE_LEFT, x, y);
+			break;
+		}
+
+		/* Emulate a right click. */
+		if (points == 2 &&
+		    abs(x - touch_start_x) < FINGER_DISTANCE &&
+		    abs(y - touch_start_y) < FINGER_DISTANCE) {
+			hal_callback.on_touch_cancel();
+			hal_callback.on_mouse_press(HAL_MOUSE_RIGHT, x, y);
+			hal_callback.on_mouse_release(HAL_MOUSE_RIGHT, x, y);
+			break;
+		}
+
+		/* Cancel the touch move. */
+		hal_callback.on_touch_cancel();
+	} while (0);
+
+	jni_env = NULL;
+}
+
+JNIEXPORT void JNICALL
+Java_io_noctvm_strato_MainActivity_nativeOnKeyDown(
+	JNIEnv *env,
+	jobject instance,
+	int key)
+{
+	hal_callback.on_key_press(key);
+}
+
+JNIEXPORT void JNICALL
+Java_io_noctvm_strato_engineandroid_MainActivity_nativeOnKeyUp(
+	JNIEnv *env,
+	jobject instance,
+	int key)
+{
+	hal_callback.on_key_release(key);
+}
+
+JNIEXPORT void JNICALL
+Java_io_noctvm_strato_MainActivity_nativeOnGamepadAnalog(
+	JNIEnv *env,
+	jobject instance,
+	jfloat x1,
+	jfloat y1,
+	jfloat x2,
+	jfloat y2,
+	jfloat l,
+	jfloat r)
+{
+	hal_callback.on_analog_input(HAL_ANALOG_X1, (int)(x1 * 32767.0f));
+	hal_callback.on_analog_input(HAL_ANALOG_Y1, (int)(y1 * 32767.0f));
+	hal_callback.on_analog_input(HAL_ANALOG_X2, (int)(x2 * 32767.0f));
+	hal_callback.on_analog_input(HAL_ANALOG_Y2, (int)(y2 * 32767.0f));
+	hal_callback.on_analog_input(HAL_ANALOG_L, (int)(l * 32767.0f));
+	hal_callback.on_analog_input(HAL_ANALOG_R, (int)(r * 32767.0f));
+}
+
+/*
+ * Helpers
+ */
 
 static void
 init_locale(
@@ -174,7 +442,7 @@ init_locale(
 	    jLang = NULL;
 
 	    /* Get the MainActivity class. */
-	    clazz = (*env)->FindClass(env, "io/noctvm/playfield/engineandroid/MainActivity");
+	    clazz = (*env)->FindClass(env, "io/noctvm/strato/MainActivity");
 	    if (clazz == NULL)
 		    break;
 
@@ -246,100 +514,12 @@ init_locale(
 	    (*env)->ReleaseStringUTFChars(env, jLang, langCode);
 }
 
-JNIEXPORT jint JNICALL
-Java_io_noctvm_playfield_engineandroid_MainActivity_nativeGetScreenWidth(
-	JNIEnv *env,
-	jobject instance)
-{
-	return screen_width;
-}
-
-JNIEXPORT jint JNICALL
-Java_io_noctvm_playfield_engineandroid_MainActivity_nativeGetScreenHeight(
-	JNIEnv *env,
-	jobject instance)
-{
-	return screen_height;
-}
-
-JNIEXPORT void JNICALL
-Java_io_noctvm_playfield_engineandroid_MainActivity_nativeReinitOpenGL(
-        JNIEnv *env,
-        jobject instance)
-{
-	jni_env = env;
-
-	/* Make sure to retain the main activity instance. */
-	main_activity = (*env)->NewGlobalRef(env, instance);
-
-	/* Re-initialize OpenGL. */
-	if (!init_opengl(screen_width, screen_height)) {
-		hal_log_error("Failed to initialize OpenGL.");
-		return;
-	}
-
-	state_video = false;
-
-	jni_env = NULL;
-}
-
-JNIEXPORT void JNICALL
-Java_io_noctvm_playfield_engineandroid_MainActivity_nativeCleanup(
-	JNIEnv *env,
-	jobject instance)
-{
-	jni_env = env;
-
-	hal_callback_on_event_stop();
-
-	/* Delete the global reference to the main activity instance. */
-	if (main_activity != NULL) {
-		(*env)->DeleteGlobalRef(env, main_activity);
-		main_activity = NULL;
-	}
-
-	jni_env = NULL;
-}
-
-JNIEXPORT jboolean JNICALL
-Java_io_noctvm_playfield_engineandroid_MainActivity_nativeRunFrame(
-	JNIEnv *env,
-	jobject instance)
-{
-	jni_env = env;
-
-	/* Process a video playback. */
-	bool do_render = true;
-	if (state_video) {
-		jclass cls = (*jni_env)->FindClass(jni_env, "io/noctvm/playfield/engineandroid/MainActivity");
-		jmethodID mid = (*jni_env)->GetMethodID(jni_env, cls, "bridgeIsVideoPlaying", "()Z");
-		if ((*jni_env)->CallBooleanMethod(jni_env, main_activity, mid))
-			do_render = false;
-		else
-			state_video = false;
-	}
-
-	/* Start a rendering. */
-	if (do_render)
-		opengl_start_rendering();
-
-	/* Run a frame. */
-	jboolean ret = JNI_TRUE;
-	if (!hal_callback_on_event_frame())
-		ret = JNI_FALSE;
-
-	/* Finish a rendering. */
-	if (do_render)
-		opengl_end_rendering();
-
-	/* Do delayed removal of rfile refereces. */
-	do_delayed_remove_rfile_ref();
-
-	jni_env = NULL;
-
-	return ret;
-}
-
+/*
+ * Reserve a deferred removal of a file reference. In the OpenSL
+ * callback, we don't have an env reference and we can't remove a file
+ * reference. Thus, we have to defer the removal when the main thread
+ * runs.
+ */
 void
 post_delayed_remove_rfile_ref(
 	struct hal_rfile *rf)
@@ -374,164 +554,6 @@ do_delayed_remove_rfile_ref(void)
 	}
 }
 
-JNIEXPORT void JNICALL
-Java_io_noctvm_playfield_engineandroid_MainActivity_nativeOnPause(
-        JNIEnv *env,
-        jobject instance)
-{
-	jni_env = env;
-
-	sl_pause_sound();
-
-	jni_env = NULL;
-}
-
-JNIEXPORT void JNICALL
-Java_io_noctvm_playfield_engineandroid_MainActivity_nativeOnResume(
-        JNIEnv *env,
-        jobject instance)
-{
-	jni_env = env;
-
-	sl_resume_sound();
-
-	jni_env = NULL;
-}
-
-JNIEXPORT void JNICALL
-Java_io_noctvm_playfield_engineandroid_MainActivity_nativeOnTouchStart(
-        JNIEnv *env,
-        jobject instance,
-        jint x,
-        jint y,
-	jint points)
-{
-	jni_env = env;
-	{
-		touch_start_x = x;
-		touch_start_y = y;
-		touch_last_y = y;
-		hal_callback_on_event_mouse_press(HAL_MOUSE_LEFT, x, y);
-	}
-	jni_env = NULL;
-}
-
-JNIEXPORT void JNICALL
-Java_io_noctvm_playfield_engineandroid_MainActivity_nativeOnTouchMove(
-	JNIEnv *env,
-	jobject instance,
-	jint x,
-	jint y)
-{
-	jni_env = env;
-	do {
-		/* Emulate a wheel down. */
-		const int FLICK_Y_DISTANCE = 30;
-		int delta_y = y - touch_last_y;
-		touch_last_y = y;
-		if (is_continuous_swipe_enabled) {
-			if (delta_y > 0 && delta_y < FLICK_Y_DISTANCE) {
-				hal_callback_on_event_key_press(HAL_KEY_DOWN);
-				hal_callback_on_event_key_release(HAL_KEY_DOWN);
-				break;
-			}
-		}
-
-		/* Emulate a mouse move. */
-		hal_callback_on_event_mouse_move(x, y);
-	} while (0);
-	jni_env = NULL;
-}
-
-JNIEXPORT void JNICALL
-Java_io_noctvm_playfield_engineandroid_MainActivity_nativeOnTouchEnd(
-	JNIEnv *env,
-	jobject instance,
-	jint x,
-	jint y,
-	jint points)
-{
-	jni_env = env;
-
-	do {
-		/* Detect a down/up swipe. */
-		const int FLICK_Y_DISTANCE = 50;
-		int delta_y = y - touch_start_y;
-		if (delta_y > FLICK_Y_DISTANCE) {
-			hal_callback_on_event_touch_cancel();
-			hal_callback_on_event_swipe_down();
-			break;
-		} else if (delta_y < -FLICK_Y_DISTANCE) {
-			hal_callback_on_event_touch_cancel();
-			hal_callback_on_event_swipe_up();
-			break;
-		}
-
-		/* Emulate a left click. */
-		const int FINGER_DISTANCE = 10;
-		if (points == 1 &&
-		    abs(x - touch_start_x) < FINGER_DISTANCE &&
-		    abs(y - touch_start_y) < FINGER_DISTANCE) {
-			hal_callback_on_event_touch_cancel();
-			hal_callback_on_event_mouse_press(HAL_MOUSE_LEFT, x, y);
-			hal_callback_on_event_mouse_release(HAL_MOUSE_LEFT, x, y);
-			break;
-		}
-
-		/* Emulate a right click. */
-		if (points == 2 &&
-		    abs(x - touch_start_x) < FINGER_DISTANCE &&
-		    abs(y - touch_start_y) < FINGER_DISTANCE) {
-			hal_callback_on_event_touch_cancel();
-			hal_callback_on_event_mouse_press(HAL_MOUSE_RIGHT, x, y);
-			hal_callback_on_event_mouse_release(HAL_MOUSE_RIGHT, x, y);
-			break;
-		}
-
-		/* Cancel the touch move. */
-		hal_callback_on_event_touch_cancel();
-	} while (0);
-
-	jni_env = NULL;
-}
-
-JNIEXPORT void JNICALL
-Java_io_noctvm_playfield_engineandroid_MainActivity_nativeOnKeyDown(
-	JNIEnv *env,
-	jobject instance,
-	int key)
-{
-	hal_callback_on_event_key_press(key);
-}
-
-JNIEXPORT void JNICALL
-Java_io_noctvm_playfield_engineandroid_MainActivity_nativeOnKeyUp(
-	JNIEnv *env,
-	jobject instance,
-	int key)
-{
-	hal_callback_on_event_key_release(key);
-}
-
-JNIEXPORT void JNICALL
-Java_io_noctvm_playfield_engineandroid_MainActivity_nativeOnGamepadAnalog(
-	JNIEnv *env,
-	jobject instance,
-	jfloat x1,
-	jfloat y1,
-	jfloat x2,
-	jfloat y2,
-	jfloat l,
-	jfloat r)
-{
-	hal_callback_on_event_analog_input(HAL_ANALOG_X1, (int)(x1 * 32767.0f));
-	hal_callback_on_event_analog_input(HAL_ANALOG_Y1, (int)(y1 * 32767.0f));
-	hal_callback_on_event_analog_input(HAL_ANALOG_X2, (int)(x2 * 32767.0f));
-	hal_callback_on_event_analog_input(HAL_ANALOG_Y2, (int)(y2 * 32767.0f));
-	hal_callback_on_event_analog_input(HAL_ANALOG_L, (int)(l * 32767.0f));
-	hal_callback_on_event_analog_input(HAL_ANALOG_R, (int)(r * 32767.0f));
-}
-
 /*
  * HAL
  */
@@ -546,7 +568,7 @@ hal_log_info(
 
 	va_start(ap, s);
 	vsnprintf(buf, sizeof(buf), s, ap);
-	__android_log_print(ANDROID_LOG_INFO, "playfield", "%s", buf);
+	__android_log_print(ANDROID_LOG_INFO, window_title, "%s", buf);
 	va_end(ap);
 	return true;
 }
@@ -561,7 +583,7 @@ hal_log_warn(
 
 	va_start(ap, s);
 	vsnprintf(buf, sizeof(buf), s, ap);
-	__android_log_print(ANDROID_LOG_WARN, "playfield", "%s", buf);
+	__android_log_print(ANDROID_LOG_WARN, window_title, "%s", buf);
 	va_end(ap);
 	return true;
 }
@@ -576,7 +598,7 @@ hal_log_error(
 
 	va_start(ap, s);
 	vsnprintf(buf, sizeof(buf), s, ap);
-	__android_log_print(ANDROID_LOG_ERROR, "playfield", "%s", buf);
+	__android_log_print(ANDROID_LOG_ERROR, window_title, "%s", buf);
 	va_end(ap);
 	return true;
 }
@@ -914,23 +936,6 @@ hal_render_image_3d_cross(
 				     alpha);
 }
 
-bool
-make_save_directory(void)
-{
-	/* Note: We don't create a sav directory for engine-android. */
-	return true;
-}
-
-char *
-hal_make_valid_path(
-	const char *dir,
-	const char *fname)
-{
-	/* Note: We don't use a POSIX path for engine-android. */
-	assert(0);
-	return NULL;
-}
-
 void
 hal_reset_lap_timer(
 	uint64_t *t)
@@ -965,7 +970,7 @@ hal_play_video(
 
 	jstring file = (*jni_env)->NewStringUTF(jni_env, fname);
 
-	jclass cls = (*jni_env)->FindClass(jni_env, "io/noctvm/playfield/engineandroid/MainActivity");
+	jclass cls = (*jni_env)->FindClass(jni_env, "io/noctvm/strato/MainActivity");
 	jmethodID mid = (*jni_env)->GetMethodID(jni_env, cls, "bridgePlayVideo", "(Ljava/lang/String;Z)V");
 	(*jni_env)->CallVoidMethod(jni_env,
 				   main_activity,
@@ -981,7 +986,7 @@ hal_stop_video(void)
 {
 	state_video = false;
 
-	jclass cls = (*jni_env)->FindClass(jni_env, "io/noctvm/playfield/engineandroid/MainActivity");
+	jclass cls = (*jni_env)->FindClass(jni_env, "io/noctvm/strato/MainActivity");
 	jmethodID mid = (*jni_env)->GetMethodID(jni_env, cls, "bridgeStopVideo", "()V");
 	(*jni_env)->CallVoidMethod(jni_env, main_activity, mid);
 }
@@ -990,7 +995,7 @@ bool
 hal_is_video_playing(void)
 {
 	if (state_video) {
-		jclass cls = (*jni_env)->FindClass(jni_env, "io/noctvm/playfield/engineandroid/MainActivity");
+		jclass cls = (*jni_env)->FindClass(jni_env, "io/noctvm/strato/MainActivity");
 		jmethodID mid = (*jni_env)->GetMethodID(jni_env, cls, "bridgeIsVideoPlaying", "()Z");
 		if (!(*jni_env)->CallBooleanMethod(jni_env, main_activity, mid)) {
 			state_video = false;
@@ -1051,29 +1056,4 @@ hal_set_continuous_swipe_enabled(
 	bool is_enabled)
 {
 	is_continuous_swipe_enabled = is_enabled;
-}
-
-void
-hal_get_local_time(
-	int *year,
-	int *month,
-	int *day,
-	int *dow,
-	int *hour,
-	int *min,
-	int *sec)
-{
-	time_t t;
-	struct tm *tm_info;
-
-	time(&t);
-	tm_info = localtime(&t);
-
-	*year = tm_info->tm_year + 1900;
-	*month = tm_info->tm_mon + 1;
-	*day = tm_info->tm_mday;
-	*dow = tm_info->tm_wday;
-	*hour = tm_info->tm_hour;
-	*min = tm_info->tm_min;
-	*sec = tm_info->tm_sec;
 }

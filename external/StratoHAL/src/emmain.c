@@ -29,7 +29,7 @@
  */
 
 /* Base */
-#include <stratohal/stratohal.h>
+#include <strato/strato.h>
 
 /* HAL */
 #include "stdfile.h"	/* File */
@@ -73,8 +73,12 @@ static char *window_title;
 static int screen_width;
 static int screen_height;
 
-/* Locale */
+/* Locale. */
 static const char *lang_code;
+
+/* Callback. */
+struct hal_callback hal_callback;
+HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback);
 
 /*
  * Forward Declaration
@@ -97,7 +101,7 @@ static void init_lang_code(void);
  * main()
  */
 int
-main(void)
+hal_main(void)
 {
 	/* Initialize the locale. */
 	init_lang_code();
@@ -107,7 +111,7 @@ main(void)
 		return 1;
 
 	/* Do a boot callback. */
-	if (!hal_callback_on_event_boot(&window_title, &screen_width, &screen_height))
+	if (!hal_bootstrap_ptr(&window_title, &screen_width, &screen_height, &hal_callback))
 		return 1;
 
 	/* Mount IDBFS for save data. */
@@ -153,7 +157,7 @@ main_continue(void)
 		return;
 
 	/* Do a start callback. */
-	if (!hal_callback_on_event_start())
+	if (!hal_callback.on_start())
 		return;
 
 	/* Register input device events. */
@@ -222,15 +226,18 @@ loop_iter(
 	/* Fill sound buffer. */
 	fill_sound_buffer();
 
+	/* Call the update callback. */
+	if (!hal_callback.on_update()) {
+		/* Exit. */
+		stop = true;
+		return EM_FALSE;
+	}
+
 	/* Start a frame rendering. */
 	opengl_start_rendering();
 
-	/* Call a frame callback. */
-	if (!hal_callback_on_event_frame()) {
-		/* Exit. */
-		stop = true;
-		EM_FALSE;
-	}
+	/* Call the render callback. */
+	hal_callback.on_render();
 
 	/* End a frame rendering. */
 	opengl_end_rendering();
@@ -257,7 +264,7 @@ cb_mousemove(
 	x = (int)((double)mouseEvent->targetX / scale_x);
 	y = (int)((double)mouseEvent->targetY / scale_y);
 
-	hal_callback_on_event_mouse_move(x, y);
+	hal_callback.on_mouse_move(x, y);
 	return EM_TRUE;
 }
 
@@ -283,7 +290,7 @@ cb_mousedown(
 	else
 		button = HAL_MOUSE_RIGHT;
 
-	hal_callback_on_event_mouse_press(button, x, y);
+	hal_callback.on_mouse_press(button, x, y);
 	return EM_TRUE;
 }
 
@@ -309,7 +316,7 @@ cb_mouseup(
 	else
 		button = HAL_MOUSE_RIGHT;
 
-	hal_callback_on_event_mouse_release(button, x, y);
+	hal_callback.on_mouse_release(button, x, y);
 	return EM_TRUE;
 }
 
@@ -321,11 +328,11 @@ cb_wheel(
 	void *userData)
 {
 	if (wheelEvent->deltaY > 0) {
-		hal_callback_on_event_key_press(HAL_KEY_DOWN);
-		hal_callback_on_event_key_release(HAL_KEY_DOWN);
+		hal_callback.on_key_press(HAL_KEY_DOWN);
+		hal_callback.on_key_release(HAL_KEY_DOWN);
 	} else {
-		hal_callback_on_event_key_press(HAL_KEY_UP);
-		hal_callback_on_event_key_release(HAL_KEY_UP);
+		hal_callback.on_key_press(HAL_KEY_UP);
+		hal_callback.on_key_release(HAL_KEY_UP);
 	}
 	return EM_TRUE;
 }
@@ -342,7 +349,7 @@ cb_keydown(int eventType,
 	if (keycode == -1)
 		return EM_TRUE;
 
-	hal_callback_on_event_key_press(keycode);
+	hal_callback.on_key_press(keycode);
 	return EM_TRUE;
 }
 
@@ -358,7 +365,7 @@ cb_keyup(int eventType,
 	if (keycode == -1)
 		return EM_TRUE;
 
-	hal_callback_on_event_key_release(keycode);
+	hal_callback.on_key_release(keycode);
 	return EM_TRUE;
 }
 
@@ -522,10 +529,10 @@ cb_touchstart(
 	y = (int)((double)touchEvent->touches[0].targetY / scale);
 
 	/* Reset an existing touch move state. */
-	hal_callback_on_event_touch_cancel();
+	hal_callback.on_touch_cancel();
 
 	/* Process as a mouse down. (even if it's a touch start) */
-	hal_callback_on_event_mouse_press(HAL_MOUSE_LEFT, x, y);
+	hal_callback.on_mouse_press(HAL_MOUSE_LEFT, x, y);
 
 	return EM_TRUE;
 }
@@ -547,8 +554,8 @@ cb_touchmove(
 	touch_last_y = touchEvent->touches[0].targetY;
 	if (is_continuous_swipe_enabled) {
 		if (delta_y > 0 && delta_y < FLICK_Y_DISTANCE) {
-			hal_callback_on_event_key_press(HAL_KEY_DOWN);
-			hal_callback_on_event_key_release(HAL_KEY_DOWN);
+			hal_callback.on_key_press(HAL_KEY_DOWN);
+			hal_callback.on_key_release(HAL_KEY_DOWN);
 			return EM_TRUE;
 		}
 	}
@@ -560,7 +567,7 @@ cb_touchmove(
 	y = (int)((double)touchEvent->touches[0].targetY / scale);
 
 	/* Process as a mouse move. (even if it's a touch start) */
-	hal_callback_on_event_mouse_move(x, y);
+	hal_callback.on_mouse_move(x, y);
 
 	return EM_TRUE;
 }
@@ -579,12 +586,12 @@ cb_touchend(
 
 	delta_y = touchEvent->touches[0].targetY - touch_start_y;
 	if (delta_y > FLICK_Y_DISTANCE) {
-		hal_callback_on_event_touch_cancel();
-		hal_callback_on_event_swipe_down();
+		hal_callback.on_touch_cancel();
+		hal_callback.on_swipe_down(0, 0);
 		return EM_TRUE;
 	} else if (delta_y < -FLICK_Y_DISTANCE) {
-		hal_callback_on_event_touch_cancel();
-		hal_callback_on_event_swipe_up();
+		hal_callback.on_touch_cancel();
+		hal_callback.on_swipe_up(0, 0);
 		return EM_TRUE;
 	}
 
@@ -603,22 +610,22 @@ cb_touchend(
 	if (touchEvent->numTouches == 1 &&
 	    abs(touchEvent->touches[0].targetX - touch_start_x) < FINGER_DISTANCE &&
 	    abs(touchEvent->touches[0].targetY - touch_start_y) < FINGER_DISTANCE) {
-		hal_callback_on_event_touch_cancel();
-		hal_callback_on_event_mouse_press(HAL_MOUSE_LEFT, x, y);
-		hal_callback_on_event_mouse_release(HAL_MOUSE_LEFT, x, y);
+		hal_callback.on_touch_cancel();
+		hal_callback.on_mouse_press(HAL_MOUSE_LEFT, x, y);
+		hal_callback.on_mouse_release(HAL_MOUSE_LEFT, x, y);
 		return EM_TRUE;
 	}
 
 	/* Process as a right click if two-figer. */
 	if (touchEvent->numTouches == 2) {
-		hal_callback_on_event_touch_cancel();
-		hal_callback_on_event_mouse_press(HAL_MOUSE_RIGHT, x, y);
-		hal_callback_on_event_mouse_release(HAL_MOUSE_RIGHT, x, y);
+		hal_callback.on_touch_cancel();
+		hal_callback.on_mouse_press(HAL_MOUSE_RIGHT, x, y);
+		hal_callback.on_mouse_release(HAL_MOUSE_RIGHT, x, y);
 		return EM_TRUE;
 	}
 
 	/* Otherwise, just cancel a touch move. */
-	hal_callback_on_event_touch_cancel();
+	hal_callback.on_touch_cancel();
 
 	return EM_TRUE;
 }
@@ -631,7 +638,7 @@ cb_touchcancel(
 	void *userData)
 {
 	/* FIXME: When is this called? */
-	hal_callback_on_event_touch_cancel();
+	hal_callback.on_touch_cancel();
 	return EM_TRUE;
 }
 
@@ -660,7 +667,7 @@ EMSCRIPTEN_KEEPALIVE
 void
 mouseLeave(void)
 {
-	hal_callback_on_event_touch_cancel();
+	hal_callback.on_touch_cancel();
 }
 
 /*

@@ -7,138 +7,357 @@ on:
     branches: [ main ]
 
 jobs:
-  build-linux:
-    runs-on: ubuntu-latest
+  build-windows:
+    runs-on: windows-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: x86
+        run: |
+          cmake --preset windows-vs2022-x86
+          cmake --build --preset windows-vs2022-x86 --config Release --parallel
+
+      - name: x64
+        run: |
+          cmake --preset windows-vs2022-x64
+          cmake --build --preset windows-vs2022-x64 --config Release --parallel
+          cp out/build/windows-vs2022-x64/Release/noct.exe noct-win64.exe
+
+      - name: arm64
+        run: |
+          cmake --preset windows-vs2022-arm64
+          cmake --build --preset windows-vs2022-arm64 --config Release --parallel
+
+      - name: Build nuget
+        run: |
+          mkdir build
+          mkdir build/native
+          mkdir build/native/include
+          mkdir build/native/include/noct
+          mkdir build/native/lib
+          mkdir build/native/lib/x86
+          mkdir build/native/lib/x64
+          mkdir build/native/lib/arm64
+          cp include/noct/noct.h build/native/include/noct/
+          cp include/noct/c89compat.h build/native/include/noct/
+          cp out/build/windows-vs2022-x86/Release/noct.lib  build/native/lib/x86/
+          cp out/build/windows-vs2022-x86/Release/noctapi.lib  build/native/lib/x86/
+          cp out/build/windows-vs2022-x64/Release/noct.lib  build/native/lib/x64/
+          cp out/build/windows-vs2022-x64/Release/noctapi.lib  build/native/lib/x64/
+          cp out/build/windows-vs2022-arm64/Release/noct.lib build/native/lib/arm64/
+          cp out/build/windows-vs2022-arm64/Release/noctapi.lib build/native/lib/arm64/
+          cp resources/windows/Noct.nuspec ./
+          nuget pack Noct.nuspec
+
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: |
+            noct-win64.exe
+            Noct.1.0.0.nupkg
+          if-no-files-found: error
+          retention-days: 7
+
+  build-linux:
+    runs-on: ubuntu-latest
+    container: rockylinux:8
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Set up dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential cmake bison flex
-      - name: Configure
-        run: cmake -B build -S .
-      - name: Build
-        run: cmake --build build --config Release
-      - name: Strip
-        run: strip build/noct
-      - name: Rename binary
-        run: mv build/noct build/noct-linux
+          dnf -y install gcc make cmake
+
+      - name: Build static
+        run: |
+          cmake --preset linux -G "Unix Makefiles"
+          cmake --build --preset linux --parallel
+
+      - name: Build shared
+        run: |
+          cmake --preset linux-debian
+          cmake --build --preset linux-debian --parallel
+
+      - name: Build tar.gz
+        run: |
+          mkdir -p out
+          mkdir -p out/include/noct
+          mkdir -p out/lib/x86_64-linux-gnu/
+          mkdir -p out/lib/x86_64-linux-gnu/pkgconfig
+          mkdir -p out/share/cmake/Modules
+          mkdir -p out/share/man/man1
+          cp include/noct/noct.h out/include/noct/
+          cp include/noct/c89compat.h out/include/noct/
+          cp build-linux/libnoct.a out/lib/x86_64-linux-gnu/
+          cp build-linux/libnoctapi.a out/lib/x86_64-linux-gnu/
+          cp -d build-linux-debian/libnoct.so* out/lib/x86_64-linux-gnu/
+          cp -d build-linux-debian/libnoctapi.so out/lib/x86_64-linux-gnu/
+          cp resources/pkg-config/noct*.pc out/lib/x86_64-linux-gnu/pkgconfig/
+          cp cmake/modules/FindNoct.cmake out/share/cmake/Modules/
+          cp resources/man/noct.1.man out/share/man/man1/
+          cd out
+          tar czf ../noct-linux-x86_64.tar.gz *
+          cd ..
+
       - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
-          name: noct-linux
-          path: build/noct-linux
+          name: linux
+          path: noct-linux-x86_64.tar.gz
 
   build-windows-mingw:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Cache apt packages
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/apt/archives
+          key: ${{ runner.os }}-apt-${{ hashFiles('**/apt-packages.txt') }}
+
       - name: Set up dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y mingw-w64 cmake bison flex
-      - name: Configure
-        run: cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/mingw-x86_64-toolchain.cmake
-      - name: Build
-        run: cmake --build build --config Release
-      - name: Strip
-        run: x86_64-w64-mingw32-strip build/noct.exe
+          sudo apt-get install -y mingw-w64 cmake ninja-build
+
+      - name: Buld
+        run: |
+          cmake --preset windows-mingw-x86
+          cmake --build --preset windows-mingw-x86
+          cmake --preset windows-mingw-x86_64
+          cmake --build --preset windows-mingw-x86_64
+
+      - name: Build tar.gz
+        run: |
+          mkdir -p out/
+
+          mkdir -p out/i686-w64-mingw32/bin
+          mkdir -p out/i686-w64-mingw32/include/noct
+          mkdir -p out/i686-w64-mingw32/lib/
+          mkdir -p out/i686-w64-mingw32/lib/pkgconfig
+          mkdir -p out/i686-w64-mingw32/share/cmake/Modules
+          mkdir -p out/i686-w64-mingw32/share/man/man1
+          cp build-mingw-x86/noct.exe out/i686-w64-mingw32/bin/
+          cp include/noct/noct.h out/i686-w64-mingw32/include/noct/
+          cp include/noct/c89compat.h out/i686-w64-mingw32/include/noct/
+          cp build-mingw-x86/libnoct.a out/i686-w64-mingw32/lib/
+          cp build-mingw-x86/libnoctapi.a out/i686-w64-mingw32/lib/
+          cp resources/pkg-config/noct*.pc out/i686-w64-mingw32/lib/pkgconfig/
+          cp cmake/modules/FindNoct.cmake out/i686-w64-mingw32/share/cmake/Modules/
+          cp resources/man/noct.1.man out/i686-w64-mingw32/share/man/man1/
+
+          mkdir -p out/x86_64-w64-mingw32/bin
+          mkdir -p out/x86_64-w64-mingw32/include/noct
+          mkdir -p out/x86_64-w64-mingw32/lib/
+          mkdir -p out/x86_64-w64-mingw32/lib/pkgconfig
+          mkdir -p out/x86_64-w64-mingw32/share/cmake/Modules
+          mkdir -p out/x86_64-w64-mingw32/share/man/man1
+          cp build-mingw-x86_64/noct.exe out/x86_64-w64-mingw32/bin/
+          cp include/noct/noct.h out/x86_64-w64-mingw32/include/noct/
+          cp include/noct/c89compat.h out/x86_64-w64-mingw32/include/noct/
+          cp build-mingw-x86_64/libnoct.a out/x86_64-w64-mingw32/lib/
+          cp build-mingw-x86_64/libnoctapi.a out/x86_64-w64-mingw32/lib/
+          cp resources/pkg-config/noct*.pc out/x86_64-w64-mingw32/lib/pkgconfig/
+          cp cmake/modules/FindNoct.cmake out/x86_64-w64-mingw32/share/cmake/Modules/
+          cp resources/man/noct.1.man out/x86_64-w64-mingw32/share/man/man1/
+
+          cd out
+          tar czf ../noct-mingw-w64.tar.gz *
+          cd ..
+
       - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
-          name: noct.exe
-          path: build/noct.exe
+          name: mingw
+          path: |
+            noct-mingw-w64.tar.gz
 
   build-macos:
     runs-on: macos-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Set up dependencies
+
+      - name: Build macOS
         run: |
-          brew update
-          brew install bison flex
-          echo "/opt/homebrew/opt/bison/bin" >> $GITHUB_PATH
-          echo "/opt/homebrew/opt/flex/bin" >> $GITHUB_PATH
-      - name: Verify versions
+          cmake --preset macos-arm64
+          cmake --build --preset macos-arm64
+          cmake --preset macos-x86_64
+          cmake --build --preset macos-x86_64
+
+      - name: Build Universal Binary 2
         run: |
-          which bison
-          bison --version
-          which flex
-          flex --version
-      - name: Configure
-        run: cmake -B build -S .
-      - name: Build
-        run: cmake --build build --config Release
-      - name: Rename binary
-        run: mv build/noct build/noct-macos
+          lipo -create -output noct build-macos-arm64/noct build-macos-x86_64/noct
+          lipo -create -output libnoct.a build-macos-arm64/libnoct.a build-macos-x86_64/libnoct.a
+          lipo -create -output libnoctapi.a build-macos-arm64/libnoctapi.a build-macos-x86_64/libnoctapi.a
+
+      - name: Build iOS
+        run: |
+          cmake --preset ios-device
+          cmake --build --preset ios-device
+          cmake --preset ios-simulator
+          cmake --build --preset ios-simulator
+
+      - name: Build xcframework
+        run: |
+          xcodebuild -create-xcframework \
+              -library libnoct.a -headers include \
+              -library build-ios-device/libnoct.a -headers include \
+              -library build-ios-simulator/libnoct.a -headers include \
+              -output Noct.xcframework
+          xcodebuild -create-xcframework \
+              -library libnoctapi.a -headers include \
+              -output NoctAPI.xcframework
+          zip Noct-XCFramework-macOS-iOS.zip Noct.xcframework NoctAPI.xcframework
+
+      - name: Build tar.gz
+        run: |
+          mkdir -p out
+          mkdir -p out/bin
+          mkdir -p out/include/noct
+          mkdir -p out/lib
+          mkdir -p out/lib/pkgconfig
+          mkdir -p out/share/cmake/Modules
+          mkdir -p out/share/man/man1
+          cp noct out/bin/
+          cp include/noct/noct.h out/include/noct/
+          cp include/noct/c89compat.h out/include/noct/
+          cp libnoct.a out/lib/
+          cp libnoctapi.a out/lib/
+          cp resources/pkg-config/noct*.pc out/lib/pkgconfig/
+          cp cmake/modules/FindNoct.cmake out/share/cmake/Modules/
+          cp resources/man/noct.1.man out/share/man/man1/
+          cd out
+          tar czf ../noct-macos-universal.tar.gz *
+          cd ..
+
       - name: Upload macOS binary
         uses: actions/upload-artifact@v4
         with:
-          name: noct-macos
-          path: build/noct-macos
+          name: macos
+          path: |
+            Noct-XCFramework-macOS-iOS.zip
+            noct-macos-universal.tar.gz
 
   build-pc98:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
       - name: Set up dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y cmake
+
+      - name: Cache Watcom
+        id: cache-watcom
+        uses: actions/cache@v4
+        with:
+          path: openwatcom-1.9
+          key: openwatcom-1.9
+
       - name: Configure OpenWatcom
+        if: steps.cache-watcom.outputs.cache-hit != 'true'
         run: |
           wget https://noctvm.io/ci/openwatcom-1.9.tar.gz
           tar xzf openwatcom-1.9.tar.gz
 
-          echo "WATCOM=$PWD/openwatcom-1.9" >> $GITHUB_ENV
-          echo "INCLUDE=$PWD/openwatcom-1.9/h" >> $GITHUB_ENV
-          echo "EDPATH=$PWD/openwatcom-1.9/eddat" >> $GITHUB_ENV
-
-          echo "$PWD/openwatcom-1.9/binw" >> $GITHUB_PATH
-          echo "$PWD/openwatcom-1.9/binl" >> $GITHUB_PATH
-
       - name: Build
         run: |
+          export WATCOM="$PWD/openwatcom-1.9"
+          export INCLUDE="$WATCOM/h"
+          export EDPATH="$WATCOM/eddat"
+          export PATH="$WATCOM/binl:$WATCOM/binw:$PATH"
+          echo "$WATCOM"
+          ls -lha "$WATCOM/binl"
+          command -v wcl386 || true
+          command -v wlink || true
           cmake --preset msdos
           cmake --build --preset msdos
-          mv build-msdos/noct.exe build-msdos/noct98.exe
+          mv build-msdos/noct.exe noct-dos.exe
+
       - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
-          name: noct-pc98
-          path: build-msdos/noct98.exe
+          name: pc98
+          path: noct-dos.exe
 
   release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
     needs:
+      - build-windows
       - build-linux
       - build-windows-mingw
       - build-macos
       - build-pc98
+
     steps:
-      - name: Download all artifacts
+      - name: Download Windows artifacts
         uses: actions/download-artifact@v4
         with:
-          path: ./artifacts
+          name: windows
+          path: windows
+
+      - name: Download Linux artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: linux
+          path: linux
+
+      - name: Download mingw-w64 artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: mingw
+          path: mingw
+
+      - name: Download macOS artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: macos
+          path: macos
+
+      - name: Download PC98 artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: pc98
+          path: pc98
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: nightly-${{ github.run_number }}
           name: Nightly Build ${{ github.run_number }}
-          files: artifacts/**/*
-          body: |
-            This is an automated nightly build.
+          files: |
+            windows/noct-win64.exe
+            windows/Noct.1.0.0.nupkg
+            mingw/noct-mingw-w64.tar.gz
+            macos/Noct-XCFramework-macOS-iOS.zip
+            macos/noct-macos-universal.tar.gz
+            linux/noct-linux-x86_64.tar.gz
+            pc98/noct-dos.exe
 
-            Includes:
-            - Linux
-            - Windows (MinGW)
-            - macOS
-            - NEC PC-9801
+          body: |
+            This is an automated nightly build. Not an official release.
+            
+            | OS      | File                           | Type             | Description                                          |
+            |---------|--------------------------------|------------------|------------------------------------------------------|
+            | Windows | noct-win64.exe                 | Executable       | Windows 7+ x64                                       |
+            | Windows | Noct.1.0.0.nupkg               | NuGet Package    | Visual Studio 2022+                                  |
+            | Windows | noct-mingw-w64.tar.gz          | Tarball          | MinGW-w64 (extract to /)                             |
+            | macOS   | Noct-XCFramework-macOS-iOS.zip | Xcode Framework  | macOS and iOS                                        |
+            | macOS   | noct-macos-universal.tar.gz    | Tarball          | macOS (extract to /usr/local)                        |
+            | Linux   | noct-linux-x86_64.tar.gz       | Tarball          | Linux (extract to /usr/local)                        |
+            | DOS     | noct-dos.exe                   | Executable       | DOS4GW: PC/AT, PC-9801, OS/2, Windows 3.1 - XP       |
+
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

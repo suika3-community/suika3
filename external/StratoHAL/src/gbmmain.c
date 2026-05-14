@@ -29,7 +29,7 @@
  */
 
 /* HAL */
-#include <stratohal/stratohal.h>		/* Public Interface */
+#include <strato/strato.h>		/* Public Interface */
 #include "stdfile.h"			/* Standard C File Implementation */
 #if defined(HAL_TARGET_LINUX)
 #include "asound.h"			/* ALSA Sound Implemenatation */

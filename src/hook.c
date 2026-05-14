@@ -9,10 +9,13 @@
  * Dummy Initialization Hook
  */
 
-#include <playfield/c89compat.h>
+#include <playfield/playfield.h>
+
+/* Entrypoint. */
+PF_DEFINE_MAIN()
 
 /*
- * Special initialization function for derived engines.
+ * Initialization function for derived engines.
  */
 bool
 pf_init_hook(
@@ -22,15 +25,3 @@ pf_init_hook(
 	/* Stub. */
 	return true;
 }
-
-#if defined(PF_TARGET_PC98)
-/*
- * OpenWatcom cannot search main() in libraries.
- * We define main() here, and call main2() in libstrato.
- */
-int main(int argc, char argv[])
-{
-	int main2(int argc, char *argv[]);
-	return main2(argc, argv);
-}
-#endif

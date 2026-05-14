@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.18)
-project(StratoHAL LANGUAGES C CXX)
+project(StratoHAL VERSION 1.0 LANGUAGES C)
 
 #
 # Configuration
@@ -12,7 +12,7 @@ option(STRATO_TARGET_MACOS            "Build for macOS"                         
 option(STRATO_TARGET_LINUX            "Build for Linux (Wayland/X11 Dual)"      OFF)
 option(STRATO_TARGET_LINUX_X11        "Build for Linux (Wayland, OpenGL)"       OFF)
 option(STRATO_TARGET_LINUX_WAYLAND    "Build for Linux (Wayland, OpenGL)"       OFF)
-option(STRATO_TARGET_LINUX_GBM        "Build for Linux (GBM, OpenGL ES)"        OFF)
+option(STRATO_TARGET_LINUX_DRI        "Build for Linux (DRI, OpenGL ES)"        OFF)
 option(STRATO_TARGET_LINUX_FBDEV      "Build for Linux (fbdev, Soft3D)"         OFF)
 option(STRATO_TARGET_LINUX_X11SOFT    "Build for Linux (X11, Soft3D)"           OFF)
 option(STRATO_TARGET_IOS              "Build for iOS"                           OFF)
@@ -49,7 +49,6 @@ option(STRATO_ENABLE_I18N             "Enable translation"                      
 option(STRATO_ENABLE_I18N_LIBINTL     "Enable gettext"                          OFF)
 option(STRATO_ENABLE_ROT90            "Rotate screen"                           OFF)
 option(STRATO_ENABLE_GST              "Enable Gstreamer support"                OFF)
-option(STRATO_ENABLE_MAIN2            "Enable macOS main2()"                    OFF)
 option(STRATO_ENABLE_CONSOLE          "Enable console debug output"             OFF)
 option(STRATO_ENABLE_PORTAL           "Enable XDG Portal"                       OFF)
 
@@ -65,7 +64,7 @@ if(   STRATO_TARGET_WINDOWS
    OR STRATO_TARGET_LINUX
    OR STRATO_TARGET_LINUX_X11
    OR STRATO_TARGET_LINUX_WAYLAND
-   OR STRATO_TARGET_LINUX_GBM
+   OR STRATO_TARGET_LINUX_DRI
    OR STRATO_TARGET_LINUX_FBDEV
    OR STRATO_TARGET_LINUX_X11SOFT
    OR STRATO_TARGET_IOS
@@ -194,7 +193,7 @@ endif()
 #
 
 if(STRATO_ENABLE_I18N_LIBINTL)
-  list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+  list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
   find_package(INTL REQUIRED)
   include(GNUInstallDirs)
   add_definitions(-DLOCALEDIR="${CMAKE_INSTALL_FULL_LOCALEDIR}")
@@ -218,15 +217,15 @@ if(STRATO_ENABLE_DIST)
   find_package(ZLIB REQUIRED)
 else()
   # Build the dependencies statically.
-  include(cmake/zlib.cmake)
-  include(cmake/libpng.cmake)
-  include(cmake/jpeg.cmake)
+  include(cmake/ext/zlib.cmake)
+  include(cmake/ext/libpng.cmake)
+  include(cmake/ext/jpeg.cmake)
   if(NOT STRATO_TARGET_PC98)
-    include(cmake/libwebp.cmake)
+    include(cmake/ext/libwebp.cmake)
   endif()
-  include(cmake/libogg.cmake)
-  include(cmake/libvorbis.cmake)
-  include(cmake/freetype.cmake)
+  include(cmake/ext/libogg.cmake)
+  include(cmake/ext/libvorbis.cmake)
+  include(cmake/ext/freetype.cmake)
 endif()
 
 # libX11
@@ -266,7 +265,7 @@ endif()
 # libEGL
 if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_LINUX_WAYLAND
-   OR STRATO_TARGET_LINUX_GBM
+   OR STRATO_TARGET_LINUX_DRI
    OR STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_FREEBSD_WAYLAND)
   find_package(PkgConfig REQUIRED)
@@ -275,7 +274,7 @@ endif()
 
 # libGLESv2
 if(   STRATO_TARGET_LINUX
-   OR STRATO_TARGET_LINUX_GBM
+   OR STRATO_TARGET_LINUX_DRI
    OR STRATO_TARGET_LINUX_WAYLAND
    OR STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_FREEBSD_WAYLAND)
@@ -298,14 +297,14 @@ endif()
 if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_LINUX_X11
    OR STRATO_TARGET_LINUX_WAYLAND
-   OR STRATO_TARGET_LINUX_GBM
+   OR STRATO_TARGET_LINUX_DRI
    OR STRATO_TARGET_LINUX_FBDEV
    OR STRATO_TARGET_LINUX_X11SOFT)
   find_library(ALSA_LIBRARY asound REQUIRED)
 endif()
 
 # GBM and DRM
-if(STRATO_TARGET_LINUX_GBM)
+if(STRATO_TARGET_LINUX_DRI)
   find_library(GBM_LIBRARY gbm REQUIRED)
   find_library(DRM_LIBRARY drm REQUIRED)
 endif()
@@ -495,7 +494,7 @@ if(   STRATO_TARGET_LINUX_WAYLAND
 endif()
 
 # GBM, OpenGL ES 2.0
-if(STRATO_TARGET_LINUX_GBM)
+if(STRATO_TARGET_LINUX_DRI)
   set(STRATO_SOURCES
       src/image.c
       src/glyph.c
@@ -597,7 +596,7 @@ if(STRATO_TARGET_UNITY)
     src/image.c
     src/glyph.c
     src/wave.c
-    src/halwrap.c
+    src/csharp.c
   )
 endif()
 
@@ -732,8 +731,14 @@ target_include_directories(strato PRIVATE ${VORBIS_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${FREETYPE_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${ZLIB_INCLUDE_DIRS})
 
-if(STRATO_ENABLE_SHARED OR STRATO_ENABLE_DIST)
-  target_compile_definitions(strato PRIVATE HAL_USE_SHARED)
+if(STRATO_ENABLE_SHARED)
+  # HAL_USE_DLL means we make a shared library.
+  target_compile_definitions(strato PRIVATE HAL_USE_DLL)
+endif()
+
+if(STRATO_ENABLE_DIST)
+  # HAL_USE_EXTDLL means we use shared libraries for dependencies.
+  target_compile_definitions(strato PRIVATE HAL_USE_EXTDLL)
 endif()
 
 if(STRATO_ENABLE_JIT)
@@ -747,6 +752,7 @@ endif()
 
 # Windows
 if(   STRATO_TARGET_WINDOWS
+   OR STRATO_TARGET_WINDOWS95
    OR STRATO_TARGET_GDK_WINDOWS
    OR STRATO_TARGET_GDK_XBOX_XS)
   add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
@@ -756,7 +762,7 @@ if(   STRATO_TARGET_WINDOWS
   target_include_directories(
     strato
     PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/res
+    ${CMAKE_CURRENT_SOURCE_DIR}/resources/windows
     ${CMAKE_BINARY_DIR}/dx12headers/include/directx
     ${CMAKE_BINARY_DIR}/dx12headers/include/dxguids
   )
@@ -777,7 +783,7 @@ if(STRATO_TARGET_WINDOWS95)
   target_include_directories(
     strato
     PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/res
+    ${CMAKE_CURRENT_SOURCE_DIR}/resources/windoes
   )
 endif()
 
@@ -896,7 +902,7 @@ endif()
 # GLES
 if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_LINUX_WAYLAND
-   OR STRATO_TARGET_LINUX_GBM
+   OR STRATO_TARGET_LINUX_DRI
    OR STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_FREEBSD_WAYLAND
    OR STRATO_TARGET_ANDROID
@@ -914,7 +920,7 @@ if(   STRATO_TARGET_LINUX
 endif()
 
 # GBM
-if(STRATO_TARGET_LINUX_GBM)
+if(STRATO_TARGET_LINUX_DRI)
   target_include_directories(strato PRIVATE /usr/include/libdrm)
 endif()
 
@@ -1146,7 +1152,7 @@ if(   STRATO_TARGET_LINUX
 endif()
 
 # GBM
-if(STRATO_TARGET_LINUX_GBM)
+if(STRATO_TARGET_LINUX_DRI)
   target_link_libraries(
     strato
     PUBLIC
@@ -1174,7 +1180,7 @@ endif()
 if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_LINUX_X11
    OR STRATO_TARGET_LINUX_WAYLAND
-   OR STRATO_TARGET_LINUX_GBM
+   OR STRATO_TARGET_LINUX_DRI
    OR STRATO_TARGET_LINUX_FBDEV
    OR STRATO_TARGET_LINUX_X11SOFT)
   target_link_libraries(strato PUBLIC asound)
@@ -1239,6 +1245,13 @@ if(STRATO_TARGET_GENERICUNIX)
     /usr/X11R6/lib
     /usr/X11R7/lib
   )
+endif()
+
+# Android
+if(STRATO_TARGET_ANDROID)
+  set(CMAKE_SHARED_LINKER_FLAGS
+      "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--hash-style=both -Wl,-z,max-page-size=16384"
+      CACHE STRING "" FORCE)
 endif()
 
 # GDK
@@ -1352,14 +1365,42 @@ endif()
 if(STRATO_ENABLE_INSTALL)
   include(GNUInstallDirs)
   install(FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/stratohal/platform.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/stratohal/c89compat.h
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/stratohal)
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/strato/strato.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/strato/c89compat.h
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/strato)
   install(TARGETS strato RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR})
   install(TARGETS stratopack RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
   if(STRATO_ENABLE_I18N_LIBINTL)
     install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/locale/
             DESTINATION ${CMAKE_INSTALL_FULL_LOCALEDIR})
+  endif()
+
+  # CMake module
+  install(
+    FILES "${CMAKE_SOURCE_DIR}/cmake/modules/FindStratoHAL.cmake"
+    DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/cmake/Modules"
+  )
+
+  # pkgconfig pc
+  configure_file(
+    "${CMAKE_SOURCE_DIR}/resources/pkg-config/strato.pc.in"
+    strato.pc
+    @ONLY
+  )
+  install(
+    FILES "${CMAKE_CURRENT_BINARY_DIR}/strato.pc"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
+  )
+  if(STRATO_ENABLE_PACK)
+    configure_file(
+      "${CMAKE_SOURCE_DIR}/resources/pkg-config/stratopack.pc.in"
+      stratopack.pc
+      @ONLY
+    )
+    install(
+      FILES "${CMAKE_CURRENT_BINARY_DIR}/stratopack.pc"
+      DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
+    )
   endif()
 endif()

@@ -42,7 +42,7 @@
  * u8 file_body[file_count][file_length]; // Obfuscated
  */
 
-#include <stratohal/stratohal.h>
+#include <strato/strato.h>
 #include "stdfile.h"
 
 #include <stdio.h>

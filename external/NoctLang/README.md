@@ -18,7 +18,9 @@ and a clean C/JS-like syntax featuring a novel Dictionary-based OOP model.
 
 Written in portable ANSI C with no external dependencies, it runs
 everywhere — from desktop PCs down to Raspberry Pi.
-Even on NEC PC-9801, Noct runs well with JIT!
+Even on
+[MS-DOS](https://github.com/awemorris/NoctLang/releases/latest/download/noct98.exe),
+Noct runs well with JIT! (MS-DOS 6.2, 80386, 8MB RAM, DOS4GW 1.9, PC-9801 or IBM PC required.)
 
 ### Embeddable
 

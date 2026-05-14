@@ -155,7 +155,6 @@ noct_elback_translate(
 	func_count = hir_get_function_count();
 	for (i = 0; i < func_count; i++) {
 		struct hir_block *hfunc;
-		struct lir_func *lfunc;
 
 		/* Transform HIR to LIR (bytecode). */
 		hfunc = hir_get_function(i);
@@ -196,7 +195,7 @@ elback_translate_func(
 {
 	struct hir_block *cur_block;
 	struct hir_local *local;
-	int i;
+	uint32_t i;
 
 	/* Copy the file name. */
 	elback_file_name = strdup(func->val.func.file_name);
@@ -275,7 +274,7 @@ elback_translate_func(
 
 static bool is_parameter_name(struct hir_block *func, const char *symbol)
 {
-	int i;
+	uint32_t i;
 
 	for (i = 0; i < func->val.func.param_count; i++) {
 		if (strcmp(func->val.func.param_name[i], symbol) == 0)

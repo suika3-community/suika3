@@ -34,7 +34,7 @@
 #include "common.h"
 #include "engine.h"
 
-#include <stratohal/platform.h>
+#include <strato/strato.h>
 
 #include <stdio.h>
 #include <stdlib.h>

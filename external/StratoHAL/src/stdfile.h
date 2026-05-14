@@ -31,7 +31,7 @@
 #ifndef STRATOHAL_STDFILE_H
 #define STRATOHAL_STDFILE_H
 
-#include <stratohal/c89compat.h>
+#include <strato/strato.h>
 
 bool
 init_file(void);
@@ -43,6 +43,12 @@ bool
 make_save_directory(void);
 
 char *
-make_real_path(const char *fname);
+make_real_path(
+	const char *fname);
+
+#if defined(HAL_TARGET_WINDOWS)
+const wchar_t *win32_utf8_to_utf16(const char *s);
+const char *win32_utf16_to_utf8(const wchar_t *s);
+#endif
 
 #endif

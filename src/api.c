@@ -37,7 +37,7 @@
 #include "vm.h"
 
 #include <noct/noct.h>
-#include <stratohal/platform.h>
+#include <strato/strato.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -105,6 +105,7 @@ pfi_cleanup_api(void)
 /*
  * Load a texture.
  */
+PF_DLL
 bool
 pf_load_texture(
 	const char *fname,
@@ -175,6 +176,7 @@ pf_load_texture(
 /*
  * Create a color texture.
  */
+PF_DLL
 bool
 pf_create_color_texture(
 	int width,
@@ -265,6 +267,7 @@ search_free_entry(void)
 /*
  * Destroy a texture.
  */
+PF_DLL
 void
 pf_destroy_texture(
 	int tex_id)
@@ -282,6 +285,7 @@ pf_destroy_texture(
 /*
  * Notify a texture update.
  */
+PF_DLL
 bool
 pf_notify_texture_update(
 	int tex_id)
@@ -299,6 +303,7 @@ pf_notify_texture_update(
 /*
  * Draw a texture image on a texture image.
  */
+PF_DLL
 void
 pf_draw_texture(
 	int dst_tex_id,
@@ -412,6 +417,7 @@ pf_draw_texture(
 /*
  * Draw a texture image on a texture image. (3D)
 */
+PF_DLL
 void
 pf_draw_texture_3d(
 	int dst_tex_id,
@@ -492,6 +498,7 @@ pf_draw_texture_3d(
 /*
  * Fill a rectangle on a texture image.
  */
+PF_DLL
 void
 pf_fill_texture_rect(
 	int tex_id,
@@ -518,6 +525,7 @@ pf_fill_texture_rect(
 /*
  * Get a raw pixel pointer.
  */
+PF_DLL
 pf_pixel_t *
 pf_get_texture_pixels(
 	int tex_id)
@@ -537,6 +545,7 @@ pf_get_texture_pixels(
 /*
  * Render a texture. (alpha blending)
  */
+PF_DLL
 void
 pf_render_texture(
 	int dst_left,
@@ -614,6 +623,7 @@ pf_render_texture(
 /*
  * Render textures for 1-bit universal transition.
  */
+PF_DLL
 void
 pf_render_texture_rule(
 	int tex1_id,
@@ -639,6 +649,7 @@ pf_render_texture_rule(
 /*
  * Render textures for 8-bit universal transition.
  */
+PF_DLL
 void
 pf_render_texture_melt(
 	int tex1_id,
@@ -664,6 +675,7 @@ pf_render_texture_melt(
 /*
  * Render textures for cross fading.
  */
+PF_DLL
 void
 pf_render_texture_cross(
 	int tex1_id,
@@ -699,6 +711,7 @@ pf_render_texture_cross(
 /*
  * Render a texture. (3D, alpha blending)
  */
+PF_DLL
 void
 pf_render_texture_3d(
 	float x1,
@@ -756,6 +769,7 @@ pf_render_texture_3d(
 /*
  * Render textures for cross fading.
  */
+PF_DLL
 void
 pf_render_texture_3d_cross(
 	int tex1_id,
@@ -815,6 +829,7 @@ pf_render_texture_3d_cross(
 /*
  * Render a texture.
  */
+PF_DLL
 void
 pf_draw(
 	int tex_id,
@@ -848,6 +863,7 @@ pf_draw(
 /*
  * Load a font file to a font slot.
  */
+PF_DLL
 bool
 pf_load_font(
 	int slot,
@@ -879,6 +895,7 @@ pf_load_font(
 /*
  * Convert a color code (#rrggbb) to a pixel value.
  */
+PF_DLL
 pf_pixel_t
 pf_color_code_to_pixel_value(
 	const char *code)
@@ -904,6 +921,7 @@ pf_color_code_to_pixel_value(
 /*
  * Create a text texture.
  */
+PF_DLL
 bool
 pf_create_text_texture(
 	int slot,
@@ -931,6 +949,7 @@ pf_create_text_texture(
 /*
  * Create a text texture with outlining.
  */
+PF_DLL
 bool
 pf_create_text_texture_outline(
 	int slot,
@@ -1008,6 +1027,7 @@ pf_create_text_texture_outline(
 /*
  * Play a sound file on a stream.
  */
+PF_DLL
 bool
 pf_play_sound(
 	int stream,
@@ -1031,6 +1051,7 @@ pf_play_sound(
 /*
  * Stop the sound on a stream.
  */
+PF_DLL
 bool
 pf_stop_sound(
 	int stream)
@@ -1053,6 +1074,7 @@ pf_stop_sound(
 /*
  * Set the sound volume on a stream.
  */
+PF_DLL
 bool
 pf_set_sound_volume(
 	int stream,
@@ -1071,6 +1093,7 @@ pf_set_sound_volume(
 /*
  * Check if a sound stream is completed.
  */
+PF_DLL
 bool
 pf_is_sound_finished(
 	int stream)
@@ -1088,6 +1111,7 @@ pf_is_sound_finished(
 /*
  * Play a video.
  */
+PF_DLL
 bool
 pf_play_video(
 	const char *file,
@@ -1099,6 +1123,7 @@ pf_play_video(
 /*
  * Stop the video.
  */
+PF_DLL
 void
 pf_stop_video(void)
 {
@@ -1108,6 +1133,7 @@ pf_stop_video(void)
 /*
  * Check if a video is playing back.
  */
+PF_DLL
 bool
 pf_is_video_playing(void)
 {
@@ -1121,6 +1147,7 @@ pf_is_video_playing(void)
 /*
  * Reset a lap timer and initializes it with a current time.
  */
+PF_DLL
 void
 pf_reset_lap_timer(
 	uint64_t *origin)
@@ -1131,6 +1158,7 @@ pf_reset_lap_timer(
 /*
  * Get a lap time in milliseconds.
  */
+PF_DLL
 uint64_t
 pf_get_lap_timer_millisec(
 	uint64_t *origin)
@@ -1145,6 +1173,7 @@ pf_get_lap_timer_millisec(
 /*
  * Write save data.
  */
+PF_DLL
 bool
 pf_write_save_data(
 	const char *key,
@@ -1185,6 +1214,7 @@ pf_write_save_data(
 /*
  * Read save data.
  */
+PF_DLL
 bool
 pf_read_save_data(
 	const char *key,
@@ -1237,6 +1267,7 @@ pf_read_save_data(
 /*
  * Check whether save data exist or not.
  */
+PF_DLL
 bool
 pf_check_save_data(
 	const char *key)
@@ -1260,6 +1291,7 @@ pf_check_save_data(
 /*
  * Get the size of save data.
  */
+PF_DLL
 bool
 pf_get_save_data_size(
 	const char *key,
@@ -1372,6 +1404,7 @@ get_hex_char(int val)
 /*
  * Check if a file exists.
  */
+PF_DLL
 bool
 pf_check_file_exists(
 	const char *fname)
@@ -1385,6 +1418,7 @@ pf_check_file_exists(
 /*
  * Read a file.
  */
+PF_DLL
 bool
 pf_read_file_content(
 	const char *fname,
@@ -1404,6 +1438,7 @@ pf_read_file_content(
 /*
  * Get the VM environment.
  */
+PF_DLL
 void *
 pf_get_vm_env(void)
 {
@@ -1413,6 +1448,7 @@ pf_get_vm_env(void)
 /*
  * Call a VM function.
  */
+PF_DLL
 bool
 pf_call_vm_function(
 	const char *func_name)
@@ -1423,6 +1459,7 @@ pf_call_vm_function(
 /*
  * Set a VM integer.
  */
+PF_DLL
 bool
 pf_set_vm_int(
 	const char *prop_name,
@@ -1434,6 +1471,7 @@ pf_set_vm_int(
 /*
  * Get a VM integer.
  */
+PF_DLL
 bool
 pf_get_vm_int(
 	const char *prop_name,
@@ -1449,6 +1487,7 @@ pf_get_vm_int(
 /*
  * Install an API function in the global name space.
  */
+PF_DLL
 bool
 pf_install_api(
 	const char *name,
@@ -1468,6 +1507,7 @@ pf_install_api(
 /*
  * Install an API function in a package name space.
  */
+PF_DLL
 bool
 pf_install_package_api(
 	const char *package,
@@ -1509,6 +1549,7 @@ pf_install_package_api(
 /*
  * Get a function call parameter as an integer.
  */
+PF_DLL
 bool
 pf_get_call_arg_int(
 	const char *name,
@@ -1547,6 +1588,7 @@ pf_get_call_arg_int(
 /*
  * Get a function call parameter as a float.
  */
+PF_DLL
 bool
 pf_get_call_arg_float(
 	const char *name,
@@ -1582,6 +1624,7 @@ pf_get_call_arg_float(
 /*
  * Get a function call parameter as a string.
  */
+PF_DLL
 bool
 pf_get_call_arg_string(
 	const char *name,
@@ -1633,6 +1676,7 @@ pf_get_call_arg_string(
 /*
  * Get the length of an array of a function call parameter.
  */
+PF_DLL
 bool
 pf_get_call_arg_array_length(
 	const char *name,
@@ -1663,6 +1707,7 @@ pf_get_call_arg_array_length(
 /*
  * Get an integer element of an array of a function call parameter.
  */
+PF_DLL
 bool
 pf_get_call_arg_array_int(
 	const char *name,
@@ -1692,6 +1737,7 @@ pf_get_call_arg_array_int(
 /*
  * Get a float element of an array of a function call parameter.
  */
+PF_DLL
 bool
 pf_get_call_arg_array_float(
 	const char *name,
@@ -1721,6 +1767,7 @@ pf_get_call_arg_array_float(
 /*
  * Get a string element of an array of a function call parameter.
  */
+PF_DLL
 bool
 pf_get_call_arg_array_string(
 	const char *name,
@@ -1758,6 +1805,7 @@ pf_get_call_arg_array_string(
 /*
  * Get an integer element of a dictionary of a function call parameter.
  */
+PF_DLL
 bool
 pf_get_call_arg_dict_int(
 	const char *name,
@@ -1798,6 +1846,7 @@ pf_get_call_arg_dict_int(
 /*
  * Get a float element of a dictionary of a function call parameter.
  */
+PF_DLL
 bool
 pf_get_call_arg_dict_float(
 	const char *name,
@@ -1838,6 +1887,7 @@ pf_get_call_arg_dict_float(
 /*
  * Get a string element of an array of a function call parameter.
  */
+PF_DLL
 bool
 pf_get_call_arg_dict_string(
 	const char *name,
@@ -1923,6 +1973,7 @@ get_dict_arg(
 /*
  * Set an integer return value.
  */
+PF_DLL
 bool
 pf_set_return_int(
 	int val)
@@ -1941,6 +1992,7 @@ pf_set_return_int(
 /*
  * Set a float return value.
  */
+PF_DLL
 bool
 pf_set_return_float(
 	float val)
@@ -1959,6 +2011,7 @@ pf_set_return_float(
 /*
  * Set a string return value.
  */
+PF_DLL
 bool
 pf_set_return_string(
 	const char *val)
@@ -1977,6 +2030,7 @@ pf_set_return_string(
 /*
  * Set an integer array return value.
  */
+PF_DLL
 bool
 pf_set_return_int_array(
 	int *val,
@@ -2005,6 +2059,7 @@ pf_set_return_int_array(
 /*
  * Set a float array return value.
  */
+PF_DLL
 bool
 pf_set_return_float_array(
 	float *val,
@@ -2033,6 +2088,7 @@ pf_set_return_float_array(
 /*
  * Set a string array return value.
  */
+PF_DLL
 bool
 pf_set_return_string_array(
 	const char **val,
@@ -2065,6 +2121,7 @@ pf_set_return_string_array(
  *    "IIS" means 2 integers and 1 string.
  *    "IFS" means 1 integers, 1 float, and 1 string.
  */
+PF_DLL
 bool
 pf_set_return_dictionary(
 	const char *type_desc,
@@ -2127,6 +2184,7 @@ pf_set_return_dictionary(
 /*
  * Return whether we support the full screen mode.
  */
+PF_DLL
 bool
 pf_is_full_screen_supported(void)
 {
@@ -2136,6 +2194,7 @@ pf_is_full_screen_supported(void)
 /*
  * Return whether the we are in the full screen mode.
  */
+PF_DLL
 bool
 pf_is_full_screen_mode(void)
 {
@@ -2145,6 +2204,7 @@ pf_is_full_screen_mode(void)
 /*
  * Enter the full screen mode.
  */
+PF_DLL
 void
 pf_enter_full_screen_mode(void)
 {
@@ -2154,6 +2214,7 @@ pf_enter_full_screen_mode(void)
 /*
  * Leave the full screen mode.
  */
+PF_DLL
 void
 pf_leave_full_screen_mode(void)
 {
@@ -2163,6 +2224,7 @@ pf_leave_full_screen_mode(void)
 /*
  * Enable/disable message skip by touch move.
  */
+PF_DLL
 void
 pf_set_continuous_swipe_enabled(
 	bool is_enabled)
@@ -2173,6 +2235,7 @@ pf_set_continuous_swipe_enabled(
 /*
  * Get the system locale.
  */
+PF_DLL
 const char *
 pf_get_system_language(void)
 {
@@ -2182,6 +2245,7 @@ pf_get_system_language(void)
 /*
  * Print a debug message.
  */
+PF_DLL
 void
 pf_log_info(
 	const char *msg,
@@ -2200,6 +2264,7 @@ pf_log_info(
 /*
  * Print a warning message.
  */
+PF_DLL
 void
 pf_log_warn(
 	const char *msg,
@@ -2218,6 +2283,7 @@ pf_log_warn(
 /*
  * Print an error message.
  */
+PF_DLL
 void
 pf_log_error(
 	const char *msg,
@@ -2236,6 +2302,7 @@ pf_log_error(
 /*
  * Print an out-of-memory error message.
  */
+PF_DLL
 void
 pf_log_out_of_memory(void)
 {

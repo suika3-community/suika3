@@ -32,7 +32,7 @@
 
 /* HAL */
 extern "C" {
-#include <stratohal/stratohal.h>		/* Public Interface */
+#include <strato/strato.h>		/* Public Interface */
 #include "stdfile.h"			/* Standard C File Implementation */
 };
 
@@ -71,6 +71,10 @@ staticBSoundPlayer *sound_player[HAL_SOUND_TRACKS];
 static struct hal_wave *wave[HAL_SOUND_TRACKS];
 static bool is_finished[HAL_SOUND_TRACKS];
 
+/* HAL callback. */
+struct hal_callback hal_callback;
+HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback);
+
 extern "C" void fill_buffer(void *cookie, void *buffer, size_t size, const media_raw_audio_format& format);
 
 class NoctView : public BView
@@ -92,7 +96,10 @@ public:
 			return;
 
 		hal_clear_image(image, 0);
-		hal_callback_on_event_frame();
+		if (!hal_callback.on_update())
+			exit(0);
+		hal_callback.on_render();
+			
 		DrawBitmap(bitmap, BPoint(0, 0));
 	}
 
@@ -201,7 +208,7 @@ public:
 	{
 		if (!init_file())
 			exit(1);
-		if (!hal_callback_on_event_boot(&window_title, &window_width, &window_height))
+		if (!hal_bootstrap(&window_title, &window_width, &window_height, &hal_callback))
 			exit(1);
 
 		NoctWindow *window = new NoctWindow(window_title, window_width, window_height);
@@ -224,7 +231,7 @@ public:
 	}
 };
 
-int main(int argc, char *argv[])
+int hal_main(int argc, char *argv[])
 {
 	NoctApplication app;
 	app.Run();

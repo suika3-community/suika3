@@ -456,7 +456,7 @@ if(NOT PLAYFIELD_ENABLE_DIST)
 else()
   # Use system libraries.
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
-  find_package(StratoHAL REQUIRED)
+  find_package(StratoHAL REQUIRED COMPONENTS pack)
   find_package(Noct REQUIRED)
 endif()
 
@@ -557,6 +557,16 @@ add_library(
   ${PLAYFIELD_DEPS}
   ${PLAYFIELD_HOOK}
 )
+if(PLAYFIELD_ENABLE_SHARED)
+  set_target_properties(playfield PROPERTIES 
+    VERSION 1.0.0 
+    SOVERSION 1
+  )
+  set_target_properties(playfield PROPERTIES
+    C_VISIBILITY_PRESET hidden
+    VISIBILITY_INLINES_HIDDEN ON
+  )
+endif()
 
 # .so versioning.
 set_target_properties(playfield PROPERTIES 
@@ -582,6 +592,11 @@ target_include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${NOCT_INCLUDE_DIR}
 )
+
+# DLL
+if(PLAYFIELD_ENABLE_SHARED)
+  target_compile_definitions(playfield PRIVATE PF_USE_DLL HAL_USE_DLL)
+endif()
 
 # JIT
 if(PLAYFIELD_ENABLE_JIT)
@@ -749,7 +764,7 @@ if(PLAYFIELD_ENABLE_BIN)
   if(NOT PLAYFIELD_ENABLE_DIST)
     target_link_libraries(playfieldbin PRIVATE strato)
   else()
-    target_link_libraries(playfieldbin PRIVATE ${STRATO_LIBRARY})
+    target_link_libraries(playfieldbin PRIVATE StratoHAL::strato)
   endif()
 
   # Add twice for circular references on callback functions.
@@ -842,7 +857,7 @@ if(PLAYFIELD_ENABLE_PACK)
   if(NOT PLAYFIELD_ENABLE_DIST)
     target_link_libraries(playfield-pack PRIVATE stratopack)
   else()
-    target_link_libraries(playfield-pack PRIVATE ${STRATOPACK_LIBRARY})
+    target_link_libraries(playfield-pack PRIVATE StratoHAL::pack)
   endif()
 endif()
 
@@ -897,7 +912,6 @@ if(PLAYFIELD_ENABLE_AOTC)
   add_executable(
     playfield-aotc
     src/aot.c
-    external/NoctLang/src/backend/cback.c
     ${PLAYFIELD_AOTC_RESOURCE}
   )
 
@@ -1127,4 +1141,21 @@ if(PLAYFIELD_ENABLE_INSTALL)
     install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/locale/
             DESTINATION ${CMAKE_INSTALL_FULL_LOCALEDIR})
   endif()
+
+  # CMake module
+  install(
+    FILES "${CMAKE_SOURCE_DIR}/cmake/modules/FindPlayfield.cmake"
+    DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/cmake/Modules"
+  )
+
+  # pkgconfig pc
+  configure_file(
+    "${CMAKE_SOURCE_DIR}/resources/pkg-config/playfield.pc.in"
+    playfield.pc
+    @ONLY
+  )
+  install(
+    FILES "${CMAKE_CURRENT_BINARY_DIR}/playfield.pc"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
+  )
 endif()

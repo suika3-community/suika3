@@ -29,7 +29,10 @@
  */
 
 /* HAL */
-#include <stratohal/stratohal.h>
+#include <strato/strato.h>
+
+/* POSIX */
+#include <unistd.h>
 
 /* Standard C */
 #include <stdio.h>
@@ -37,26 +40,26 @@
 #include <string.h>
 #include <stdarg.h>
 
-#include <unistd.h>
-
+/* Buffer size. */
 #define LOG_BUF_SIZE	4096
 
+/* Mode. */
 enum running_mode {
 	MODE_INIT,
 	MODE_WAYLAND,
 	MODE_X11,
 };
-
 static int mode;
+
+/* Callback. */
+struct hal_callback hal_callback;
+HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback);
 
 static bool is_wslg(void);
 
+/* Wayland. */
 bool main_init_wl(int argc, char *argv[]);
 bool main_run_wl(void);
-
-bool main_init_x11(int argc, char *argv[]);
-bool main_run_x11(void);
-
 bool hal_log_info_wl(const char *s, ...);
 bool hal_log_warn_wl(const char *s, ...);
 bool hal_log_error_wl(const char *s, ...);
@@ -89,6 +92,9 @@ void hal_leave_full_screen_mode_wl(void);
 const char *hal_get_system_language_wl(void);
 void hal_set_continuous_swipe_enabled_wl(bool is_enabled);
 
+/* X11. */
+bool main_init_x11(int argc, char *argv[]);
+bool main_run_x11(void);
 bool hal_log_info_x11(const char *s, ...);
 bool hal_log_warn_x11(const char *s, ...);
 bool hal_log_error_x11(const char *s, ...);
@@ -121,7 +127,12 @@ void hal_leave_full_screen_mode_x11(void);
 const char *hal_get_system_language_x11(void);
 void hal_set_continuous_swipe_enabled_x11(bool is_enabled);
 
-int main(int argc, char *argv[])
+/* Main. */
+HAL_DLL
+int
+hal_main(
+	int argc,
+	char *argv[])
 {
 	bool prefer_x11 = is_wslg();
 	bool wl_tried = false;
@@ -176,6 +187,7 @@ is_wslg(void)
 	       access("/mnt/wslg", F_OK) == 0;
 }
 
+HAL_DLL
 bool
 hal_log_info(
 	const char *s,
@@ -199,6 +211,7 @@ hal_log_info(
 	return true;
 }
 
+HAL_DLL
 bool
 hal_log_warn(
 	const char *s,
@@ -222,6 +235,7 @@ hal_log_warn(
 	return true;
 }
 
+HAL_DLL
 bool
 hal_log_error(
 	const char *s,
@@ -245,6 +259,7 @@ hal_log_error(
 	return true;
 }
 
+HAL_DLL
 bool
 hal_log_out_of_memory(void)
 {
@@ -256,29 +271,7 @@ hal_log_out_of_memory(void)
 	return false;
 }
 
-bool
-make_save_directory(void)
-{
-	if (mode == MODE_WAYLAND)
-		return make_save_directory_wl();
-	else if (mode == MODE_X11)
-		return make_save_directory_x11();
-
-	return false;
-}
-
-char *
-make_real_path(
-	const char *fname)
-{
-	if (mode == MODE_WAYLAND)
-		return make_real_path_wl(fname);
-	else if (mode == MODE_X11)
-		return make_real_path_x11(fname);
-
-	return NULL;
-}
-
+HAL_DLL
 void
 hal_reset_lap_timer(
 	uint64_t *t)
@@ -289,6 +282,7 @@ hal_reset_lap_timer(
 		hal_reset_lap_timer_x11(t);
 }
 
+HAL_DLL
 uint64_t
 hal_get_lap_timer_millisec(
 	uint64_t *t)
@@ -301,6 +295,7 @@ hal_get_lap_timer_millisec(
 	return 0;
 }
 
+HAL_DLL
 void
 hal_notify_image_update(
 	struct hal_image *img)
@@ -311,6 +306,7 @@ hal_notify_image_update(
 		hal_notify_image_update_x11(img);
 }
 
+HAL_DLL
 void
 hal_notify_image_free(
 	struct hal_image *img)
@@ -321,6 +317,7 @@ hal_notify_image_free(
 		hal_notify_image_free_x11(img);
 }
 
+HAL_DLL
 void
 hal_render_image_normal(
 	int dst_left,
@@ -340,6 +337,7 @@ hal_render_image_normal(
 		hal_render_image_normal_x11(dst_left, dst_top, dst_width, dst_height, src_image, src_left, src_top, src_width, src_height, alpha);
 }
 
+HAL_DLL
 void
 hal_render_image_add(
 	int dst_left,
@@ -359,7 +357,9 @@ hal_render_image_add(
 		hal_render_image_add_x11(dst_left, dst_top, dst_width, dst_height, src_image, src_left, src_top, src_width, src_height, alpha);
 }
 
-void hal_render_image_sub(
+HAL_DLL
+void
+hal_render_image_sub(
 	int dst_left,
 	int dst_top,
 	int dst_width,
@@ -377,7 +377,9 @@ void hal_render_image_sub(
 		hal_render_image_sub_x11(dst_left, dst_top, dst_width, dst_height, src_image, src_left, src_top, src_width, src_height, alpha);
 }
 
-void hal_render_image_dim(
+HAL_DLL
+void
+hal_render_image_dim(
 	int dst_left,
 	int dst_top,
 	int dst_width,
@@ -395,6 +397,7 @@ void hal_render_image_dim(
 		hal_render_image_dim_x11(dst_left, dst_top, dst_width, dst_height, src_image, src_left, src_top, src_width, src_height, alpha);
 }
 
+HAL_DLL
 void
 hal_render_image_rule(
 	struct hal_image *src_img,
@@ -407,6 +410,7 @@ hal_render_image_rule(
 		hal_render_image_rule_x11(src_img, rule_img, threshold);
 }
 
+HAL_DLL
 void
 hal_render_image_melt(
 	struct hal_image *src_img,
@@ -419,6 +423,7 @@ hal_render_image_melt(
 		hal_render_image_melt_x11(src_img, rule_img, progress);
 }
 
+HAL_DLL
 void
 hal_render_image_cross(
 	struct hal_image *src1_img,
@@ -435,6 +440,7 @@ hal_render_image_cross(
 		hal_render_image_cross_x11(src1_img, src2_img, src1_left, src1_top, src2_left, src2_top, alpha);
 }
 
+HAL_DLL
 void
 hal_render_image_3d_normal(
 	float x1,
@@ -458,6 +464,7 @@ hal_render_image_3d_normal(
 		hal_render_image_3d_normal_x11(x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height, alpha);
 }
 
+HAL_DLL
 void
 hal_render_image_3d_add(
 	float x1,
@@ -481,6 +488,7 @@ hal_render_image_3d_add(
 		hal_render_image_3d_add_x11(x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height, alpha);
 }
 
+HAL_DLL
 void
 hal_render_image_3d_sub(
 	float x1,
@@ -504,6 +512,7 @@ hal_render_image_3d_sub(
 		hal_render_image_3d_sub_x11(x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height, alpha);
 }
 
+HAL_DLL
 void
 hal_render_image_3d_dim(
 	float x1,
@@ -527,6 +536,7 @@ hal_render_image_3d_dim(
 		hal_render_image_3d_dim_x11(x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height, alpha);
 }
 
+HAL_DLL
 void
 hal_render_image_3d_cross(
 	struct hal_image *src1_img,
@@ -555,6 +565,7 @@ hal_render_image_3d_cross(
 		hal_render_image_3d_cross_x11(src1_img, src2_img, src1_x1, src1_y1, src1_x2, src1_y2, src1_x3, src1_y3, src1_x4, src1_y4, src2_x1, src2_y1, src2_x2, src2_y2, src2_x3, src2_y3, src2_x4, src2_y4, alpha);
 }
 
+HAL_DLL
 bool
 hal_play_video(
 	const char *fname,
@@ -568,6 +579,7 @@ hal_play_video(
 	return false;
 }
 
+HAL_DLL
 void
 hal_stop_video(void)
 {
@@ -577,6 +589,7 @@ hal_stop_video(void)
 		hal_stop_video_x11();
 }
 
+HAL_DLL
 bool
 hal_is_video_playing(void)
 {
@@ -588,6 +601,7 @@ hal_is_video_playing(void)
 	return false;
 }
 
+HAL_DLL
 bool
 hal_is_full_screen_supported(void)
 {
@@ -599,6 +613,7 @@ hal_is_full_screen_supported(void)
 	return false;
 }
 
+HAL_DLL
 bool
 hal_is_full_screen_mode(void)
 {
@@ -610,6 +625,7 @@ hal_is_full_screen_mode(void)
 	return false;
 }
 
+HAL_DLL
 void
 hal_enter_full_screen_mode(void)
 {
@@ -619,6 +635,7 @@ hal_enter_full_screen_mode(void)
 		hal_enter_full_screen_mode_x11();
 }
 
+HAL_DLL
 void
 hal_leave_full_screen_mode(void)
 {
@@ -628,6 +645,7 @@ hal_leave_full_screen_mode(void)
 		hal_leave_full_screen_mode_x11();
 }
 
+HAL_DLL
 const char *
 hal_get_system_language(void)
 {
@@ -639,6 +657,7 @@ hal_get_system_language(void)
 	return NULL;
 }
 
+HAL_DLL
 void
 hal_set_continuous_swipe_enabled(
 	bool is_enabled)
@@ -647,4 +666,27 @@ hal_set_continuous_swipe_enabled(
 		hal_set_continuous_swipe_enabled_wl(is_enabled);
 	else if (mode == MODE_X11)
 		hal_set_continuous_swipe_enabled_x11(is_enabled);
+}
+
+bool
+make_save_directory(void)
+{
+	if (mode == MODE_WAYLAND)
+		return make_save_directory_wl();
+	else if (mode == MODE_X11)
+		return make_save_directory_x11();
+
+	return false;
+}
+
+char *
+make_real_path(
+	const char *fname)
+{
+	if (mode == MODE_WAYLAND)
+		return make_real_path_wl(fname);
+	else if (mode == MODE_X11)
+		return make_real_path_x11(fname);
+
+	return NULL;
 }

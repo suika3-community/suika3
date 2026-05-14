@@ -2257,12 +2257,14 @@ ast_strdup(
 	const char *s)
 {
 	char *ret;
+	size_t len;
 
-	ret = arena_alloc(&ast_arena, strlen(s) + 1);
+	len = strlen(s) + 1;
+	ret = arena_alloc(&ast_arena, len);
 	if (ret == NULL)
 		return NULL;
 
-	strcpy(ret, s);
+	memcpy(ret, s, len);
 	return ret;
 }
 

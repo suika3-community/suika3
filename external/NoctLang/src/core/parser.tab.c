@@ -3222,7 +3222,7 @@ void ast_yyerror(void *scanner, char *s)
 	ast_error_column = ast_yylloc.first_column + 1;
 	
 	if (s != NULL)
-		strcpy(ast_error_message, N_TR(s));
+		snprintf(ast_error_message, sizeof(ast_error_message), "%s", N_TR(s));
 	else
-		strcpy(ast_error_message, "");
+		ast_error_message[0] = '\0';
 }

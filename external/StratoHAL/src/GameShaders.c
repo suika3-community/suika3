@@ -1,7 +1,7 @@
 // -*- coding: utf-8; tab-width: 4; indent-tabs-mode: nil; -*-
 
 /*
- * StratoHAL
+ * Strato HAL
  * Apple Metal Shader
  */
 
