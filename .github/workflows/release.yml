@@ -331,7 +331,7 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Build Native Libraries
+      - name: Build static libraries
         run: |
           cmake --preset android-arm64
           cmake --build --preset android-arm64
@@ -339,89 +339,53 @@ jobs:
           cmake --build --preset android-armv7
           cmake --preset android-x86_64
           cmake --build --preset android-x86_64
-          #cmake --preset android-x86
-          #cmake --build --preset android-x86
-          #cmake --preset android-riscv64
-          #cmake --build --preset android-riscv64
+          cmake --preset android-x86
+          cmake --build --preset android-x86
+          cmake --preset android-riscv64
+          cmake --build --preset android-riscv64
 
-      - name: Prepare Android Studio Project
+      - name: Build class files
         run: |
-          cp -R resources/projects/android ./
-          mkdir -p android/app/src/main/assets
-          cp -R game/* android/app/src/main/assets/
-          mkdir -p android/app/src/main/java/io/noctvm/playfield/engineandroid
-          cp external/PlayfieldEngine/external/StratoHAL/src/MainActivity.java android/app/src/main/java/io/noctvm/playfield/engineandroid/
-          mkdir -p android/app/src/main/jniLibs/arm64-v8a
-          cp build-android-arm64/libsuika3.so android/app/src/main/jniLibs/arm64-v8a/libplayfield.so
-          mkdir -p android/app/src/main/jniLibs/armeabi-v7a
-          cp build-android-armv7/libsuika3.so android/app/src/main/jniLibs/armeabi-v7a/libplayfield.so
-          mkdir -p android/app/src/main/jniLibs/x86_64
-          cp build-android-x86_64/libsuika3.so android/app/src/main/jniLibs/x86_64/libplayfield.so
-          #mkdir -p android/app/src/main/jniLibs/x86
-          #cp build-android-x86/libsuika3.so android/app/src/main/jniLibs/x86/libplayfield.so
-          #mkdir -p android/app/src/main/jniLibs/riscv64
-          #cp build-android-riscv64/libsuika3.so android/app/src/main/jniLibs/riscv64/libplayfield.so
+          ANDROID_JAR="${ANDROID_SDK_ROOT}/platforms/android-35/android.jar"
+          mkdir classes
+          javac -d classes -cp $ANDROID_JAR src/MainActivity.java
+
+      - name: Build AAR
+        run: |
+          mkdir -p aar_out/prefab/modules/strato/include
+          mkdir -p aar_out/prefab/modules/strato/android.arm64-v8a
+          mkdir -p aar_out/prefab/modules/strato/android.armeabi-v7a
+          mkdir -p aar_out/prefab/modules/strato/android.x86_64
+          mkdir -p aar_out/prefab/modules/strato/android.x86
+          mkdir -p aar_out/prefab/modules/strato/android.riscv64
+
+          cd classes
+          jar cvf ../aar_out/classes.jar *.class
+          cd ..
+
+          cp -r include/* aar_out/prefab/modules/strato/include/
+          cp build-android-arm64/libstrato.a aar_out/prefab/modules/strato/android.arm64-v8a/
+          cp build-android-armv7/libstrato.a aar_out/prefab/modules/strato/android.armeabi-v7a/
+          cp build-android-x86_64/libstrato.a aar_out/prefab/modules/strato/android.x86_64/
+          cp build-android-x86/libstrato.a aar_out/prefab/modules/strato/android.x86/
+          cp build-android-riscv64/libstrato.a aar_out/prefab/modules/strato/android.riscv64/
+
+          echo '<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.example.stratohal" />' > aar_out/AndroidManifest.xml
+          echo '{"schema_version": 2, "name": "strato", "dependencies": []}' > aar_out/prefab/prefab.json
+          echo '{"export_libraries": [], "library_name": "libstrato"}' > aar_out/prefab/modules/strato/module.json
+
+          cd aar_out
+          zip -r ../StratoHAL.aar .
+          cd ..
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: android-arm64
           path: |
-            build-android-arm64/libsuika3.so
+            StratoHAL.aar
           if-no-files-found: error
           retention-days: 7
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-armv7
-          path: |
-            build-android-armv7/libsuika3.so
-          if-no-files-found: error
-          retention-days: 7
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-x86_64
-          path: |
-            build-android-x86_64/libsuika3.so
-          if-no-files-found: error
-          retention-days: 7
-
-#      - name: Upload artifact
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: android-x86
-#          path: |
-#            build-android-x86/libsuika3.so
-#          if-no-files-found: error
-#          retention-days: 7
-#
-#      - name: Upload artifact
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: android-riscv64
-#          path: |
-#            build-android-riscv64/libsuika3.so
-#          if-no-files-found: error
-#          retention-days: 7
-
-#      - name: Build Android Studio Project
-#        run: |
-#          cd android
-#          ./gradlew assembleDebug
-#          cd ..
-#          cp android/app/build/outputs/apk/debug/app-debug.apk suika3.apk
-#
-#      - name: Upload artifact
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: android-apk
-#          path: |
-#            suika3.apk
-#          if-no-files-found: error
-#          retention-days: 7
 
   build-openharmony:
     if: |
@@ -457,7 +421,7 @@ jobs:
         with:
           name: openharmony-arm64
           path: |
-            build-openharmony-arm64/libsuika3.a
+            build-openharmony-arm64/libstrato.a
           if-no-files-found: error
           retention-days: 7
 
@@ -466,7 +430,7 @@ jobs:
         with:
           name: openharmony-x86_64
           path: |
-            build-openharmony-x86_64/libsuika3.a
+            build-openharmony-x86_64/libstrato.a
           if-no-files-found: error
           retention-days: 7
 
