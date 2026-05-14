@@ -449,6 +449,7 @@ endif()
 
 if(NOT PLAYFIELD_ENABLE_DIST)
   # NoctLang
+  set(NOCT_ENABLE_INSTALL OFF)
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/NoctLang)
 
   # StratoHAL

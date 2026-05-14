@@ -55,7 +55,6 @@ jobs:
           name: windows-binaries
           path: |
             out/**/playfield.exe
-            out/**/playfield-editor.exe
             out/**/playfield-pack.exe
             out/**/playfield-web.exe
           if-no-files-found: error
@@ -550,7 +549,6 @@ jobs:
       - name: Copy for Windows.
         run: |
           cp windows/build/windows-vs2022-x64/Release/playfield.exe dist/
-          cp windows/build/windows-vs2022-x64/Release/playfield-editor.exe dist/
           cp windows/build/windows-vs2022-x86/Release/playfield-pack.exe dist/SDK/windows/
           cp windows/build/windows-vs2022-x86/Release/playfield-web.exe dist/SDK/wasm/
           cp windows/build/windows-vs2022-arm64/Release/playfield.exe dist/SDK/windows/playfield-arm64.exe
