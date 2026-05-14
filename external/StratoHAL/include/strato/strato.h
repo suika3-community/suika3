@@ -1722,6 +1722,11 @@ int WINAPI WinMain(						\
 	}
 #endif
 
+#if defined(HAL_TARGET_UNITY) && !defined(HAL_USE_DLL)
+#define HAL_DEFINE_MAIN()
+#define HAL_DEFINE_MAIN_CHAIN(chain_ptr, chain)
+#endif
+
 #if defined(HAL_TARGET_WASM)
 #define HAL_DEFINE_MAIN()					\
 	int main(void)						\
