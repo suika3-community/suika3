@@ -206,7 +206,7 @@ jobs:
           cp build-macos-cli/suika3-pack out/bin/
           cp build-macos-cli/suika3-aotc out/bin/
           cp build-macos-cli/suika3-bcc out/bin/
-          cp resources/manpage/suika3.1 opt/share/man/man1/
+          cp resources/manpage/suika3.1 out/share/man/man1/
           cd out
           tar czf ../suika3-macos-universal.tar.gz *
           cd ..
