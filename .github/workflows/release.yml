@@ -22,6 +22,9 @@ jobs:
           cmake --preset windows-vs2022-x86
           cmake --build --preset windows-vs2022-x86 --config Release
           cp out/build/windows-vs2022-x86/Release/playfield.exe playfield-win32.exe
+          cp out/build/windows-vs2022-x86/Release/playfield-web.exe playfield-aotcc.exe
+          cp out/build/windows-vs2022-x86/Release/playfield-web.exe playfield-bcc.exe
+          cp out/build/windows-vs2022-x86/Release/playfield-web.exe playfield-pack.exe
           cp out/build/windows-vs2022-x86/Release/playfield-web.exe playfield-web.exe
 
       - name: Build for x64
@@ -69,6 +72,9 @@ jobs:
             playfield-win32.exe
             playfield-win64.exe
             playfield-arm64.exe
+            playfield-aotc.exe
+            playfield-bcc.exe
+            playfield-pack.exe
             playfield-web.exe
           if-no-files-found: error
           retention-days: 7
@@ -218,19 +224,18 @@ jobs:
       - name: Build macOS project
         run: |
           mkdir macos
-          mkdir macos/project
-          mkdir macos/project/Resources
-          mkdir macos/project/Resources/video
-          cp resources/assets.arc macos/project/Resources/
+          mkdir macos/Resources
+          mkdir macos/Resources/video
+          cp resources/assets.arc macos/Resources/
 
-          mkdir macos/project/Game.xcodeproj
-          cp resources/projects/macos/Game.xcodeproj/project.pbxproj macos/project/Game.xcodeproj/
+          mkdir macos/Game.xcodeproj
+          cp resources/projects/macos/Game.xcodeproj/project.pbxproj macos/Game.xcodeproj/
 
-          mkdir macos/project/Game
-          cp -R Playfield.xcframework macos/project/Game/
-          cp -R resources/projects/macos/Game/Assets.xcassets macos/project/Game/
-          cp resources/projects/macos/Game/main.m macos/project/Game/
-          cp resources/macos/macos.entitlements macos/project/Game/Game.entitlements
+          mkdir macos/Game
+          cp -R Playfield.xcframework macos/Game/
+          cp -R resources/projects/macos/Game/Assets.xcassets macos/Game/
+          cp resources/projects/macos/Game/main.m macos/Game/
+          cp resources/macos/macos.entitlements macos/Game/Game.entitlements
 
           zip -r Playfield-macOS-Xcode.zip macos
 
@@ -703,8 +708,11 @@ jobs:
 
           mkdir dist/SDK/windows
           cp windows/playfield-win64.exe dist/playfield.exe
-          cp windows/playfield-arm64.exe dist/SDK/windows/playfield-arm64.exe
-          cp mingw/playfield-win32.exe dist/SDK/windows/playfield-win32.exe
+          cp windows/playfield-arm64.exe dist/SDK/windows/
+          cp mingw/playfield-win32.exe dist/SDK/windows/
+          cp windows/playfield-aotc.exe dist/SDK/windows/
+          cp windows/playfield-bcc.exe dist/SDK/windows/
+          cp windows/playfield-pack.exe dist/SDK/windows/
 
           mkdir -p dist/SDK/wasm
           cp windows/playfield-web.exe dist/SDK/wasm/
@@ -756,7 +764,7 @@ jobs:
       - name: Copy for Android
         run: |
           mkdir dist/SDK/android
-          unzip android/Playfield-Android-Studio.zip -x dist/SDK/android
+          unzip android/Playfield-Android-Studio.zip -d dist/SDK/android
 
       - name: Download OpenHarmony artifacts
         uses: actions/download-artifact@v4
@@ -766,7 +774,7 @@ jobs:
 
       - name: Copy for OpenHarmony
         run: |
-          unzip openharmony/Playfield-OpenHarmony-DevEco.zip -x dist/SDK
+          unzip openharmony/Playfield-OpenHarmony-DevEco.zip -d dist/SDK
 
       - name: Download Unity artifacts
         uses: actions/download-artifact@v4
@@ -794,7 +802,7 @@ jobs:
       - name: Copy for Unity
         run: |
           mkdir dist/SDK/unity
-          unzip unity/Playfield-Unity.zip -x dist/SDK
+          unzip unity/Playfield-Unity.zip -d dist/SDK
 
       - name: Download mkdocs artifacts
         uses: actions/download-artifact@v4
@@ -804,7 +812,7 @@ jobs:
 
       - name: Copy documents
         run: |
-          tar xzf mkdocs/playfield-documents.tar.gz -C dist/SDK/
+          unzip mkdocs/playfield-documents.zip -d dist/SDK
           cp -R samples dist/SDK/samples
 
       - name: Get current date
@@ -816,8 +824,8 @@ jobs:
 
       - name: Build ZIP
         run: |
-          mv dist "Playfield-$DATE-$SHORT_SHA"
-          7z a -tzip -mx=9 "Playfield-$DATE-$SHORT_SHA.zip" "Playfield-$DATE-$SHORT_SHA"
+          mv dist "PlayfieldEngine"
+          7z a -tzip -mx=9 Playfield-SDK-Full.zip "Playfield
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -826,8 +834,28 @@ jobs:
         with:
           tag_name: nightly-${{ env.DATE }}-${{ env.SHORT_SHA }}
           name: Playfield-${{ env.DATE }}-${{ env.SHORT_SHA }}
+
+          body: |
+            This is an automated nightly build. Not an official release.
+            
+            | OS          | File                                               | Type                       | Description                    |
+            |-------------|----------------------------------------------------|----------------------------|--------------------------------|
+            | Full        | Playfiled-${{ env.DATE }}-${{ env.SHORT_SHA }}.zip | ZIP                        | Full Distribution              |
+            | Windows     | Playfield.1.0.0.nupkg                              | NuGet Package              | Visual Studio 2022+            |
+            | Windows     | playfield-mingw-w64.tar.gz                         | Tarball                    | MinGW-w64                      |
+            | macOS       | Playfield.xcframework.zip                          | Xcode Framework            | macOS and iOS, Xcode           |
+            | macOS       | Playfield-macOS-Xcode.zip                          | Xcode Project              | macOS Xcode Project            |
+            | macOS       | playfield-macos-universal.tar.gz                   | Tarball                    | macOS (extract to /usr/local)  |
+            | Linux       | Playfield-x86_64.AppImage                          | AppImage                   | Linux AppImage                 |
+            | Linux       | playfield-linux-x86_64.tar.gz                      | Tarball                    | Linux (extract to /usr/local)  |
+            | Wasm        | playfield-wasm.html                                | Wasm                       | Emscripten                     |
+            | Wasm        | playfield-wasm.tar.gz                              | Tarball                    | Emscripten                     |
+            | Android     | Playfield-Android-Studio.zip                       | Android Studio Project     | Android NDK                    |
+            | OpenHarmony | Playfield-OpenHarmony-DevEco.zip                   | OpenHarmony DevEco Project | OpenHarmony (HarmonyOS NEXT)   |
+            | Documents   | playfield-documents.zip                            | ZIP                        | Documents                      |
+
           files: |
-            Playfield-${{ env.DATE }}-${{ env.SHORT_SHA }}.zip
+            Playfield-Full-SDK.zip
             windows/Playfield.1.0.0.nupgk
             windows/playfield-win64.exe
             windows/playfield-arm64.exe
@@ -843,19 +871,4 @@ jobs:
             playfield-wasm.html
             wasm/playfield-wasm.tar.gz
             unity/Playfield-Unity.zip
-          body: |
-            This is an automated nightly build. Not an official release.
-            
-            | OS          | File                             | Type                       | Description                    |
-            |-------------|----------------------------------|----------------------------|--------------------------------|
-            | Windows     | Playfield.1.0.0.nupkg            | NuGet Package              | Visual Studio 2022+            |
-            | Windows     | playfield-mingw-w64.tar.gz       | Tarball                    | MinGW-w64                      |
-            | macOS       | Playfield.xcframework.zip        | Xcode Framework            | macOS and iOS, Xcode           |
-            | macOS       | Playfield-macOS-Xcode.zip        | Xcode Project              | macOS Xcode Project            |
-            | macOS       | playfield-macos-universal.tar.gz | Tarball                    | macOS (extract to /usr/local)  |
-            | Linux       | Playfield-x86_64.AppImage        | AppImage                   | Linux AppImage                 |
-            | Linux       | playfield-linux-x86_64.tar.gz    | Tarball                    | Linux (extract to /usr/local)  |
-            | Wasm        | playfield-wasm.html              | Wasm                       | Emscripten                     |
-            | Wasm        | playfield-wasm.tar.gz            | Tarball                    | Emscripten                     |
-            | Android     | Playfield-Android-Studio.zip     | Android Studio Project     | Android NDK                    |
-            | OpenHarmony | Playfield-OpenHarmony-DevEco.zip | OpenHarmony DevEco Project | OpenHarmony (HarmonyOS NEXT)   |
+            mkdocs/playfield-documents.zip
