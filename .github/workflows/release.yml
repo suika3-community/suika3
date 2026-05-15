@@ -81,7 +81,7 @@ jobs:
           cmake --preset windows-mingw-x86
           cmake --build --preset windows-mingw-x86
           i686-w64-mingw32-strip build-mingw-x86/suika3.exe
-          cp build-mingw-x86/suika3-win32.exe
+          cp build-mingw-x86/suika3.exe suika3-win32.exe
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -111,6 +111,9 @@ jobs:
         run: |
           cmake --preset macos
           cmake --build --preset macos
+
+          cmake --preset macos-lib
+          cmake --build --preset macos-lib
 
           cmake --preset macos-cli
           cmake --build --preset macos-cli
@@ -146,7 +149,7 @@ jobs:
         run: |
           xcodebuild \
             -create-xcframework \
-            -library build-macos/libsuika3.a -headers include \
+            -library build-macos-lib/libsuika3.a -headers include \
             -library build-ios-device/libsuika3.a -headers include \
             -library build-ios-simulator/libsuika3.a -headers include \
             -output Suika3.xcframework
@@ -421,17 +424,10 @@ jobs:
         run: |
           cp -R resources/projects/openharmony ./
 
-          mkdir -p openharmony
-          mkdir -p openharmony/entry/src/main/cpp/third_party/playfield/include/playfield
-          mkdir -p openharmony/entry/src/main/cpp/third_party/playfield/include/noct
-          mkdir -p openharmony/entry/src/main/cpp/third_party/playfield/include/strato
-          mkdir -p openharmony/entry/src/main/cpp/third_party/playfield/lib/arm64-v8a
-          mkdir -p openharmony/entry/src/main/cpp/third_party/playfield/lib/x86_64
-
-          mkdir -p openharmony/entry/libs/arm64-v8a
+          mkdir -p openharmony/entry/src/main/cpp/third_party/suika3/lib/arm64-v8a
           cp build-openharmony-arm64/libsuika3.a openharmony/entry/src/main/cpp/third_party/suika3/lib/arm64-v8a/
 
-          mkdir -p openharmony/entry/libs/arm64-x86_64
+          mkdir -p openharmony/entry/src/main/cpp/third_party/suika3/lib/x86_64
           cp build-openharmony-x86_64/libsuika3.a openharmony/entry/src/main/cpp/third_party/suika3/lib/x86_64/
 
           mkdir -p openharmony/entry/src/main/resources/rawfile/
@@ -494,6 +490,7 @@ jobs:
 
       - name: Built project
         run: |
+          mkdir unity
           mkdir unity/Assets
 
           mkdir unity/Assets/StreamingAssets
