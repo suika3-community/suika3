@@ -296,6 +296,7 @@ extern "C" {
     !defined(PF_TARGET_PIOSIX) &&               \
     !defined(PF_TARGET_IOS) &&                  \
     !defined(PF_TARGET_ANDROID) &&              \
+    !defined(PF_TARGET_OPENHARMONY) &&          \
     !defined(PF_TARGET_WASM) &&                 \
     !defined(PF_TARGET_BEOS) &&                 \
     !defined(PF_TARGET_UNITY) &&                \
