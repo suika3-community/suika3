@@ -859,7 +859,7 @@ jobs:
       - name: Copy for PC98
         run: |
           mkdir dist/SDK/msdos
-          unzip pc98/pf98.exe -d dist/SDK/msdos/
+          cp pc98/pf98.exe dist/SDK/msdos/
 
       - name: Download mkdocs artifacts
         uses: actions/download-artifact@v4
