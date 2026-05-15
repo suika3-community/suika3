@@ -542,6 +542,51 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
+  build-pc98:
+    name: Build for NEC PC-9801
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake
+
+      - name: Cache Watcom
+        id: cache-watcom
+        uses: actions/cache@v4
+        with:
+          path: openwatcom-1.9
+          key: openwatcom-1.9
+
+      - name: Configure OpenWatcom
+        if: steps.cache-watcom.outputs.cache-hit != 'true'
+        run: |
+          wget https://noctvm.io/ci/openwatcom-1.9.tar.gz
+          tar xzf openwatcom-1.9.tar.gz
+
+      - name: Build
+        run: |
+          export WATCOM="$PWD/openwatcom-1.9"
+          export INCLUDE="$WATCOM/h"
+          export EDPATH="$WATCOM/eddat"
+          export PATH="$WATCOM/binl:$WATCOM/binw:$PATH"
+          echo "$WATCOM"
+          ls -lha "$WATCOM/binl"
+          command -v wcl386 || true
+          command -v wlink || true
+          cmake --preset pc98
+          cmake --build --preset pc98
+          mv build-pc98/suika3.exe suika98.exe
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: pc98
+          path: suika98.exe
+
   build-mkdocs:
     if: |
       github.event_name != 'push' ||
@@ -586,6 +631,7 @@ jobs:
       - build-android
       - build-openharmony
       - build-unity
+      - build-pc98
       - build-mkdocs
     runs-on: ubuntu-latest
     steps:
@@ -724,6 +770,17 @@ jobs:
         with:
           name: mkdocs
           path: mkdocs
+
+      - name: Download PC98 artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: pc98
+          path: pc98
+
+      - name: Copy for PC98
+        run: |
+          mkdir dist/SDK/msdos
+          unzip pc98/suika98.exe -d dist/SDK/msdos/
 
       - name: Copy documents
         run: |
