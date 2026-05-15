@@ -619,14 +619,19 @@ if(PLAYFIELD_ENABLE_SHARED)
   target_compile_definitions(playfield PRIVATE PF_USE_SHARED)
 endif()
 
+# OpenHarmony
+if(PLAYFIELD_TARGET_OPENHARMONY)
+  target_compile_definitions(playfield PUBLIC PF_TARGET_OPENHARMONY NOCT_TARGET_OPENHARMONY HAL_TARGET_OPENHARMONY)
+endif()
+
 # Unity
 if(PLAYFIELD_TARGET_UNITY)
-  target_compile_definitions(playfield PRIVATE PF_TARGET_UNITY)
+  target_compile_definitions(playfield PUBLIC PF_TARGET_UNITY)
 endif()
 
 # PC98
 if(PLAYFIELD_TARGET_PC98)
-  target_compile_definitions(playfield PRIVATE PF_TARGET_PC98)
+  target_compile_definitions(playfield PUBLIC PF_TARGET_PC98)
 endif()
 
 # Windows
