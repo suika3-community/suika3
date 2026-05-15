@@ -2,17 +2,18 @@ StratoHAL
 =========
 
 `StratoHAL` is a highly portable hardware abstraction layer (HAL) for
-game applications. With 25+ years of its history as in-house software,
-it has been published as free/libre software to serve as a core
-building block of the Suika3 game scripting runtime. Today, it
-continues to evolve as an independent library, bridging classic and
-modern platforms.
+game applications.
 
 `StratoHAL` provides:
 
-- Built-in game loop and callback mechanism.
+- Built-in platform initialization, game loop, and event callback mechanisms.
 - API for 2D graphics, audio, and input.
 - GPU acceleration as well as software rendering.
+
+With 25+ years of its history as in-house software, it has been
+published as free/libre software to serve as a core building block of
+the Suika3 game scripting runtime. Today, it continues to evolve as an
+independent library, bridging classic and modern platforms.
 
 ## Platforms
 

@@ -268,7 +268,8 @@
             "cacheVariables": {
                 "ANDROID_PLATFORM":    "30",
                 "ANDROID_ABI":         "x86",
-                "NOCT_ENABLE_STATIC":  "ON"
+                "NOCT_ENABLE_STATIC":  "ON",
+                "NOCT_ENABLE_CLI":     "OFF"
             }
         },
         {
@@ -280,7 +281,8 @@
             "cacheVariables": {
                 "ANDROID_PLATFORM":    "30",
                 "ANDROID_ABI":         "x86_64",
-                "NOCT_ENABLE_STATIC":  "ON"
+                "NOCT_ENABLE_STATIC":  "ON",
+                "NOCT_ENABLE_CLI":     "OFF"
             }
         },
         {
@@ -292,7 +294,8 @@
             "cacheVariables": {
                 "ANDROID_PLATFORM":    "30",
                 "ANDROID_ABI":         "armeabi-v7a",
-                "NOCT_ENABLE_STATIC":  "ON"
+                "NOCT_ENABLE_STATIC":  "ON",
+                "NOCT_ENABLE_CLI":     "OFF"
             }
         },
         {
@@ -304,7 +307,8 @@
             "cacheVariables": {
                 "ANDROID_PLATFORM":    "30",
                 "ANDROID_ABI":         "arm64-v8a",
-                "NOCT_ENABLE_STATIC":  "ON"
+                "NOCT_ENABLE_STATIC":  "ON",
+                "NOCT_ENABLE_CLI":     "OFF"
             }
         },
         {
@@ -316,7 +320,8 @@
             "cacheVariables": {
                 "ANDROID_PLATFORM":    "30",
                 "ANDROID_ABI":         "riscv64",
-                "NOCT_ENABLE_STATIC":  "ON"
+                "NOCT_ENABLE_STATIC":  "ON",
+                "NOCT_ENABLE_CLI":     "OFF"
             }
         },
         {
@@ -329,7 +334,8 @@
                 "OHOS_PLATFORM_LEVEL":     "12",
                 "OHOS_ARCH":               "x86_64",
                 "NOCT_TARGET_OPENHARMONY": "ON",
-                "NOCT_ENABLE_STATIC":      "ON"
+                "NOCT_ENABLE_STATIC":      "ON",
+                "NOCT_ENABLE_CLI":         "OFF"
             }
         },
         {
@@ -342,7 +348,8 @@
                 "OHOS_PLATFORM_LEVEL":     "12",
                 "OHOS_ARCH":               "arm64-v8a",
                 "NOCT_TARGET_OPENHARMONY": "ON",
-                "NOCT_ENABLE_STATIC":      "ON"
+                "NOCT_ENABLE_STATIC":      "ON",
+                "NOCT_ENABLE_CLI":         "OFF"
             }
         },
         {
@@ -355,7 +362,8 @@
                 "OHOS_PLATFORM_LEVEL":     "12",
                 "OHOS_ARCH":               "armeabi-v7a",
                 "NOCT_TARGET_OPENHARMONY": "ON",
-                "NOCT_ENABLE_STATIC":      "ON"
+                "NOCT_ENABLE_STATIC":      "ON",
+                "NOCT_ENABLE_CLI":         "OFF"
             }
         },
         {
@@ -366,7 +374,8 @@
             "toolchainFile":  "${sourceDir}/cmake/toolchains/wasm.cmake",
             "cacheVariables": {
                 "NOCT_TARGET_WASM":   "ON",
-                "NOCT_ENABLE_STATIC": "ON"
+                "NOCT_ENABLE_STATIC": "ON",
+                "NOCT_ENABLE_CLI":    "OFF"
             }
         },
         {
@@ -377,7 +386,8 @@
             "toolchainFile":  "${sourceDir}/cmake/toolchains/wasm.cmake",
             "cacheVariables": {
                 "NOCT_TARGET_WASM_LOCAL": "ON",
-                "NOCT_ENABLE_STATIC":     "ON"
+                "NOCT_ENABLE_STATIC":     "ON",
+                "NOCT_ENABLE_CLI":        "OFF"
             }
         },
         {
@@ -388,7 +398,8 @@
             "toolchainFile":  "${sourceDir}/cmake/toolchains/unity-win64.cmake",
             "cacheVariables": {
                 "NOCT_TARGET_UNITY":  "ON",
-                "NOCT_ENABLE_STATIC": "ON"
+                "NOCT_ENABLE_STATIC": "ON",
+                "NOCT_ENABLE_CLI":    "OFF"
             }
         },
         {
@@ -399,7 +410,9 @@
             "toolchainFile":  "${sourceDir}/cmake/toolchains/unity-winarm64.cmake",
             "cacheVariables": {
                 "NOCT_TARGET_UNITY":  "ON",
-                "NOCT_ENABLE_STATIC": "ON"
+                "NOCT_ENABLE_STATIC": "ON",
+                "NOCT_ENABLE_JIT":    "OFF",
+                "NOCT_ENABLE_CLI":    "OFF"
             }
         },
         {
@@ -411,7 +424,9 @@
             "cacheVariables": {
                 "NOCT_TARGET_UNITY":        "ON",
                 "NOCT_TARGET_UNITY_SWITCH": "ON",
-                "NOCT_ENABLE_STATIC":       "ON"
+                "NOCT_ENABLE_STATIC":       "ON",
+                "NOCT_ENABLE_JIT":          "OFF",
+                "NOCT_ENABLE_CLI":          "OFF"
             }
         },
         {
@@ -423,7 +438,9 @@
             "cacheVariables": {
                 "NOCT_TARGET_UNITY":     "ON",
                 "NOCT_TARGET_UNITY_PS5": "ON",
-                "NOCT_ENABLE_STATIC":    "ON"
+                "NOCT_ENABLE_STATIC":    "ON",
+                "NOCT_ENABLE_JIT":       "OFF",
+                "NOCT_ENABLE_CLI":       "OFF"
             }
         },
         {
@@ -435,7 +452,9 @@
             "cacheVariables": {
                 "NOCT_TARGET_UNITY":      "ON",
                 "NOCT_TARGET_UNITY_XBOX": "ON",
-                "NOCT_ENABLE_STATIC":     "ON"
+                "NOCT_ENABLE_STATIC":     "ON",
+                "NOCT_ENABLE_JIT":        "OFF",
+                "NOCT_ENABLE_CLI":        "OFF"
             }
         },
         {
@@ -446,7 +465,8 @@
             "cacheVariables": {
                 "NOCT_ENABLE_STATIC":     "ON",
                 "NOCT_ENABLE_I18N":       "ON",
-                "NOCT_ENABLE_PACK":       "ON"
+                "NOCT_ENABLE_PACK":       "ON",
+                "NOCT_ENABLE_CLI":        "OFF"
             }
         },
         {
