@@ -176,6 +176,7 @@ jobs:
 
       - name: Build iOS project
         run: |
+          mkdir ios
           mkdir ios/Resources
           mkdir ios/Resources/video
           cp resources/assets.arc ios/Resources/
@@ -514,10 +515,10 @@ jobs:
           mkdir unity/Assets/Plugins/PS5
           mkdir unity/Assets/Plugins/GameCoreXboxSeries
           mkdir unity/Assets/Plugins/Common
-          cp unity-win64/libsuika3.dll unity/Assets/Plugins/x86_64/
-          cp unity-switch/libsuika3.a  unity/Assets/Plugins/Switch/
-          cp unity-ps5/libsuika3.a     unity/Assets/Plugins/PS5/
-          cp unity-xbox/suika3.lib     unity/Assets/Plugins/GameCoreXboxSeries/
+          cp build-unity-win64/libsuika3.dll unity/Assets/Plugins/x86_64/
+          cp build-unity-switch/libsuika3.a  unity/Assets/Plugins/Switch/
+          cp build-unity-ps5/libsuika3.a     unity/Assets/Plugins/PS5/
+          cp build-unity-xbox/suika3.lib     unity/Assets/Plugins/GameCoreXboxSeries/
 
           cp docs/readme/unity.md dist/SDK/unity/
 
@@ -637,7 +638,7 @@ jobs:
         run: |
           cp macos/Suika3.dmg dist/SDK/macos/
 
-          mkdir dist/SDK/macos/project
+          mkdir -p dist/SDK/macos/project
           cp macos/Suika3-macOS-Xcode.zip -d dist/SDK/macos
           mv dist/SDK/macos/macos dist/SDK/macos/project
 
