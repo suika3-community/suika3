@@ -821,7 +821,6 @@ jobs:
             | Windows     | suika3-arm64.exe                | Executable                 | Windows 10+ Arm64              |
             | macOS       | Suika3.dmg                      | Application                | macOS                          |
             | macOS       | Suika3-macOS-Xcode.zip          | Xcode Project              | macOS Xcode Project            |
-            | macOS/iOS   | Suika3.xcframework.zip          | Xcode Framework            | macOS and iOS, Xcode           |
             | Linux       | Suika3-x86_64.flatpak           | Flatpak                    | Linux Flatpak                  |
             | iOS         | Suika3-iOS-Xcode.zip            | Xcode Project              | macOS Xcode Project            |
             | Android     | Suika3-Android-Studio.zip       | Android Studio Project     | Android NDK                    |
