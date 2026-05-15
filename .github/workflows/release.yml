@@ -19,53 +19,40 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
-      - name: Install flex & bison (Chocolatey)
-        run: choco install -y winflexbison3
-
-      - name: Configure (x64)
-        run: >
-          cmake --preset windows-vs2022-x64
-          -DFLEX_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_flex.exe"
-          -DBISON_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_bison.exe"
-
-      - name: Build (x64)
-        run: cmake --build --preset windows-vs2022-x64 --config Release --parallel
-
-      - name: Configure (x64-console)
-        run: >
-          cmake --preset windows-vs2022-x64-console
-          -DFLEX_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_flex.exe"
-          -DBISON_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_bison.exe"
-
-      - name: Build (x64-console)
-        run: cmake --build --preset windows-vs2022-x64-console --config Release --parallel
-
-      - name: Configure (x86)
-        run: >
+      - name: Build
+        run: |
           cmake --preset windows-vs2022-x86
-          -DFLEX_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_flex.exe"
-          -DBISON_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_bison.exe"
+          cmake --build --preset windows-vs2022-x86 --config Release
+          cp out/build/windows-vs2022-x86/Release/suika3.exe suika3-win32.exe
 
-      - name: Build (x86)
-        run: cmake --build --preset windows-vs2022-x86 --config Release --parallel
+          cmake --preset windows-vs2022-x64
+          cmake --build --preset windows-vs2022-x64 --config Release
+          cp out/build/windows-vs2022-x64/Release/suika3.exe suika3-win64.exe
+          cp out/build/windows-vs2022-x64/Release/suika3-aotc.exe suika3-aotc.exe
+          cp out/build/windows-vs2022-x64/Release/suika3-bcc.exe suika3-bcc.exe
+          cp out/build/windows-vs2022-x64/Release/suika3-pack.exe suika3-pack.exe
+          cp out/build/windows-vs2022-x64/Release/suika3-web.exe suika3-web.exe
 
-      - name: Configure (arm64)
-        run: >
+          cmake --preset windows-vs2022-x64-console
+          cmake --build --preset windows-vs2022-x64-console --config Release
+          cp out/build/windows-vs2022-x64-console/Release/suika3.exe suika3-debug.exe
+
           cmake --preset windows-vs2022-arm64
-          -DFLEX_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_flex.exe"
-          -DBISON_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_bison.exe"
-
-      - name: Build (arm64)
-        run: cmake --build --preset windows-vs2022-arm64 --config Release --parallel
+          cmake --build --preset windows-vs2022-arm64 --config Release
+          cp out/build/windows-vs2022-arm64/Release/suika3.exe suika3-arm64.exe
 
       - name: Upload Windows EXEs
         uses: actions/upload-artifact@v4
         with:
           name: windows-binaries
           path: |
-            out/**/suika3.exe
-            out/**/suika3-pack.exe
-            out/**/suika3-web.exe
+            suika3-win32.exe
+            suika3-win64.exe
+            suika3-arm64.exe
+            suika3-aotc.exe
+            suika3-bcc.exe
+            suika3-pack.exe
+            suika3-web.exe
           if-no-files-found: error
           retention-days: 7
 
@@ -77,10 +64,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install deps
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake ninja-build flex bison
+          sudo apt-get install -y cmake ninja-build
 
       - name: Download mingw-w64-11.0
         run: |
@@ -94,13 +81,14 @@ jobs:
           cmake --preset windows-mingw-x86
           cmake --build --preset windows-mingw-x86
           i686-w64-mingw32-strip build-mingw-x86/suika3.exe
+          cp build-mingw-x86/suika3-win32.exe
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: mingw
           path: |
-            build-mingw-x86/suika3.exe
+            suika3-win32.exe
           if-no-files-found: error
           retention-days: 7
 
@@ -113,20 +101,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
  
-      - name: Set up dependencies
-        run: |
-          brew update
-          brew install bison flex
-          echo "/opt/homebrew/opt/bison/bin" >> $GITHUB_PATH
-          echo "/opt/homebrew/opt/flex/bin" >> $GITHUB_PATH
- 
-      - name: Verify versions
-        run: |
-          which bison
-          bison --version
-          which flex
-          flex --version
- 
       - name: Setup for macOS
         uses: apple-actions/import-codesign-certs@v3
         with:
@@ -134,14 +108,27 @@ jobs:
           p12-password: ${{ secrets.CERTIFICATE_PASSWORD }}
 
       - name: Build for macOS
+          cmake --preset macos
+          cmake --build --preset macos
+
+          cmake --preset macos-cli
+          cmake --build --preset macos-cli
+
+      - name: Build for iOS
+        run: |
+          cmake --preset ios-device
+          cmake --build --preset ios-device
+
+          cmake --preset ios-simulator
+          cmake --build --preset ios-simulator
+
+      - name: Build macOS dmg
         shell: bash
         env:
           APPLE_ID: ${{ secrets.APPLE_ID }}
           TEAM_ID: ${{ secrets.TEAM_ID }}
           APP_SECRET: ${{ secrets.APP_PASSWORD }}
         run: |
-          cmake --preset macos
-          cmake --build --preset macos
           cd build-macos
           codesign --timestamp --options runtime --entitlements ../resources/macos/macos.entitlements --deep --force --sign "Developer ID Application" Suika3.app
           ditto -c -k --sequesterRsrc --keepParent Suika3.app Suika3.zip
@@ -152,24 +139,79 @@ jobs:
           hdiutil create -fs HFS+ -format UDBZ -srcfolder tmp -volname Suika3 Suika3.dmg
           codesign --sign "Developer ID Application" Suika3.dmg
           cd ..
-          cmake --preset macos-lib
-          cmake --build --preset macos-lib
-          xcodebuild -create-xcframework -library build-macos-lib/libsuika3.a -headers include -output Suika3.xcframework
-          tar czf Suika3.xcframework.tar.gz Suika3.xcframework
-          cmake --preset macos-cli
-          cmake --build --preset macos-cli
+          mv build-macos/Suika3.dmg .
+
+      - name: Build macOS/iOS XCFramework
+          xcodebuild \
+            -create-xcframework \
+            -library build-macos/libsuika3.a -headers include \
+            -library build-ios-device/libsuika3.a -headers include \
+            -library build-ios-simulator/libsuika3.a -headers include \
+            -output Suika3.xcframework
+          zip -r Suika3.xcframework.zip Suika3.xcframework
+
+      - name: Build macOS project
+        run: |
+          mkdir macos/project/Resources
+          mkdir macos/project/Resources/video
+          cp resources/assets.arc macos/project/Resources/
+
+          mkdir macos/project/Game.xcodeproj
+          cp resources/projects/macos/Game.xcodeproj/project.pbxproj macos/project/Game.xcodeproj/
+
+          mkdir dist/SDK/macos/project/Game
+          cp -R Suika3.xcframework macos/project/Game/
+          cp -R resources/projects/macos/Game/Assets.xcassets macos/project/Game/
+          cp resources/projects/macos/Game/main.m macos/project/Game/
+          cp resources/macos/macos.entitlements macos/project/Game/Game.entitlements
+
+          zip -r Suika3-macOS-Xcode.zip -r macos
+
+      - name: Build iOS project
+        run: |
+          mkdir ios/Resources
+          mkdir ios/Resources/video
+          cp resources/assets.arc ios/Resources/
+
+          mkdir ios/ios.xcodeproj
+          cp resources/projects/ios/ios.xcodeproj/project.pbxproj ios/ios.xcodeproj/
+
+          mkdir ios/ios
+          cp -R Suika3.xcframework ios/ios/
+          cp -R resources/projects/ios/ios/Assets.xcassets ios/ios/
+
+          cp resources/projects/ios/ios/entry.c ios/ios/
+          cp resources/projects/ios/ios/Info.plist ios/ios/
+          cp resources/projects/ios/ios/ios.entitlements ios/ios/
+          cp resources/projects/ios/ios/LaunchScreen.storyboard ios/ios/
+          cp resources/ios/ExportOptions.plist ios/
+          cp resources/ios/build.sh ios/
+
+          zip -r Suika3-iOS-Xcode.zip -r ios
+
+      - name: Build macOS tar.gz
+        run: |
+          mkdir -p out
+          mkdir -p out/bin
+          mkdir -p out/share/man/man1
+          cp build-macos-cli/playfield out/bin/
+          cp build-macos-cli/playfield-pack out/bin/
+          cp build-macos-cli/playfield-aotc out/bin/
+          cp build-macos-cli/playfield-bcc out/bin/
+          cp resources/manpage/suika3.1
+          cd out
+          tar czf ../suika3-macos-universal.tar.gz *
+          cd ..
 
       - name: Upload macOS
         uses: actions/upload-artifact@v4
         with:
           name: macos
           path: |
-            build-macos/Suika3.dmg
-            Suika3.xcframework.tar.gz
-            build-macos-cli/suika3
-            build-macos-cli/suika3-pack
-            build-macos-cli/suika3-bcc
-            build-macos-cli/suika3-aotc
+            Suika3.dmg
+            Suika3-macOS-Xcode.zip
+            Suika3-iOS-Xcode.zip
+            suika3-macos-universal.tar.gz
           if-no-files-found: error
           retention-days: 7
 
@@ -204,37 +246,37 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-#  build-flatpak-aarch64:
-#    if: |
-#      github.event_name != 'push' ||
-#      !contains(github.event.head_commit.message, '[docs]')
-#    runs-on: ubuntu-24.04-arm64
-#
-#    steps:
-#      - uses: actions/checkout@v4
-#
-#      - name: Install deps
-#        run: |
-#          sudo apt-get update
-#          sudo apt-get install -y flatpak-builder
-#
-#      - name: Build flatpak
-#        run: |
-#          yes | flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-#          flatpak install --user -y flathub org.freedesktop.Sdk//25.08
-#          flatpak install --user -y flathub org.freedesktop.Platform//25.08
-#          flatpak install --user -y flathub org.freedesktop.Platform.GStreamer.openmpt//25.08
-#          flatpak-builder --user -y --repo=myrepo --force-clean build-dir-aarch64 ./resources/flatpak/vn.suika3.engine.yml
-#          flatpak build-bundle myrepo Suika3-aarch64.flatpak vn.suika3.engine --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo
-#
-#      - name: Upload artifact
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: flatpak-aarch64
-#          path: |
-#            Suika3-aarch64.flatpak
-#          if-no-files-found: error
-#          retention-days: 7
+  build-flatpak-aarch64:
+    if: |
+      github.event_name != 'push' ||
+      !contains(github.event.head_commit.message, '[docs]')
+    runs-on: ubuntu-24.04-arm64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak-builder
+
+      - name: Build flatpak
+        run: |
+          yes | flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          flatpak install --user -y flathub org.freedesktop.Sdk//25.08
+          flatpak install --user -y flathub org.freedesktop.Platform//25.08
+          flatpak install --user -y flathub org.freedesktop.Platform.GStreamer.openmpt//25.08
+          flatpak-builder --user -y --repo=myrepo --force-clean build-dir-aarch64 ./resources/flatpak/vn.suika3.engine.yml
+          flatpak build-bundle myrepo Suika3-aarch64.flatpak vn.suika3.engine --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: flatpak-aarch64
+          path: |
+            Suika3-aarch64.flatpak
+          if-no-files-found: error
+          retention-days: 7
 
   build-wasm:
     if: |
@@ -253,63 +295,17 @@ jobs:
         run: |
           cmake --preset wasm
           cmake --build --preset wasm
+          cp build-wasm/index.html ./  
 
       - name: Upload Wasm
         uses: actions/upload-artifact@v4
         with:
           name: wasm
           path: |
-            build-wasm/index.html
+            index.html
           if-no-files-found: error
           retention-days: 7
 
-  build-ios:
-    if: |
-      github.event_name != 'push' ||
-      !contains(github.event.head_commit.message, '[docs]')
-    runs-on: macos-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
- 
-      - name: Set up dependencies
-        run: |
-          brew update
-          brew install bison flex
-          echo "/opt/homebrew/opt/bison/bin" >> $GITHUB_PATH
-          echo "/opt/homebrew/opt/flex/bin" >> $GITHUB_PATH
- 
-      - name: Verify versions
-        run: |
-          which bison
-          bison --version
-          which flex
-          flex --version
- 
-      - name: Setup for iOS
-        uses: apple-actions/import-codesign-certs@v3
-        with:
-          p12-file-base64: ${{ secrets.CERTIFICATE_FILE_BASE64 }}
-          p12-password: ${{ secrets.CERTIFICATE_PASSWORD }}
- 
-      - name: Build for iOS
-        run: |
-          cmake --preset ios-device
-          cmake --build --preset ios-device
-          cmake --preset ios-simulator
-          cmake --build --preset ios-simulator
-          xcodebuild -create-xcframework -library build-ios-device/libsuika3.a -headers include -library build-ios-simulator/libsuika3.a -headers include -output Suika3.xcframework
-          tar czf Suika3.xcframework.tar.gz Suika3.xcframework
- 
-      - name: Upload iOS
-        uses: actions/upload-artifact@v4
-        with:
-          name: ios
-          path: |
-            Suika3.xcframework.tar.gz
-          if-no-files-found: error
-          retention-days: 7
- 
   build-android:
     if: |
       github.event_name != 'push' ||
@@ -321,7 +317,7 @@ jobs:
       - name: Install deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake ninja-build flex bison openjdk-17-jdk gradle
+          sudo apt-get install -y cmake ninja-build openjdk-17-jdk gradle
 
       - name: Setup for Android NDK
         uses: nttld/setup-ndk@v1
@@ -331,7 +327,7 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Build static libraries
+      - name: Build shared libraries
         run: |
           cmake --preset android-arm64
           cmake --build --preset android-arm64
@@ -344,46 +340,49 @@ jobs:
           cmake --preset android-riscv64
           cmake --build --preset android-riscv64
 
-      - name: Build class files
+      - name: Build project
         run: |
-          ANDROID_JAR="${ANDROID_SDK_ROOT}/platforms/android-35/android.jar"
-          mkdir classes
-          javac -d classes -cp $ANDROID_JAR src/MainActivity.java
+          mkdir android
+          cp -R resources/projects/android/app                 android/
+          cp -R resources/projects/android/gradle.properties   android/
+          cp -R resources/projects/android/build.gradle        android/
+          cp -R resources/projects/android/gradlew             android/
+          cp -R resources/projects/android/settings.gradle     android/
+          cp -R resources/projects/android/gradlew.bat         android/
+          cp -R resources/projects/android/gradle              android/
+          cp -R resources/projects/android/build.bat           android/
+          cp -R resources/projects/android/build.sh            android/
 
-      - name: Build AAR
-        run: |
-          mkdir -p aar_out/prefab/modules/strato/include
-          mkdir -p aar_out/prefab/modules/strato/android.arm64-v8a
-          mkdir -p aar_out/prefab/modules/strato/android.armeabi-v7a
-          mkdir -p aar_out/prefab/modules/strato/android.x86_64
-          mkdir -p aar_out/prefab/modules/strato/android.x86
-          mkdir -p aar_out/prefab/modules/strato/android.riscv64
+          mkdir -p android/app/src/main/assets
+          cp -R game/* android/app/src/main/assets/
+          cp resources/launcher/system/font/NotoSans-Medium.ttf android/app/src/main/assets/system/font/NotoSansCJK-Medium.ttc
 
-          cd classes
-          jar cvf ../aar_out/classes.jar *.class
-          cd ..
+          mkdir -p android/app/src/main/java/io/noctvm/strato
+          cp external/PlayfieldEngine/external/StratoHAL/src/MainActivity.java android/app/src/main/java/io/noctvm/strato/
 
-          cp -r include/* aar_out/prefab/modules/strato/include/
-          cp build-android-arm64/libstrato.a aar_out/prefab/modules/strato/android.arm64-v8a/
-          cp build-android-armv7/libstrato.a aar_out/prefab/modules/strato/android.armeabi-v7a/
-          cp build-android-x86_64/libstrato.a aar_out/prefab/modules/strato/android.x86_64/
-          cp build-android-x86/libstrato.a aar_out/prefab/modules/strato/android.x86/
-          cp build-android-riscv64/libstrato.a aar_out/prefab/modules/strato/android.riscv64/
+          mkdir -p android/app/src/main/jniLibs/arm64-v8a
+          cp android-arm64/libsuika3.so android/app/src/main/jniLibs/arm64-v8a/libstrato.so
 
-          echo '<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.example.stratohal" />' > aar_out/AndroidManifest.xml
-          echo '{"schema_version": 2, "name": "strato", "dependencies": []}' > aar_out/prefab/prefab.json
-          echo '{"export_libraries": [], "library_name": "libstrato"}' > aar_out/prefab/modules/strato/module.json
+          mkdir -p android/app/src/main/jniLibs/armeabi-v7a
+          cp android-armv7/libsuika3.so android/app/src/main/jniLibs/armeabi-v7a/libstrato.so
 
-          cd aar_out
-          zip -r ../StratoHAL.aar .
-          cd ..
+          mkdir -p android/app/src/main/jniLibs/x86_64
+          cp android-x86_64/libsuika3.so android/app/src/main/jniLibs/x86_64/libstrato.so
+
+          mkdir -p dist/SDK/android/app/src/main/jniLibs/x86
+          cp android-x86/libsuika3.so android/app/src/main/jniLibs/x86/libstrato.so
+
+          mkdir -p dist/SDK/android/app/src/main/jniLibs/riscv64
+          cp android-riscv64/libsuika3.so android/app/src/main/jniLibs/riscv64/libstrato.so
+
+          zip -r SUika3-Android-Studio.zip android
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: android-arm64
           path: |
-            StratoHAL.aar
+            Suika3-Android-Studio.zip
           if-no-files-found: error
           retention-days: 7
 
@@ -416,21 +415,35 @@ jobs:
           OH_NATIVE_SDK_ROOT="$PWD/openharmony-sdk-native" cmake --preset openharmony-x86_64
           OH_NATIVE_SDK_ROOT="$PWD/openharmony-sdk-native" cmake --build --preset openharmony-x86_64
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: openharmony-arm64
-          path: |
-            build-openharmony-arm64/libstrato.a
-          if-no-files-found: error
-          retention-days: 7
+      - name: Build project
+        run: |
+          cp -R resources/projects/openharmony ./
 
-      - name: Upload artifact
+          mkdir -p openharmony
+          mkdir -p openharmony/entry/src/main/cpp/third_party/playfield/include/playfield
+          mkdir -p openharmony/entry/src/main/cpp/third_party/playfield/include/noct
+          mkdir -p openharmony/entry/src/main/cpp/third_party/playfield/include/strato
+          mkdir -p openharmony/entry/src/main/cpp/third_party/playfield/lib/arm64-v8a
+          mkdir -p openharmony/entry/src/main/cpp/third_party/playfield/lib/x86_64
+
+          mkdir -p openharmony/entry/libs/arm64-v8a
+          cp build-openharmony-arm64/libsuika3.a openharmony/entry/src/main/cpp/third_party/suika3/lib/arm64-v8a/
+
+          mkdir -p openharmony/entry/libs/arm64-x86_64
+          cp build-openharmony-x86_64/libsuika3.a openharmony/entry/src/main/cpp/third_party/suika3/lib/x86_64/
+
+          mkdir -p openharmony/entry/src/main/resources/rawfile/
+          cp -R game/* openharmony/entry/src/main/resources/rawfile/
+          cp resources/launcher/system/font/NotoSans-Medium.ttf openharmony/entry/src/main/resources/rawfile/system/font/NotoSansCJK-Medium.ttc
+
+          zip -r Suika3-OpenHarmony-DevEco.zip openharmony
+
+      - name: Upload OpenHarmony artifact
         uses: actions/upload-artifact@v4
         with:
-          name: openharmony-x86_64
+          name: openharmony
           path: |
-            build-openharmony-x86_64/libstrato.a
+            Suika3-OpenHarmony-DevEco.zip
           if-no-files-found: error
           retention-days: 7
 
@@ -477,39 +490,44 @@ jobs:
           cmake --preset unity-xbox
           cmake --build --preset unity-xbox
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: unity-win64
-          path: |
-            build-unity-win64/libsuika3.dll
-          if-no-files-found: error
-          retention-days: 7
+      - name: Built project
+        run: |
+          mkdir unity/Assets
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: unity-switch
-          path: |
-            build-unity-switch/libsuika3.a
-          if-no-files-found: error
-          retention-days: 7
+          mkdir unity/Assets/StreamingAssets
+          cp -R game/* unity/Assets/StreamingAssets/
+          cp resources/launcher/system/font/NotoSans-Medium.ttf unity/Assets/StreamingAssets/system/font/NotoSansCJK-Medium.ttc
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: unity-ps5
-          path: |
-            build-unity-ps5/libsuika3.a
-          if-no-files-found: error
-          retention-days: 7
+          mkdir unity/Assets/Resources
+          cp external/PlayfieldEngine/external/StratoHAL/src/PlayfieldScript.cs   unity/Assets/
+          cp external/PlayfieldEngine/external/StratoHAL/src/NormalShader.shader  unity/Assets/Resources/
+          cp external/PlayfieldEngine/external/StratoHAL/src/AddShader.shader     unity/Assets/Resources/
+          cp external/PlayfieldEngine/external/StratoHAL/src/DimShader.shader     unity/Assets/Resources/
+          cp external/PlayfieldEngine/external/StratoHAL/src/RuleShader.shader    unity/Assets/Resources/
+          cp external/PlayfieldEngine/external/StratoHAL/src/MeltShader.shader    unity/Assets/Resources/
+          cp external/PlayfieldEngine/external/StratoHAL/src/MainScene.unity      unity/Assets/
 
-      - name: Upload artifact
+          mkdir dist/SDK/unity/Assets/Plugins
+          mkdir dist/SDK/unity/Assets/Plugins/x86_64
+          mkdir dist/SDK/unity/Assets/Plugins/Switch
+          mkdir dist/SDK/unity/Assets/Plugins/PS5
+          mkdir dist/SDK/unity/Assets/Plugins/GameCoreXboxSeries
+          mkdir dist/SDK/unity/Assets/Plugins/Common
+          cp unity-win64/libsuika3.dll dist/SDK/unity/Assets/Plugins/x86_64/
+          cp unity-switch/libsuika3.a  dist/SDK/unity/Assets/Plugins/Switch/
+          cp unity-ps5/libsuika3.a     dist/SDK/unity/Assets/Plugins/PS5/
+          cp unity-xbox/suika3.lib     dist/SDK/unity/Assets/Plugins/GameCoreXboxSeries/
+
+          cp docs/readme/unity.md dist/SDK/unity/
+
+          zip -r Suika3-Unity.zip unity
+
+      - name: Upload Unity artifact
         uses: actions/upload-artifact@v4
         with:
-          name: unity-xbox
+          name: unity
           path: |
-            build-unity-xbox/suika3.lib
+            Suuka3-Unity.zip
           if-no-files-found: error
           retention-days: 7
 
@@ -531,14 +549,14 @@ jobs:
           cd docs/mkdocs-en
           mkdocs build
           mv site documents
-          tar czf ../../documents.tar.gz documents
+          tar czf ../../Suika3-documents.zip documents
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: mkdocs
           path: |
-            documents.tar.gz
+            Suika3-documents.zip
           if-no-files-found: error
           retention-days: 7
 
@@ -552,7 +570,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Make the target directory.
+      - name: Make the target directory
         run: |
           mkdir dist
           mkdir dist/SDK
@@ -566,7 +584,7 @@ jobs:
           mkdir dist/SDK/openharmony
           mkdir dist/SDK/unity
 
-      - name: Copy the sample game.
+      - name: Copy the sample game
         run: |
           cp -R game/.vscode dist/
           cp game/main.ray dist/
@@ -582,24 +600,21 @@ jobs:
           name: windows-binaries
           path: windows
 
-      - name: Copy for Windows.
-        run: |
-          cp windows/build/windows-vs2022-x64/Release/suika3.exe dist/
-          cp windows/build/windows-vs2022-x64/Release/suika3.exe dist/SDK/windows/suika3-64.exe
-          cp windows/build/windows-vs2022-x86/Release/suika3-pack.exe dist/SDK/windows/
-          cp windows/build/windows-vs2022-x86/Release/suika3-web.exe dist/SDK/wasm/
-          cp windows/build/windows-vs2022-arm64/Release/suika3.exe dist/SDK/windows/suika3-arm64.exe
-          cp windows/build/windows-vs2022-x64-console/Release/suika3.exe dist/SDK/windows/suika3-debug.exe
-
       - name: Download mingw artifacts
         uses: actions/download-artifact@v4
         with:
           name: mingw
           path: mingw
 
-      - name: Copy for mingw.
+      - name: Copy for Windows
         run: |
-          cp mingw/suika3.exe dist/SDK/windows/suika3-32.exe
+          cp windows/suika3-win64.exe   dist/
+          cp windows/suika3-win64.exe   dist/SDK/windows/suika3-win64.exe
+          cp mingw/suika3-win32.exe     dist/SDK/windows/suika3-win32.exe
+          cp windows/suika3-pack.exe    dist/SDK/windows/
+          cp windows/suika3-web.exe     dist/SDK/wasm/
+          cp windows/suika3-arm64.exe   dist/SDK/windows/suika3-arm64.exe
+          cp windows/suika3-debug.exe   dist/SDK/windows/suika3-debug.exe
 
       - name: Download macOS artifacts
         uses: actions/download-artifact@v4
@@ -607,27 +622,27 @@ jobs:
           name: macos
           path: macos
 
-      - name: Copy for macOS.
+      - name: Copy for macOS
         run: |
-          cp macos/build-macos/Suika3.dmg dist/SDK/macos/
-          cp macos/build-macos-cli/suika3 dist/SDK/macos/
-          cp macos/build-macos-cli/suika3-pack dist/SDK/macos/
-          cp macos/build-macos-cli/suika3-aotc dist/SDK/macos/
-          cp macos/build-macos-cli/suika3-bcc dist/SDK/macos/
-          cp resources/macos/suika3-wrapper.sh dist/SDK/macos/
+          cp macos/Suika3.dmg dist/SDK/macos/
 
-      - name: Copy for macOS project.
+          mkdir dist/SDK/macos/project
+          cp macos/Suika3-macOS-Xcode.zip -d dist/SDK/macos
+          mv dist/SDK/macos/macos dist/SDK/macos/project
+
+          mkdir dist/SDK/macos/root
+          tar xzf suika3-macos-universal.tar.gz  -C dist/SDK/macos/root
+
+          cp dist/SDK/macos/root/bin/suika3-aotc    dist/SDK/macos/
+          cp dist/SDK/macos/root/bin/suika3-bcc     dist/SDK/macos/
+          cp dist/SDK/macos/root/bin/suika3-pack    dist/SDK/macos/
+          cp resources/macos/suika3-wrapper.sh      dist/SDK/macos/
+
+      - name: Copy for iOS
         run: |
-          mkdir dist/SDK/macos/project/Resources/
-          cp resources/assets.arc dist/SDK/macos/project/Resources/
-          mkdir dist/SDK/macos/project/Resources/video
-          mkdir dist/SDK/macos/project/Game.xcodeproj
-          cp resources/projects/macos/Game.xcodeproj/project.pbxproj dist/SDK/macos/project/Game.xcodeproj/
-          mkdir dist/SDK/macos/project/Game
-          tar xfz macos/Suika3.xcframework.tar.gz -C dist/SDK/macos/project/Game/
-          cp -R resources/projects/macos/Game/Assets.xcassets dist/SDK/macos/project/Game/
-          cp resources/projects/macos/Game/main.m dist/SDK/macos/project/Game/
-          cp resources/macos/macos.entitlements dist/SDK/macos/project/Game/Game.entitlements
+          mkdir dist/SDK/ios/project
+          cp macos/Suika3-iOS-Xcode.zip -d dist/SDK/ios
+          mv dist/SDK/ios/ios dist/SDK/ios/project
 
       - name: Download Flatpak x86_64 artifacts
         uses: actions/download-artifact@v4
@@ -635,9 +650,16 @@ jobs:
           name: flatpak-x86_64
           path: flatpak-x86_64
 
-      - name: Copy for Linux.
+      - name: Download Flatpak aarch64 artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: flatpak-aarch64
+          path: flatpak-aarch64
+
+      - name: Copy for Linux
         run: |
           cp flatpak-x86_64/Suika3-x86_64.flatpak dist/SDK/linux/
+          cp flatpak-aarch64/Suika3-aarch.flatpak dist/SDK/linux/
           cp resources/linux/suika3-wrapper.sh dist/SDK/linux/
 
       - name: Download wasm artifacts
@@ -650,155 +672,37 @@ jobs:
         run: |
           cp wasm/index.html dist/SDK/wasm/
           cp resources/assets.arc dist/SDK/wasm/
+          cp wasm/index.html suika3-wasm.html
 
-      - name: Download iOS artifacts
+      - name: Download Android artifacts
         uses: actions/download-artifact@v4
         with:
-          name: ios
-          path: ios
- 
-      - name: Copy for iOS.
-        run: |
-          mkdir dist/SDK/ios/Resources/
-          cp resources/assets.arc dist/SDK/ios/Resources/
-          mkdir dist/SDK/ios/Resources/video
-          mkdir dist/SDK/ios/ios.xcodeproj
-          cp resources/projects/ios/ios.xcodeproj/project.pbxproj dist/SDK/ios/ios.xcodeproj/
-          mkdir dist/SDK/ios/ios
-          tar xfz ios/Suika3.xcframework.tar.gz -C dist/SDK/ios/ios/
-          cp -R resources/projects/ios/ios/Assets.xcassets dist/SDK/ios/ios/
-          cp resources/projects/ios/ios/entry.c dist/SDK/ios/ios/
-          cp resources/projects/ios/ios/Info.plist dist/SDK/ios/ios/
-          cp resources/projects/ios/ios/ios.entitlements dist/SDK/ios/ios/
-          cp resources/projects/ios/ios/LaunchScreen.storyboard dist/SDK/ios/ios/
-          cp resources/ios/ExportOptions.plist dist/SDK/ios/
-          cp resources/ios/build.sh dist/SDK/ios/
-
-      - name: Download Android arm64 artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: android-arm64
-          path: android-arm64
-
-      - name: Download Android armv7 artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: android-armv7
-          path: android-armv7
-
-      - name: Download Android x86_64 artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: android-x86_64
-          path: android-x86_64
-
-#      - name: Download Android x86 artifacts
-#        uses: actions/download-artifact@v4
-#        with:
-#          name: android-x86
-#          path: android-x86
-
-#      - name: Download Android RISC-V 64 artifacts
-#        uses: actions/download-artifact@v4
-#        with:
-#          name: android-riscv64
-#          path: android-riscv64
+          name: android
+          path: android
 
       - name: Copy for Android
         run: |
-          cp -R resources/projects/android/app dist/SDK/android/
-          cp -R resources/projects/android/gradle.properties dist/SDK/android/
-          cp -R resources/projects/android/build.gradle dist/SDK/android/
-          cp -R resources/projects/android/gradlew dist/SDK/android/
-          cp -R resources/projects/android/settings.gradle dist/SDK/android/
-          cp -R resources/projects/android/gradlew.bat dist/SDK/android/
-          cp -R resources/projects/android/gradle dist/SDK/android/
-          cp -R resources/projects/android/build.bat dist/SDK/android/
-          cp -R resources/projects/android/build.sh dist/SDK/android/
-          mkdir -p dist/SDK/android/app/src/main/assets
-          cp -R game/* dist/SDK/android/app/src/main/assets/
-          cp resources/launcher/system/font/NotoSans-Medium.ttf dist/SDK/android/app/src/main/assets/system/font/NotoSansCJK-Medium.ttc
-          mkdir -p dist/SDK/android/app/src/main/java/io/noctvm/playfield/engineandroid
-          cp external/PlayfieldEngine/external/StratoHAL/src/MainActivity.java dist/SDK/android/app/src/main/java/io/noctvm/playfield/engineandroid/
-          mkdir -p dist/SDK/android/app/src/main/jniLibs/arm64-v8a
-          cp android-arm64/libsuika3.so dist/SDK/android/app/src/main/jniLibs/arm64-v8a/libplayfield.so
-          mkdir -p dist/SDK/android/app/src/main/jniLibs/armeabi-v7a
-          cp android-armv7/libsuika3.so dist/SDK/android/app/src/main/jniLibs/armeabi-v7a/libplayfield.so
-          mkdir -p dist/SDK/android/app/src/main/jniLibs/x86_64
-          cp android-x86_64/libsuika3.so dist/SDK/android/app/src/main/jniLibs/x86_64/libplayfield.so
-          #mkdir -p dist/SDK/android/app/src/main/jniLibs/x86
-          #cp android-x86/libsuika3.so dist/SDK/android/app/src/main/jniLibs/x86/libplayfield.so
-          #mkdir -p dist/SDK/android/app/src/main/jniLibs/riscv64
-          #cp android-riscv64/libsuika3.so dist/SDK/android/app/src/main/jniLibs/riscv64/libplayfield.so
+          zip -x android/Suika3-Android-Studio.zip -d dist/SDK
 
-      - name: Download OpenHarmony arm64 artifacts
+      - name: Download OpenHarmony artifacts
         uses: actions/download-artifact@v4
         with:
-          name: openharmony-arm64
-          path: openharmony-arm64
-
-      - name: Download OpenHarmony x86_64 artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: openharmony-x86_64
-          path: openharmony-x86_64
+          name: openharmony
+          path: openharmony
 
       - name: Copy for OpenHarmony
         run: |
-          cp -R resources/projects/openharmony/* dist/SDK/openharmony/
-          mkdir -p dist/SDK/openharmony/entry/libs/arm64-v8a
-          mkdir -p dist/SDK/openharmony/entry/libs/arm64-x86_64
-          cp openharmony-arm64/libsuika3.a dist/SDK/openharmony/entry/libs/arm64-v8a
-          cp openharmony-x86_64/libsuika3.a dist/SDK/openharmony/entry/libs/x86_64
+          zip -x openharmony/Suika3-OpenHarmony-DevEco.zip -d dist/SDK
 
-      - name: Download Unity Win64 artifacts
+      - name: Download Unity artifacts
         uses: actions/download-artifact@v4
         with:
-          name: unity-win64
-          path: unity-win64
-
-      - name: Download Unity switch artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: unity-switch
-          path: unity-switch
-
-      - name: Download Unity ps5 artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: unity-ps5
-          path: unity-ps5
-
-      - name: Download Unity xbox artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: unity-xbox
-          path: unity-xbox
+          name: unity
+          path: unity
 
       - name: Copy for Unity
         run: |
-          mkdir dist/SDK/unity/Assets
-          mkdir dist/SDK/unity/Assets/StreamingAssets
-          cp game/main.ray dist/SDK/unity/Assets/StreamingAssets/
-          mkdir dist/SDK/unity/Assets/Resources
-          cp external/PlayfieldEngine/external/StratoHAL/src/PlayfieldScript.cs dist/SDK/unity/Assets/
-          cp external/PlayfieldEngine/external/StratoHAL/src/NormalShader.shader dist/SDK/unity/Assets/Resources/
-          cp external/PlayfieldEngine/external/StratoHAL/src/AddShader.shader dist/SDK/unity/Assets/Resources/
-          cp external/PlayfieldEngine/external/StratoHAL/src/DimShader.shader dist/SDK/unity/Assets/Resources/
-          cp external/PlayfieldEngine/external/StratoHAL/src/RuleShader.shader dist/SDK/unity/Assets/Resources/
-          cp external/PlayfieldEngine/external/StratoHAL/src/MeltShader.shader dist/SDK/unity/Assets/Resources/
-          cp external/PlayfieldEngine/external/StratoHAL/src/MainScene.unity dist/SDK/unity/Assets/
-          mkdir dist/SDK/unity/Assets/Plugins
-          mkdir dist/SDK/unity/Assets/Plugins/x86_64
-          mkdir dist/SDK/unity/Assets/Plugins/Switch
-          mkdir dist/SDK/unity/Assets/Plugins/PS5
-          mkdir dist/SDK/unity/Assets/Plugins/GameCoreXboxSeries
-          mkdir dist/SDK/unity/Assets/Plugins/Common
-          cp unity-win64/libsuika3.dll dist/SDK/unity/Assets/Plugins/x86_64/
-          cp unity-switch/libsuika3.a dist/SDK/unity/Assets/Plugins/Switch/
-          cp unity-ps5/libsuika3.a dist/SDK/unity/Assets/Plugins/PS5/
-          cp unity-xbox/suika3.lib dist/SDK/unity/Assets/Plugins/GameCoreXboxSeries/
-          cp docs/readme/unity.md dist/SDK/unity/
+          zip -x unity/Suika3-Unity.zip -d dist/SDK
 
       - name: Download mkdocs artifacts
         uses: actions/download-artifact@v4
@@ -808,7 +712,7 @@ jobs:
 
       - name: Copy documents
         run: |
-          tar xzf mkdocs/documents.tar.gz -C dist/SDK/
+          zip -x mkdocs/Suika3-documents.zip -C dist/SDK/
           cp README.md dist/SDK/
 
       - name: Get current date
@@ -825,16 +729,25 @@ jobs:
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: CI-${{ env.DATE }}-${{ env.SHORT_SHA }}
           name: Suika3-CI-${{ env.DATE }}-${{ env.SHORT_SHA }}
           prerelease: true
           files: |
             Suika3-SDK-Full.zip
-            windows/build/windows-vs2022-x64/Release/suika3.exe
-            macos/build-macos/Suika3.dmg
-            flatpak-x86_64/Suika3-x86_64.flatpak
+            windows/suika3-win64.exe
+            mingw/suika3-win32.exe
+            macos/Suika3.dmg
+            macos/Suika3-macOS-Xcode.zip
+            linux/Suika3-x86_64.flatpak
+            linux/Suika3-aarch64.flatpak
+            macos/Suika3-iOS-Xcode.zip
+            android/Suika3-Android-Studio.zip
+            openharmony/Suika3-OpenHarmony-DevEco.zip
+            wasm/suika3-wasm.html
+            unity/Suika3-Unity.zip
+
           body: |
             - This is an automated build from CI and is not an official release.
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
