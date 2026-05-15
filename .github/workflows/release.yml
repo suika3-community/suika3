@@ -254,37 +254,37 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-  build-flatpak-aarch64:
-    if: |
-      github.event_name != 'push' ||
-      !contains(github.event.head_commit.message, '[docs]')
-    runs-on: ubuntu-24.04-arm64
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install deps
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y flatpak-builder
-
-      - name: Build flatpak
-        run: |
-          yes | flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-          flatpak install --user -y flathub org.freedesktop.Sdk//25.08
-          flatpak install --user -y flathub org.freedesktop.Platform//25.08
-          flatpak install --user -y flathub org.freedesktop.Platform.GStreamer.openmpt//25.08
-          flatpak-builder --user -y --repo=myrepo --force-clean build-dir-aarch64 ./resources/flatpak/vn.suika3.engine.yml
-          flatpak build-bundle myrepo Suika3-aarch64.flatpak vn.suika3.engine --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: flatpak-aarch64
-          path: |
-            Suika3-aarch64.flatpak
-          if-no-files-found: error
-          retention-days: 7
+#  build-flatpak-aarch64:
+#    if: |
+#      github.event_name != 'push' ||
+#      !contains(github.event.head_commit.message, '[docs]')
+#    runs-on: ubuntu-24.04-arm64
+#
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - name: Install deps
+#        run: |
+#          sudo apt-get update
+#          sudo apt-get install -y flatpak-builder
+#
+#      - name: Build flatpak
+#        run: |
+#          yes | flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+#          flatpak install --user -y flathub org.freedesktop.Sdk//25.08
+#          flatpak install --user -y flathub org.freedesktop.Platform//25.08
+#          flatpak install --user -y flathub org.freedesktop.Platform.GStreamer.openmpt//25.08
+#          flatpak-builder --user -y --repo=myrepo --force-clean build-dir-aarch64 ./resources/flatpak/vn.suika3.engine.yml
+#          flatpak build-bundle myrepo Suika3-aarch64.flatpak vn.suika3.engine --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo
+#
+#      - name: Upload artifact
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: flatpak-aarch64
+#          path: |
+#            Suika3-aarch64.flatpak
+#          if-no-files-found: error
+#          retention-days: 7
 
   build-wasm:
     if: |
@@ -571,7 +571,6 @@ jobs:
       - build-windows-mingw-w64
       - build-macos
       - build-flatpak-x86_64
-      - build-flatpak-aarch64
       - build-wasm
       - build-android
       - build-openharmony
