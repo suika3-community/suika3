@@ -366,6 +366,7 @@
             "cacheVariables": {
                 "CMAKE_OSX_DEPLOYMENT_TARGET": "10.11",
                 "PLAYFIELD_TARGET_MACOS_CLI":  "ON",
+                "PLAYFIELD_ENABLE_INSTALL":    "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
                 "PLAYFIELD_ENABLE_BIN":        "ON",
@@ -402,6 +403,7 @@
             "binaryDir":      "${sourceDir}/build-linux",
             "cacheVariables": {
                 "PLAYFIELD_TARGET_LINUX":      "ON",
+                "PLAYFIELD_ENABLE_INSTALL":    "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_BIN":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",

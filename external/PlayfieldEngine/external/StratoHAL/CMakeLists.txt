@@ -303,7 +303,7 @@ if(   STRATO_TARGET_LINUX
   find_library(ALSA_LIBRARY asound REQUIRED)
 endif()
 
-# GBM and DRM
+# DRI
 if(STRATO_TARGET_LINUX_DRI)
   find_library(GBM_LIBRARY gbm REQUIRED)
   find_library(DRM_LIBRARY drm REQUIRED)
@@ -493,7 +493,7 @@ if(   STRATO_TARGET_LINUX_WAYLAND
     )
 endif()
 
-# GBM, OpenGL ES 2.0
+# DRI, OpenGL ES 2.0
 if(STRATO_TARGET_LINUX_DRI)
   set(STRATO_SOURCES
       src/image.c
@@ -919,7 +919,7 @@ if(   STRATO_TARGET_LINUX
   target_compile_definitions(strato PRIVATE HAL_USE_WAYLAND)
 endif()
 
-# GBM
+# DRI
 if(STRATO_TARGET_LINUX_DRI)
   target_include_directories(strato PRIVATE /usr/include/libdrm)
 endif()
@@ -1151,7 +1151,7 @@ if(   STRATO_TARGET_LINUX
   )
 endif()
 
-# GBM
+# DRI
 if(STRATO_TARGET_LINUX_DRI)
   target_link_libraries(
     strato
