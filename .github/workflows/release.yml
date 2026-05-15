@@ -219,7 +219,7 @@ jobs:
             -library build-ios-device/libplayfield.a -headers include \
             -library build-ios-simulator/libplayfield.a -headers include \
             -output Playfield.xcframework
-          tar czf Playfield.xcframework.tar.gz Playfield.xcframework
+          zip -r Playfield.xcframework.zip Playfield.xcframework
 
       - name: Build macOS project
         run: |
@@ -294,6 +294,7 @@ jobs:
           name: macos
           path: |
             Playfield.dmg
+            Playfield.xcframework.zip
             Playfield-macOS-Xcode.zip
             Playfield-iOS-Xcode.zip
             playfield-macos-universal.tar.gz
@@ -893,11 +894,17 @@ jobs:
           name: Playfield-${{ env.DATE }}-${{ env.SHORT_SHA }}
 
           body: |
+            Playfield Engine
+            ================
+            
             This is an automated nightly build. Not an official release.
+            
+            Playfield Engine is a framework to build a custom 2D game engine.
+            It has a scripting language with a high-performance runtime, and runs virtually everywhere.
             
             | OS          | File                               | Type                       | Description                    |
             |-------------|------------------------------------|----------------------------|--------------------------------|
-            | Full        | Playfiled-Full-SDK.zip             | ZIP                        | Full Distribution              |
+            | Full        | Playfield-SDK-Full.zip             | ZIP                        | Full Distribution              |
             | Windows     | playfield-win64.exe                | Executable                 | Windows 7+ 64-bit              |
             | Windows     | playfield-win32.exe                | Executable                 | Windows XP+ 32-bit             |
             | Windows     | playfield-arm64.exe                | Executable                 | Windows 10+ Arm64              |
@@ -919,11 +926,11 @@ jobs:
             | Documents   | playfield-documents.zip            | ZIP                        | Documents                      |
 
           files: |
-            Playfield-Full-SDK.zip
+            Playfield-SDK-Full.zip
             windows/playfield-win64.exe
             mingw/playfield-win32.exe
             windows/playfield-arm64.exe
-            windows/Playfield.1.0.0.nupgk
+            windows/Playfield.1.0.0.nupkg
             mingw/playfield-mingw-w64.tar.gz
             macos/Playfield.dmg
             macos/Playfield-macOS-Xcode.zip

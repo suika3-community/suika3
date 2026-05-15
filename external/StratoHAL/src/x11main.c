@@ -245,7 +245,6 @@ static void event_button_release(XEvent *event);
 static void event_motion_notify(XEvent *event);
 static void event_resize(XEvent *event);
 static void update_viewport_size(int width, int height);
-static Bool want_configure(Display* d, XEvent* ev, XPointer arg);
 
 /*
  * Main
@@ -992,8 +991,8 @@ set_icon(void)
         }
         data[0] = (unsigned long)width;
         data[1] = (unsigned long)height;
-        for (y = 0; y < height; y++) {
-                for (x = 0; x < width; x++) {
+        for (y = 0; y < (int)height; y++) {
+                for (x = 0; x < (int)width; x++) {
                         unsigned long p;
                         unsigned long m;
                         unsigned long r, g, b, a;
@@ -1019,7 +1018,7 @@ set_icon(void)
 			32,
                         PropModeReplace,
                         (unsigned char *)data,
-                        2 + width * height);
+                        (int)(2 + width * height));
 
         free(data);
         XDestroyImage(img);
@@ -1538,14 +1537,14 @@ event_button_press(
 	case Button1:
 		hal_callback.on_mouse_press(
 			HAL_MOUSE_LEFT,
-			(int)((event->xbutton.x - mouse_ofs_x) * mouse_scale),
-			(int)((event->xbutton.y - mouse_ofs_y) * mouse_scale));
+			(int)((float)(event->xbutton.x - mouse_ofs_x) * mouse_scale),
+			(int)((float)(event->xbutton.y - mouse_ofs_y) * mouse_scale));
 		break;
 	case Button3:
 		hal_callback.on_mouse_press(
 			HAL_MOUSE_RIGHT,
-			(int)((event->xbutton.x - mouse_ofs_x) * mouse_scale),
-			(int)((event->xbutton.y - mouse_ofs_y) * mouse_scale));
+			(int)((float)(event->xbutton.x - mouse_ofs_x) * mouse_scale),
+			(int)((float)(event->xbutton.y - mouse_ofs_y) * mouse_scale));
 		break;
 	case Button4:
 		hal_callback.on_key_press(HAL_KEY_UP);
@@ -1570,14 +1569,14 @@ event_button_release(
 	case Button1:
 		hal_callback.on_mouse_release(
 			HAL_MOUSE_LEFT,
-			(int)((event->xbutton.x - mouse_ofs_x) * mouse_scale),
-			(int)((event->xbutton.y - mouse_ofs_y) * mouse_scale));
+			(int)((float)(event->xbutton.x - mouse_ofs_x) * mouse_scale),
+			(int)((float)(event->xbutton.y - mouse_ofs_y) * mouse_scale));
 		break;
 	case Button3:
 		hal_callback.on_mouse_release(
 			HAL_MOUSE_RIGHT,
-			(int)((event->xbutton.x - mouse_ofs_x) * mouse_scale),
-			(int)((event->xbutton.y - mouse_ofs_y) * mouse_scale));
+			(int)((float)(event->xbutton.x - mouse_ofs_x) * mouse_scale),
+			(int)((float)(event->xbutton.y - mouse_ofs_y) * mouse_scale));
 		break;
 	}
 }
@@ -1587,8 +1586,8 @@ static void event_motion_notify(XEvent *event)
 {
 	/* Call an event handler. */
 	hal_callback.on_mouse_move(
-		(int)((event->xbutton.x - mouse_ofs_x) * mouse_scale),
-		(int)((event->xbutton.y - mouse_ofs_y) * mouse_scale));
+		(int)((float)(event->xbutton.x - mouse_ofs_x) * mouse_scale),
+		(int)((float)(event->xbutton.y - mouse_ofs_y) * mouse_scale));
 }
 
 /* Process a ConfigureNotify event. */
@@ -2016,10 +2015,10 @@ hal_render_image_cross_x11(
 {
 	opengl_render_image_cross(src1_img,
 				  src2_img,
-				  src1_left,
-				  src1_top,
-				  src2_left,
-				  src2_top,
+				  (int)src1_left,
+				  (int)src1_top,
+				  (int)src2_left,
+				  (int)src2_top,
 				  alpha);
 }
 
@@ -2265,7 +2264,7 @@ hal_enter_full_screen_mode_x11(void)
 	xev.xclient.message_type = wm_state;
 	xev.xclient.format = 32;
 	xev.xclient.data.l[0] = 1;
-	xev.xclient.data.l[1] = fs_atom;
+	xev.xclient.data.l[1] = (long)fs_atom;
 	xev.xclient.data.l[2] = 0; // no second property
 	xev.xclient.data.l[3] = 1;
 
@@ -2300,7 +2299,7 @@ hal_leave_full_screen_mode_x11(void)
 	xev.xclient.message_type = wm_state;
 	xev.xclient.format = 32;
 	xev.xclient.data.l[0] = 0;
-	xev.xclient.data.l[1] = fs_atom;
+	xev.xclient.data.l[1] = (long)fs_atom;
 	xev.xclient.data.l[2] = 0;
 	xev.xclient.data.l[3] = 1;
 

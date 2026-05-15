@@ -37,7 +37,7 @@ static bool system_load_file(NoctEnv *env, const char *fname, char **data, size_
 struct ffi_item {
 	const char *global_name;
 	const char *field_name;
-	int param_count;
+	uint32_t param_count;
 	const char *param[NOCT_ARG_MAX];
 	bool (*cfunc)(NoctEnv *env);
 };
@@ -88,7 +88,7 @@ noct_register_api_system(
 	NoctEnv *env)
 {
 	NoctValue dict;
-	int i;
+	size_t i;
 
 	/* Make a global variable "System". */
 	if (!noct_make_empty_dict(env, &dict))
@@ -150,7 +150,7 @@ cfunc_System_import(
 			return false;
 	} else {
 		/* It's a bytecode file. */
-		if (!noct_register_bytecode(env, (void *)data, len))
+		if (!noct_register_bytecode(env, (void *)data, (uint32_t)len))
 			return false;
 	}
 
@@ -376,7 +376,7 @@ static bool system_load_file(NoctEnv *env, const char *fname, char **data, size_
 
 	/* Get the file size. */
 	fseek(fp, 0, SEEK_END);
-	*size = ftell(fp);
+	*size = (size_t)ftell(fp);
 	fseek(fp, 0, SEEK_SET);
 
 	/* Allocate a buffer. */

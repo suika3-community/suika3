@@ -1189,17 +1189,17 @@ DRAW_IMAGE_CROSS(
 			dst_a = 1.0f - (src1_a + src2_a);
 
 			/* Multiply the alpha value and the source pixel value. */
-			src_r = src1_a * (float)((src1_pix >> 16) & 0xff) +
-				src2_a * (float)((src2_pix >> 16) & 0xff);
-			src_g = src1_a * (float)((src1_pix >> 8) & 0xff) +
-				src2_a * (float)((src2_pix >> 8) & 0xff);
-			src_b = src1_a * (float)(src1_pix & 0xff) +
-				src2_a * (float)(src2_pix & 0xff);
+			src_r = (hal_pixel_t)(src1_a * (float)((src1_pix >> 16) & 0xff) +
+					      src2_a * (float)((src2_pix >> 16) & 0xff));
+			src_g = (hal_pixel_t)(src1_a * (float)((src1_pix >> 8) & 0xff) +
+					      src2_a * (float)((src2_pix >> 8) & 0xff));
+			src_b = (hal_pixel_t)(src1_a * (float)(src1_pix & 0xff) +
+					      src2_a * (float)(src2_pix & 0xff));
 
 			/* Multiply the alpha value and the destination pixel value. */
-			dst_r = dst_a * (float)((dst_pix >> 16) & 0xff);
-			dst_g = dst_a * (float)((dst_pix >> 8) & 0xff);
-			dst_b = dst_a * (float)(dst_pix & 0xff);
+			dst_r = (hal_pixel_t)(dst_a * (float)((dst_pix >> 16) & 0xff));
+			dst_g = (hal_pixel_t)(dst_a * (float)((dst_pix >> 8) & 0xff));
+			dst_b = (hal_pixel_t)(dst_a * (float)(dst_pix & 0xff));
 
 			/* Store to the destination. */
 			dst_image->pixels[y * dst_image->width + x] =

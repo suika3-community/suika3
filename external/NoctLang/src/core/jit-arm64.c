@@ -120,6 +120,8 @@ void
 jit_commit(
         struct rt_env *env)
 {
+        UNUSED_PARAMETER(env);
+
         /* Make code executable and non-writable. */
         jit_map_executable(jit_code_region, JIT_CODE_MAX);
 
@@ -340,6 +342,7 @@ jit_put_add_imm(
         return true;
 }
 
+#if 0
 /* lsl #4 */
 #define LSL_4(rd, rs)                   if (!jit_put_lsl4(ctx, rd, rs)) return false
 static bool
@@ -355,6 +358,7 @@ jit_put_lsl4(
                 return false;
         return true;
 }
+#endif
 
 /* cmp_imm */
 #define CMP_IMM(rs, imm)                if (!jit_put_cmp_imm(ctx, rs, imm)) return false
@@ -2152,7 +2156,7 @@ jit_patch_branch(
 {
         uint32_t *target_code;
         int offset;
-        int i;
+        uint32_t i;
 
         if (ctx->pc_entry_count == 0)
                 return true;

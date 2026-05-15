@@ -487,7 +487,7 @@ init_opengl(
 	int width,
 	int height)
 {
-#if defined(HAL_TARGET_ANDROID) || (HAL_TARGET_OPENHARMONY)
+#if defined(HAL_TARGET_ANDROID) || defined(HAL_TARGET_OPENHARMONY)
 	cleanup_opengl();
 #endif
 
@@ -704,7 +704,7 @@ setup_fragment_shader(
 
 	/* Setup "s_texture" in a fragment shader. */
 	sampler1_loc = glGetUniformLocation(*prog, "s_texture1");
-	glUniform1i(sampler2_loc, 0);
+	glUniform1i(sampler1_loc, 0);
 
 	/* Setup "s_rule" in a fragment shader if we use a second texture. */
 	if (use_second_texture) {
@@ -1106,22 +1106,30 @@ opengl_render_image_cross(
 {
 	draw_elements_3d(0,
 			 0,
-			 window_width,
+			 (float)window_width,
 			 0,
 			 0,
-			 window_height,
-			 window_width,
-			 window_height,
+			 (float)window_height,
+			 (float)window_width,
+			 (float)window_height,
 			 src1_image,
 			 src2_image,
-			 -src1_left,			-src1_top,
-			 window_width - src1_left, 	-src1_top,
-			 -src1_left,			window_height - src1_top,
-			 window_width - src1_left,	window_height - src1_top,
-			 -src2_left,                	-src2_top,
-			 window_width - src2_left,	-src2_top,
-			 -src2_left,			window_height - src2_top,
-			 window_width - src2_left,	window_height - src2_top,
+			 (float)-src1_left,
+			 (float)-src1_top,
+			 (float)(window_width - src1_left),
+			 (float)-src1_top,
+			 (float)-src1_left,
+			 (float)(window_height - src1_top),
+			 (float)(window_width - src1_left),
+			 (float)(window_height - src1_top),
+			 (float)-src2_left,
+			 (float)-src2_top,
+			 (float)(window_width - src2_left),
+			 (float)-src2_top,
+			 (float)-src2_left,
+			 (float)(window_height - src2_top),
+			 (float)(window_width - src2_left),
+			 (float)(window_height - src2_top),
 			 alpha,
 			 PIPELINE_CROSS);
 }
@@ -1156,22 +1164,22 @@ draw_elements(
 			 (float)(dst_top + dst_height),
 			 src_image,
 			 rule_image,
-			 src1_left,
-			 src1_top,
-			 src1_left + src1_width,
-			 src1_top,
-			 src1_left,
-			 src1_top + src1_height,
-			 src1_left + src1_width,
-			 src1_top + src1_height,
-			 src2_left,
-			 src2_top,
-			 src2_left + src2_width,
-			 src2_top,
-			 src2_left,
-			 src2_top + src2_height,
-			 src2_left + src2_width,
-			 src2_top + src2_height,
+			 (float)src1_left,
+			 (float)src1_top,
+			 (float)(src1_left + src1_width),
+			 (float)src1_top,
+			 (float)src1_left,
+			 (float)(src1_top + src1_height),
+			 (float)(src1_left + src1_width),
+			 (float)(src1_top + src1_height),
+			 (float)src2_left,
+			 (float)src2_top,
+			 (float)(src2_left + src2_width),
+			 (float)src2_top,
+			 (float)src2_left,
+			 (float)(src2_top + src2_height),
+			 (float)(src2_left + src2_width),
+			 (float)(src2_top + src2_height),
 			 alpha,
 			 pipeline);
 }
@@ -1206,14 +1214,14 @@ opengl_render_image_3d_normal(
 			 y4,
 			 src_image,
 			 NULL,
-			 src_left,
-			 src_top,
-			 src_left + src_width,
-			 src_top,
-			 src_left,
-			 src_top + src_height,
-			 src_left + src_width,
-			 src_top + src_height,
+			 (float)src_left,
+			 (float)src_top,
+			 (float)(src_left + src_width),
+			 (float)src_top,
+			 (float)src_left,
+			 (float)(src_top + src_height),
+			 (float)(src_left + src_width),
+			 (float)(src_top + src_height),
 			 0, 0, 0, 0, 0, 0, 0, 0,
 			 alpha,
 			 PIPELINE_NORMAL);
@@ -1249,14 +1257,14 @@ opengl_render_image_3d_add(
 			 y4,
 			 src_image,
 			 NULL,
-			 src_left,
-			 src_top,
-			 src_left + src_width,
-			 src_top,
-			 src_left,
-			 src_top + src_height,
-			 src_left + src_width,
-			 src_top + src_height,
+			 (float)src_left,
+			 (float)src_top,
+			 (float)(src_left + src_width),
+			 (float)src_top,
+			 (float)src_left,
+			 (float)(src_top + src_height),
+			 (float)(src_left + src_width),
+			 (float)(src_top + src_height),
 			 0, 0, 0, 0, 0, 0, 0, 0,
 			 alpha,
 			 PIPELINE_ADD);
@@ -1292,14 +1300,14 @@ opengl_render_image_3d_sub(
 			 y4,
 			 src_image,
 			 NULL,
-			 src_left,
-			 src_top,
-			 src_left + src_width,
-			 src_top,
-			 src_left,
-			 src_top + src_height,
-			 src_left + src_width,
-			 src_top + src_height,
+			 (float)src_left,
+			 (float)src_top,
+			 (float)(src_left + src_width),
+			 (float)src_top,
+			 (float)src_left,
+			 (float)(src_top + src_height),
+			 (float)(src_left + src_width),
+			 (float)(src_top + src_height),
 			 0, 0, 0, 0, 0, 0, 0, 0,
 			 alpha,
 			 PIPELINE_SUB);
@@ -1335,14 +1343,14 @@ opengl_render_image_3d_dim(
 			 y4,
 			 src_image,
 			 NULL,
-			 src_left,
-			 src_top,
-			 src_left + src_width,
-			 src_top,
-			 src_left,
-			 src_top + src_height,
-			 src_left + src_width,
-			 src_top + src_height,
+			 (float)src_left,
+			 (float)src_top,
+			 (float)(src_left + src_width),
+			 (float)src_top,
+			 (float)src_left,
+			 (float)(src_top + src_height),
+			 (float)(src_left + src_width),
+			 (float)(src_top + src_height),
 			 0, 0, 0, 0, 0, 0, 0, 0,
 			 alpha,
 			 PIPELINE_DIM);
@@ -1374,6 +1382,11 @@ opengl_render_image_cross_3d(
     float s2_tx[4], s2_ty[4];
     float screen_x[] = { 0.0f, (float)window_width, 0.0f, (float)window_width };
     float screen_y[] = { 0.0f, 0.0f, (float)window_height, (float)window_height };
+
+    UNUSED_PARAMETER(src1_x4);
+    UNUSED_PARAMETER(src1_y4);
+    UNUSED_PARAMETER(src2_x4);
+    UNUSED_PARAMETER(src2_y4);
 
     {
         float dx1 = src1_x2 - src1_x1;

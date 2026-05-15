@@ -101,7 +101,6 @@ static int last_mouse_y;
 static struct wl_display *wl_dpy;
 static struct wl_compositor *wl_compositor;
 static struct wl_surface *wl_surface;
-static struct xdg_surface *xdg_surface;
 static struct wl_egl_window *wlegl_win;
 static struct wl_seat *wl_seat;
 static struct wl_pointer *wl_pointer;
@@ -146,17 +145,12 @@ static void init_locale(void);
 static bool open_log_file(void);
 static void close_log_file(void);
 static bool open_display(void);
-static void set_rotation(void);
 static void close_display(void);
 static void cleanup_hal(void);
-static void destroy_window(void);
-static void destroy_icon_image(void);
 static void run_game_loop(void);
 static bool run_frame(void);
 static void render_video_frame(void);
-static void flip(void);
 static bool wait_for_next_frame(void);
-static bool next_event(void);
 static void update_viewport_size(int width, int height);
 static void seat_capabilities(void *data, struct wl_seat *seat, uint32_t caps);
 static void seat_name(void *data, struct wl_seat *seat, const char *name);
@@ -172,10 +166,10 @@ static void pointer_leave(void *data, struct wl_pointer *pointer, uint32_t seria
 static void pointer_motion(void *data, struct wl_pointer *pointer, uint32_t time, wl_fixed_t sx, wl_fixed_t sy);
 static void pointer_button(void *data, struct wl_pointer *pointer, uint32_t serial, uint32_t time, uint32_t button, uint32_t state);
 static void pointer_axis(void *data, struct wl_pointer *pointer, uint32_t time, uint32_t axis, wl_fixed_t value);
-static void pointer_frame(void *data, struct wl_pointer *pointer) { /* no-op */ }
-static void pointer_axis_source(void *data, struct wl_pointer *pointer, uint32_t axis_source) { /* no-op */ }
-static void pointer_axis_stop(void *data, struct wl_pointer *pointer, uint32_t time, uint32_t axis) { /* no-op */ }
-static void pointer_axis_discrete(void *data, struct wl_pointer *pointer, uint32_t axis, int32_t discrete) { /* no-op */ }
+static void pointer_frame(void *, struct wl_pointer *) { /* no-op */ }
+static void pointer_axis_source(void *, struct wl_pointer *, uint32_t) { /* no-op */ }
+static void pointer_axis_stop(void *, struct wl_pointer *, uint32_t, uint32_t) { /* no-op */ }
+static void pointer_axis_discrete(void *, struct wl_pointer *, uint32_t, int32_t) { /* no-op */ }
 static void keyboard_keymap(void *data, struct wl_keyboard *keyboard, uint32_t format, int fd, uint32_t size);
 static void keyboard_enter(void *data, struct wl_keyboard *keyboard, uint32_t serial, struct wl_surface *surface, struct wl_array *keys);
 static void keyboard_leave(void *data, struct wl_keyboard *keyboard, uint32_t serial, struct wl_surface *surface);
@@ -896,13 +890,13 @@ handle_configure(
 	static int last_width = -1;
 	static int last_height = -1;
 	int width, height;
-	int orig_x, orig_y;
-	int viewport_width, viewport_height;
 	struct libdecor_state *state;
 	enum libdecor_window_state window_state;
 
+	UNUSED_PARAMETER(user_data);
+
 	if (libdecor_configuration_get_window_state(configuration, &window_state)) {
-		bool is_maximized = (window_state & LIBDECOR_WINDOW_STATE_MAXIMIZED) != 0;
+		/* bool is_maximized = (window_state & LIBDECOR_WINDOW_STATE_MAXIMIZED) != 0; */
 		bool is_now_fullscreen = (window_state & LIBDECOR_WINDOW_STATE_FULLSCREEN) != 0;
 		if (!is_full_screen && is_now_fullscreen)
 			hal_enter_full_screen_mode();
@@ -955,6 +949,8 @@ handle_decor_error(
         enum libdecor_error error,
         const char *message)
 {
+	UNUSED_PARAMETER(context);
+
 	hal_log_error("libdecor error %d: %s", (int)error, message ? message : "(null)");
 }
 
@@ -963,6 +959,9 @@ handle_close(
 	struct libdecor_frame *frame,
 	void *user_data)
 {
+	UNUSED_PARAMETER(frame);
+	UNUSED_PARAMETER(user_data);
+
 	is_close_requested = true;
 }
 
@@ -1009,6 +1008,8 @@ pointer_enter(
 	UNUSED_PARAMETER(pointer);
 	UNUSED_PARAMETER(serial);
 	UNUSED_PARAMETER(surface);
+	UNUSED_PARAMETER(sx);
+	UNUSED_PARAMETER(sy);
 }
 
 static void
@@ -1080,6 +1081,8 @@ pointer_axis(
 	UNUSED_PARAMETER(data);
 	UNUSED_PARAMETER(pointer);
 	UNUSED_PARAMETER(time);
+	UNUSED_PARAMETER(axis);
+	UNUSED_PARAMETER(value);
 }
 
 static void
@@ -1090,6 +1093,11 @@ keyboard_keymap(
 	int fd,
 	uint32_t size)
 {
+	UNUSED_PARAMETER(data);
+	UNUSED_PARAMETER(keyboard);
+	UNUSED_PARAMETER(format);
+	UNUSED_PARAMETER(size);
+
 	close(fd);
 }
 
@@ -1101,6 +1109,11 @@ keyboard_enter(
 	struct wl_surface *surface,
 	struct wl_array *keys)
 {
+	UNUSED_PARAMETER(data);
+	UNUSED_PARAMETER(keyboard);
+	UNUSED_PARAMETER(serial);
+	UNUSED_PARAMETER(surface);
+	UNUSED_PARAMETER(keys);
 }
 
 static void
@@ -1110,6 +1123,10 @@ keyboard_leave(
 	uint32_t serial,
 	struct wl_surface *surface)
 {
+	UNUSED_PARAMETER(data);
+	UNUSED_PARAMETER(keyboard);
+	UNUSED_PARAMETER(serial);
+	UNUSED_PARAMETER(surface);
 }
 
 static void
@@ -1122,10 +1139,14 @@ keyboard_key(
 	uint32_t state)
 {
 	static bool is_alt_pressed;
-
 	int keycode;
 
-	keycode = get_keycode(key);
+	UNUSED_PARAMETER(data);
+	UNUSED_PARAMETER(keyboard);
+	UNUSED_PARAMETER(serial);
+	UNUSED_PARAMETER(time);
+
+	keycode = get_keycode((int)key);
 
 	if (keycode == HAL_KEY_ALT) {
 		if (state == WL_KEYBOARD_KEY_STATE_PRESSED)
@@ -1244,6 +1265,13 @@ keyboard_modifiers(
 	uint32_t mods_locked,
 	uint32_t group)
 {
+	UNUSED_PARAMETER(data);
+	UNUSED_PARAMETER(keyboard);
+	UNUSED_PARAMETER(serial);
+	UNUSED_PARAMETER(mods_depressed);
+	UNUSED_PARAMETER(mods_latched);
+	UNUSED_PARAMETER(mods_locked);
+	UNUSED_PARAMETER(group);
 }
 
 static void
@@ -1253,6 +1281,10 @@ keyboard_repeat_info(
 	int32_t rate,
 	int32_t delay)
 {
+	UNUSED_PARAMETER(data);
+	UNUSED_PARAMETER(keyboard);
+	UNUSED_PARAMETER(rate);
+	UNUSED_PARAMETER(delay);
 }
 
 /*
@@ -1632,10 +1664,10 @@ hal_render_image_cross_wl(
 {
 	opengl_render_image_cross(src1_img,
 				  src2_img,
-				  src1_left,
-				  src1_top,
-				  src2_left,
-				  src2_top,
+				  (int)src1_left,
+				  (int)src1_top,
+				  (int)src2_left,
+				  (int)src2_top,
 				  alpha);
 }
 
