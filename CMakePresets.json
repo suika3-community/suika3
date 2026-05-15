@@ -564,6 +564,25 @@
             }
         },
         {
+            "name":           "linux-debug",
+            "displayName":    "Linux",
+            "generator":      "Ninja",
+           "binaryDir":      "${sourceDir}/build-linux-debug",
+            "cacheVariables": {
+                "SUIKA_TARGET_LINUX":          "ON",
+                "SUIKA_ENABLE_INSTALL":        "ON",
+                "SUIKA_ENABLE_FREEDESKTOP":    "ON",
+                "SUIKA_ENABLE_JIT":            "ON",
+                "SUIKA_ENABLE_I18N":           "ON",
+                "SUIKA_ENABLE_PACK":           "ON",
+                "SUIKA_ENABLE_BCC":            "ON",
+                "SUIKA_ENABLE_AOTC":           "ON",
+                "SUIKA_ENABLE_GST":            "ON",
+                "SUIKA_ENABLE_PORTAL":         "ON",
+                "SUIKA_ENABLE_UNSAFE":         "ON"
+            }
+        },
+        {
             "name":           "linux-debian",
             "displayName":    "Linux Debian",
             "generator":      "Unix Makefiles",
@@ -637,7 +656,7 @@
             }
         },
         {
-            "name":           "linux-gbm-rot90",
+            "name":           "linux-dri-rot90",
             "displayName":    "Linux DRI Framebuffer (OpenGL)",
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-linux-dri-rot90",
@@ -1177,275 +1196,318 @@
     "buildPresets": [
         {
             "name": "windows-vs2022-x86",
-            "configurePreset": "windows-vs2022-x86"
+            "configurePreset": "windows-vs2022-x86",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-vs2022-x64",
-            "configurePreset": "windows-vs2022-x64"
+            "configurePreset": "windows-vs2022-x64",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-vs2022-arm64",
-            "configurePreset": "windows-vs2022-arm64"
+            "configurePreset": "windows-vs2022-arm64",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-vs2022-x64-console",
-            "configurePreset": "windows-vs2022-x64-console"
+            "configurePreset": "windows-vs2022-x64-console",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-vs2022-x64-launcher",
-            "configurePreset": "windows-vs2022-x64-launcher"
+            "configurePreset": "windows-vs2022-x64-launcher",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-vs2022-gdk-desktop",
-            "configurePreset": "windows-vs2022-gdk-desktop"
+            "configurePreset": "windows-vs2022-gdk-desktop",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-vs2022-gdk-xbox-xs",
-            "configurePreset": "windows-vs2022-gdk-xbox-xs"
+            "configurePreset": "windows-vs2022-gdk-xbox-xs",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-vs2022-uwp",
-            "configurePreset": "windows-vs2022-uwp"
+            "configurePreset": "windows-vs2022-uwp",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-vs2026-x86",
-            "configurePreset": "windows-vs2026-x86"
+            "configurePreset": "windows-vs2026-x86",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-vs2026-x64",
-            "configurePreset": "windows-vs2026-x64"
+            "configurePreset": "windows-vs2026-x64",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-vs2026-x64-pdb",
-            "configurePreset": "windows-vs2026-x64-pdb"
-        },
-        {
-            "name": "windows-vs2026-x64-debug",
-            "configurePreset": "windows-vs2026-x64-debug"
+            "configurePreset": "windows-vs2026-x64-pdb",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-vs2026-arm64",
-            "configurePreset": "windows-vs2026-arm64"
-        },
-        {
-            "name": "windows-vs2026-arm64-debug",
-            "configurePreset": "windows-vs2026-arm64-debug"
+            "configurePreset": "windows-vs2026-arm64",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-vs2026-console-x64",
-            "configurePreset": "windows-vs2026-console-x64"
+            "configurePreset": "windows-vs2026-console-x64",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-vs2026-launcher-x64",
-            "configurePreset": "windows-vs2026-launcher-x64"
+            "configurePreset": "windows-vs2026-launcher-x64",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-vs2026-gdk-desktop",
-            "configurePreset": "windows-vs2026-gdk-desktop"
+            "configurePreset": "windows-vs2026-gdk-desktop",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-vs2026-gdk-xbox-xs",
-            "configurePreset": "windows-vs2026-gdk-xbox-xs"
+            "configurePreset": "windows-vs2026-gdk-xbox-xs",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-mingw-x86",
-            "configurePreset": "windows-mingw-x86"
+            "configurePreset": "windows-mingw-x86",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-mingw-x86_64",
-            "configurePreset": "windows-mingw-x86_64"
+            "configurePreset": "windows-mingw-x86_64",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-mingw-x86_64-console",
-            "configurePreset": "windows-mingw-x86_64-console"
+            "configurePreset": "windows-mingw-x86_64-console",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-mingw-arm64",
-            "configurePreset": "windows-mingw-arm64"
+            "configurePreset": "windows-mingw-arm64",
+	    "configuration":   "Release"
         },
         {
             "name": "windows-mingw-win95",
-            "configurePreset": "windows-mingw-win95"
+            "configurePreset": "windows-mingw-win95",
+	    "configuration":   "Release"
         },
         {
             "name": "macos",
-            "configurePreset": "macos"
+            "configurePreset": "macos",
+	    "configuration":   "Release"
         },
         {
             "name": "macos-cli",
-            "configurePreset": "macos-cli"
-        },
-        {
-            "name": "macos-cli-debug",
-            "configurePreset": "macos-cli-debug"
+            "configurePreset": "macos-cli",
+	    "configuration":   "Release"
         },
         {
             "name": "macos-lib",
-            "configurePreset": "macos-lib"
+            "configurePreset": "macos-lib",
+	    "configuration":   "Release"
         },
         {
             "name": "linux",
-            "configurePreset": "linux"
+            "configurePreset": "linux",
+	    "configuration":   "Release"
         },
         {
             "name": "linux-debug",
-            "configurePreset": "linux-debug"
+            "configurePreset": "linux",
+	    "configuration":   "Debug"
         },
         {
             "name": "linux-debian",
-            "configurePreset": "linux-debian"
+            "configurePreset": "linux-debian",
+	    "configuration":   "Release"
         },
         {
             "name": "linux-x11",
-            "configurePreset": "linux-x11"
-        },
-        {
-            "name": "linux-x11-debug",
-            "configurePreset": "linux-x11-debug"
+            "configurePreset": "linux-x11",
+	    "configuration":   "Release"
         },
         {
             "name": "linux-wayland",
-            "configurePreset": "linux-wayland"
+            "configurePreset": "linux-wayland",
+	    "configuration":   "Release"
         },
         {
-            "name": "linux-wayland-debug",
-            "configurePreset": "linux-wayland-debug"
+            "name": "linux-dri",
+            "configurePreset": "linux-dri",
+	    "configuration":   "Release"
         },
         {
-            "name": "linux-gbm",
-            "configurePreset": "linux-gbm"
-        },
-        {
-            "name": "linux-gbm-rot90",
-            "configurePreset": "linux-gbm-rot90"
+            "name": "linux-dri-rot90",
+            "configurePreset": "linux-dri-rot90",
+	    "configuration":   "Release"
         },
         {
             "name": "linux-x11soft",
-            "configurePreset": "linux-x11soft"
+            "configurePreset": "linux-x11soft",
+	    "configuration":   "Release"
         },
         {
             "name": "ios-device",
-            "configurePreset": "ios-device"
+            "configurePreset": "ios-device",
+	    "configuration":   "Release"
         },
         {
             "name": "ios-simulator",
-            "configurePreset": "ios-simulator"
+            "configurePreset": "ios-simulator",
+	    "configuration":   "Release"
         },
         {
             "name": "android-x86",
-            "configurePreset": "android-x86"
+            "configurePreset": "android-x86",
+	    "configuration":   "Release"
         },
         {
             "name": "android-x86_64",
-            "configurePreset": "android-x86_64"
+            "configurePreset": "android-x86_64",
+	    "configuration":   "Release"
         },
         {
             "name": "android-armv7",
-            "configurePreset": "android-armv7"
+            "configurePreset": "android-armv7",
+	    "configuration":   "Release"
         },
         {
             "name": "android-arm64",
-            "configurePreset": "android-arm64"
+            "configurePreset": "android-arm64",
+	    "configuration":   "Release"
         },
         {
             "name": "android-riscv64",
-            "configurePreset": "android-riscv64"
+            "configurePreset": "android-riscv64",
+	    "configuration":   "Release"
         },
         {
             "name": "openharmony-x86_64",
-            "configurePreset": "openharmony-x86_64"
+            "configurePreset": "openharmony-x86_64",
+	    "configuration":   "Release"
         },
         {
             "name": "openharmony-arm64",
-            "configurePreset": "openharmony-arm64"
+            "configurePreset": "openharmony-arm64",
+	    "configuration":   "Release"
         },
         {
             "name": "openharmony-armv7",
-            "configurePreset": "openharmony-armv7"
+            "configurePreset": "openharmony-armv7",
+	    "configuration":   "Release"
         },
         {
             "name": "wasm",
-            "configurePreset": "wasm"
+            "configurePreset": "wasm",
+	    "configuration":   "Release"
         },
         {
             "name": "wasm-local",
-            "configurePreset": "wasm-local"
+            "configurePreset": "wasm-local",
+	    "configuration":   "Release"
         },
         {
             "name": "unity-win64",
-            "configurePreset": "unity-win64"
+            "configurePreset": "unity-win64",
+	    "configuration":   "Release"
         },
         {
             "name": "unity-switch",
-            "configurePreset": "unity-switch"
+            "configurePreset": "unity-switch",
+	    "configuration":   "Release"
         },
         {
             "name": "unity-ps5",
-            "configurePreset": "unity-ps5"
+            "configurePreset": "unity-ps5",
+	    "configuration":   "Release"
         },
         {
             "name": "unity-xbox",
-            "configurePreset": "unity-xbox"
+            "configurePreset": "unity-xbox",
+	    "configuration":   "Release"
         },
         {
             "name": "freebsd",
-            "configurePreset": "freebsd"
+            "configurePreset": "freebsd",
+	    "configuration":   "Release"
         },
         {
             "name": "freebsd-x11",
-            "configurePreset": "freebsd-x11"
+            "configurePreset": "freebsd-x11",
+	    "configuration":   "Release"
         },
         {
             "name": "freebsd-wayland",
-            "configurePreset": "freebsd-wayland"
+            "configurePreset": "freebsd-wayland",
+	    "configuration":   "Release"
         },
         {
             "name": "freebsd-x11soft",
-            "configurePreset": "freebsd-x11soft"
+            "configurePreset": "freebsd-x11soft",
+	    "configuration":   "Release"
         },
         {
             "name": "netbsd",
-            "configurePreset": "netbsd"
+            "configurePreset": "netbsd",
+	    "configuration":   "Release"
         },
         {
             "name": "netbsd-x11osft",
-            "configurePreset": "netbsd-x11soft"
+            "configurePreset": "netbsd-x11soft",
+	    "configuration":   "Release"
         },
         {
             "name": "openbsd",
-            "configurePreset": "openbsd"
+            "configurePreset": "openbsd",
+	    "configuration":   "Release"
         },
         {
             "name": "openbsd-x11soft",
-            "configurePreset": "openbsd-x11soft"
+            "configurePreset": "openbsd-x11soft",
+	    "configuration":   "Release"
         },
         {
             "name": "solaris11",
-            "configurePreset": "solaris11"
+            "configurePreset": "solaris11",
+	    "configuration":   "Release"
         },
         {
             "name": "solaris10",
-            "configurePreset": "solaris10"
+            "configurePreset": "solaris10",
+	    "configuration":   "Release"
         },
         {
             "name": "aix",
-            "configurePreset": "aix"
+            "configurePreset": "aix",
+	    "configuration":   "Release"
         },
         {
             "name": "hpux",
-            "configurePreset": "hpux"
+            "configurePreset": "hpux",
+	    "configuration":   "Release"
         },
         {
             "name": "unix",
-            "configurePreset": "unix"
+            "configurePreset": "unix",
+	    "configuration":   "Release"
         },
         {
             "name": "haiku",
-            "configurePreset": "haiku"
+            "configurePreset": "haiku",
+	    "configuration":   "Release"
         },
         {
             "name": "pc98",
-            "configurePreset": "pc98"
+            "configurePreset": "pc98",
+	    "configuration":   "Release"
         }
     ]
 }
