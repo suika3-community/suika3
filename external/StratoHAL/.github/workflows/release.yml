@@ -8,6 +8,7 @@ on:
 
 jobs:
   build-windows:
+    name: Build for Visual Studio
     runs-on: windows-latest
     steps:
       - name: Checkout repository
@@ -15,9 +16,6 @@ jobs:
 
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
-
-      - name: Set up dependencies
-        run: git submodule update --init
 
       - name: x86
         run: |
@@ -65,10 +63,11 @@ jobs:
           retention-days: 7
 
   build-mingw:
+    name: Build for MinGW-w64
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Cache apt packages
         uses: actions/cache@v4
@@ -115,7 +114,7 @@ jobs:
           cp cmake/modules/FindStratoHAL.cmake out/x86_64-w64-mingw32/share/cmake/Modules/
 
           cd out
-          tar czf ../libstrato-mingw-w64.tar.gz *
+          tar czf ../strato-mingw-w64.tar.gz *
           cd ..
 
       - name: Upload artifact
@@ -123,11 +122,12 @@ jobs:
         with:
           name: mingw
           path: |
-            libstrato-mingw-w64.tar.gz
+            strato-mingw-w64.tar.gz
           if-no-files-found: error
           retention-days: 7
 
   build-macos:
+    name: Build for macOS and iOS
     runs-on: macos-latest
     steps:
       - name: Checkout repository
@@ -175,7 +175,7 @@ jobs:
           cp build-macos-arm64/stratopack.pc out/lib/pkgconfig/
           cp cmake/modules/FindStratoHAL.cmake out/share/cmake/Modules/
           cd out
-          tar czf ../libstrato-macos-universal.tar.gz *
+          tar czf ../strato-macos-universal.tar.gz *
           cd ..
 
       - name: Upload macOS
@@ -188,10 +188,11 @@ jobs:
           retention-days: 7
 
   build-linux:
+    name: Build for Linux
     runs-on: ubuntu-24.04
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Install deps
         run: |
@@ -231,7 +232,7 @@ jobs:
           cp build-linux/stratopack.pc out/lib/x86_64-linux-gnu/pkgconfig/
           cp cmake/modules/FindStratoHAL.cmake out/share/cmake/Modules/
           cd out
-          tar czf ../libstrato-linux-x86_64.tar.gz *
+          tar czf ../strato-linux-x86_64.tar.gz *
           cd ..
 
       - name: Upload artifact
@@ -239,23 +240,21 @@ jobs:
         with:
           name: linux
           path: |
-            libstrato-linux-x86_64.tar.gz
+            strato-linux-x86_64.tar.gz
           if-no-files-found: error
           retention-days: 7
 
   build-android:
+    name: Build for Android
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up dependencies
-        run: git submodule update --init
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Install deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake ninja-build flex bison
+          sudo apt-get install -y cmake ninja-build
 
       - name: Setup for Android
         uses: nttld/setup-ndk@v1
@@ -320,18 +319,16 @@ jobs:
           retention-days: 7
 
   build-openharmony:
+    name: Build for OpenHarmony
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up dependencies
-        run: git submodule update --init
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Install deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake ninja-build flex bison
+          sudo apt-get install -y cmake ninja-build
 
       - name: Download OpenHarmony SDK
         run: |
@@ -358,7 +355,7 @@ jobs:
           cp build-openharmony-x86_64/libstrato.a out/src/main/cpp/third_party/StratoHAL/lib/x86_64/
           cp resources/openharmony/FindStratoHAL.cmake out/src/main/cpp/
           cd out
-          tar czf ../libstrato-openharmony.tar.gz *
+          tar czf ../strato-openharmony.tar.gz *
           cd ..
 
       - name: Upload artifact
@@ -366,7 +363,7 @@ jobs:
         with:
           name: openharmony
           path: |
-            libstrato-openharmony.tar.gz
+            strato-openharmony.tar.gz
           if-no-files-found: error
           retention-days: 7
 
@@ -374,7 +371,8 @@ jobs:
     name: Build for Wasm
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup for Wasm
         uses: mymindstorm/setup-emsdk@v14
@@ -396,7 +394,7 @@ jobs:
           cp include/strato/c89compat.h out/include/strato/
           cp build-wasm/libstrato.a out/lib/
           cd out
-          tar czf ../libstrato-wasm.tar.gz *
+          tar czf ../strato-wasm.tar.gz *
           cd ..
 
       - name: Upload Wasm
@@ -404,20 +402,21 @@ jobs:
         with:
           name: wasm
           path: |
-            libstrato-wasm.tar.gz
+            strato-wasm.tar.gz
           if-no-files-found: error
           retention-days: 7
 
   build-unity:
+    name: Build for Unity
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Install apt deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake ninja-build flex bison mingw-w64
+          sudo apt-get install -y cmake ninja-build mingw-w64
 
       - name: Cache LLVM
         id: cache-llvm
@@ -461,7 +460,7 @@ jobs:
           cp build-unity-ps5/libstrato.a out/lib/PS5/
           cp build-unity-xbox/strato.lib out/lib/GameCoreXboxSeries/
           cd out
-          zip -r ../libstrato-unity.zip *
+          zip -r ../strato-unity.zip *
           cd ..
 
       - name: Upload artifact
@@ -469,11 +468,67 @@ jobs:
         with:
           name: unity
           path: |
-            libstrato-unity.zip
+            strato-unity.zip
           if-no-files-found: error
           retention-days: 7
 
-  zip:
+  build-pc98:
+    name: Build for NEC PC-9801
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake jlha-utils
+
+      - name: Cache Watcom
+        id: cache-watcom
+        uses: actions/cache@v4
+        with:
+          path: openwatcom-1.9
+          key: openwatcom-1.9
+
+      - name: Configure OpenWatcom
+        if: steps.cache-watcom.outputs.cache-hit != 'true'
+        run: |
+          wget https://noctvm.io/ci/openwatcom-1.9.tar.gz
+          tar xzf openwatcom-1.9.tar.gz
+
+      - name: Build
+        run: |
+          export WATCOM="$PWD/openwatcom-1.9"
+          export INCLUDE="$WATCOM/h"
+          export EDPATH="$WATCOM/eddat"
+          export PATH="$WATCOM/binl:$WATCOM/binw:$PATH"
+          echo "$WATCOM"
+          ls -lha "$WATCOM/binl"
+          command -v wcl386 || true
+          command -v wlink || true
+          cmake --preset pc98
+          cmake --build --preset pc98
+
+      - name: Make LZH
+        run: |
+          mkdir -p out/include/strato
+          mkdir -p out/lib
+          cp include/strato/strato.h out/include/strato/
+          cp include/strato/c89compat.h out/include/strato/
+          cp build-pc98/strato.lib out/lib/
+          cd out
+          jlha a ../strato-pc98.lzh *
+          cd ..
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: pc98
+          path: strato-pc98.lzh
+
+  release:
+    name: Create GitHub Release
     needs:
       - build-windows
       - build-mingw
@@ -483,9 +538,8 @@ jobs:
       - build-android
       - build-openharmony
       - build-unity
-
+      - build-pc98
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -538,6 +592,12 @@ jobs:
           name: unity
           path: unity
 
+      - name: Download PC98 artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: pc98
+          path: pc98
+
       - name: Get current date
         id: date
         run: echo "DATE=$(date +'%Y%m%d')" >> $GITHUB_ENV
@@ -547,32 +607,38 @@ jobs:
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: nightly-${{ env.DATE }}-${{ env.SHORT_SHA }}
           name: StratoHAL-${{ env.DATE }}-${{ env.SHORT_SHA }}
-          files: |
-            windows/StratoHAL.1.0.0.nupkg
-            mingw/libstrato-mingw.tar.gz
-            macos/StratoHAL.xcframework.zip
-            macos/libstrato-macos-universal.tar.gz
-            linux/libstrato-linux-x86_64.tar.gz
-            wasm/libstrato-wasm.tar.gz
-            android/StratoHAL.aar
-            openharmony/libstrato-openharmony.tar.gz
-
           body: |
+            StratoHAL 🌍🚀
+            ==============
+            
+            `StratoHAL` is a portable hardware abstraction layer (HAL) for game applications.
+
             This is an automated nightly build. Not an official release.
             
-            | OS          | File                             | Type             | Description                    |
-            |-------------|----------------------------------|------------------|--------------------------------|
-            | Windows     | StratoHAL.1.0.0.nupkg            | NuGet Package    | Visual Studio 2022+            |
-            | Windows     | libstrato-mingw-w64.tar.gz       | Tarball          | MinGW-w64                      |
-            | macOS       | StratoHAL.xcframework.zip        | Xcode Framework  | macOS and iOS, Xcode           |
-            | macOS       | libstrato-macos-universal.tar.gz | Tarball          | macOS (extract to /usr/local)  |
-            | Linux       | libstrato-linux-x86_64.tar.gz    | Tarball          | Linux (extract to /usr/local)  |
-            | Wasm        | libstrato-wasm.tar.gz            | Tarball          | Emscripten                     |
-            | Android     | StratoHAL.aar                    | AAR              | Android NDK                    |
-            | OpenHarmony | libstrato-openharmony.tar.gz     | Tarball          | OpenHarmony (HarmonyOS NEXT)   |
+            | OS          | File                             | Type             | Description                                  |
+            |-------------|----------------------------------|------------------|----------------------------------------------|
+            | Windows     | StratoHAL.1.0.0.nupkg            | NuGet Package    | Visual Studio 2022+                          |
+            | Windows     | strato-mingw-w64.tar.gz          | Tarball          | MinGW-w64                                    |
+            | macOS/iOS   | StratoHAL.xcframework.zip        | Xcode Framework  | macOS and iOS, Xcode                         |
+            | macOS       | strato-macos-universal.tar.gz    | Tarball          | macOS (extract to /usr/local)                |
+            | Linux       | strato-linux-x86_64.tar.gz       | Tarball          | Linux (extract to /usr/local)                |
+            | Android     | StratoHAL.aar                    | AAR              | Android NDK                                  |
+            | Wasm        | strato-wasm.tar.gz               | Tarball          | Emscripten                                   |
+            | OpenHarmony | strato-openharmony.tar.gz        | Tarball          | OpenHarmony (HarmonyOS NEXT)                 |
+            | PC-9801     | strato-pc98.lzh                  | Library          | PC-9801 MS-DOS DOS4GW                        |
 
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          files: |
+            windows/StratoHAL.1.0.0.nupkg
+            mingw/strato-mingw.tar.gz
+            macos/StratoHAL.xcframework.zip
+            macos/strato-macos-universal.tar.gz
+            linux/strato-linux-x86_64.tar.gz
+            android/StratoHAL.aar
+            wasm/strato-wasm.tar.gz
+            openharmony/strato-openharmony.tar.gz
+            pc98/strato-pc98.lzh
