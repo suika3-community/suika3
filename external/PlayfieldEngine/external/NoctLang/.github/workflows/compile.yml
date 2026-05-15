@@ -71,23 +71,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Cache apt packages
-        uses: actions/cache@v4
-        with:
-          path: /var/cache/apt/archives
-          key: ${{ runner.os }}-apt-${{ hashFiles('**/apt-packages.txt') }}
-
       - name: Set up dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake ninja-build
-
-      - name: Download mingw-w64-11.0
-        run: |
-          echo "Downloaing mingw-w64-11.0."
-          wget -q https://noctvm.io/ci/mingw-w64-11.0.tar.bz2
-          tar xJf mingw-w64-11.0.tar.bz2
-          echo "$PWD/mingw-w64-11.0/bin" >> $GITHUB_PATH
+          sudo apt-get install -y cmake ninja-build mingw-w64
 
       - name: Buld
         run: |
@@ -136,12 +123,27 @@ jobs:
           tar czf ../noct-mingw-w64.tar.gz *
           cd ..
 
+      - name: Download mingw-w64-11.0
+        run: |
+          echo "Downloaing mingw-w64-11.0."
+          wget -q https://noctvm.io/ci/mingw-w64-11.0.tar.bz2
+          tar xJf mingw-w64-11.0.tar.bz2
+          echo "$PWD/mingw-w64-11.0/bin" >> $GITHUB_PATH
+
+      - name: Buld for 32-bit
+        run: |
+          mv build-mingw-x86 build-mingw-x86-old
+          cmake --preset windows-mingw-x86
+          cmake --build --preset windows-mingw-x86
+          cp build-mingw-x86/noct.exe noct-win32.exe
+
       - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
           name: mingw
           path: |
             noct-mingw-w64.tar.gz
+            noct-win32.exe
 
   build-linux:
     name: Build for Linux
@@ -357,6 +359,7 @@ jobs:
             windows/noct-win64.exe
             windows/Noct.1.0.0.nupkg
             mingw/noct-mingw-w64.tar.gz
+            mingw/noct-win32.exe
             macos/Noct-XCFramework-macOS-iOS.zip
             macos/noct-macos-universal.tar.gz
             linux/noct-linux-x86_64.tar.gz
@@ -375,12 +378,13 @@ jobs:
             | OS      | File                           | Type             | Description                                          |
             |---------|--------------------------------|------------------|------------------------------------------------------|
             | Windows | noct-win64.exe                 | Executable       | Windows 7+ x64                                       |
+            | Windows | noct-win32.exe                 | Executable       | Windows XP+ x86                                      |
             | Windows | Noct.1.0.0.nupkg               | NuGet Package    | Visual Studio 2022+                                  |
             | Windows | noct-mingw-w64.tar.gz          | Tarball          | MinGW-w64 (extract to /)                             |
             | macOS   | Noct-XCFramework-macOS-iOS.zip | Xcode Framework  | macOS and iOS                                        |
             | macOS   | noct-macos-universal.tar.gz    | Tarball          | macOS (extract to /usr/local)                        |
             | Linux   | noct-linux-x86_64.tar.gz       | Tarball          | Linux (extract to /usr/local)                        |
-            | DOS     | noct-dos.exe                   | Executable       | DOS4GW: PC/AT, PC-9801, OS/2, Windows 3.1 - XP       |
+            | DOS     | noct-dos.exe                   | Executable       | DOS4GW: PC-9801, PC/AT, OS/2, Windows 3.1-XP         |
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
