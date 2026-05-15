@@ -228,13 +228,9 @@ if(NOT PLAYFIELD_ENABLE_DIST)
     set(NOCT_TARGET_DOS4G ON)
   endif()
 
-  # No `noct` CLI.
-  if(NOT NOCT_ENABLE_CLI)
-    set(NOCT_ENABLE_CLI OFF)
-  endif()
-
-  # No install.
-  set(NOCT_DISABLE_INSTALL ON)
+  # Others
+  set(NOCT_ENABLE_CLI OFF)
+  set(NOCT_ENABLE_INSTALL OFF)
 
   # Magic:
   #  merge object files that consists in libnoct.a into libplayfield.a.
@@ -534,10 +530,6 @@ if(NOT PLAYFIELD_ENABLE_DIST)
     set(
       PLAYFIELD_DEPS
       $<TARGET_OBJECTS:png>
-      $<TARGET_OBJECTS:jpeg>
-      $<TARGET_OBJECTS:vorbisfile>
-      $<TARGET_OBJECTS:vorbis>
-      $<TARGET_OBJECTS:ogg>
       $<TARGET_OBJECTS:freetype>
       $<TARGET_OBJECTS:z>
     )      

@@ -22,10 +22,10 @@ jobs:
           cmake --preset windows-vs2022-x86
           cmake --build --preset windows-vs2022-x86 --config Release
           cp out/build/windows-vs2022-x86/Release/playfield.exe playfield-win32.exe
-          cp out/build/windows-vs2022-x86/Release/playfield-web.exe playfield-aotcc.exe
-          cp out/build/windows-vs2022-x86/Release/playfield-web.exe playfield-bcc.exe
-          cp out/build/windows-vs2022-x86/Release/playfield-web.exe playfield-pack.exe
-          cp out/build/windows-vs2022-x86/Release/playfield-web.exe playfield-web.exe
+          cp out/build/windows-vs2022-x86/Release/playfield-aotc.exe ./
+          cp out/build/windows-vs2022-x86/Release/playfield-bcc.exe ./
+          cp out/build/windows-vs2022-x86/Release/playfield-pack.exe ./
+          cp out/build/windows-vs2022-x86/Release/playfield-web.exe ./
 
       - name: Build for x64
         run: |
@@ -641,6 +641,51 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
+  build-pc98:
+    name: Build for NEC PC-9801
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake
+
+      - name: Cache Watcom
+        id: cache-watcom
+        uses: actions/cache@v4
+        with:
+          path: openwatcom-1.9
+          key: openwatcom-1.9
+
+      - name: Configure OpenWatcom
+        if: steps.cache-watcom.outputs.cache-hit != 'true'
+        run: |
+          wget https://noctvm.io/ci/openwatcom-1.9.tar.gz
+          tar xzf openwatcom-1.9.tar.gz
+
+      - name: Build
+        run: |
+          export WATCOM="$PWD/openwatcom-1.9"
+          export INCLUDE="$WATCOM/h"
+          export EDPATH="$WATCOM/eddat"
+          export PATH="$WATCOM/binl:$WATCOM/binw:$PATH"
+          echo "$WATCOM"
+          ls -lha "$WATCOM/binl"
+          command -v wcl386 || true
+          command -v wlink || true
+          cmake --preset pc98
+          cmake --build --preset pc98
+          mv build-pc98/playfield.exe pf98.exe
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: pc98
+          path: pf98.exe
+
   build-mkdocs:
     name: Build documents
     runs-on: ubuntu-latest
@@ -679,6 +724,7 @@ jobs:
       - build-android
       - build-openharmony
       - build-unity
+      - build-pc98
       - build-mkdocs
     runs-on: ubuntu-latest
     steps:
@@ -776,12 +822,6 @@ jobs:
         run: |
           unzip openharmony/Playfield-OpenHarmony-DevEco.zip -d dist/SDK
 
-      - name: Download Unity artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: unity
-          path: unity
-
       - name: Download wasm artifacts
         uses: actions/download-artifact@v4
         with:
@@ -799,10 +839,27 @@ jobs:
 
           cp wasm/index.html playfield-wasm.html
 
+      - name: Download Unity artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: unity
+          path: unity
+
       - name: Copy for Unity
         run: |
           mkdir dist/SDK/unity
           unzip unity/Playfield-Unity.zip -d dist/SDK
+
+      - name: Download PC98 artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: pc98
+          path: pc98
+
+      - name: Copy for PC98
+        run: |
+          mkdir dist/SDK/msdos
+          unzip pc98/pf98.exe -d dist/SDK/msdos/
 
       - name: Download mkdocs artifacts
         uses: actions/download-artifact@v4
@@ -824,8 +881,8 @@ jobs:
 
       - name: Build ZIP
         run: |
-          mv dist "PlayfieldEngine"
-          7z a -tzip -mx=9 Playfield-SDK-Full.zip "Playfield
+          mv dist Playfield-Engine
+          7z a -tzip -mx=9 Playfield-SDK-Full.zip Playfield-Engine
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -838,31 +895,40 @@ jobs:
           body: |
             This is an automated nightly build. Not an official release.
             
-            | OS          | File                                               | Type                       | Description                    |
-            |-------------|----------------------------------------------------|----------------------------|--------------------------------|
-            | Full        | Playfiled-${{ env.DATE }}-${{ env.SHORT_SHA }}.zip | ZIP                        | Full Distribution              |
-            | Windows     | Playfield.1.0.0.nupkg                              | NuGet Package              | Visual Studio 2022+            |
-            | Windows     | playfield-mingw-w64.tar.gz                         | Tarball                    | MinGW-w64                      |
-            | macOS       | Playfield.xcframework.zip                          | Xcode Framework            | macOS and iOS, Xcode           |
-            | macOS       | Playfield-macOS-Xcode.zip                          | Xcode Project              | macOS Xcode Project            |
-            | macOS       | playfield-macos-universal.tar.gz                   | Tarball                    | macOS (extract to /usr/local)  |
-            | Linux       | Playfield-x86_64.AppImage                          | AppImage                   | Linux AppImage                 |
-            | Linux       | playfield-linux-x86_64.tar.gz                      | Tarball                    | Linux (extract to /usr/local)  |
-            | Wasm        | playfield-wasm.html                                | Wasm                       | Emscripten                     |
-            | Wasm        | playfield-wasm.tar.gz                              | Tarball                    | Emscripten                     |
-            | Android     | Playfield-Android-Studio.zip                       | Android Studio Project     | Android NDK                    |
-            | OpenHarmony | Playfield-OpenHarmony-DevEco.zip                   | OpenHarmony DevEco Project | OpenHarmony (HarmonyOS NEXT)   |
-            | Documents   | playfield-documents.zip                            | ZIP                        | Documents                      |
+            | OS          | File                               | Type                       | Description                    |
+            |-------------|------------------------------------|----------------------------|--------------------------------|
+            | Full        | Playfiled-Full-SDK.zip             | ZIP                        | Full Distribution              |
+            | Windows     | playfield-win64.exe                | Executable                 | Windows 7+ 64-bit              |
+            | Windows     | playfield-win32.exe                | Executable                 | Windows XP+ 32-bit             |
+            | Windows     | playfield-arm64.exe                | Executable                 | Windows 10+ Arm64              |
+            | Windows     | Playfield.1.0.0.nupkg              | NuGet Package              | Visual Studio 2022+            |
+            | Windows     | playfield-mingw-w64.tar.gz         | Tarball                    | MinGW-w64                      |
+            | macOS       | Playfield.dmg                      | Application                | macOS                          |
+            | macOS       | Playfield-macOS-Xcode.zip          | Xcode Project              | macOS Xcode Project            |
+            | macOS       | playfield-macos-universal.tar.gz   | Tarball                    | macOS (extract to /usr/local)  |
+            | macOS/iOS   | Playfield.xcframework.zip          | Xcode Framework            | macOS and iOS, Xcode           |
+            | Linux       | Playfield-x86_64.AppImage          | AppImage                   | Linux AppImage                 |
+            | Linux       | playfield-linux-x86_64.tar.gz      | Tarball                    | Linux (extract to /usr/local)  |
+            | iOS         | Playfield-iOS-Xcode.zip            | Xcode Project              | macOS Xcode Project            |
+            | Android     | Playfield-Android-Studio.zip       | Android Studio Project     | Android NDK                    |
+            | OpenHarmony | Playfield-OpenHarmony-DevEco.zip   | OpenHarmony DevEco Project | OpenHarmony (HarmonyOS NEXT)   |
+            | Wasm        | playfield-wasm.html                | Wasm                       | Emscripten                     |
+            | Wasm        | playfield-wasm.tar.gz              | Tarball                    | Emscripten                     |
+            | Unity       | Playfield-Unity.zip                | Unity Plugin + Project     | Unity (Win64/Switch/PS5/Xbox)  |
+            | NEC PC-9801 | pf98.exe                           | Executable                 | NEC PC-9801 DOS4G (386+, 16MB) |
+            | Documents   | playfield-documents.zip            | ZIP                        | Documents                      |
 
           files: |
             Playfield-Full-SDK.zip
-            windows/Playfield.1.0.0.nupgk
             windows/playfield-win64.exe
-            windows/playfield-arm64.exe
             mingw/playfield-win32.exe
+            windows/playfield-arm64.exe
+            windows/Playfield.1.0.0.nupgk
+            mingw/playfield-mingw-w64.tar.gz
             macos/Playfield.dmg
             macos/Playfield-macOS-Xcode.zip
             macos/playfield-macos-universal.tar.gz
+            macos/Playfield.xcframework.zip
             linux/Playfied-x86_64.AppImage
             linux/playfield-linux-x86_64.tar.gz
             macos/Playfield-iOS-Xcode.zip
@@ -871,4 +937,5 @@ jobs:
             playfield-wasm.html
             wasm/playfield-wasm.tar.gz
             unity/Playfield-Unity.zip
+            pc98/pf98.exe
             mkdocs/playfield-documents.zip
