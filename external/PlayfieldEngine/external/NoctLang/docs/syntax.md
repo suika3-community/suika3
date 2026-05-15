@@ -1,15 +1,13 @@
-NoctLang Syntax
-===============
-
-NoctLang is a simple scripting language.
+Noct Syntax
+===========
 
 ## Assignments
 
-Variables in NoctLang are dynamically typed and don't require explicit
+Variables in Noct are dynamically typed and don't require explicit
 declaration. The assignment operator (`=`) is used to create and
 assign values to variables.
 
-As shown in the example below, NoctLang supports various data types
+As shown in the example below, Noct supports various data types
 including integers, floating-point numbers, and strings. Variables can
 be reassigned to different types at any time during execution.
 
@@ -243,9 +241,9 @@ func main() {
 `++` and `--` are supported only as standalone statements (`a++;`, `b--;`).
 Using them inside expressions is disallowed to avoid complex side-effects.
 
-## OOP in NoctLang
+## OOP in Noct
 
-The object-oriented model in NoctLang is a lightweight variation of prototype-based OOP.
+The object-oriented model in Noct is a lightweight variation of prototype-based OOP.
 
 - Classes are simply dictionary templates
 - Inheritance and instantiation are realized by dictionary merging

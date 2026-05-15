@@ -798,7 +798,6 @@ noct_get_args(
 	uint32_t i;
 
 	assert(env != NULL);
-	assert(val != NULL);
 	assert(count <= env->frame->tmpvar_size);
 
 	va_start(ap, count);

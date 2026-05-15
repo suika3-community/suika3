@@ -8,6 +8,7 @@ on:
 
 jobs:
   build-windows:
+    name: Build for Visual Studio
     runs-on: windows-latest
     steps:
       - name: Checkout repository
@@ -16,106 +17,341 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
-      - name: Install flex & bison (Chocolatey)
-        run: choco install -y winflexbison3
-
-      - name: Set up dependencies
-        run: git submodule update --init
-
-      - name: Configure (x86)
-        run: >
+      - name: Build for x86
+        run: |
           cmake --preset windows-vs2022-x86
-          -DFLEX_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_flex.exe"
-          -DBISON_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_bison.exe"
+          cmake --build --preset windows-vs2022-x86 --config Release
+          cp out/build/windows-vs2022-x86/Release/playfield.exe playfield-win32.exe
+          cp out/build/windows-vs2022-x86/Release/playfield-web.exe playfield-web.exe
 
-      - name: Build (x86)
-        run: cmake --build --preset windows-vs2022-x86 --config Release --parallel
-
-      - name: Configure (x64)
-        run: >
+      - name: Build for x64
+        run: |
           cmake --preset windows-vs2022-x64
-          -DFLEX_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_flex.exe"
-          -DBISON_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_bison.exe"
+          cmake --build --preset windows-vs2022-x64 --config Release
+          cp out/build/windows-vs2022-x64/Release/playfield.exe playfield-win64.exe
 
-      - name: Build (x64)
-        run: cmake --build --preset windows-vs2022-x64 --config Release --parallel
-
-      - name: Configure (arm64)
+      - name: Build for arm64
         run: >
           cmake --preset windows-vs2022-arm64
-          -DFLEX_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_flex.exe"
-          -DBISON_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_bison.exe"
+          cmake --build --preset windows-vs2022-arm64 --config Release
+          cp out/build/windows-vs2022-arm64/Release/playfield.exe playfield-arm64.exe
 
-      - name: Build (arm64)
-        run: cmake --build --preset windows-vs2022-arm64 --config Release --parallel
+      - name: Build nuget
+        run: |
+          mkdir build
+          mkdir build/native
+          mkdir build/native/include
+          mkdir build/native/include/playfield
+          mkdir build/native/include/noct
+          mkdir build/native/include/strato
+          mkdir build/native/lib
+          mkdir build/native/lib/x86
+          mkdir build/native/lib/x64
+          mkdir build/native/lib/arm64
+          cp include/playfield/playfield.h build/native/include/playfield/
+          cp include/playfield/c89compat.h build/native/include/playfield/
+          cp external/include/NoctLang/include/noct/noct.h build/native/include/noct/
+          cp external/include/NoctLang/include/noct/c89compat.h build/native/include/noct/
+          cp external/include/StratoHAL/include/strato/strato.h build/native/include/strato/
+          cp external/include/StratoHAL/include/strato/c89compat.h build/native/include/strato/
+          cp out/build/windows-vs2022-x86/Release/strato.lib  build/native/lib/x86/
+          cp out/build/windows-vs2022-x64/Release/strato.lib  build/native/lib/x64/
+          cp out/build/windows-vs2022-arm64/Release/strato.lib build/native/lib/arm64/
+          cp resources/windows/Playfield.nuspec ./
+          nuget pack Playfield.nuspec
 
-      - name: Upload Windows EXEs
+      - name: Upload Visual Studio artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: windows-binaries
+          name: windows
           path: |
-            out/**/playfield.exe
-            out/**/playfield-pack.exe
-            out/**/playfield-web.exe
+            Playfield.1.0.0.nupkg
+            playfield-win32.exe
+            playfield-win64.exe
+            playfield-arm64.exe
+            playfield-web.exe
           if-no-files-found: error
           retention-days: 7
 
   build-mingw:
+    name: Build for MinGW-w64
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up dependencies
-        run: git submodule update --init
-
-      - name: Install deps
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake ninja-build mingw-w64
+          sudo apt-get install -y cmake ninja-build
 
-      - name: Download mingw-w64-11.0
+      - name: Cache MinGW-w64
+        id: cache-mingw
+        uses: actions/cache@v4
+        with:
+          path: mingw-w64-11.0
+          key: mingw-11
+
+      - name: Setup MinGW-w64
+        if: steps.cache-mingw.outputs.cache-hit != 'true'
         run: |
           echo "Downloaing mingw-w64-11.0."
           wget -q https://noctvm.io/ci/mingw-w64-11.0.tar.bz2
           tar xJf mingw-w64-11.0.tar.bz2
+
+      - name: Setup PATH
+        run: |
           echo "$PWD/mingw-w64-11.0/bin" >> $GITHUB_PATH
 
-      - name: Build for mingw-w64
+      - name: Build
         run: |
           cmake --preset windows-mingw-x86
           cmake --build --preset windows-mingw-x86
           i686-w64-mingw32-strip build-mingw-x86/playfield.exe
+          cp build-mingw-x86/playfield.exe playfield-win32.exe
 
-      - name: Upload artifact
+          cmake --preset windows-mingw-x86_64
+          cmake --build --preset windows-mingw-x86_64
+          x86_64-w64-mingw32-strip build-mingw-x86_64/playfield.exe
+          cp build-mingw-x86_64/playfield.exe playfield-win64.exe
+
+      - name: Make tar.gz
+        run: |
+          mkdir -p out
+
+          mkdir -p out/i686-w64-mingw32/bin
+          mkdir -p out/i686-w64-mingw32/include/playfield
+          mkdir -p out/i686-w64-mingw32/include/noct
+          mkdir -p out/i686-w64-mingw32/include/strato
+          mkdir -p out/i686-w64-mingw32/lib
+          mkdir -p out/i686-w64-mingw32/lib/pkgconfig
+          mkdir -p out/i686-w64-mingw32/share/cmake/Modules
+          cp windows-mingw-x86/playfield.exe out/i686-w64-mingw32/bin/
+          cp windows-mingw-x86/playfield-aotc.exe out/i686-w64-mingw32/bin/
+          cp windows-mingw-x86/playfield-bcc.exe out/i686-w64-mingw32/bin/
+          cp windows-mingw-x86/playfield-pack.exe out/i686-w64-mingw32/bin/
+          cp include/playfield/playfield.h out/i686-w64-mingw32/include/playfield/
+          cp include/playfield/c89compat.h out/i686-w64-mingw32/include/playfield/
+          cp external/NoctLang/include/noct/noct.h out/i686-w64-mingw32/include/noct/
+          cp external/NoctLang/include/noct/c89compat.h out/i686-w64-mingw32/include/noct/
+          cp external/StratoHAL/include/strato/strato.h out/i686-w64-mingw32/include/strato/
+          cp external/StratoHAL/include/strato/c89compat.h out/i686-w64-mingw32/include/strato/
+          cp build-mingw-x86/libplayfield.a out/i686-w64-mingw32/lib/
+          cp build-mingw-x86/playfield.pc out/i686-w64-mingw32/lib/pkgconfig/
+          cp cmake/modules/FindPlayfield.cmake out/i686-w64-mingw32/share/cmake/Modules/
+
+          mkdir -p out/x86_64-w64-mingw32/bin
+          mkdir -p out/x86_64-w64-mingw32/include/strato
+          mkdir -p out/x86_64-w64-mingw32/lib
+          mkdir -p out/x86_64-w64-mingw32/lib/pkgconfig
+          mkdir -p out/x86_64-w64-mingw32/share/cmake/Modules
+          cp windows-mingw-x86_64/playfield.exe out/x86_64-w64-mingw32/bin/
+          cp windows-mingw-x86_64/playfield-aotc.exe out/x86_64-w64-mingw32/bin/
+          cp windows-mingw-x86_64/playfield-bcc.exe out/x86_64-w64-mingw32/bin/
+          cp windows-mingw-x86_64/playfield-pack.exe out/x86_64-w64-mingw32/bin/
+          cp include/playfield/playfield.h out/ix86_64-w64-mingw32/include/playfield/
+          cp include/playfield/c89compat.h out/x86_64-w64-mingw32/include/playfield/
+          cp external/NoctLang/include/noct/noct.h out/x86_64-w64-mingw32/include/noct/
+          cp external/NoctLang/include/noct/c89compat.h out/x86_64-w64-mingw32/include/noct/
+          cp external/StratoHAL/include/strato/strato.h out/x86_64-w64-mingw32/include/strato/
+          cp external/StratoHAL/include/strato/c89compat.h out/x86_64-w64-mingw32/include/strato/
+          cp build-mingw-x86_64/libplayfield.a out/x86_64-w64-mingw32/lib/
+          cp build-mingw-x86_64/playfield.pc out/x86_64-w64-mingw32/lib/pkgconfig/
+          cp cmake/modules/FindPlayfield.cmake out/x86_64-w64-mingw32/share/cmake/Modules/
+
+          cd out
+          tar czf ../playfield-mingw-w64.tar.gz *
+          cd ..
+
+      - name: Upload MinGW-w64 artifact
         uses: actions/upload-artifact@v4
         with:
           name: mingw
           path: |
-            build-mingw-x86/playfield.exe
+            playfield-mingw-w64.tar.gz
+            playfield-win32.exe
+            playfield-win64.exe
+          if-no-files-found: error
+          retention-days: 7
+
+  build-macos:
+    name: Build for macOS and iOS
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup for macOS
+        uses: apple-actions/import-codesign-certs@v3
+        with:
+          p12-file-base64: ${{ secrets.CERTIFICATE_FILE_BASE64 }}
+          p12-password: ${{ secrets.CERTIFICATE_PASSWORD }}
+
+      - name: Build for macOS
+        run: |
+          cmake --preset macos
+          cmake --build --preset macos
+
+          cmake --preset macos-cli
+          cmake --build --preset macos-cli
+
+      - name: Build for iOS
+        run: |
+          cmake --preset ios-device
+          cmake --build --preset ios-device
+
+          cmake --preset ios-simulator
+          cmake --build --preset ios-simulator
+
+      - name: Build .dmg
+        shell: bash
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          TEAM_ID: ${{ secrets.TEAM_ID }}
+          APP_SECRET: ${{ secrets.APP_PASSWORD }}
+        run: |
+          cd build-macos
+          codesign --timestamp --options runtime --entitlements ../resources/macos/macos.entitlements --deep --force --sign "Developer ID Application" Playfield.app
+          ditto -c -k --sequesterRsrc --keepParent Playfield.app Playfield.zip
+          xcrun notarytool submit Playfield.zip --apple-id "$APPLE_ID" --team-id "$TEAM_ID" --password "$APP_SECRET" --wait
+          xcrun stapler staple Playfield.app
+          mkdir tmp
+          cp -Rv Playfield.app tmp/Playfield.app
+          hdiutil create -fs HFS+ -format UDBZ -srcfolder tmp -volname Playfield Playfield.dmg
+          codesign --sign "Developer ID Application" Playfield.dmg
+          mv Playfield.dmg ../
+          cd ..
+
+      - name: Build .xcframework
+        run: |
+          xcodebuild \
+            -create-xcframework \
+            -library build-macos/libplayfield.a -headers include \
+            -library build-ios-device/libplayfield.a -headers include \
+            -library build-ios-simulator/libplayfield.a -headers include \
+            -output Playfield.xcframework
+          tar czf Playfield.xcframework.tar.gz Playfield.xcframework
+
+      - name: Build macOS project
+        run: |
+          mkdir macos
+          mkdir macos/project
+          mkdir macos/project/Resources
+          mkdir macos/project/Resources/video
+          cp resources/assets.arc macos/project/Resources/
+
+          mkdir macos/project/Game.xcodeproj
+          cp resources/projects/macos/Game.xcodeproj/project.pbxproj macos/project/Game.xcodeproj/
+
+          mkdir macos/project/Game
+          cp -R Playfield.xcframework macos/project/Game/
+          cp -R resources/projects/macos/Game/Assets.xcassets macos/project/Game/
+          cp resources/projects/macos/Game/main.m macos/project/Game/
+          cp resources/macos/macos.entitlements macos/project/Game/Game.entitlements
+
+          zip -r Playfield-macOS-Xcode.zip macos
+
+      - name: Build iOS project
+        run: |
+          mkdir ios
+
+          mkdir ios/Resources/
+          mkdir ios/Resources/video
+          cp resources/assets.arc ios/Resources/
+
+          mkdir ios/ios.xcodeproj
+          cp resources/projects/ios/ios.xcodeproj/project.pbxproj ios/ios.xcodeproj/
+
+          mkdir ios/ios
+          cp -R Playfield.xcframework ios/ios/
+          cp -R resources/projects/ios/ios/Assets.xcassets ios/ios/
+          cp resources/projects/ios/ios/entry.c ios/ios/
+          cp resources/projects/ios/ios/Info.plist ios/ios/
+          cp resources/projects/ios/ios/ios.entitlements ios/ios/
+          cp resources/projects/ios/ios/LaunchScreen.storyboard ios/ios/
+
+          zip -r Playfield-iOS-Xcode.zip ios
+
+      - name: Build tar.gz
+        run: |
+          mkdir -p out
+          mkdir -p out/bin
+          mkdir -p out/include/playfield
+          mkdir -p out/include/noct
+          mkdir -p out/include/strato
+          mkdir -p out/lib
+          mkdir -p out/lib/pkgconfig
+          mkdir -p out/share/cmake/Modules
+          mkdir -p out/share/man/man1
+          cp build-macos-cli/playfield out/bin/
+          cp build-macos-cli/playfield-pack out/bin/
+          cp build-macos-cli/playfield-aotc out/bin/
+          cp build-macos-cli/playfield-bcc out/bin/
+          cp include/playfield/playfield.h out/include/playfield/
+          cp include/playfield/c89compat.h out/include/playfield/
+          cp external/NoctLang/include/noct/noct.h out/include/noct/
+          cp external/NoctLang/include/noct/c89compat.h out/include/noct/
+          cp external/StratoHAL/include/strato/strato.h out/include/strato/
+          cp external/StratoHAL/include/strato/c89compat.h out/include/strato/
+          cp libplayfield.a out/lib/
+          cp build-macos/playfield.pc out/lib/pkgconfig/
+          cp cmake/modules/FindPlayfield.cmake out/share/cmake/Modules/
+          cd out
+          tar czf ../playfield-macos-universal.tar.gz *
+          cd ..
+
+      - name: Upload macOS artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: |
+            Playfield.dmg
+            Playfield-macOS-Xcode.zip
+            Playfield-iOS-Xcode.zip
+            playfield-macos-universal.tar.gz
           if-no-files-found: error
           retention-days: 7
 
   build-linux:
     runs-on: ubuntu-24.04
-
+    name: Build for Linux
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up dependencies
-        run: git submodule update --init
-
-      - name: Install deps
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y git cmake ninja-build build-essential libasound2-dev libx11-dev libxpm-dev libwayland-dev wayland-protocols libegl1-mesa-dev libegl-dev libgles-dev libwayland-client0 libwayland-egl1 libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-x libdecor-0-dev flex bison libfuse2
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Download appimagetool
         run: |
           wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
           chmod +x appimagetool-x86_64.AppImage
 
-      - name: Add desktop
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            git \
+            cmake \
+            ninja-build \
+            build-essential \
+            libasound2-dev \
+            libx11-dev \
+            libxpm-dev \
+            libwayland-dev \
+            wayland-protocols \
+            libegl1-mesa-dev \
+            libegl-dev \
+            libgles-dev \
+            libwayland-client0 \
+            libwayland-egl1 \
+            libgstreamer1.0-dev \
+            libgstreamer-plugins-base1.0-dev \
+            gstreamer1.0-x \
+            libdecor-0-dev
+
+      - name: Build static
+        run: |
+          cmake --preset linux
+          cmake --build --preset linux
+
+      - name: Build AppImage
         run: |
           cat > playfield.desktop <<EOF
           [Desktop Entry]
@@ -125,13 +361,6 @@ jobs:
           Icon=playfield
           Categories=Game;
           EOF
-
-      - name: Build for x86_64
-        run: |
-          cmake --preset linux
-          cmake --build --preset linux
-          #cmake -B build -DCMAKE_BUILD_TYPE=Release
-          #cmake --build build --config Release
           mkdir -p AppDir/usr/bin
           cp build-linux/playfield AppDir/usr/bin/
           cp resources/linux/AppRun AppDir/
@@ -139,168 +368,52 @@ jobs:
           cp resources/icon.png AppDir/playfield.png
           ARCH=x86_64 ./appimagetool-x86_64.AppImage AppDir Playfield-x86_64.AppImage
 
-      - name: Upload artifact
+      - name: Build tar.gz
+        run: |
+          mkdir -p out
+          mkdir -p out/include/playfield
+          mkdir -p out/include/noct
+          mkdir -p out/include/strato
+          mkdir -p out/lib/x86_64-linux-gnu/
+          mkdir -p out/lib/x86_64-linux-gnu/pkgconfig
+          mkdir -p out/share/cmake/Modules
+          cp build-linux/playfield out/bin/
+          cp build-linux/playfield-aotc out/bin/
+          cp build-linux/playfield-bcc out/bin/
+          cp build-linux/playfield-pack out/bin/
+          cp include/playfield/playfield.h out/include/playfield/
+          cp include/playfield/c89compat.h out/include/playfield/
+          cp exteral/NoctLang/include/noct/noct.h out/include/noct/
+          cp exteral/NoctLang/include/noct/c89compat.h out/include/noct/
+          cp exteral/StratoHAL/include/strato/strato.h out/include/strato/
+          cp exteral/StratoHAL/include/strato/c89compat.h out/include/strato/
+          cp build-linux/libplayfield.a out/lib/x86_64-linux-gnu/
+          cp build-linux/playfield.pc out/lib/x86_64-linux-gnu/pkgconfig/
+          cp cmake/modules/FindPlayfield.cmake out/share/cmake/Modules/
+          cd out
+          tar czf ../playfield-linux-x86_64.tar.gz *
+          cd ..
+
+      - name: Upload Linux artifact
         uses: actions/upload-artifact@v4
         with:
-          name: linux-appimage
+          name: linux
           path: |
             Playfield-x86_64.AppImage
-          if-no-files-found: error
-          retention-days: 7
-
-  build-wasm:
-    runs-on: ubuntu-24.04
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up dependencies
-        run: git submodule update --init
-
-      - name: Setup for Wasm
-        uses: mymindstorm/setup-emsdk@v14
-        with:
-          version: latest
-
-      - name: Build for Wasm
-        run: |
-          cmake --preset wasm
-          cmake --build --preset wasm
-
-      - name: Upload Wasm
-        uses: actions/upload-artifact@v4
-        with:
-          name: wasm
-          path: |
-            build-wasm/index.html
-          if-no-files-found: error
-          retention-days: 7
-
-  build-macos:
-    runs-on: macos-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up dependencies
-        run: |
-          git submodule update --init
-
-          brew update
-          brew install bison flex
-          echo "/opt/homebrew/opt/bison/bin" >> $GITHUB_PATH
-          echo "/opt/homebrew/opt/flex/bin" >> $GITHUB_PATH
-
-      - name: Verify versions
-        run: |
-          which bison
-          bison --version
-          which flex
-          flex --version
-
-      - name: Setup for macOS
-        uses: apple-actions/import-codesign-certs@v3
-        with:
-          p12-file-base64: ${{ secrets.CERTIFICATE_FILE_BASE64 }}
-          p12-password: ${{ secrets.CERTIFICATE_PASSWORD }}
-
-      - name: Build for macOS
-        shell: bash
-        env:
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          TEAM_ID: ${{ secrets.TEAM_ID }}
-          APP_SECRET: ${{ secrets.APP_PASSWORD }}
-        run: |
-          cmake --preset macos
-          cmake --build --preset macos
-          cd build-macos
-          ls -lha
-          codesign --timestamp --options runtime --entitlements ../resources/macos/macos.entitlements --deep --force --sign "Developer ID Application" Playfield.app
-          ditto -c -k --sequesterRsrc --keepParent Playfield.app Playfield.zip
-          xcrun notarytool submit Playfield.zip --apple-id "$APPLE_ID" --team-id "$TEAM_ID" --password "$APP_SECRET" --wait
-          xcrun stapler staple Playfield.app
-          mkdir tmp
-          cp -Rv Playfield.app tmp/Playfield.app
-          hdiutil create -fs HFS+ -format UDBZ -srcfolder tmp -volname Playfield Playfield.dmg
-          codesign --sign "Developer ID Application" Playfield.dmg
-          cd ..
-          cmake --preset macos-lib
-          cmake --build --preset macos-lib
-          xcodebuild -create-xcframework -library build-macos-lib/libplayfield.a -headers include -output Playfield.xcframework
-          tar czf Playfield.xcframework.tar.gz Playfield.xcframework
-
-      - name: Upload macOS
-        uses: actions/upload-artifact@v4
-        with:
-          name: macos
-          path: |
-            build-macos/Playfield.dmg
-            build-macos/playfield-pack
-            build-macos/suika3-bytecomp
-            build-macos/suika3-aotcomp
-            Playfield.xcframework.tar.gz
-          if-no-files-found: error
-          retention-days: 7
-
-  build-ios:
-    runs-on: macos-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up dependencies
-        run: |
-          git submodule update --init
-
-          brew update
-          brew install bison flex
-          echo "/opt/homebrew/opt/bison/bin" >> $GITHUB_PATH
-          echo "/opt/homebrew/opt/flex/bin" >> $GITHUB_PATH
-
-      - name: Verify versions
-        run: |
-          which bison
-          bison --version
-          which flex
-          flex --version
-
-      - name: Setup for iOS
-        uses: apple-actions/import-codesign-certs@v3
-        with:
-          p12-file-base64: ${{ secrets.CERTIFICATE_FILE_BASE64 }}
-          p12-password: ${{ secrets.CERTIFICATE_PASSWORD }}
-
-      - name: Build for iOS
-        run: |
-          cmake --preset ios-device
-          cmake --build --preset ios-device
-          cmake --preset ios-simulator
-          cmake --build --preset ios-simulator
-          xcodebuild -create-xcframework -library build-ios-device/libplayfield.a -headers include -library build-ios-simulator/libplayfield.a -headers include -output Playfield.xcframework
-          tar czf Playfield.xcframework.tar.gz Playfield.xcframework
-
-      - name: Upload iOS
-        uses: actions/upload-artifact@v4
-        with:
-          name: ios
-          path: |
-            Playfield.xcframework.tar.gz
+            playfield-linux-x86_64.tar.gz
           if-no-files-found: error
           retention-days: 7
 
   build-android:
+    name: Build for Android
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up dependencies
-        run: git submodule update --init
-
-      - name: Install deps
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake ninja-build flex bison
+          sudo apt-get install -y cmake ninja-build
 
       - name: Setup for Android
         uses: nttld/setup-ndk@v1
@@ -320,64 +433,51 @@ jobs:
           cmake --preset android-riscv64
           cmake --build --preset android-riscv64
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-arm64
-          path: |
-            build-android-arm64/libplayfield.so
-          if-no-files-found: error
-          retention-days: 7
+      - name: Build project
+        run: |
+          mkdir android
+          cp -R resources/projects/android/app android/
+          cp -R resources/projects/android/gradle.properties android/
+          cp -R resources/projects/android/build.gradle android/
+          cp -R resources/projects/android/gradlew android/
+          cp -R resources/projects/android/settings.gradle android/
+          cp -R resources/projects/android/gradlew.bat android/
+          cp -R resources/projects/android/gradle android/
+          mkdir -p android/app/src/main/assets
+          cp samples/shoot/main.ray android/app/src/main/assets/
+          mkdir -p android/app/src/main/java/io/noctvm/strato
+          cp external/StratoHAL/src/MainActivity.java android/app/src/main/java/io/noctvm/strato/
+          mkdir -p android/app/src/main/jniLibs/arm64-v8a
+          cp android-arm64/libplayfield.so android/app/src/main/jniLibs/arm64-v8a/libstrato.so
+          mkdir -p android/app/src/main/jniLibs/armeabi-v7a
+          cp android-armv7/libplayfield.so android/app/src/main/jniLibs/armeabi-v7a/libstrato.so
+          mkdir -p android/app/src/main/jniLibs/x86_64
+          cp android-x86_64/libplayfield.so android/app/src/main/jniLibs/x86_64/libstrato.so
+          mkdir -p android/app/src/main/jniLibs/x86
+          cp android-x86/libplayfield.so android/app/src/main/jniLibs/x86/libstrato.so
+          mkdir -p android/app/src/main/jniLibs/riscv64
+          cp android-riscv64/libplayfield.so android/app/src/main/jniLibs/riscv64/libstrato.so
+          zip -r playfield-android-studio.zip android
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: android-armv7
+          name: android
           path: |
-            build-android-armv7/libplayfield.so
-          if-no-files-found: error
-          retention-days: 7
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-x86_64
-          path: |
-            build-android-x86_64/libplayfield.so
-          if-no-files-found: error
-          retention-days: 7
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-x86
-          path: |
-            build-android-x86/libplayfield.so
-          if-no-files-found: error
-          retention-days: 7
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-riscv64
-          path: |
-            build-android-riscv64/libplayfield.so
+            playfield-android-studio.zip
           if-no-files-found: error
           retention-days: 7
 
   build-openharmony:
+    name: Build for OpenHarmony
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up dependencies
-        run: git submodule update --init
-
-      - name: Install deps
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake ninja-build flex bison
+          sudo apt-get install -y cmake ninja-build
 
       - name: Download OpenHarmony SDK
         run: |
@@ -392,29 +492,106 @@ jobs:
           OH_NATIVE_SDK_ROOT="$PWD/openharmony-sdk-native" cmake --preset openharmony-x86_64
           OH_NATIVE_SDK_ROOT="$PWD/openharmony-sdk-native" cmake --build --preset openharmony-x86_64
 
-      - name: Upload artifact
+      - name: Build project
+        run: |
+          cp -R resources/projects/openharmony ./
+
+          mkdir -p openharmony
+          mkdir -p openharmony/entry/src/main/cpp/third_party/playfield/include/playfield
+          mkdir -p openharmony/entry/src/main/cpp/third_party/playfield/include/noct
+          mkdir -p openharmony/entry/src/main/cpp/third_party/playfield/include/strato
+          mkdir -p openharmony/entry/src/main/cpp/third_party/playfield/lib/arm64-v8a
+          mkdir -p openharmony/entry/src/main/cpp/third_party/playfield/lib/x86_64
+          mkdir -p openharmony/entry/src/main/resources/rawfile/
+          cp include/playfield/playfield.h openharmony/entry/src/main/cpp/third_party/playfield/include/playfield/
+          cp include/playfield/c89compat.h openharmony/entry/src/main/cpp/third_party/playfield/include/playfield/
+          cp external/NoctLang/include/noct/noct.h openharmony/entry/src/main/cpp/third_party/playfield/include/noct/
+          cp external/NoctLang/include/noct/c89compat.h openharmony/entry/src/main/cpp/third_party/playfield/include/noct/
+          cp external/StratoHAL/include/strato/strato.h openharmony/entry/src/main/cpp/third_party/playfield/include/strato/
+          cp external/StratoHAL/include/strato/c89compat.h openharmony/entry/src/main/cpp/third_party/playfield/include/strato/
+          cp openharmony-arm64/libplayfield.a openharmony/entry/entry/src/main/cpp/third_party/playfield/lib/arm64-v8a/
+          cp openharmony-x86_64/libplayfield.a openharmony/entry/entry/src/main/cpp/third_party/playfield/lib/x86_64/
+          cp samples/shoot/main.ray openharmony/entry/src/main/resources/rawfile/
+          zip -r Playfield-OpenHarmony-DevEco.zip openharmony
+
+      - name: Upload OpenHarmony artifact
         uses: actions/upload-artifact@v4
         with:
           name: openharmony-arm64
           path: |
-            build-openharmony-arm64/libplayfield.a
+            Playfield-OpenHarmony-DevEco.zip
           if-no-files-found: error
           retention-days: 7
 
-      - name: Upload artifact
+  build-wasm:
+    name: Build for Wasm
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup for Wasm
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: latest
+
+      - name: Build for Wasm
+        run: |
+          cmake --preset wasm
+          cmake --build --preset wasm
+          cp build-wasm/index.html ./  
+
+      - name: Build tar.gz
+        run: |
+          mkdir -p out
+          mkdir -p out/include/playfield
+          mkdir -p out/include/noct
+          mkdir -p out/include/strato
+          mkdir -p out/lib
+          cp include/playfield/playfield.h out/include/playfield/
+          cp include/playfield/c89compat.h out/include/playfield/
+          cp external/NoctLang/include/noct/noct.h out/include/noct/
+          cp external/NoctLang/include/noct/c89compat.h out/include/noct/
+          cp external/StratoHAL/include/strato/strato.h out/include/strato/
+          cp external/StratoHAL/include/strato/c89compat.h out/include/strato/
+          cp build-wasm/libstrato.a out/lib/
+          cd out
+          tar czf ../playfield-wasm.tar.gz *
+          cd ..
+
+      - name: Upload Wasm artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: openharmony-x86_64
+          name: wasm
           path: |
-            build-openharmony-x86_64/libplayfield.a
+            index.html
+            playfield-wasm.tar.gz
           if-no-files-found: error
           retention-days: 7
 
   build-unity:
+    name: Build for Unity
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install apt packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build
+
+      - name: Cache MinGW-w64
+        id: cache-mingw
+        uses: actions/cache@v4
+        with:
+          path: mingw-w64-11.0
+          key: mingw-11
+
+      - name: Setup MinGW-w64
+        if: steps.cache-mingw.outputs.cache-hit != 'true'
+        run: |
+          echo "Downloaing mingw-w64-11.0."
+          wget -q https://noctvm.io/ci/mingw-w64-11.0.tar.bz2
+          tar xJf mingw-w64-11.0.tar.bz2
 
       - name: Cache LLVM
         id: cache-llvm
@@ -423,24 +600,16 @@ jobs:
           path: llvm-21
           key: llvm-21
 
-      - name: Install apt packages
-        run: git submodule update --init
-
-      - name: Install apt packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y cmake ninja-build flex bison mingw-w64
-
-      - name: Setup LLVM for Unity
+      - name: Setup LLVM
         if: steps.cache-llvm.outputs.cache-hit != 'true'
         run: |
           curl -L -o llvm.tar.xz https://github.com/llvm/llvm-project/releases/download/llvmorg-21.1.8/LLVM-21.1.8-Linux-X64.tar.xz
           mkdir llvm-21 && tar -xJf llvm.tar.xz -C llvm-21 --strip-components=1
 
-      - name: Setup PATH for LLVM
+      - name: Setup PATH
         run: |
-          echo "`pwd`/llvm-21/bin" >> $GITHUB_PATH
-          clang --version
+          echo "$PWD/llvm-21/bin" >> $GITHUB_PATH
+          echo "$PWD/mingw-w64-11.0/bin" >> $GITHUB_PATH
 
       - name: Build for Unity
         run: |
@@ -453,50 +622,52 @@ jobs:
           cmake --preset unity-xbox
           cmake --build --preset unity-xbox
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: unity-win64
-          path: |
-            build-unity-win64/libplayfield.dll
-          if-no-files-found: error
-          retention-days: 7
+      - name: Build project
+        run: |
+          mkdir unity/Assets
+          mkdir unity/Assets/StreamingAssets
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: unity-switch
-          path: |
-            build-unity-switch/libplayfield.a
-          if-no-files-found: error
-          retention-days: 7
+          cp samples/shoot/main.ray unity/Assets/StreamingAssets/
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: unity-ps5
-          path: |
-            build-unity-ps5/libplayfield.a
-          if-no-files-found: error
-          retention-days: 7
+          mkdir unity/Assets/Resources
+          cp external/StratoHAL/src/StratoScript.cs unity/Assets/
+          cp external/StratoHAL/src/NormalShader.shader unity/Assets/Resources/
+          cp external/StratoHAL/src/AddShader.shader unity/Assets/Resources/
+          cp external/StratoHAL/src/DimShader.shader unity/Assets/Resources/
+          cp external/StratoHAL/src/RuleShader.shader unity/Assets/Resources/
+          cp external/StratoHAL/src/MeltShader.shader unity/Assets/Resources/
+          cp external/StratoHAL/src/CrossShader.shader unity/Assets/Resources/
+          cp external/StratoHAL/src/MainScene.unity unity/Assets/
+
+          mkdir unity/Assets/Plugins
+          mkdir unity/Assets/Plugins/x86_64
+          mkdir unity/Assets/Plugins/Switch
+          mkdir unity/Assets/Plugins/PS5
+          mkdir unity/Assets/Plugins/GameCoreXboxSeries
+          mkdir unity/Assets/Plugins/Common
+          cp unity-win64/libplayfield.dll unity/Assets/Plugins/x86_64/strato.dll
+          cp unity-switch/libplayfield.a unity/Assets/Plugins/Switch/libstrato.a
+          cp unity-ps5/libplayfield.a unity/Assets/Plugins/PS5/libstrato.a
+          cp unity-xbox/playfield.lib unity/Assets/Plugins/GameCoreXboxSeries/strato.lib
+
+          cp docs/readme/unity.md unity/
+
+          zip -r Playfield-Unity.zip unity
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: unity-xbox
           path: |
-            build-unity-xbox/playfield.lib
+            Playfield-Unity.zip
           if-no-files-found: error
           retention-days: 7
 
   build-mkdocs:
+    name: Build documents
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up dependencies
-        run: git submodule update --init
 
       - name: Install deps
         run: |
@@ -508,19 +679,29 @@ jobs:
           cd docs/mkdocs-en
           mkdocs build
           mv site documents
-          tar czf ../../documents.tar.gz documents
+          zip -r ../../playfield-documents.zip documents
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: mkdocs
           path: |
-            documents.tar.gz
+            playfield-documents.zip
           if-no-files-found: error
           retention-days: 7
 
-  zip:
-    needs: [build-windows, build-mingw, build-linux, build-macos, build-wasm, build-ios, build-android, build-openharmony, build-unity, build-mkdocs]
+  release:
+    name: Create GitHub Release
+    needs:
+      - build-windows
+      - build-mingw
+      - build-linux
+      - build-macos
+      - build-wasm
+      - build-android
+      - build-openharmony
+      - build-unity
+      - build-mkdocs
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -530,39 +711,30 @@ jobs:
         run: |
           mkdir dist
           mkdir dist/SDK
-          mkdir dist/SDK/windows
-          mkdir dist/SDK/macos
-          mkdir dist/SDK/macos/project
-          mkdir dist/SDK/linux
-          mkdir dist/SDK/wasm
-          mkdir dist/SDK/ios
-          mkdir dist/SDK/android
-          mkdir dist/SDK/openharmony
-          mkdir dist/SDK/unity
 
-      - name: Download Windows artifacts
+      - name: Download Visual Studio artifacts
         uses: actions/download-artifact@v4
         with:
-          name: windows-binaries
+          name: windows
           path: windows
 
-      - name: Copy for Windows.
-        run: |
-          cp windows/build/windows-vs2022-x64/Release/playfield.exe dist/
-          cp windows/build/windows-vs2022-x86/Release/playfield-pack.exe dist/SDK/windows/
-          cp windows/build/windows-vs2022-x86/Release/playfield-web.exe dist/SDK/wasm/
-          cp windows/build/windows-vs2022-arm64/Release/playfield.exe dist/SDK/windows/playfield-arm64.exe
-          cp samples/shoot/main.ray dist/
-
-      - name: Download mingw artifacts
+      - name: Download MinGW artifacts
         uses: actions/download-artifact@v4
         with:
           name: mingw
           path: mingw
 
-      - name: Copy for mingw.
+      - name: Copy for Windows
         run: |
-          cp mingw/playfield.exe dist/SDK/windows/playfield32.exe
+          cp samples/shoot/main.ray dist/
+
+          mkdir dist/SDK/windows
+          cp windows/playfield-win64.exe dist/playfield.exe
+          cp windows/playfield-arm64.exe dist/SDK/windows/playfield-arm64.exe
+          cp mingw/playfield-win32.exe dist/SDK/windows/playfield-win32.exe
+
+          mkdir dist/SDK/wasm
+          cp windows/playfield-web.exe   dist/SDK/wasm/
 
       - name: Download macOS artifacts
         uses: actions/download-artifact@v4
@@ -570,34 +742,30 @@ jobs:
           name: macos
           path: macos
 
-      - name: Copy for macOS app.
+      - name: Copy for macOS
         run: |
-          ls -lha macos/
-          cp macos/build-macos/Playfield.dmg dist/SDK/macos/
-          cp macos/build-macos/playfield-pack dist/SDK/macos/
+          mkdir -p dist/SDK/macos
+          cp macos/Playfield.dmg dist/SDK/macos/
 
-      - name: Copy for macOS project.
-        run: |
-          mkdir dist/SDK/macos/project/Resources/
-          cp resources/assets.arc dist/SDK/macos/project/Resources/
-          mkdir dist/SDK/macos/project/Resources/video
-          mkdir dist/SDK/macos/project/Game.xcodeproj
-          cp resources/projects/macos/Game.xcodeproj/project.pbxproj dist/SDK/macos/project/Game.xcodeproj/
-          mkdir dist/SDK/macos/project/Game
-          tar xfz macos/Playfield.xcframework.tar.gz -C dist/SDK/macos/project/Game/
-          cp -R resources/projects/macos/Game/Assets.xcassets dist/SDK/macos/project/Game/
-          cp resources/projects/macos/Game/main.m dist/SDK/macos/project/Game/
-          cp resources/macos/macos.entitlements dist/SDK/macos/project/Game/Game.entitlements
+          mkdir dst/SDK/macos/project
+          unzip macos/Playfield-macOS-Xcode.zip -x dst/SDK/macos/project
+
+          mkdir dst/SDK/macos/root
+          tar xzf macos/playfield-macos-universal.tar.gz -C dst/SDK/macos/root
 
       - name: Download Linux artifacts
         uses: actions/download-artifact@v4
         with:
-          name: linux-appimage
+          name: linux
           path: linux
 
-      - name: Copy for Linux.
+      - name: Copy for Linux
         run: |
+          mkdir dist/SDK/linux/
           cp linux/Playfield-x86_64.AppImage dist/SDK/linux/
+
+          mkdir dist/SDK/linux/root
+          tar xzf linux/playfield-linux-x86_64.tar.gz -C dist/SDK/linux/root
 
       - name: Download wasm artifacts
         uses: actions/download-artifact@v4
@@ -605,162 +773,48 @@ jobs:
           name: wasm
           path: wasm
 
-      - name: Copy for Wasm.
+      - name: Copy for Wasm
         run: |
+          mkdir dist/SDK/wasm
           cp wasm/index.html dist/SDK/wasm/
           cp resources/assets.arc dist/SDK/wasm/
 
-      - name: Download iOS artifacts
+          mkdir dist/SDK/wasm/root
+          tar xzf wasm/playfield-wasm.tar.gz -C dist/SDK/wasm/root
+
+          cp wasm/index.html playfield-wasm.html
+
+      - name: Download Android artifacts
         uses: actions/download-artifact@v4
         with:
-          name: ios
-          path: ios
-
-      - name: Copy for iOS.
-        run: |
-          mkdir dist/SDK/ios/Resources/
-          cp resources/assets.arc dist/SDK/ios/Resources/
-          mkdir dist/SDK/ios/Resources/video
-          mkdir dist/SDK/ios/ios.xcodeproj
-          cp resources/projects/ios/ios.xcodeproj/project.pbxproj dist/SDK/ios/ios.xcodeproj/
-          mkdir dist/SDK/ios/ios
-          tar xfz ios/Playfield.xcframework.tar.gz -C dist/SDK/ios/ios/
-          cp -R resources/projects/ios/ios/Assets.xcassets dist/SDK/ios/ios/
-          cp resources/projects/ios/ios/entry.c dist/SDK/ios/ios/
-          cp resources/projects/ios/ios/Info.plist dist/SDK/ios/ios/
-          cp resources/projects/ios/ios/ios.entitlements dist/SDK/ios/ios/
-          cp resources/projects/ios/ios/LaunchScreen.storyboard dist/SDK/ios/ios/
-
-      - name: Download Android arm64 artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: android-arm64
-          path: android-arm64
-
-      - name: Download Android armv7 artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: android-armv7
-          path: android-armv7
-
-      - name: Download Android x86_64 artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: android-x86_64
-          path: android-x86_64
-
-      - name: Download Android x86 artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: android-x86
-          path: android-x86
-
-      - name: Download Android RISC-V 64 artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: android-riscv64
-          path: android-riscv64
+          name: android
+          path: android
 
       - name: Copy for Android
         run: |
-          cp -R resources/projects/android/app dist/SDK/android/
-          cp -R resources/projects/android/gradle.properties dist/SDK/android/
-          cp -R resources/projects/android/build.gradle dist/SDK/android/
-          cp -R resources/projects/android/gradlew dist/SDK/android/
-          cp -R resources/projects/android/settings.gradle dist/SDK/android/
-          cp -R resources/projects/android/gradlew.bat dist/SDK/android/
-          cp -R resources/projects/android/gradle dist/SDK/android/
-          mkdir -p dist/SDK/android/app/src/main/assets
-          cp samples/shoot/main.ray dist/SDK/android/app/src/main/assets/
-          mkdir -p dist/SDK/android/app/src/main/java/io/noctvm/playfield/engineandroid
-          cp external/StratoHAL/src/MainActivity.java dist/SDK/android/app/src/main/java/io/noctvm/playfield/engineandroid/
-          mkdir -p dist/SDK/android/app/src/main/jniLibs/arm64-v8a
-          cp android-arm64/libplayfield.so dist/SDK/android/app/src/main/jniLibs/arm64-v8a/
-          mkdir -p dist/SDK/android/app/src/main/jniLibs/armeabi-v7a
-          cp android-armv7/libplayfield.so dist/SDK/android/app/src/main/jniLibs/armeabi-v7a/
-          mkdir -p dist/SDK/android/app/src/main/jniLibs/x86_64
-          cp android-x86_64/libplayfield.so dist/SDK/android/app/src/main/jniLibs/x86_64/
-          mkdir -p dist/SDK/android/app/src/main/jniLibs/x86
-          cp android-x86/libplayfield.so dist/SDK/android/app/src/main/jniLibs/x86/
-          mkdir -p dist/SDK/android/app/src/main/jniLibs/riscv64
-          cp android-riscv64/libplayfield.so dist/SDK/android/app/src/main/jniLibs/riscv64/
+          mkdir dist/SDK/android
+          unzip android/Playfield-Android-Studio.zip -x dist/SDK/android
 
-      - name: Download OpenHarmony arm64 artifacts
+      - name: Download OpenHarmony artifacts
         uses: actions/download-artifact@v4
         with:
-          name: openharmony-arm64
-          path: openharmony-arm64
-
-      - name: Download OpenHarmony x86_64 artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: openharmony-x86_64
-          path: openharmony-x86_64
+          name: openharmony
+          path: openharmony
 
       - name: Copy for OpenHarmony
         run: |
-          cp -R resources/projects/openharmony/AppScope dist/SDK/openharmony/
-          cp -R resources/projects/openharmony/AppScope build-profile.json5
-          cp -R resources/projects/openharmony/AppScope code-linter.json5
-          cp -R resources/projects/openharmony/AppScope entry
-          cp -R resources/projects/openharmony/AppScope hvigor
-          cp -R resources/projects/openharmony/AppScope hvigorfile.ts
-          mkdir -p dist/SDK/openharmony/entry/src/main/resources/rawfile/
-          cp samples/shoot/main.ray dist/SDK/openharmony/entry/src/main/resources/rawfile/
-          mkdir -p dist/SDK/openharmony/entry/libs/arm64-v8a
-          mkdir -p dist/SDK/openharmony/entry/libs/arm64-x86_64
-          cp openharmony-arm64/libplayfield.a dist/SDK/openharmony/entry/libs/arm64-v8a
-          cp openharmony-x86_64/libplayfield.a dist/SDK/openharmony/entry/libs/x86_64
+          unzip openharmony/Playfield-OpenHarmony-DevEcoStudio.zip -x dist/SDK
 
-      - name: Download Unity Win64 artifacts
+      - name: Download Unity artifacts
         uses: actions/download-artifact@v4
         with:
-          name: unity-win64
-          path: unity-win64
-
-      - name: Download Unity switch artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: unity-switch
-          path: unity-switch
-
-      - name: Download Unity ps5 artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: unity-ps5
-          path: unity-ps5
-
-      - name: Download Unity xbox artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: unity-xbox
-          path: unity-xbox
+          name: unity
+          path: unity
 
       - name: Copy for Unity
         run: |
-          mkdir dist/SDK/unity/Assets
-          mkdir dist/SDK/unity/Assets/StreamingAssets
-          cp samples/shoot/main.ray dist/SDK/unity/Assets/StreamingAssets/
-          mkdir dist/SDK/unity/Assets/Resources
-          cp external/StratoHAL/src/StratoScript.cs dist/SDK/unity/Assets/
-          cp external/StratoHAL/src/NormalShader.shader dist/SDK/unity/Assets/Resources/
-          cp external/StratoHAL/src/AddShader.shader dist/SDK/unity/Assets/Resources/
-          cp external/StratoHAL/src/DimShader.shader dist/SDK/unity/Assets/Resources/
-          cp external/StratoHAL/src/RuleShader.shader dist/SDK/unity/Assets/Resources/
-          cp external/StratoHAL/src/MeltShader.shader dist/SDK/unity/Assets/Resources/
-          cp external/StratoHAL/src/CrossShader.shader dist/SDK/unity/Assets/Resources/
-          cp external/StratoHAL/src/MainScene.unity dist/SDK/unity/Assets/
-          mkdir dist/SDK/unity/Assets/Plugins
-          mkdir dist/SDK/unity/Assets/Plugins/x86_64
-          mkdir dist/SDK/unity/Assets/Plugins/Switch
-          mkdir dist/SDK/unity/Assets/Plugins/PS5
-          mkdir dist/SDK/unity/Assets/Plugins/GameCoreXboxSeries
-          mkdir dist/SDK/unity/Assets/Plugins/Common
-          cp unity-win64/playfield.dll dist/SDK/unity/Assets/Plugins/x86_64/strato.dll
-          cp unity-switch/libplayfield.a dist/SDK/unity/Assets/Plugins/Switch/
-          cp unity-ps5/libplayfield.a dist/SDK/unity/Assets/Plugins/PS5/
-          cp unity-xbox/playfield.lib dist/SDK/unity/Assets/Plugins/GameCoreXboxSeries/
-          cp docs/readme/unity.md dist/SDK/unity/
+          mkdir dist/SDK/unity
+          unzip openharmony/Playfield-Unity.zip -x dist/SDK
 
       - name: Download mkdocs artifacts
         uses: actions/download-artifact@v4
@@ -770,9 +824,8 @@ jobs:
 
       - name: Copy documents
         run: |
-          tar xzf mkdocs/documents.tar.gz -C dist/SDK/
+          tar xzf mkdocs/playfield-documents.tar.gz -C dist/SDK/
           cp -R samples dist/SDK/samples
-          cp docs/readme/readme.txt dist/
 
       - name: Get current date
         id: date
@@ -781,23 +834,48 @@ jobs:
       - name: Short SHA
         run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
 
-      - name: Make documents
+      - name: Build ZIP
         run: |
           mv dist "Playfield-$DATE-$SHORT_SHA"
           7z a -tzip -mx=9 "Playfield-$DATE-$SHORT_SHA.zip" "Playfield-$DATE-$SHORT_SHA"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: nightly-${{ env.DATE }}-${{ env.SHORT_SHA }}
           name: Playfield-${{ env.DATE }}-${{ env.SHORT_SHA }}
           files: |
             Playfield-${{ env.DATE }}-${{ env.SHORT_SHA }}.zip
-            windows/build/windows-vs2022-x64/Release/playfield.exe
-            macos/build-macos/Playfield.dmg
+            windows/Playfield.1.0.0.nupgk
+            windows/playfield-win64.exe
+            windows/playfield-arm64.exe
+            mingw/playfield-win32.exe
+            macos/Playfield.dmg
+            macos/Playfield-macOS-Xcode.zip
+            macos/playfield-macos-universal.tar.gz
+            linux/Playfied-x86_64.AppImage
+            linux/playfield-linux-x86_64.tar.gz
+            macos/Playfield-iOS-Xcode.zip
+            android/Playfield-Android-Studio.zip
+            openharmony/Playfield-OpenHarmony-DevEcoStudio.zip
+            playfield-wasm.html
+            wasm/playfield-wasm.tar.gz
+            unity/Playfield-Unity.zip
           body: |
-            This is an artifact of the automatic build, not an official release.
-            The zip includes standalone engines for Windows, macOS, and Linux (x86_64).
-            In addition, export kits for WebAssembly, iOS, Android, HarmonyOS NEXT, and Unity are included.
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            This is an automated nightly build. Not an official release.
+            
+            | OS          | File                             | Type                       | Description                    |
+            |-------------|----------------------------------|----------------------------|--------------------------------|
+            | Windows     | Playfield.1.0.0.nupkg            | NuGet Package              | Visual Studio 2022+            |
+            | Windows     | playfield-mingw-w64.tar.gz       | Tarball                    | MinGW-w64                      |
+            | macOS       | Playfield.xcframework.zip        | Xcode Framework            | macOS and iOS, Xcode           |
+            | macOS       | Playfield-macOS-Xcode.zip        | Xcode Project              | macOS Xcode Project            |
+            | macOS       | playfield-macos-universal.tar.gz | Tarball                    | macOS (extract to /usr/local)  |
+            | Linux       | Playfield-x86_64.AppImage        | AppImage                   | Linux AppImage                 |
+            | Linux       | playfield-linux-x86_64.tar.gz    | Tarball                    | Linux (extract to /usr/local)  |
+            | Wasm        | playfield-wasm.html              | Wasm                       | Emscripten                     |
+            | Wasm        | playfield-wasm.tar.gz            | Tarball                    | Emscripten                     |
+            | Android     | Playfield-Android-Studio.zip     | Android Studio Project     | Android NDK                    |
+            | OpenHarmony | Playfield-OpenHarmony-DevEco.zip | OpenHarmony DevEco Project | OpenHarmony (HarmonyOS NEXT)   |
