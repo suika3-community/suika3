@@ -157,6 +157,8 @@ jobs:
 
       - name: Build macOS project
         run: |
+          mkdir macos
+          mkdir macos/project
           mkdir macos/project/Resources
           mkdir macos/project/Resources/video
           cp resources/assets.arc macos/project/Resources/
@@ -366,19 +368,19 @@ jobs:
           cp external/PlayfieldEngine/external/StratoHAL/src/MainActivity.java android/app/src/main/java/io/noctvm/strato/
 
           mkdir -p android/app/src/main/jniLibs/arm64-v8a
-          cp android-arm64/libsuika3.so android/app/src/main/jniLibs/arm64-v8a/libstrato.so
+          cp build-android-arm64/libsuika3.so android/app/src/main/jniLibs/arm64-v8a/libstrato.so
 
           mkdir -p android/app/src/main/jniLibs/armeabi-v7a
-          cp android-armv7/libsuika3.so android/app/src/main/jniLibs/armeabi-v7a/libstrato.so
+          cp build-android-armv7/libsuika3.so android/app/src/main/jniLibs/armeabi-v7a/libstrato.so
 
           mkdir -p android/app/src/main/jniLibs/x86_64
-          cp android-x86_64/libsuika3.so android/app/src/main/jniLibs/x86_64/libstrato.so
+          cp build-android-x86_64/libsuika3.so android/app/src/main/jniLibs/x86_64/libstrato.so
 
           mkdir -p dist/SDK/android/app/src/main/jniLibs/x86
-          cp android-x86/libsuika3.so android/app/src/main/jniLibs/x86/libstrato.so
+          cp build-android-x86/libsuika3.so android/app/src/main/jniLibs/x86/libstrato.so
 
           mkdir -p dist/SDK/android/app/src/main/jniLibs/riscv64
-          cp android-riscv64/libsuika3.so android/app/src/main/jniLibs/riscv64/libstrato.so
+          cp build-android-riscv64/libsuika3.so android/app/src/main/jniLibs/riscv64/libstrato.so
 
           zip -r SUika3-Android-Studio.zip android
 
@@ -498,7 +500,7 @@ jobs:
           cp resources/launcher/system/font/NotoSans-Medium.ttf unity/Assets/StreamingAssets/system/font/NotoSansCJK-Medium.ttc
 
           mkdir unity/Assets/Resources
-          cp external/PlayfieldEngine/external/StratoHAL/src/PlayfieldScript.cs   unity/Assets/
+          cp external/PlayfieldEngine/external/StratoHAL/src/StratoScript.cs      unity/Assets/
           cp external/PlayfieldEngine/external/StratoHAL/src/NormalShader.shader  unity/Assets/Resources/
           cp external/PlayfieldEngine/external/StratoHAL/src/AddShader.shader     unity/Assets/Resources/
           cp external/PlayfieldEngine/external/StratoHAL/src/DimShader.shader     unity/Assets/Resources/
