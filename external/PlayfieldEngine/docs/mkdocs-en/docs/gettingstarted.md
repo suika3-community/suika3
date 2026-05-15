@@ -6,27 +6,21 @@ Follow the steps below to run your first game.
 ## Get Playfield Engine
 
 **On Windows:**
-* Download the latest `Windows 11 64-bit ZIP` from [the website](https://noctvm.io/playfield/).
-* Download the latest `Sample Games ZIP` from [the website](https://noctvm.io/playfield/).
-* Extract the `Sample Games ZIP` file to any folder you like.
-* Extract the `Windows 11 64-bit ZIP` file, and copy `playfield.exe` to a game folder. (e.g., "samples/shoot2")
+* Download the latest `Full` zip.
+* Copy the `playfield.exe` app into a game folder. (e.g., "samples/shoot2")
 * Double-click `playfield.exe` to run the sample game.
 
 **On macOS:**
 
-* Download the latest `macOS Arm64/Intel DMG` from [the website](https://noctvm.io/playfield/).
-* Download the latest `Sample Games ZIP` from [the website](https://noctvm.io/playfield/).
-* Extract the `Sample Games` ZIP file to any folder you like.
-* Open `Playfield.dmg`.
+* Download the latest `Full` zip.
+* Open `macos/Playfield.dmg`.
 * Copy the `Playfield` app from the DMG into a game folder. (e.g., "samples/shoot2")
 * Double-click the `Playfield` app to run the sample game.
 
 **On Linux:**
 
-* Download the latest `macOS Arm64/Intel DMG` from [the website](https://noctvm.io/playfield/).
-* Download the latest `Playfield-x86_64.AppImage` from [the website](https://noctvm.io/playfield/).
-* Extract the `Sample Games` ZIP file to any folder you like.
-* Place the AppImage file to a game folder. (e.g., "samples/shoot2")
+* Download the latest `Full` zip.
+* Place the `linux/Playfield-x86_64.AppImage` file to a game folder. (e.g., "samples/shoot2")
 * Make the AppImage executable if necessary (`chmod +x Playfield-x86_64.AppImage`).
 * Double-click the AppImage to run the sample game.
 

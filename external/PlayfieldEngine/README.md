@@ -216,7 +216,7 @@ Precompiled binaries are available for Windows, macOS, Linux, and Chromebook!
 
 ### 1. Download the latest binary:
 
-- Download the `All-in-One` file at the top of this page.
+- Download the "full" zip file at the top of this page.
 - Extract the downloaded file.
 
 ### 2. Run a game script

@@ -9,7 +9,7 @@
  * Pseudo gettext support.
  */
 
-#if defined(NOCT_USE_TRANSLATION) && defined(NOCT_USE_GETTEXT)
+#if defined(NOCT_USE_TRANSLATION) && defined(NOCT_USE_LIBINTL)
 
 #include <noct/noct.h>
 
@@ -21,7 +21,7 @@ noct_init_locale(void)
 	bind_textdomain_codeset("libnoct", "UTF-8");
 }
 
-#elif defined(NOCT_USE_TRANSLATION) && !defined(NOCT_USE_GETTEXT)
+#elif defined(NOCT_USE_TRANSLATION) && !defined(NOCT_USE_LIBINTL)
 
 #include <noct/noct.h>
 
@@ -158,9 +158,9 @@ noct_init_locale(void)
 		default:                          noct_lang_code = "zh-cn"; break;
 		}
 	default:
+		noct_lang_code = "en";
 		break;
 	}
-	noct_lang_code = "en";
 #endif	/* !defined(_WIN32) */
 }
 
