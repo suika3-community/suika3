@@ -1240,6 +1240,9 @@ on_swipe_down(
 	float speed,
 	float amount)
 {
+	UNUSED_PARAMETER(speed);
+	UNUSED_PARAMETER(amount);
+
 	if (is_running) {
 		pf_is_mouse_left_pressed = false;
 		pf_is_swiped = true;
@@ -1253,6 +1256,9 @@ on_swipe_up(
 	float speed,
 	float amount)
 {
+	UNUSED_PARAMETER(speed);
+	UNUSED_PARAMETER(amount);
+
 	if (is_running) {
 		pf_is_mouse_left_pressed = false;
 		pf_is_swiped = true;

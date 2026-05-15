@@ -742,7 +742,7 @@ jobs:
           mkdir dist/SDK/unity/Assets/StreamingAssets
           cp samples/shoot/main.ray dist/SDK/unity/Assets/StreamingAssets/
           mkdir dist/SDK/unity/Assets/Resources
-          cp external/StratoHAL/src/PlayfieldScript.cs dist/SDK/unity/Assets/
+          cp external/StratoHAL/src/StratoScript.cs dist/SDK/unity/Assets/
           cp external/StratoHAL/src/NormalShader.shader dist/SDK/unity/Assets/Resources/
           cp external/StratoHAL/src/AddShader.shader dist/SDK/unity/Assets/Resources/
           cp external/StratoHAL/src/DimShader.shader dist/SDK/unity/Assets/Resources/
@@ -756,7 +756,7 @@ jobs:
           mkdir dist/SDK/unity/Assets/Plugins/PS5
           mkdir dist/SDK/unity/Assets/Plugins/GameCoreXboxSeries
           mkdir dist/SDK/unity/Assets/Plugins/Common
-          cp unity-win64/libplayfield.dll dist/SDK/unity/Assets/Plugins/x86_64/
+          cp unity-win64/playfield.dll dist/SDK/unity/Assets/Plugins/x86_64/strato.dll
           cp unity-switch/libplayfield.a dist/SDK/unity/Assets/Plugins/Switch/
           cp unity-ps5/libplayfield.a dist/SDK/unity/Assets/Plugins/PS5/
           cp unity-xbox/playfield.lib dist/SDK/unity/Assets/Plugins/GameCoreXboxSeries/
