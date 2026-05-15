@@ -173,7 +173,7 @@ jobs:
           cp resources/projects/macos/Game/main.m macos/project/Game/
           cp resources/macos/macos.entitlements macos/project/Game/Game.entitlements
 
-          zip -r Suika3-macOS-Xcode.zip -r macos
+          zip -r Suika3-macOS-Xcode.zip macos
 
       - name: Build iOS project
         run: |
@@ -196,7 +196,7 @@ jobs:
           cp resources/ios/ExportOptions.plist ios/
           cp resources/ios/build.sh ios/
 
-          zip -r Suika3-iOS-Xcode.zip -r ios
+          zip -r Suika3-iOS-Xcode.zip ios
 
       - name: Build macOS tar.gz
         run: |
@@ -552,7 +552,7 @@ jobs:
           cd docs/mkdocs-en
           mkdocs build
           mv site documents
-          tar czf ../../Suika3-documents.zip documents
+          zip -r ../../Suika3-documents.zip documents
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -653,7 +653,7 @@ jobs:
       - name: Copy for iOS
         run: |
           mkdir dist/SDK/ios/project
-          cp macos/Suika3-iOS-Xcode.zip -d dist/SDK/ios
+          unzip macos/Suika3-iOS-Xcode.zip -d dist/SDK/ios
           mv dist/SDK/ios/ios dist/SDK/ios/project
 
       - name: Download Flatpak x86_64 artifacts
@@ -694,7 +694,7 @@ jobs:
 
       - name: Copy for Android
         run: |
-          zip -x android/Suika3-Android-Studio.zip -d dist/SDK
+          unzip android/Suika3-Android-Studio.zip -d dist/SDK
 
       - name: Download OpenHarmony artifacts
         uses: actions/download-artifact@v4
@@ -704,7 +704,7 @@ jobs:
 
       - name: Copy for OpenHarmony
         run: |
-          zip -x openharmony/Suika3-OpenHarmony-DevEco.zip -d dist/SDK
+          unzip openharmony/Suika3-OpenHarmony-DevEco.zip -d dist/SDK
 
       - name: Download Unity artifacts
         uses: actions/download-artifact@v4
@@ -714,7 +714,7 @@ jobs:
 
       - name: Copy for Unity
         run: |
-          zip -x unity/Suika3-Unity.zip -d dist/SDK
+          unzip unity/Suika3-Unity.zip -d dist/SDK
 
       - name: Download mkdocs artifacts
         uses: actions/download-artifact@v4
@@ -724,7 +724,7 @@ jobs:
 
       - name: Copy documents
         run: |
-          zip -x mkdocs/Suika3-documents.zip -C dist/SDK/
+          unzip mkdocs/Suika3-documents.zip -d dist/SDK
           cp README.md dist/SDK/
 
       - name: Get current date
