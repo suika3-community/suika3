@@ -219,12 +219,12 @@ else()
   # Build the dependencies statically.
   include(cmake/ext/zlib.cmake)
   include(cmake/ext/libpng.cmake)
-  include(cmake/ext/jpeg.cmake)
   if(NOT STRATO_TARGET_PC98)
+    include(cmake/ext/jpeg.cmake)
     include(cmake/ext/libwebp.cmake)
+    include(cmake/ext/libogg.cmake)
+    include(cmake/ext/libvorbis.cmake)
   endif()
-  include(cmake/ext/libogg.cmake)
-  include(cmake/ext/libvorbis.cmake)
   include(cmake/ext/freetype.cmake)
 endif()
 
@@ -675,10 +675,6 @@ if(NOT STRATO_ENABLE_DIST)
   else()
     set(STRATO_DEPS
         $<TARGET_OBJECTS:png>
-        $<TARGET_OBJECTS:jpeg>
-        $<TARGET_OBJECTS:vorbisfile>
-        $<TARGET_OBJECTS:vorbis>
-        $<TARGET_OBJECTS:ogg>
         $<TARGET_OBJECTS:freetype>
         $<TARGET_OBJECTS:z>
     )
@@ -963,7 +959,7 @@ if(STRATO_ENABLE_I18N)
 endif()
 
 # gettext
-if(NOCT_ENABLE_I18N_LIBINTL)
+if(STRATO_ENABLE_I18N_LIBINTL)
   target_compile_definitions(strato PRIVATE HAL_USE_LIBINTL)
 endif()  
 

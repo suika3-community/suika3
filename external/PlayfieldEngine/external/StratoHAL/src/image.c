@@ -1035,7 +1035,7 @@ static INLINE int fp32_eq(float a, float b)
     return d > -0.0001f && d < 0.0001f;
 }
 
-#if defined(HAL_TARGET_DOS4G)
+#if defined(HAL_TARGET_PC98)
 #undef floorf
 static INLINE int floorf(float x)
 {
@@ -1662,6 +1662,8 @@ png_warning_silent(
  * JPEG
  */
 
+#if !defined(HAL_TARGET_PC98)
+
 #if defined(HAL_TARGET_WASM) || \
     (defined(HAL_TARGET_MACOS) && defined(HAL_USE_EXTDLL)) || \
     (defined(HAL_TARGET_POSIX) && defined(HAL_USE_EXTDLL)) || \
@@ -1749,6 +1751,24 @@ hal_create_image_with_jpeg(
 
 	return true;
 }
+
+#else
+
+bool
+hal_create_image_with_jpeg(
+	const uint8_t *data,
+	size_t size,
+	struct hal_image **img)
+{
+	UNUSED_PARAMETER(data);
+	UNUSED_PARAMETER(size);
+	UNUSED_PARAMETER(img);
+
+	hal_log_error("JPEG is not supported.");
+	return false;
+}
+
+#endif /* !defined(HAL_TARGET_PC98) */
 
 /*
  * WebP

@@ -1243,17 +1243,6 @@ s3_get_last_tag_name(void)
 }
 
 /*
- * OpenWatcom Quirk
- */
-#if defined(S3_TARGET_PC98)
-int main(int argc, char *argv[])
-{
-	return main2(argc, argv);
-
-}
-#endif
-
-/*
  * Embedded License String
  */
 

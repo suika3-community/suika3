@@ -398,6 +398,7 @@
             "binaryDir":      "${sourceDir}/build-mingw-x86",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/mingw-x86.cmake",
             "cacheVariables": {
+                "CMAKE_BUILD_TYPE":        "Release",
                 "SUIKA_TARGET_WINDOWS":    "ON",
                 "SUIKA_ENABLE_INSTALL":    "ON",
                 "SUIKA_ENABLE_JIT":        "ON",
@@ -415,6 +416,7 @@
             "binaryDir":      "${sourceDir}/build-mingw-x86_64",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/mingw-x86_64.cmake",
             "cacheVariables": {
+                "CMAKE_BUILD_TYPE":        "Release",
                 "SUIKA_TARGET_WINDOWS":    "ON",
                 "SUIKA_ENABLE_INSTALL":    "ON",
                 "SUIKA_ENABLE_JIT":        "ON",
@@ -432,6 +434,7 @@
             "binaryDir":      "${sourceDir}/build-mingw-x86_64-console",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/mingw-x86_64.cmake",
             "cacheVariables": {
+                "CMAKE_BUILD_TYPE":        "Release",
                 "SUIKA_TARGET_WINDOWS":    "ON",
                 "SUIKA_ENABLE_INSTALL":    "ON",
                 "SUIKA_ENABLE_JIT":        "ON",
@@ -450,6 +453,7 @@
             "binaryDir":      "${sourceDir}/build-mingw-x86_64-launcher",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/mingw-x86_64.cmake",
             "cacheVariables": {
+                "CMAKE_BUILD_TYPE":        "Release",
                 "SUIKA_TARGET_WINDOWS":    "ON",
                 "SUIKA_ENABLE_INSTALL":    "ON",
                 "SUIKA_ENABLE_JIT":        "ON",
@@ -468,6 +472,7 @@
             "binaryDir":      "${sourceDir}/build-mingw-win95",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/mingw-win95.cmake",
             "cacheVariables": {
+                "CMAKE_BUILD_TYPE":        "Release",
                 "SUIKA_TARGET_WINDOWS95":  "ON",
                 "SUIKA_ENABLE_JIT":        "OFF",
                 "SUIKA_ENABLE_I18N":       "OFF",
@@ -484,6 +489,7 @@
             "binaryDir":      "${sourceDir}/build-mingw-arm64",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/mingw-arm64.cmake",
             "cacheVariables": {
+                "CMAKE_BUILD_TYPE":        "Release",
                 "SUIKA_TARGET_WINDOWS":    "ON",
                 "SUIKA_ENABLE_INSTALL":    "ON",
                 "SUIKA_ENABLE_JIT":        "ON",
@@ -501,6 +507,7 @@
             "binaryDir":      "${sourceDir}/build-macos",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/macos.cmake",
             "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Release",
                 "CMAKE_OSX_DEPLOYMENT_TARGET": "10.11",
                 "SUIKA_TARGET_MACOS":          "ON",
                 "SUIKA_ENABLE_JIT":            "ON",
@@ -514,6 +521,7 @@
             "binaryDir":      "${sourceDir}/build-macos-cli",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/macos.cmake",
             "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Release",
                 "CMAKE_OSX_DEPLOYMENT_TARGET": "10.11",
                 "SUIKA_TARGET_MACOS_CLI":      "ON",
                 "SUIKA_ENABLE_INSTALL":        "ON",
@@ -533,6 +541,7 @@
             "binaryDir":      "${sourceDir}/build-macos-lib",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/macos.cmake",
             "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Release",
                 "CMAKE_OSX_DEPLOYMENT_TARGET": "10.11",
                 "SUIKA_TARGET_MACOS_LIB":      "ON",
                 "SUIKA_ENABLE_MAIN2":          "ON",
@@ -550,6 +559,7 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-linux",
             "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Release",
                 "SUIKA_TARGET_LINUX":          "ON",
                 "SUIKA_ENABLE_INSTALL":        "ON",
                 "SUIKA_ENABLE_FREEDESKTOP":    "ON",
@@ -569,6 +579,7 @@
             "generator":      "Ninja",
            "binaryDir":      "${sourceDir}/build-linux-debug",
             "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Debug",
                 "SUIKA_TARGET_LINUX":          "ON",
                 "SUIKA_ENABLE_INSTALL":        "ON",
                 "SUIKA_ENABLE_FREEDESKTOP":    "ON",
@@ -588,6 +599,7 @@
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-linux-debian",
             "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Release",
                 "SUIKA_TARGET_LINUX":          "ON",
                 "SUIKA_ENABLE_INSTALL":        "ON",
                 "SUIKA_ENABLE_DIST":           "ON",
@@ -608,6 +620,7 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-linux-x11",
             "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Release",
                 "SUIKA_TARGET_LINUX_X11":      "ON",
                 "SUIKA_ENABLE_INSTALL":        "ON",
                 "SUIKA_ENABLE_FREEDESKTOP":    "ON",
@@ -626,6 +639,7 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-linux-wayland",
             "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Release",
                 "SUIKA_TARGET_LINUX_WAYLAND":  "ON",
                 "SUIKA_ENABLE_INSTALL":        "ON",
                 "SUIKA_ENABLE_FREEDESKTOP":    "ON",
@@ -644,6 +658,7 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-linux-dri",
             "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Release",
                 "SUIKA_TARGET_LINUX_DRI":      "ON",
                 "SUIKA_ENABLE_INSTALL":        "ON",
                 "SUIKA_ENABLE_JIT":            "ON",
@@ -661,6 +676,7 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-linux-dri-rot90",
             "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Release",
                 "SUIKA_TARGET_LINUX_DRI":      "ON",
                 "SUIKA_ENABLE_INSTALL":        "ON",
                 "SUIKA_ENABLE_ROT90":          "ON",
@@ -697,7 +713,7 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-linux-x11soft",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Debug",
+                "CMAKE_BUILD_TYPE":            "Release",
                 "SUIKA_TARGET_LINUX_X11SOFT":  "ON",
                 "SUIKA_ENABLE_INSTALL":        "ON",
                 "SUIKA_ENABLE_FREEDESKTOP":    "ON",
@@ -1281,13 +1297,11 @@
         },
         {
             "name": "windows-mingw-x86_64",
-            "configurePreset": "windows-mingw-x86_64",
-	    "configuration":   "Release"
+            "configurePreset": "windows-mingw-x86_64"
         },
         {
             "name": "windows-mingw-x86_64-console",
-            "configurePreset": "windows-mingw-x86_64-console",
-	    "configuration":   "Release"
+            "configurePreset": "windows-mingw-x86_64-console"
         },
         {
             "name": "windows-mingw-arm64",
@@ -1296,138 +1310,111 @@
         },
         {
             "name": "windows-mingw-win95",
-            "configurePreset": "windows-mingw-win95",
-	    "configuration":   "Release"
+            "configurePreset": "windows-mingw-win95"
         },
         {
             "name": "macos",
-            "configurePreset": "macos",
-	    "configuration":   "Release"
+            "configurePreset": "macos"
         },
         {
             "name": "macos-cli",
-            "configurePreset": "macos-cli",
-	    "configuration":   "Release"
+            "configurePreset": "macos-cli"
         },
         {
             "name": "macos-lib",
-            "configurePreset": "macos-lib",
-	    "configuration":   "Release"
+            "configurePreset": "macos-lib"
         },
         {
             "name": "linux",
-            "configurePreset": "linux",
-	    "configuration":   "Release"
+            "configurePreset": "linux"
         },
         {
             "name": "linux-debug",
-            "configurePreset": "linux",
-	    "configuration":   "Debug"
+            "configurePreset": "linux"
         },
         {
             "name": "linux-debian",
-            "configurePreset": "linux-debian",
-	    "configuration":   "Release"
+            "configurePreset": "linux-debian"
         },
         {
             "name": "linux-x11",
-            "configurePreset": "linux-x11",
-	    "configuration":   "Release"
+            "configurePreset": "linux-x11"
         },
         {
             "name": "linux-wayland",
-            "configurePreset": "linux-wayland",
-	    "configuration":   "Release"
+            "configurePreset": "linux-wayland"
         },
         {
             "name": "linux-dri",
-            "configurePreset": "linux-dri",
-	    "configuration":   "Release"
+            "configurePreset": "linux-dri"
         },
         {
             "name": "linux-dri-rot90",
-            "configurePreset": "linux-dri-rot90",
-	    "configuration":   "Release"
+            "configurePreset": "linux-dri-rot90"
         },
         {
             "name": "linux-x11soft",
-            "configurePreset": "linux-x11soft",
-	    "configuration":   "Release"
+            "configurePreset": "linux-x11soft"
         },
         {
             "name": "ios-device",
-            "configurePreset": "ios-device",
-	    "configuration":   "Release"
+            "configurePreset": "ios-device"
         },
         {
             "name": "ios-simulator",
-            "configurePreset": "ios-simulator",
-	    "configuration":   "Release"
+            "configurePreset": "ios-simulator"
         },
         {
             "name": "android-x86",
-            "configurePreset": "android-x86",
-	    "configuration":   "Release"
+            "configurePreset": "android-x86"
         },
         {
             "name": "android-x86_64",
-            "configurePreset": "android-x86_64",
-	    "configuration":   "Release"
+            "configurePreset": "android-x86_64"
         },
         {
             "name": "android-armv7",
-            "configurePreset": "android-armv7",
-	    "configuration":   "Release"
+            "configurePreset": "android-armv7"
         },
         {
             "name": "android-arm64",
-            "configurePreset": "android-arm64",
-	    "configuration":   "Release"
+            "configurePreset": "android-arm64"
         },
         {
             "name": "android-riscv64",
-            "configurePreset": "android-riscv64",
-	    "configuration":   "Release"
+            "configurePreset": "android-riscv64"
         },
         {
             "name": "openharmony-x86_64",
-            "configurePreset": "openharmony-x86_64",
-	    "configuration":   "Release"
+            "configurePreset": "openharmony-x86_64"
         },
         {
             "name": "openharmony-arm64",
-            "configurePreset": "openharmony-arm64",
-	    "configuration":   "Release"
+            "configurePreset": "openharmony-arm64"
         },
         {
             "name": "openharmony-armv7",
-            "configurePreset": "openharmony-armv7",
-	    "configuration":   "Release"
+            "configurePreset": "openharmony-armv7"
         },
         {
             "name": "wasm",
-            "configurePreset": "wasm",
-	    "configuration":   "Release"
+            "configurePreset": "wasm"
         },
         {
             "name": "wasm-local",
-            "configurePreset": "wasm-local",
-	    "configuration":   "Release"
+            "configurePreset": "wasm-local"
         },
         {
             "name": "unity-win64",
-            "configurePreset": "unity-win64",
-	    "configuration":   "Release"
+            "configurePreset": "unity-win64"
         },
         {
             "name": "unity-switch",
-            "configurePreset": "unity-switch",
-	    "configuration":   "Release"
+            "configurePreset": "unity-switch"
         },
         {
             "name": "unity-ps5",
-            "configurePreset": "unity-ps5",
-	    "configuration":   "Release"
+            "configurePreset": "unity-ps5"
         },
         {
             "name": "unity-xbox",
@@ -1436,78 +1423,63 @@
         },
         {
             "name": "freebsd",
-            "configurePreset": "freebsd",
-	    "configuration":   "Release"
+            "configurePreset": "freebsd"
         },
         {
             "name": "freebsd-x11",
-            "configurePreset": "freebsd-x11",
-	    "configuration":   "Release"
+            "configurePreset": "freebsd-x11"
         },
         {
             "name": "freebsd-wayland",
-            "configurePreset": "freebsd-wayland",
-	    "configuration":   "Release"
+            "configurePreset": "freebsd-wayland"
         },
         {
             "name": "freebsd-x11soft",
-            "configurePreset": "freebsd-x11soft",
-	    "configuration":   "Release"
+            "configurePreset": "freebsd-x11soft"
         },
         {
             "name": "netbsd",
-            "configurePreset": "netbsd",
-	    "configuration":   "Release"
+            "configurePreset": "netbsd"
         },
         {
             "name": "netbsd-x11osft",
-            "configurePreset": "netbsd-x11soft",
-	    "configuration":   "Release"
+            "configurePreset": "netbsd-x11soft"
         },
         {
             "name": "openbsd",
-            "configurePreset": "openbsd",
-	    "configuration":   "Release"
+            "configurePreset": "openbsd"
         },
         {
             "name": "openbsd-x11soft",
-            "configurePreset": "openbsd-x11soft",
-	    "configuration":   "Release"
+            "configurePreset": "openbsd-x11soft"
         },
         {
             "name": "solaris11",
-            "configurePreset": "solaris11",
-	    "configuration":   "Release"
+            "configurePreset": "solaris11"
         },
         {
             "name": "solaris10",
-            "configurePreset": "solaris10",
-	    "configuration":   "Release"
+            "configurePreset": "solaris10"
         },
         {
             "name": "aix",
-            "configurePreset": "aix",
-	    "configuration":   "Release"
+            "configurePreset": "aix"
         },
         {
             "name": "hpux",
-            "configurePreset": "hpux",
-	    "configuration":   "Release"
+            "configurePreset": "hpux"
         },
         {
             "name": "unix",
-            "configurePreset": "unix",
-	    "configuration":   "Release"
+            "configurePreset": "unix"
         },
         {
             "name": "haiku",
-            "configurePreset": "haiku",
-	    "configuration":   "Release"
+            "configurePreset": "haiku"
         },
         {
             "name": "pc98",
-            "configurePreset": "pc98",
-	    "configuration":   "Release"
+            "configurePreset": "pc98"
         }
     ]
 }

@@ -28,6 +28,8 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
+#if !defined(HAL_TARGET_PC98)
+
 #include <strato/strato.h>
 
 #include <stdlib.h>
@@ -469,3 +471,60 @@ skip_if_needed(
 	w->do_skip = false;
 	w->consumed_bytes = (long)w->loop_start * sample_bytes;
 }
+
+#else
+
+#include <strato/strato.h>
+
+struct hal_wave {
+	int dummy;
+} dummy_wave;
+
+
+bool
+hal_create_wave_from_file(
+	const char *fname,
+	bool loop,
+	struct hal_wave **w)
+{
+	UNUSED_PARAMETER(fname);
+	UNUSED_PARAMETER(loop);
+
+	*w = &dummy_wave;
+
+	return true;
+}
+
+void
+hal_set_wave_repeat_times(
+	struct hal_wave *w,
+	int n)
+{
+	UNUSED_PARAMETER(w);
+	UNUSED_PARAMETER(n);
+}
+
+void
+hal_destroy_wave(
+	struct hal_wave *w)
+{
+	UNUSED_PARAMETER(w);
+}
+
+bool
+hal_is_wave_eos(
+	struct hal_wave *w)
+{
+	return true;
+}
+
+int
+hal_get_wave_samples(
+	struct hal_wave *w,
+	uint32_t *buf,
+	int samples)
+{
+	return 0;
+}
+
+#endif
