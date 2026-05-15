@@ -48,15 +48,32 @@
 <div align="center">
   <a href="https://noctvm.io/test/">
     Click to play on the browser!<br>
-    <img src="https://github.com/awemorris/suika3/blob/main/docs/img/screenshot-20260406.webp" alt="Suika3 Sample Game Screenshot"><br>
+    <img src="https://github.com/awemorris/suika3/blob/main/docs/img/screenshot-20260406.webp" alt="Suika3 Sample Game Screenshot">
   </a>
+  <br>
+
   Suika3 now has a nice launcher written in and self-hosted by Suika3!<br>
-  <img src="https://github.com/awemorris/suika3/blob/main/docs/img/screenshot-20260429.webp" alt="Suika3 Launcher Screenshot"><br>
-  Suika3 runs on NEC PC-9800 Series (PC98)<br>
-  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-pc98.png" alt="Suika3 on NEC PC-9801" width="320" hspace="20"><br>
+  <img src="https://github.com/awemorris/suika3/blob/main/docs/img/screenshot-20260429.webp" alt="Suika3 Launcher Screenshot">
+  <br>
+
+  <p>Windows 11</p><br>
+  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-win11.webp" alt="Suika3 on Windows 11" width="480">
+  <br>
+
+  <p>iOS</p><br>
+  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-ios.webp" alt="Suika3 on iOS" width="480">
+  <br>
+
+  <p>Android</p><br>
+  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-android.webp" alt="Suika3 on Android" width="480">
+  <br>
+
+  Suika3 on NEC PC-9801<br>
+  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-pc98.png" alt="Suika3 on NEC PC-9801" width="480"><br>
   We've returned where VN was born...<br>
   Requires: 80386/16MB RAM/MS-DOS 6.2/OpenWatcom/DOS4GW<br>
   Crazy thing is, our Sun-Ray JIT VM works on a real PC98 machine!<br>
+  <br>
 </div>
 
 ---
@@ -276,9 +293,7 @@ Suika3 is engineered with modern techniques, and delivers:
 
 - [Kanban](#kanban-status)
 - [Getting Started Guide](#getting-started-guide)
-- [Building Locally](#building-locally)
 - [Quick Look](#quick-look)
-- [Packages](#packages)
 - [Examples](#examples)
 - [Why Ray?](#why-ray)
 - [Technical Overview](#technical-overview)
@@ -295,7 +310,6 @@ Suika3 is engineered with modern techniques, and delivers:
 - [Asset File Formats](#asset-file-formats)
 - [Game Packaging & Distribution](#game-packaging-distribution)
 - [Engine Feature List](#engine-feature-list)
-- [Screenshots](#screenshots)
 - [Versioning Policy](#versioning-policy)
 - [License](#license)
 - [Support & Contact](#support--contact)
@@ -506,7 +520,7 @@ See the `game/` folder for:
 
 ---
 
-### Why Ray?
+## Why Ray?
 
 - **Instant Iteration:** No compile cycles, no waiting. The built-in
   JIT compiler runs your scripts immediately after editing, so you can
@@ -1157,59 +1171,62 @@ full text of each license and copyright notice.
 Suika3 ships with CMake presets covering various platforms and build
 configurations.
 
-|Preset                              |Platform              |Compiler   |Directory                              |Target        |Type           |
-|------------------------------------|----------------------|-----------|---------------------------------------|--------------|---------------|
-|windows-vs2022-x86-debug            |Windows               |MSVC       |out/build/windows-vs2022-x86-debug     |suika3.exe    |Executable     |
-|windows-vs2022-x86-release          |Windows               |MSVC       |out/build/windows-vs2022-x86-release   |suika3.exe    |Executable     |
-|windows-vs2022-x64-debug            |Windows               |MSVC       |out/build/windows-vs2022-x64-debug     |suika3.exe    |Executable     |
-|windows-vs2022-x64-release          |Windows               |MSVC       |out/build/windows-vs2022-x64-release   |suika3.exe    |Executable     |
-|windows-vs2022-arm64-debug          |Windows               |MSVC       |out/build/windows-vs2022-arm64-debug   |suika3.exe    |Executable     |
-|windows-vs2022-arm64-release        |Windows               |MSVC       |out/build/windows-vs2022-arm64-release |suika3.exe    |Executable     |
-|windows-vs2022-gdk-desktop          |Windows               |MSVC       |out/build/windows-vs2022-gdk-desktop   |suika3.exe    |Executable     |
-|windows-vs2022-gdk-xbox-xs          |Windows               |MSVC       |out/build/windows-vs2022-gdk-xbox-xs   |suika3.exe    |Executable     |
-|windows-vs2026-x86-debug            |Windows               |MSVC       |out/build/windows-vs2026-x86-debug     |suika3.exe    |Executable     |
-|windows-vs2026-x86-release          |Windows               |MSVC       |out/build/windows-vs2026-x86-release   |suika3.exe    |Executable     |
-|windows-vs2026-x64-debug            |Windows               |MSVC       |out/build/windows-vs2026-x64-debug     |suika3.exe    |Executable     |
-|windows-vs2026-x64-release          |Windows               |MSVC       |out/build/windows-vs2026-x64-release   |suika3.exe    |Executable     |
-|windows-vs2026-x64-console-release  |Windows               |MSVC       |out/build/windows-vs2026-x64-release   |suika3.exe    |Executable     |
-|windows-vs2026-arm64-debug          |Windows               |MSVC       |out/build/windows-vs2026-arm64-debug   |suika3.exe    |Executable     |
-|windows-vs2026-arm64-release        |Windows               |MSVC       |out/build/windows-vs2026-arm64-release |suika3.exe    |Executable     |
-|windows-vs2026-gdk-desktop          |Windows               |MSVC       |out/build/windows-vs2026-gdk-desktop   |suika3.exe    |Executable     |
-|windows-vs2026-gdk-xbox-xs          |Windows               |MSVC       |out/build/windows-vs2026-gdk-xbox-xs   |suika3.exe    |Executable     |
-|windows-mingw-x86                   |Windows               |MinGW-GCC  |build-mingw-x86                        |suika3.exe    |Executable     |
-|windows-mingw-x86_64                |Windows               |MinGW-GCC  |build-mingw-x86_64                     |suika3.exe    |Executable     |
-|windows-mingw-arm64                 |Windows               |MinGW-LLVM |build-mingw-arm64                      |suika3.exe    |Executable     |
-|windows-mingw-win95                 |Windows 9x            |MinGW-GCC  |build-mingw-win95                      |suika3.exe    |Executable     |
-|macos                               |macOS                 |Clang      |build-macos                            |Suika3.app    |App Bundle     |
-|macos-cli                           |macOS (CLI)           |Clang      |build-macos                            |Suika3.app    |App Bundle     |
-|linux                               |Linux (X11)           |GCC        |build-linux                            |suika3        |Executable     |
-|linux-wayland                       |Linux (Wayland)       |GCC        |build-linux                            |suika3        |Executable     |
-|linux-gdm                           |Linux (GBM)           |GCC        |build-linux                            |suika3        |Executable     |
-|linux-gdm-rot90                     |Linux (GBM)           |GCC        |build-linux                            |suika3        |Executable     |
-|linux-fbdev                         |Linux (fbdev)         |GCC        |build-linux                            |suika3        |Executable     |
-|linux-x11soft                       |Linux                 |GCC        |build-linux                            |suika3        |Executable     |
-|freebsd                             |FreeBSD               |Clang      |build-freebsd                          |suika3        |Executable     |
-|netbsd                              |NetBSD                |GCC        |build-netbsd                           |suika3        |Executable     |
-|openbsd                             |OpenBSD               |Clang      |build-openbsd                          |suika3        |Executable     |
-|solaris11                           |Solaris11             |SunCC      |build-solaris11                        |suika3        |Executable     |
-|solaris10                           |Solaris10             |SunCC      |build-solaris10                        |suika3        |Executable     |
-|haiku                               |Haiku OS              |GCC        |build-haiku                            |suika3        |Executable     |
-|wasm                                |WebAssembly           |Emscripten |build-wasm                             |index.html    |HTML + Wasm    |
-|wasm-local                          |Chromebook            |Emscripten |build-wasm-local                       |index.html    |HTML + Wasm    |
-|ios-device                          |iOS Device            |Clang      |build-ios-device                       |libsuika3.a   |Static Library |
-|ios-simulator                       |iOS Simulator         |Clang      |build-ios-simulator                    |libsuika3.a   |Static Library |
-|android-x86                         |Android x86           |Clang      |build-android-x86                      |libsuika3.so  |Shared Library |
-|android-x86_64                      |Android x86_64        |Clang      |build-android-x86_64                   |libsuika3.so  |Shared Library |
-|android-armv7                       |Android armv7         |Clang      |build-android-armv7                    |libsuika3.so  |Shared Library |
-|android-arm64                       |Android arm64         |Clang      |build-android-arm64                    |libsuika3.so  |Shared Library |
-|android-riscv64                     |Android riscv64       |Clang      |build-android-riscv64                  |libsuika3.so  |Shared Library |
-|openharmony-arm64                   |HarmonyOS NEXT arm64  |Clang      |build-openharmony-arm64                |libsuika3.a   |Static Library |
-|openharmony-armv7                   |HarmonyOS NEXT armv7  |Clang      |build-openharmony-armv7                |libsuika3.a   |Static Library |
-|openharmony-x86_64                  |HarmonyOS NEXT x86_64 |Clang      |build-openharmony-x86_64               |libsuika3.a   |Static Library |
-|unity-win64                         |Unity Plugin          |Clang-CL   |build-unity-win64                      |libsuika3.dll |DLL Plugin     |
-|unity-switch                        |Unity Plugin          |Clang      |build-unity-switch                     |libsuika3.a   |Static Library |
-|unity-ps5                           |Unity Plugin          |Clang      |build-unity-ps5                        |libsuika3.a   |Static Library |
-|unity-xbox                          |Unity Plugin          |Clang      |build-unity-xbox                       |libsuika3.a   |Static Library |
+| Preset                      | Platform              | Compiler   | Type           |
+|-----------------------------|-----------------------|------------|----------------|
+| windows-vs2022-x86          | Windows               | MSVC       | Executable     |
+| windows-vs2026-x86          | Windows               | MSVC       | Executable     |
+| windows-vs2022-x64          | Windows               | MSVC       | Executable     |
+| windows-vs2026-x64          | Windows               | MSVC       | Executable     |
+| windows-vs2022-x64-console  | Windows               | MSVC       | Executable     |
+| windows-vs2026-x64-console  | Windows               | MSVC       | Executable     |
+| windows-vs2022-arm64        | Windows               | MSVC       | Executable     |
+| windows-vs2026-arm64        | Windows               | MSVC       | Executable     |
+| windows-mingw-x86           | Windows               | MinGW-GCC  | Executable     |
+| windows-mingw-x86_64        | Windows               | MinGW-GCC  | Executable     |
+| windows-mingw-arm64         | Windows               | MinGW-LLVM | Executable     |
+| windows-mingw-win95         | Windows 9x            | MinGW-GCC  | Executable     |
+| macos                       | macOS                 | Clang      | App Bundle     |
+| macos-lib                   | macOS (lib)           | Clang      | Library        |
+| macos-cli                   | macOS (CLI)           | Clang      | Executable     |
+| linux                       | Linux (Wayland/X11)   | GCC        | Executable     |
+| linux-debug                 | Linux Debug           | GCC        | Executable     |
+| linux-wayland               | Linux (Wayland)       | GCC        | Executable     |
+| linux-x11                   | Linux (X11)           | GCC        | Executable     |
+| linux-dri                   | Linux (DRI)           | GCC        | Executable     |
+| linux-dri-rot90             | Linux (DRI)           | GCC        | Executable     |
+| linux-fbdev                 | Linux (fbdev)         | GCC        | Executable     |
+| linux-x11soft               | Linux                 | GCC        | Executable     |
+| freebsd                     | FreeBSD               | Clang      | Executable     |
+| freebsd-wayland             | FreeBSD               | Clang      | Executable     |
+| freebsd-x11                 | FreeBSD               | Clang      | Executable     |
+| freebsd-x11soft             | FreeBSD               | Clang      | Executable     |
+| netbsd                      | NetBSD                | GCC        | Executable     |
+| netbsd-x11soft              | NetBSD                | GCC        | Executable     |
+| openbsd                     | OpenBSD (OpenGL)      | Clang      | Executable     |
+| openbsd-x11soft             | OpenBSD (Soft3D)      | Clang      | Executable     |
+| solaris11                   | Solaris11             | SunCC      | Executable     |
+| solaris10                   | Solaris10             | SunCC      | Executable     |
+| haiku                       | Haiku OS              | GCC        | Executable     |
+| wasm                        | WebAssembly           | Emscripten | HTML + Wasm    |
+| wasm-local                  | Chromebook            | Emscripten | HTML + Wasm    |
+| ios-device                  | iOS Device            | Clang      | Static Library |
+| ios-simulator               | iOS Simulator         | Clang      | Static Library |
+| android-x86                 | Android x86           | Clang      | Shared Library |
+| android-x86_64              | Android x86_64        | Clang      | Shared Library |
+| android-armv7               | Android armv7         | Clang      | Shared Library |
+| android-arm64               | Android arm64         | Clang      | Shared Library |
+| android-riscv64             | Android riscv64       | Clang      | Shared Library |
+| openharmony-arm64           | HarmonyOS NEXT arm64  | Clang      | Static Library |
+| openharmony-armv7           | HarmonyOS NEXT armv7  | Clang      | Static Library |
+| openharmony-x86_64          | HarmonyOS NEXT x86_64 | Clang      | Static Library |
+| unity-win64                 | Unity Plugin          | Clang-CL   | DLL Plugin     |
+| unity-switch                | Unity Plugin          | Clang      | Static Library |
+| unity-ps5                   | Unity Plugin          | Clang      | Static Library |
+| unity-xbox                  | Unity Plugin          | Clang      | Static Library |
+| windows-vs2022-gdk-desktop  | Windows               | MSVC       | Executable     |
+| windows-vs2022-gdk-xbox-xs  | Windows               | MSVC       | Executable     |
+| windows-vs2026-gdk-desktop  | Windows               | MSVC       | Executable     |
+| windows-vs2026-gdk-xbox-xs  | Windows               | MSVC       | Executable     |
 
 ---
 
@@ -1236,9 +1253,11 @@ In **Software Engineering**, reliability is fundamentally a function
 of time. As Suika3 has been newly released in April 2026, the engine
 is currently in its early lifecycle stage regarding field-tested
 uptime. Consequently, formal quality metrics are not yet fully
-applicable. However, the architecture inherits over two decades of
-development expertise, ensuring a solid foundation for the QA process
-leading toward our first LTS (Long-Term Support).
+applicable.
+
+However, the architecture inherits over two decades of development
+expertise, ensuring a solid foundation for the QA process leading
+toward our first LTS (Long-Term Support).
 
 ### Our Path to Stability
 
@@ -1297,8 +1316,10 @@ external/                          # Third-party libraries and dependencies
 
 - Images:
     - Supported formats: PNG, JPEG, WebP.
+
 - Audio:
     - Supported formats: Ogg Vorbis, 44100Hz, Stereo or Mono.
+
 - Fonts:
     - Supported formats: TrueType (TTF), OpenType (OTF)
 
@@ -1376,19 +1397,6 @@ Studio Code.
 
 - Visual Novels (Done)
 - Other 2D games that have story parts
-
----
-
-## Screenshots
-
-<div align="center">
-  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-win11.webp" alt="Suika3 on Windows 11" width="320" hspace="20">
-  <p>Windows 11</p><br>
-  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-ios.webp" alt="Suika3 on iOS" width="320" hspace="20">
-  <p>iOS</p><br>
-  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-android.webp" alt="Suika3 on Android" width="320" hspace="20">
-  <p>Android</p><br>
-</div>
 
 ---
 
@@ -1650,119 +1658,36 @@ Play, regardless of their software, hardware, and budget limitations.
 
 ## FAQ
 
-- [TL;DR](#tldr)
-- [Installation](#installation)
-  - [Downloading Full SDK](#downloading-full-sdk)
-  - [Package Managers](#package-managers)
-  - [Building from Source](#building-from-source)
-- [Syntax Highlighting on Visual Studio Code](#syntax-highlighting-on-visual-studio-code)
-- [VS Code Integration](#vs-code-integration)
-  - [Copilot Completion](#copilot-completion)
-  - [Desktop Execution](#desktop-execution)
-  - [iOS and Android Execution](#ios-and-android-execution)
-- [Introduction](#introduction)
-- [Key Features](#key-features)
-- [Index](#index)
-- [Kanban (Status)](#kanban-status)
-- [Getting Started Guide](#getting-started-guide)
-  - [Installation](#installation-1)
-  - [Personalize Your Story (`start.novel`)](#personalize-your-story-startnovel)
-  - [Under the Hood (Advanced Tips)](#under-the-hood-advanced-tips)
-- [Quick Look](#quick-look)
-  - [NovelML](#novelml)
-- [Examples](#examples)
-  - [Why Ray?](#why-ray)
-- [Technical Overview](#technical-overview)
-  - [Core Architecture](#core-architecture)
-  - [StratoHAL](#stratohal)
-  - [Platform Support and Components](#platform-support-and-components)
-  - [Console Unity Plugin Notice](#console-unity-plugin-notice)
-  - [NoctLang](#noctlang)
-  - [AOT Compilation](#aot-compilation)
-  - [Script Execution Mode](#script-execution-mode)
-  - [Runtime Footprint](#runtime-footprint)
-  - [JIT Pipeline](#jit-pipeline)
-  - [Unified Execution Model](#unified-execution-model)
-- [Garbage Collection](#garbage-collection)
-  - [Core Mechanism: Generational GC](#core-mechanism-generational-gc)
-  - [Frame-Synchronized Latency Hiding](#frame-synchronized-latency-hiding)
-- [Compatibility List](#compatibility-list)
-  - [Platform Availability at a Glance](#platform-availability-at-a-glance)
-  - [64-bit Windows Binary Compatibility List](#64-bit-windows-binary-compatibility-list)
-  - [32-bit Windows Compatibility List](#32-bit-windows-compatibility-list)
-  - [macOS Compatibility List](#macos-compatibility-list)
-  - [Linux Compatibility List](#linux-compatibility-list)
-  - [iOS Compatibility List](#ios-compatibility-list)
-  - [Android Compatibility List](#android-compatibility-list)
-  - [HarmonyOS / OpenHarmony Compatibility List](#harmonyos--openharmony-compatibility-list)
-  - [FreeBSD](#freebsd)
-  - [NetBSD](#netbsd)
-  - [OpeBSD](#opebsd)
-  - [Solaris](#solaris)
-- [Documentation](#documentation)
-- [Internationalization](#internationalization)
-  - [How To Switch Languages](#how-to-switch-languages)
-  - [Contributing Translations](#contributing-translations)
-- [Third-Party Libraries](#third-party-libraries)
-  - [Core Libraries](#core-libraries)
-  - [License Compliance](#license-compliance)
-- [CMake Presets](#cmake-presets)
-- [Codebase \& Maturity](#codebase--maturity)
-- [Quality Assurance](#quality-assurance)
-  - [Our Path to Stability](#our-path-to-stability)
-- [Adoption Status](#adoption-status)
-- [Repository Structure](#repository-structure)
-- [Asset File Formats](#asset-file-formats)
-- [Game Packaging \& Distribution](#game-packaging--distribution)
-- [Engine Feature List](#engine-feature-list)
-- [Roadmap](#roadmap)
-- [Screenshots](#screenshots)
-- [Versioning Policy](#versioning-policy)
-- [License](#license)
-- [Support \& Contact](#support--contact)
-  - [Professional \& Enterprise Support](#professional--enterprise-support)
-- [Community](#community)
-  - [Discord](#discord)
-  - [Recruiting](#recruiting)
-  - [Our Commitment to Inclusivity](#our-commitment-to-inclusivity)
-  - [Governance](#governance)
-- [Contribution](#contribution)
-- [Lineage: The Grand Journey](#lineage-the-grand-journey)
-- [Why Suika3?: Our Philosophy](#why-suika3-our-philosophy)
-  - [Mission: Building a Sustainable Ecosystem](#mission-building-a-sustainable-ecosystem)
-  - [Our Vision: Catalyst for Growth](#our-vision-catalyst-for-growth)
-  - [Our Values: Empowering Talents for Sustainable Careers](#our-values-empowering-talents-for-sustainable-careers)
-- [FAQ](#faq)
-  - [What's this?](#whats-this)
-  - [Is this a competitor to existing engines such as Ren'Py, Unity, or Godot?](#is-this-a-competitor-to-existing-engines-such-as-renpy-unity-or-godot)
-  - [Is this okay to use for now?](#is-this-okay-to-use-for-now)
-  - [Doesn't "over 25 years of maturity" contradict "zero operational use"?](#doesnt-over-25-years-of-maturity-contradict-zero-operational-use)
-  - [Oh it's bus factor 1, isn't it?](#oh-its-bus-factor-1-isnt-it)
-  - [Can companies maintain their own forks?](#can-companies-maintain-their-own-forks)
-  - [Who makes the decisions?](#who-makes-the-decisions)
-  - [Is Suika3 open source software? Can it be used commercially?](#is-suika3-open-source-software-can-it-be-used-commercially)
-  - [What about the license for third-party libraries?](#what-about-the-license-for-third-party-libraries)
-  - [JIT is disabled on iOS/console, so what should I do?](#jit-is-disabled-on-iosconsole-so-what-should-i-do)
-  - [Are scripts safe? Can they access files or the network?](#are-scripts-safe-can-they-access-files-or-the-network)
-  - [Is it easy to pass the store review?](#is-it-easy-to-pass-the-store-review)
-  - [Is "Supports all modern platforms" really true?](#is-supports-all-modern-platforms-really-true)
-  - [What does "via Unity" mean for console support?](#what-does-via-unity-mean-for-console-support)
-  - [To what extent is HarmonyOS NEXT supported?](#to-what-extent-is-harmonyos-next-supported)
-  - [Can you reproduce "2.5-4.5x times faster"? What are the measurement conditions?](#can-you-reproduce-25-45x-times-faster-what-are-the-measurement-conditions)
-  - [Old GC takes 10 to 300ms, but does it cause frame drops?](#old-gc-takes-10-to-300ms-but-does-it-cause-frame-drops)
-  - [How do I start making games? Any samples?](#how-do-i-start-making-games-any-samples)
-  - [How do I go about developing plugins?](#how-do-i-go-about-developing-plugins)
-  - [Can I migrate from existing assets (like Ren'Py or Unity)?](#can-i-migrate-from-existing-assets-like-renpy-or-unity)
-  - [Where's the document? Is it the latest version?](#wheres-the-document-is-it-the-latest-version)
-  - [Is Japanese/Chinese/... supported?](#is-japanesechinese-supported)
-  - [Where should I go if I'm in trouble?](#where-should-i-go-if-im-in-trouble)
-  - [What about SLAs and maintenance contracts for businesses?](#what-about-slas-and-maintenance-contracts-for-businesses)
-  - [What are the minimum requirements?](#what-are-the-minimum-requirements)
-  - [What does "Supported" mean?](#what-does-supported-mean)
-  - [Will there be breaking changes? What is the compatibility policy?](#will-there-be-breaking-changes-what-is-the-compatibility-policy)
-  - [Does it support DLC or in-app purchases?](#does-it-support-dlc-or-in-app-purchases)
-  - [Why the deep devotion to Apple and iPhone?](#why-the-deep-devotion-to-apple-and-iphone)
-  - [Why Using Python on iOS is Challenging?](#why-using-python-on-ios-is-challenging)
+- [What's this?](#whats-this)
+- [Is this a competitor to existing engines such as Ren'Py, Unity, or Godot?](#is-this-a-competitor-to-existing-engines-such-as-renpy-unity-or-godot)
+- [Is this okay to use for now?](#is-this-okay-to-use-for-now)
+- [Doesn't "over 25 years of maturity" contradict "zero operational use"?](#doesnt-over-25-years-of-maturity-contradict-zero-operational-use)
+- [Oh it's bus factor 1, isn't it?](#oh-its-bus-factor-1-isnt-it)
+- [Can companies maintain their own forks?](#can-companies-maintain-their-own-forks)
+- [Who makes the decisions?](#who-makes-the-decisions)
+- [Is Suika3 open source software? Can it be used commercially?](#is-suika3-open-source-software-can-it-be-used-commercially)
+- [What about the license for third-party libraries?](#what-about-the-license-for-third-party-libraries)
+- [JIT is disabled on iOS/console, so what should I do?](#jit-is-disabled-on-iosconsole-so-what-should-i-do)
+- [Are scripts safe? Can they access files or the network?](#are-scripts-safe-can-they-access-files-or-the-network)
+- [Is it easy to pass the store review?](#is-it-easy-to-pass-the-store-review)
+- [Is "Supports all modern platforms" really true?](#is-supports-all-modern-platforms-really-true)
+- [What does "via Unity" mean for console support?](#what-does-via-unity-mean-for-console-support)
+- [To what extent is HarmonyOS NEXT supported?](#to-what-extent-is-harmonyos-next-supported)
+- [Can you reproduce "2.5-4.5x times faster"? What are the measurement conditions?](#can-you-reproduce-25-45x-times-faster-what-are-the-measurement-conditions)
+- [Old GC takes 10 to 300ms, but does it cause frame drops?](#old-gc-takes-10-to-300ms-but-does-it-cause-frame-drops)
+- [How do I start making games? Any samples?](#how-do-i-start-making-games-any-samples)
+- [How do I go about developing plugins?](#how-do-i-go-about-developing-plugins)
+- [Can I migrate from existing assets (like Ren'Py or Unity)?](#can-i-migrate-from-existing-assets-like-renpy-or-unity)
+- [Where's the document? Is it the latest version?](#wheres-the-document-is-it-the-latest-version)
+- [Is Japanese/Chinese/... supported?](#is-japanesechinese-supported)
+- [Where should I go if I'm in trouble?](#where-should-i-go-if-im-in-trouble)
+- [What about SLAs and maintenance contracts for businesses?](#what-about-slas-and-maintenance-contracts-for-businesses)
+- [What are the minimum requirements?](#what-are-the-minimum-requirements)
+- [What does "Supported" mean?](#what-does-supported-mean)
+- [Will there be breaking changes? What is the compatibility policy?](#will-there-be-breaking-changes-what-is-the-compatibility-policy)
+- [Does it support DLC or in-app purchases?](#does-it-support-dlc-or-in-app-purchases)
+- [Why the deep devotion to Apple and iPhone?](#why-the-deep-devotion-to-apple-and-iphone)
+- [Why Using Python on iOS is Challenging?](#why-using-python-on-ios-is-challenging)
 
 ### What's this?
 
