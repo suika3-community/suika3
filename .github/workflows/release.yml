@@ -780,7 +780,7 @@ jobs:
       - name: Copy for PC98
         run: |
           mkdir dist/SDK/msdos
-          unzip pc98/suika98.exe -d dist/SDK/msdos/
+          cp pc98/suika98.exe dist/SDK/msdos/
 
       - name: Copy documents
         run: |
