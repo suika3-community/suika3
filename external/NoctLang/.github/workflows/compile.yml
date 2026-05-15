@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-windows:
-    name: Build for Windows (Visual Studio)
+    name: Build for Windows (VS)
     runs-on: windows-latest
     steps:
       - name: Checkout repository
@@ -17,18 +17,18 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
-      - name: x86
+      - name: Build for x86
         run: |
           cmake --preset windows-vs2022-x86
           cmake --build --preset windows-vs2022-x86 --config Release --parallel
 
-      - name: x64
+      - name: Build for x64
         run: |
           cmake --preset windows-vs2022-x64
           cmake --build --preset windows-vs2022-x64 --config Release --parallel
           cp out/build/windows-vs2022-x64/Release/noct.exe noct-win64.exe
 
-      - name: arm64
+      - name: Build for arm64
         run: |
           cmake --preset windows-vs2022-arm64
           cmake --build --preset windows-vs2022-arm64 --config Release --parallel
@@ -64,56 +64,6 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-  build-linux:
-    name: Build for Linux
-    runs-on: ubuntu-latest
-    container: rockylinux:8
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up dependencies
-        run: |
-          dnf -y install gcc make cmake
-
-      - name: Build static
-        run: |
-          cmake --preset linux -G "Unix Makefiles"
-          cmake --build --preset linux --parallel
-
-      - name: Build shared
-        run: |
-          cmake --preset linux-debian
-          cmake --build --preset linux-debian --parallel
-
-      - name: Build tar.gz
-        run: |
-          mkdir -p out
-          mkdir -p out/include/noct
-          mkdir -p out/lib/x86_64-linux-gnu/
-          mkdir -p out/lib/x86_64-linux-gnu/pkgconfig
-          mkdir -p out/share/cmake/Modules
-          mkdir -p out/share/man/man1
-          cp include/noct/noct.h out/include/noct/
-          cp include/noct/c89compat.h out/include/noct/
-          cp build-linux/libnoct.a out/lib/x86_64-linux-gnu/
-          cp build-linux/libnoctapi.a out/lib/x86_64-linux-gnu/
-          cp -d build-linux-debian/libnoct.so* out/lib/x86_64-linux-gnu/
-          cp -d build-linux-debian/libnoctapi.so out/lib/x86_64-linux-gnu/
-          cp build-linux/noct.pc out/lib/x86_64-linux-gnu/pkgconfig/
-          cp build-linux/noctapi.pc out/lib/x86_64-linux-gnu/pkgconfig/
-          cp cmake/modules/FindNoct.cmake out/share/cmake/Modules/
-          cp resources/man/noct.1.man out/share/man/man1/
-          cd out
-          tar czf ../noct-linux-x86_64.tar.gz *
-          cd ..
-
-      - name: Upload binary
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux
-          path: noct-linux-x86_64.tar.gz
-
   build-windows-mingw:
     name: Build for Windows (MinGW-w64)
     runs-on: ubuntu-latest
@@ -130,7 +80,14 @@ jobs:
       - name: Set up dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y mingw-w64 cmake ninja-build
+          sudo apt-get install -y cmake ninja-build
+
+      - name: Download mingw-w64-11.0
+        run: |
+          echo "Downloaing mingw-w64-11.0."
+          wget -q https://noctvm.io/ci/mingw-w64-11.0.tar.bz2
+          tar xJf mingw-w64-11.0.tar.bz2
+          echo "$PWD/mingw-w64-11.0/bin" >> $GITHUB_PATH
 
       - name: Buld
         run: |
@@ -185,6 +142,56 @@ jobs:
           name: mingw
           path: |
             noct-mingw-w64.tar.gz
+
+  build-linux:
+    name: Build for Linux
+    runs-on: ubuntu-latest
+    container: rockylinux:8
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up dependencies
+        run: |
+          dnf -y install gcc make cmake
+
+      - name: Build static
+        run: |
+          cmake --preset linux -G "Unix Makefiles"
+          cmake --build --preset linux --parallel
+
+      - name: Build shared
+        run: |
+          cmake --preset linux-debian
+          cmake --build --preset linux-debian --parallel
+
+      - name: Build tar.gz
+        run: |
+          mkdir -p out
+          mkdir -p out/include/noct
+          mkdir -p out/lib/x86_64-linux-gnu/
+          mkdir -p out/lib/x86_64-linux-gnu/pkgconfig
+          mkdir -p out/share/cmake/Modules
+          mkdir -p out/share/man/man1
+          cp include/noct/noct.h out/include/noct/
+          cp include/noct/c89compat.h out/include/noct/
+          cp build-linux/libnoct.a out/lib/x86_64-linux-gnu/
+          cp build-linux/libnoctapi.a out/lib/x86_64-linux-gnu/
+          cp -d build-linux-debian/libnoct.so* out/lib/x86_64-linux-gnu/
+          cp -d build-linux-debian/libnoctapi.so out/lib/x86_64-linux-gnu/
+          cp build-linux/noct.pc out/lib/x86_64-linux-gnu/pkgconfig/
+          cp build-linux/noctapi.pc out/lib/x86_64-linux-gnu/pkgconfig/
+          cp cmake/modules/FindNoct.cmake out/share/cmake/Modules/
+          cp resources/man/noct.1.man out/share/man/man1/
+          cd out
+          tar czf ../noct-linux-x86_64.tar.gz *
+          cd ..
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: noct-linux-x86_64.tar.gz
 
   build-macos:
     name: Build for macOS and iOS
@@ -302,9 +309,7 @@ jobs:
 
   release:
     name: Create GitHub Release
-
     runs-on: ubuntu-latest
-
     needs:
       - build-windows
       - build-linux

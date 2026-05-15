@@ -104,8 +104,10 @@ static INLINE bool rt_get_u16(
                 return false;
         }
 
-        *val = (int)((uint32_t)func->bytecode[*pc] << 8) |
-                     (uint32_t)func->bytecode[*pc + 1];
+        *val = (int)(
+                (uint32_t)((uint32_t)func->bytecode[*pc] << 8) |
+                (uint32_t)func->bytecode[*pc + 1]
+               );
 
         *pc = *pc + 2;
 
@@ -124,8 +126,10 @@ static INLINE bool rt_get_tmpvar(
                 return false;
         }
 
-        *val = (int)((uint32_t)func->bytecode[*pc] << 8) |
-                     (uint32_t)func->bytecode[*pc + 1];
+        *val = (int)(
+                (uint32_t)((uint32_t)func->bytecode[*pc] << 8) |
+                (uint32_t)func->bytecode[*pc + 1]
+               );
         if ((uint32_t)*val >= func->tmpvar_size) {
                 rt_error(env, BROKEN_BYTECODE);
                 return false;
