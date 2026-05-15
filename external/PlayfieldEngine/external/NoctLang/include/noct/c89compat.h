@@ -209,7 +209,12 @@ extern "C" {
 #endif
 
 /* Linux (non-Android) */
-#if defined(__linux) && !defined(__ANDROID__) && !defined(NOCT_USE_UNITY)
+#if defined(__linux) && \
+        ( \
+                !defined(__ANDROID__) &&   \
+                !defined(HAL_TARGET_UNITY) && \
+                !defined(HAL_TARGET_OPENHARMONY) \
+	)
 #define NOCT_TARGET_LINUX
 #ifndef NOCT_TARGET_POSIX
 #define NOCT_TARGET_POSIX
@@ -283,6 +288,7 @@ extern "C" {
     !defined(NOCT_TARGET_PIOSIX) &&               \
     !defined(NOCT_TARGET_IOS) &&                  \
     !defined(NOCT_TARGET_ANDROID) &&              \
+    !defined(NOCT_TARGET_OPENHARMONY) &&          \
     !defined(NOCT_TARGET_WASM) &&                 \
     !defined(NOCT_TARGET_BEOS) &&                 \
     !defined(NOCT_TARGET_UNITY) &&                \
