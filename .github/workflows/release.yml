@@ -143,6 +143,7 @@ jobs:
           mv build-macos/Suika3.dmg .
 
       - name: Build macOS/iOS XCFramework
+        run: |
           xcodebuild \
             -create-xcframework \
             -library build-macos/libsuika3.a -headers include \
