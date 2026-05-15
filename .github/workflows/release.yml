@@ -643,7 +643,7 @@ jobs:
           mv dist/SDK/macos/macos dist/SDK/macos/project
 
           mkdir dist/SDK/macos/root
-          tar xzf suika3-macos-universal.tar.gz -C dist/SDK/macos/root
+          tar xzf macos/suika3-macos-universal.tar.gz -C dist/SDK/macos/root
 
           cp dist/SDK/macos/root/bin/suika3-aotc    dist/SDK/macos/
           cp dist/SDK/macos/root/bin/suika3-bcc     dist/SDK/macos/
