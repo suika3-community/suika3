@@ -794,7 +794,7 @@ jobs:
       - name: Copy for Unity
         run: |
           mkdir dist/SDK/unity
-          unzip openharmony/Playfield-Unity.zip -x dist/SDK
+          unzip unity/Playfield-Unity.zip -x dist/SDK
 
       - name: Download mkdocs artifacts
         uses: actions/download-artifact@v4
