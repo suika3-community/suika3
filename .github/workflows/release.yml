@@ -49,6 +49,7 @@ jobs:
             suika3-win32.exe
             suika3-win64.exe
             suika3-arm64.exe
+            suika3-debug.exe
             suika3-aotc.exe
             suika3-bcc.exe
             suika3-pack.exe
