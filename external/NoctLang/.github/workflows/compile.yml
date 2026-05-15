@@ -8,6 +8,7 @@ on:
 
 jobs:
   build-windows:
+    name: Build for Windows (Visual Studio)
     runs-on: windows-latest
     steps:
       - name: Checkout repository
@@ -64,6 +65,7 @@ jobs:
           retention-days: 7
 
   build-linux:
+    name: Build for Linux
     runs-on: ubuntu-latest
     container: rockylinux:8
     steps:
@@ -98,7 +100,8 @@ jobs:
           cp build-linux/libnoctapi.a out/lib/x86_64-linux-gnu/
           cp -d build-linux-debian/libnoct.so* out/lib/x86_64-linux-gnu/
           cp -d build-linux-debian/libnoctapi.so out/lib/x86_64-linux-gnu/
-          cp resources/pkg-config/noct*.pc out/lib/x86_64-linux-gnu/pkgconfig/
+          cp build-linux/noct.pc out/lib/x86_64-linux-gnu/pkgconfig/
+          cp build-linux/noctapi.pc out/lib/x86_64-linux-gnu/pkgconfig/
           cp cmake/modules/FindNoct.cmake out/share/cmake/Modules/
           cp resources/man/noct.1.man out/share/man/man1/
           cd out
@@ -112,6 +115,7 @@ jobs:
           path: noct-linux-x86_64.tar.gz
 
   build-windows-mingw:
+    name: Build for Windows (MinGW-w64)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -150,7 +154,8 @@ jobs:
           cp include/noct/c89compat.h out/i686-w64-mingw32/include/noct/
           cp build-mingw-x86/libnoct.a out/i686-w64-mingw32/lib/
           cp build-mingw-x86/libnoctapi.a out/i686-w64-mingw32/lib/
-          cp resources/pkg-config/noct*.pc out/i686-w64-mingw32/lib/pkgconfig/
+          cp build-mingw-x86/noct.pc out/i686-w64-mingw32/lib/pkgconfig/
+          cp build-mingw-x86/noctapi.pc out/i686-w64-mingw32/lib/pkgconfig/
           cp cmake/modules/FindNoct.cmake out/i686-w64-mingw32/share/cmake/Modules/
           cp resources/man/noct.1.man out/i686-w64-mingw32/share/man/man1/
 
@@ -165,7 +170,8 @@ jobs:
           cp include/noct/c89compat.h out/x86_64-w64-mingw32/include/noct/
           cp build-mingw-x86_64/libnoct.a out/x86_64-w64-mingw32/lib/
           cp build-mingw-x86_64/libnoctapi.a out/x86_64-w64-mingw32/lib/
-          cp resources/pkg-config/noct*.pc out/x86_64-w64-mingw32/lib/pkgconfig/
+          cp build-mingw-x86_64/noct.pc out/x86_64-w64-mingw32/lib/pkgconfig/
+          cp build-mingw-x86_64/noctapi.pc out/x86_64-w64-mingw32/lib/pkgconfig/
           cp cmake/modules/FindNoct.cmake out/x86_64-w64-mingw32/share/cmake/Modules/
           cp resources/man/noct.1.man out/x86_64-w64-mingw32/share/man/man1/
 
@@ -181,6 +187,7 @@ jobs:
             noct-mingw-w64.tar.gz
 
   build-macos:
+    name: Build for macOS and iOS
     runs-on: macos-latest
     steps:
       - name: Checkout repository
@@ -232,7 +239,8 @@ jobs:
           cp include/noct/c89compat.h out/include/noct/
           cp libnoct.a out/lib/
           cp libnoctapi.a out/lib/
-          cp resources/pkg-config/noct*.pc out/lib/pkgconfig/
+          cp build-macos-arm64/noct.pc out/lib/pkgconfig/
+          cp build-macos-arm64/noctapi.pc out/lib/pkgconfig/
           cp cmake/modules/FindNoct.cmake out/share/cmake/Modules/
           cp resources/man/noct.1.man out/share/man/man1/
           cd out
@@ -248,6 +256,7 @@ jobs:
             noct-macos-universal.tar.gz
 
   build-pc98:
+    name: Build for NEC PC-9801
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -293,7 +302,9 @@ jobs:
 
   release:
     name: Create GitHub Release
+
     runs-on: ubuntu-latest
+
     needs:
       - build-windows
       - build-linux
@@ -348,6 +359,13 @@ jobs:
 
           body: |
             This is an automated nightly build. Not an official release.
+            
+            🌙 Noct Programming Language
+            
+            Noct is a tiny yet mighty programming language for sandboxed scripting.
+            Its runtime is a hardened by sandboxing for game and application-embedded scripting.
+            It includes the JIT compiler for many architectures including x86, x86_64, ARMv5-7, Arm64, RISC-V 32/64, MIPS 32/64, and PowerPC 32/64.
+            The AOT compiler translates a Noct program to an ANSI C or an Emacs Lisp source code for JIT-restricted platforms such as iOS.
             
             | OS      | File                           | Type             | Description                                          |
             |---------|--------------------------------|------------------|------------------------------------------------------|

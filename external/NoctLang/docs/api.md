@@ -1,14 +1,17 @@
 Standard API
 ============
 
-The Standard API is a modular library that allows you to include only
-the necessary components in libnoctlang through build options. There
-are no mandatory APIs — developers are free to choose which ones to
-integrate into their applications. The `noct` command includes all
-APIs except those related to the GUI, while the `gnoct` command
-includes all APIs, including the GUI ones.
+The standard API is implemented in a modular library called
+`libnoctapi`, separated with the core `libnoct` library. The
+separation allows you to include only the core components or the
+entire API in your binary through build options.
 
----
+There are no mandatory APIs, and developers are free to choose which
+ones to integrate into their applications.
+
+Currently, the `noct` command includes all APIs. We plan to introduce
+some different runtimes including the `gnoct` command that includes
+GUI libraries.
 
 ## System
 

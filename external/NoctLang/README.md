@@ -1,7 +1,8 @@
-NoctLang - The Noct Programming Language
-========================================
+🌙 Noct Programming Language
+============================
 
 `Noct` is a tiny yet mighty programming language for sandboxed scripting.
+Its syntax is lightweight, but its runtime is built for high-end performance.
 
 **Small enough to learn today, powerful enough to ship tomorrow!**
 
@@ -11,24 +12,30 @@ NoctLang - The Noct Programming Language
 
 ### Small, Fast, and Robust
 
-Only about 180 KB — with a fast JIT compiler, a robust generational GC,
+Only about 200 KB — with a fast JIT compiler, a robust generational GC,
 and a clean C/JS-like syntax featuring a novel Dictionary-based OOP model.
 
 ### Portable
 
-Written in portable ANSI C with no external dependencies, it runs
-everywhere — from desktop PCs down to Raspberry Pi.
-Even on
-[MS-DOS](https://github.com/awemorris/NoctLang/releases/latest/download/noct98.exe),
-Noct runs well with JIT! (MS-DOS 6.2, 80386, 8MB RAM, DOS4GW 1.9, PC-9801 or IBM PC required.)
+Written in portable ANSI C with no external dependencies,
+it runs virtually everywhere — from desktop PCs down to Raspberry Pi.
+
+Remarkably, Noct runs well on
+[MS-DOS](https://github.com/awemorris/NoctLang/releases/latest/download/noct-dos.exe),
+even with the JIT compiler enabled!
 
 ### Embeddable
 
 Noct can be easily embedded into your applications.
-You are free to rebrand Noct as your own scripting language.
-By adding your own APIs, you can build a customized scripting runtime.
-For example, in [Playfield Engine](https://github.com/awemorris/PlayfieldEngine),
-we integrate Noct with game-specific APIs and refer to it as Playfield Script.
+
+By adding your own APIs, you can build a customized scripting runtime,
+and you are free to rebrand Noct as your own scripting language.
+
+For example, in
+[Playfield Engine](https://github.com/awemorris/PlayfieldEngine),
+and
+[Suika3](https://github.com/awemorris/suika3),
+they integrate Noct with game-specific APIs and refer to it as Ray scripting.
 
 ---
 
@@ -63,18 +70,18 @@ Our current roadmap is:
 ### JIT Backends:
 
 - x86, x86_64
-- ARMv7, Arm64
-- RISC-V 32-bit, RISC-V 64-bit
-- PowerPC 32-bit, PowerPC 64-bit
-- MIPS 32-bit, MIPS 64-bit
+- ARMv5-7, Arm64
+- RISC-V 32/64
+- PowerPC 32/64
+- MIPS 32/64
 
 ### Supported OSes:
 
-- Windows, macOS, Linux
-- iOS, Android
-- *BSD
-- Game Consoles
-- MS-DOS (with DOS extender)
+- Desktop: Windows, macOS, Linux, FreeBSD
+- Mobile: iOS, Android, OpenHarmony
+- Exotic: Solaris 10/11, NetBSD, OpenBSD, Haiku
+- Retro: DPMI (DOS, OS/2, Windows 3.1-XP)
+- Consoles: Switch, PlayStation 4/5, Xbox Series X|S
 - Any POSIX compliant OS
 
 Note: On major smartphones and consoles, runtime code generation (JIT)
@@ -92,7 +99,7 @@ found together in scripting languages:
 - **Lightweight JIT** — Fast execution in a tiny runtime.
 - **Generational GC** — Young semi-space copying + old mark-sweep-compact.
 - **Portable ANSI C** — No dependencies; runs everywhere.
-- **Tiny Footprint** — Runtime fits in ~180 KB.
+- **Tiny Footprint** — Runtime fits in ~200 KB.
 - **AOT Compilation** — Translate to C for JIT-restricted platforms. (e.g. iOS, Android)
 
 While most languages compromise on at least one of these,  
@@ -132,6 +139,7 @@ Noct is simple enough to try right now — no setup, no hassle.
 
 Save the following as `first.noct`, and just run `noct first.noct`.
 
+Source:
 ```
 func main() {
     Person = class {
@@ -146,6 +154,11 @@ func main() {
         print("Hello, " + person.name + "!");
     }
 }
+```
+
+Run:
+```
+$ noct first.noct
 ```
 
 Output:
@@ -181,9 +194,18 @@ cmake --build build
 ### Run
 
 To run a script:
-
 ```
 noct script.noct
+```
+
+To disable the JIT compiler:
+```
+noct --disable-jit script.noct
+```
+
+To forcibly enable the JIT compiler from the startup:
+```
+noct --force-jit script.noct
 ```
 
 ### Compile into Bytecode
@@ -200,6 +222,21 @@ To compile a script into an Emacs Lisp file:
 
 ```
 noct --elisp script.el script.noct
+```
+
+### JIT Option
+
+```
+  --jit-threshold=N    ... call-count threshold for compilation
+```
+
+### Garbage Collection Options
+
+```
+  --gc-nursery-size=N  ... first GC space size in bytes (default: 2MB = 2097152)
+  --gc-graduate-size=N ... second GC space size in bytes (default: 256KB = 262144)
+  --gc-tenure-size=N   ... final GC space size in bytes (default: 256MB = 268435456)
+  --gc-lop-threshold=N ... move objects larger than N-bytes to final GC space (default: 32KB = 32768)
 ```
 
 ---
@@ -374,14 +411,17 @@ CFG for "func foo(a) { if (a > 0) { return a; } else { return -a; } }"
     STORESYMBOL  "a", %2             ; Store result into global variable "a"
 ```
 
-### Compilation Stages
+### Compilation Pipeline
 
 ```
  +-----+     +-----+     +-----+     +-----+
- | SRC | --> | AST | --> | HIR | --> | LIR | ----> <<Interpreter>>
+ | SRC | --> | AST | --> | HIR | --> | LIR | ----> <<Interpreter>> Crescente Interpreter Backend
  +-----+     +-----+     +-----+     +-----+
                                         |
-                                        +--------> <<JIT Codegen>>
+                                        +--------> <<JIT Codegen>> Piena JIT Backend
+                                        |
+                                        +--------> <<AOT Codegen>> Nuova C AOT Backend
+
 ```
 
 - The AST captures the syntactic structure.
