@@ -1031,32 +1031,32 @@ hal_draw_image_3d_cross(
 
 static INLINE int fp32_eq(float a, float b)
 {
-    float d = a - b;
-    return d > -0.0001f && d < 0.0001f;
+	float d = a - b;
+	return d > -0.0001f && d < 0.0001f;
 }
 
 #if defined(HAL_TARGET_PC98)
 #undef floorf
 static INLINE int floorf(float x)
 {
-    int i = (int)x;
-    return (x < (float)i) ? i - 1 : i;
+	int i = (int)x;
+	return (x < (float)i) ? i - 1 : i;
 }
 
 #undef ceilf
 static INLINE int ceilf(float x)
 {
-    int i = (int)x;
-    return (x > (float)i) ? i + 1 : i;
+	int i = (int)x;
+	return (x > (float)i) ? i + 1 : i;
 }
 
 #undef lroundf
 static INLINE int lroundf(float x)
 {
-    if (x >= 0.0f)
-        return (int)(x + 0.5f);
-    else
-        return (int)(x - 0.5f);
+	if (x >= 0.0f)
+		return (int)(x + 0.5f);
+	else
+		return (int)(x - 0.5f);
 }
 #endif
 
