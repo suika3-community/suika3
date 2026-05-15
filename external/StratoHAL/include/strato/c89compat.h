@@ -209,7 +209,7 @@ extern "C" {
 /* Linux */
 #if defined(__linux) && \
         ( \
-                !defined(HAL_TARGET_ANDROID) && \
+                !defined(__ANDROID__) &&   \
                 !defined(HAL_TARGET_UNITY) && \
                 !defined(HAL_TARGET_OPENHARMONY) \
 	)

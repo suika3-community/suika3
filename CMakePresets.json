@@ -280,6 +280,7 @@
             "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-x86.cmake",
             "cacheVariables": {
                 "PLAYFIELD_TARGET_WINDOWS":    "ON",
+                "PLAYFIELD_ENABLE_INSTALL":    "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
                 "PLAYFIELD_ENABLE_BIN":        "ON",
@@ -297,6 +298,7 @@
             "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-x86_64.cmake",
             "cacheVariables": {
                 "PLAYFIELD_TARGET_WINDOWS":    "ON",
+                "PLAYFIELD_ENABLE_INSTALL":    "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
                 "PLAYFIELD_ENABLE_BIN":        "ON",
@@ -331,6 +333,7 @@
             "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-arm64.cmake",
             "cacheVariables": {
                 "PLAYFIELD_TARGET_WINDOWS":    "ON",
+                "PLAYFIELD_ENABLE_INSTALL":    "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
                 "PLAYFIELD_ENABLE_BIN":        "ON",

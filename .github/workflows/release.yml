@@ -122,6 +122,8 @@ jobs:
           cp cmake/modules/FindPlayfield.cmake out/i686-w64-mingw32/share/cmake/Modules/
 
           mkdir -p out/x86_64-w64-mingw32/bin
+          mkdir -p out/x86_64-w64-mingw32/include/playfield
+          mkdir -p out/x86_64-w64-mingw32/include/noct
           mkdir -p out/x86_64-w64-mingw32/include/strato
           mkdir -p out/x86_64-w64-mingw32/lib
           mkdir -p out/x86_64-w64-mingw32/lib/pkgconfig
@@ -129,8 +131,8 @@ jobs:
           cp build-mingw-x86_64/playfield.exe out/x86_64-w64-mingw32/bin/
           cp build-mingw-x86_64/playfield-aotc.exe out/x86_64-w64-mingw32/bin/
           cp build-mingw-x86_64/playfield-bcc.exe out/x86_64-w64-mingw32/bin/
-          cp windows-mingw-x86_64/playfield-pack.exe out/x86_64-w64-mingw32/bin/
-          cp include/playfield/playfield.h out/ix86_64-w64-mingw32/include/playfield/
+          cp build-mingw-x86_64/playfield-pack.exe out/x86_64-w64-mingw32/bin/
+          cp include/playfield/playfield.h out/x86_64-w64-mingw32/include/playfield/
           cp include/playfield/c89compat.h out/x86_64-w64-mingw32/include/playfield/
           cp external/NoctLang/include/noct/noct.h out/x86_64-w64-mingw32/include/noct/
           cp external/NoctLang/include/noct/c89compat.h out/x86_64-w64-mingw32/include/noct/
@@ -718,8 +720,8 @@ jobs:
           mkdir -p dist/SDK/macos
           cp macos/Playfield.dmg dist/SDK/macos/
 
-          mkdir dst/SDK/macos/project
-          unzip macos/Playfield-macOS-Xcode.zip -x dst/SDK/macos/project
+          unzip macos/Playfield-macOS-Xcode.zip -d dst/SDK/macos
+          mv dst/SDK/macos/macos dst/SDK/macos/project
 
           mkdir dst/SDK/macos/root
           tar xzf macos/playfield-macos-universal.tar.gz -C dst/SDK/macos/root
@@ -738,22 +740,12 @@ jobs:
           mkdir dist/SDK/linux/root
           tar xzf linux/playfield-linux-x86_64.tar.gz -C dist/SDK/linux/root
 
-      - name: Download wasm artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: wasm
-          path: wasm
-
-      - name: Copy for Wasm
+      - name: Copy for iOS
         run: |
-          mkdir dist/SDK/wasm
-          cp wasm/index.html dist/SDK/wasm/
-          cp resources/assets.arc dist/SDK/wasm/
+          mkdir -p dist/SDK/ios
 
-          mkdir dist/SDK/wasm/root
-          tar xzf wasm/playfield-wasm.tar.gz -C dist/SDK/wasm/root
-
-          cp wasm/index.html playfield-wasm.html
+          unzip macos/Playfield-iOS-Xcode.zip -d dst/SDK/ios
+          mv dst/SDK/ios/ios dst/SDK/ios/project
 
       - name: Download Android artifacts
         uses: actions/download-artifact@v4
@@ -781,6 +773,23 @@ jobs:
         with:
           name: unity
           path: unity
+
+      - name: Download wasm artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: wasm
+          path: wasm
+
+      - name: Copy for Wasm
+        run: |
+          mkdir dist/SDK/wasm
+          cp wasm/index.html dist/SDK/wasm/
+          cp resources/assets.arc dist/SDK/wasm/
+
+          mkdir dist/SDK/wasm/root
+          tar xzf wasm/playfield-wasm.tar.gz -C dist/SDK/wasm/root
+
+          cp wasm/index.html playfield-wasm.html
 
       - name: Copy for Unity
         run: |
