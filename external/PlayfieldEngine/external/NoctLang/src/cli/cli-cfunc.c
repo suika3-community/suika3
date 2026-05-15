@@ -22,7 +22,7 @@ static bool serialize_printer(NoctEnv *env, char *buf, size_t size, NoctValue *v
 /* NAPU table. */
 struct napi_item {
 	const char *name;
-	int param_count;
+	uint32_t param_count;
 	const char *param[NOCT_ARG_MAX];
 	bool (*cfunc)(NoctEnv *env);
 } napi_items[] = {

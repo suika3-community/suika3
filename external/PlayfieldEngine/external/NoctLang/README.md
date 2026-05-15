@@ -15,6 +15,8 @@ Its syntax is lightweight, but its runtime is built for high-end performance.
 Only about 200 KB — with a fast JIT compiler, a robust generational GC,
 and a clean C/JS-like syntax featuring a novel Dictionary-based OOP model.
 
+JIT execution is typically 2-10x faster than interpreter execution.
+
 ### Portable
 
 Written in portable ANSI C with no external dependencies,

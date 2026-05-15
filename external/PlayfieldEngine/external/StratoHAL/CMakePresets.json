@@ -209,6 +209,20 @@
             }
         },
         {
+            "name":           "linux-debug",
+            "displayName":    "Linux Wayland/X11 Dual OpenGL Debug",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-linux-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":      "Debug",
+                "STRATO_TARGET_LINUX":   "ON",
+                "STRATO_ENABLE_INSTALL": "ON",
+                "STRATO_ENABLE_STATIC":  "ON",
+                "STRATO_ENABLE_I18N":    "ON",
+                "STRATO_ENABLE_PACK":    "ON"
+            }
+        },
+        {
             "name":           "linux-debian",
             "displayName":    "Linux Debian Package",
             "generator":      "Unix Makefiles",
@@ -841,12 +855,12 @@
             "configurePreset": "linux"
         },
         {
-            "name": "linux-debian",
-            "configurePreset": "linux-debian"
+            "name": "linux-debug",
+            "configurePreset": "linux-debug"
         },
         {
-            "name": "linux-debug",
-            "configurePreset": "linux"
+            "name": "linux-debian",
+            "configurePreset": "linux-debian"
         },
         {
             "name": "linux-x11",

@@ -119,7 +119,7 @@ bool load_file_content(const char *fname, char **data, size_t *size)
 
 	/* Get the file size. */
 	fseek(fp, 0, SEEK_END);
-	*size = ftell(fp);
+	*size = (size_t)ftell(fp);
 	fseek(fp, 0, SEEK_SET);
 
 	/* Allocate a buffer. */
@@ -157,7 +157,8 @@ int wide_printf(const char *format, ...)
 	va_end(ap);
 
 #if !defined(_WIN32)
-	return printf("%s", buf);
+	printf("%s", buf);
+	return size;
 #else
 	/* MSVC or MinGW: Use WriteConsoleW(). (Otherwise we can't write CJK.) */
 	static wchar_t wbuf[4096];

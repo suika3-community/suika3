@@ -137,7 +137,6 @@ static bool add_file_hook_c(const char *fname)
 {
 	char *data;
 	size_t len;
-	uint32_t func_count, j;
 
 	/* Load an argument file. */
 	if (!load_file_content(fname, &data, &len))

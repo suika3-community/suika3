@@ -135,7 +135,6 @@ hal_main(
 	char *argv[])
 {
 	bool prefer_x11 = is_wslg();
-	bool wl_tried = false;
 
 #if defined(HAL_USE_PORTAL)
 	if (argc >= 2 && strcmp(argv[1], "--open") == 0) {

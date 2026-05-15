@@ -22,6 +22,9 @@ pf_init_hook(
 	int width,
 	int height)
 {
+	UNUSED_PARAMETER(width);
+	UNUSED_PARAMETER(height);
+
 	/* Stub. */
 	return true;
 }

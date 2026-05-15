@@ -131,7 +131,7 @@ noct_elback_translate(
 	const char *fname,
 	const char *data)
 {
-	int func_count, i;
+	uint32_t func_count, i;
 
 	/* Do parse, build AST. */
 	if (!ast_build(fname, data)) {
@@ -895,12 +895,11 @@ static bool
 elback_visit_call_expr(
 	struct hir_expr *expr)
 {
-	int arg_count, i;
+	uint32_t arg_count, i;
 
 	assert(expr != NULL);
 	assert(expr->type == HIR_EXPR_CALL);
 	assert(expr->val.call.func != NULL);
-	assert(expr->val.call.arg_count >= 0);
 	assert(expr->val.call.arg_count < HIR_PARAM_SIZE);
 
 	arg_count = expr->val.call.arg_count;
@@ -928,12 +927,11 @@ static bool
 elback_visit_thiscall_expr(
 	struct hir_expr *expr)
 {
-	int arg_count, i;
+	uint32_t arg_count, i;
 
 	assert(expr != NULL);
 	assert(expr->type == HIR_EXPR_THISCALL);
 	assert(expr->val.thiscall.func != NULL);
-	assert(expr->val.thiscall.arg_count >= 0);
 	assert(expr->val.thiscall.arg_count < HIR_PARAM_SIZE);
 
 	arg_count = expr->val.thiscall.arg_count;
@@ -962,7 +960,7 @@ static bool
 elback_visit_array_expr(
 	struct hir_expr *expr)
 {
-	int elem_count, i;
+	uint32_t elem_count, i;
 
 	assert(expr != NULL);
 	assert(expr->type == HIR_EXPR_ARRAY);
@@ -991,7 +989,7 @@ static bool
 elback_visit_dict_expr(
 	struct hir_expr *expr)
 {
-	int kv_count, i;
+	uint32_t kv_count, i;
 
 	assert(expr != NULL);
 	assert(expr->type == HIR_EXPR_DICT);
@@ -1029,7 +1027,7 @@ elback_visit_new_expr(
 
 	/* Put the elements. */
 	if (expr->val.new_.init != NULL) {
-		int i, kv_count = expr->val.new_.init->val.dict.kv_count;
+		uint32_t i, kv_count = expr->val.new_.init->val.dict.kv_count;
 		for (i = 0; i < kv_count; i++) {
 			PUT1("(%s . ", expr->val.new_.init->val.dict.key[i]);
 

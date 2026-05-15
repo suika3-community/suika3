@@ -21,18 +21,18 @@ int command_run(int argc, char *argv[])
 	NoctVM *vm;
 	NoctEnv *env;
 	NoctValue ret;
-	int file_arg;
-	int i;
+	uint32_t file_arg;
+	uint32_t i;
 	char *data;
 	size_t len;
-	int arg_count;
+	uint32_t arg_count;
 	NoctValue *arg_value;
 
 	noct_set_default_config(&config);
 
 	/* Parse options. */
 	file_arg = 1;
-	for (i = 1; i < argc; i++) {
+	for (i = 1; i < (uint32_t)argc; i++) {
 		if (argv[i][0] != '-')
 			break;
 
@@ -57,27 +57,27 @@ int command_run(int argc, char *argv[])
 			continue;
 		}
 		if (strncmp(argv[i], "--gc-nursery-size=", 18) == 0) {
-			config.gc_nursery_size = atoi(argv[i] + 18);
+			config.gc_nursery_size = (size_t)atoi(argv[i] + 18);
 			file_arg++;
 			continue;
 		}
 		if (strncmp(argv[i], "--gc-graduate-size=", 21) == 0) {
-			config.gc_graduate_size = atoi(argv[i] + 21);
+			config.gc_graduate_size = (size_t)atoi(argv[i] + 21);
 			file_arg++;
 			continue;
 		}
 		if (strncmp(argv[i], "--gc-tenure-size=", 17) == 0) {
-			config.gc_tenure_size = atoi(argv[i] + 17);
+			config.gc_tenure_size = (size_t)atoi(argv[i] + 17);
 			file_arg++;
 			continue;
 		}
 		if (strncmp(argv[i], "--gc-lop-threshold=", 18) == 0) {
-			config.gc_lop_threshold = atoi(argv[i] + 18);
+			config.gc_lop_threshold = (size_t)atoi(argv[i] + 18);
 			file_arg++;
 			continue;
 		}
 		if (strncmp(argv[i], "--gc-promotion-threshold=", 25) == 0) {
-			config.gc_promotion_threshold = atoi(argv[i] + 25);
+			config.gc_promotion_threshold = (size_t)atoi(argv[i] + 25);
 			file_arg++;
 			continue;
 		}
@@ -87,7 +87,7 @@ int command_run(int argc, char *argv[])
 	}
 
 	/* Check if a file is specified. */
-	if (file_arg == argc) {
+	if (file_arg == (uint32_t)argc) {
 		/* No file specified, enter REPL. */
 		if (argc == 1)
 			return command_repl();
@@ -120,7 +120,7 @@ int command_run(int argc, char *argv[])
 		return 1;
 	}
 
-	for (i = file_arg; i < argc; i++) {
+	for (i = file_arg; i < (uint32_t)argc; i++) {
 		/* Load a file content. */
 		if (!load_file_content(argv[i], &data, &len))
 			return 1;
@@ -140,7 +140,7 @@ int command_run(int argc, char *argv[])
 			}
 		} else {
 			/* It's a bytecode file. */
-			if (!noct_register_bytecode(env, (void *)data, len)) {
+			if (!noct_register_bytecode(env, (void *)data, (uint32_t)len)) {
 				const char *file, *msg;
 				int line;
 				noct_get_error_file(env, &file);
@@ -156,7 +156,7 @@ int command_run(int argc, char *argv[])
 	}
 
 	/* Make the arguments for "main()". */
-	arg_count = argc - file_arg - 1;
+	arg_count = (uint32_t)argc - file_arg - 1;
 	if (arg_count > 0) {
 		arg_value = malloc(sizeof(NoctValue) * arg_count);
 		if (arg_value == NULL)

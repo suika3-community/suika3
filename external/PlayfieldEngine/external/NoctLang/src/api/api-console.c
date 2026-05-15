@@ -48,7 +48,7 @@ noct_register_api_console(
 	NoctEnv *env)
 {
 	NoctValue dict;
-	int i;
+	size_t i;
 
 	/* Make a global variable "System". */
 	if (!noct_make_empty_dict(env, &dict))
@@ -123,8 +123,8 @@ static bool serialize_printer(
 	int ival;
 	float fval;
 	const char *sval;
-	int items;
-	int i;
+	uint32_t items;
+	uint32_t i;
 	char digits[1024];
 
 	if (!noct_get_value_type(env, value, &type))
@@ -153,7 +153,7 @@ static bool serialize_printer(
 			strncat(buf, "\"", size);
 		break;
 	case NOCT_VALUE_ARRAY:
-		if (!noct_get_array_size(env, value, (uint32_t *)&items))
+		if (!noct_get_array_size(env, value, &items))
 			return false;
 		strncat(buf, "[", size);
 		for (i = 0; i < items; i++) {
@@ -210,7 +210,8 @@ static int console_wide_printf(const char *format, ...)
 	va_end(ap);
 
 #if !defined(_WIN32)
-	return printf("%s", buf);
+	printf("%s", buf);
+	return size;
 #else
 	/* MSVC or MinGW: Use WriteConsoleW(). (Otherwise we can't write CJK.) */
 	static wchar_t wbuf[4096];

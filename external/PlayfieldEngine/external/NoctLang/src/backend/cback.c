@@ -95,7 +95,7 @@ noct_cback_translate(
 	const char *fname,
 	const char *data)
 {
-	int func_count, i;
+	uint32_t func_count, i;
 
 	/* Do parse, build AST. */
 	if (!ast_build(fname, data)) {

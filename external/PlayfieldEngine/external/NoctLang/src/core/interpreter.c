@@ -92,28 +92,6 @@ static INLINE bool rt_get_u8(
         return true;
 }
 
-#define GET_U16(v) if (!rt_get_u16(env, func, pc, v)) return false
-static INLINE bool rt_get_u16(
-        struct rt_env *env,
-        struct rt_func *func,
-        uint32_t *pc,
-        int *val)
-{
-        if (*pc + 2 > func->bytecode_size) {
-                rt_error(env, BROKEN_BYTECODE);
-                return false;
-        }
-
-        *val = (int)(
-                (uint32_t)((uint32_t)func->bytecode[*pc] << 8) |
-                (uint32_t)func->bytecode[*pc + 1]
-               );
-
-        *pc = *pc + 2;
-
-        return true;
-}
-
 #define GET_TMPVAR(v) if (!rt_get_tmpvar(env, func, pc, v)) return false
 static INLINE bool rt_get_tmpvar(
         struct rt_env *env,
