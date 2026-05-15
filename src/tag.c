@@ -152,17 +152,17 @@ s3i_cleanup_tag(void)
 		t = &tag[i];
 		free(t->tag_name);
 		for (j = 0; j < PROP_MAX; j++) {
-			if (t->prop_name[i] != NULL) {
-				free(t->prop_name[i]);
-				t->prop_name[i] = NULL;
+			if (t->prop_name[j] != NULL) {
+				free(t->prop_name[j]);
+				t->prop_name[j] = NULL;
 			}
-			if (t->prop_value[i] != NULL) {
-				free(t->prop_value[i]);
-				t->prop_value[i] = NULL;
+			if (t->prop_value[j] != NULL) {
+				free(t->prop_value[j]);
+				t->prop_value[j] = NULL;
 			}
-			if (t->prop_value_eval[i] != NULL) {
-				free(t->prop_value_eval[i]);
-				t->prop_value_eval[i] = NULL;
+			if (t->prop_value_eval[j] != NULL) {
+				free(t->prop_value_eval[j]);
+				t->prop_value_eval[j] = NULL;
 			}
 		}
 	}
@@ -1231,7 +1231,9 @@ parse_tag_callback(
 		return false;
 	}
 
-	t = &tag[tag_size++];
+	t = &tag[tag_size];
+	memset(t, 0, sizeof(struct s3i_tag));
+	tag_size++;
 	t->prop_count = props;
 
 	/* Copy a tag name. */
