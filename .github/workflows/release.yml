@@ -166,7 +166,7 @@ jobs:
           mkdir macos/project/Game.xcodeproj
           cp resources/projects/macos/Game.xcodeproj/project.pbxproj macos/project/Game.xcodeproj/
 
-          mkdir dist/SDK/macos/project/Game
+          mkdir macos/project/Game
           cp -R Suika3.xcframework macos/project/Game/
           cp -R resources/projects/macos/Game/Assets.xcassets macos/project/Game/
           cp resources/projects/macos/Game/main.m macos/project/Game/
@@ -376,13 +376,13 @@ jobs:
           mkdir -p android/app/src/main/jniLibs/x86_64
           cp build-android-x86_64/libsuika3.so android/app/src/main/jniLibs/x86_64/libstrato.so
 
-          mkdir -p dist/SDK/android/app/src/main/jniLibs/x86
+          mkdir -p /android/app/src/main/jniLibs/x86
           cp build-android-x86/libsuika3.so android/app/src/main/jniLibs/x86/libstrato.so
 
-          mkdir -p dist/SDK/android/app/src/main/jniLibs/riscv64
+          mkdir -p /android/app/src/main/jniLibs/riscv64
           cp build-android-riscv64/libsuika3.so android/app/src/main/jniLibs/riscv64/libstrato.so
 
-          zip -r SUika3-Android-Studio.zip android
+          zip -r Suika3-Android-Studio.zip android
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -508,16 +508,16 @@ jobs:
           cp external/PlayfieldEngine/external/StratoHAL/src/MeltShader.shader    unity/Assets/Resources/
           cp external/PlayfieldEngine/external/StratoHAL/src/MainScene.unity      unity/Assets/
 
-          mkdir dist/SDK/unity/Assets/Plugins
-          mkdir dist/SDK/unity/Assets/Plugins/x86_64
-          mkdir dist/SDK/unity/Assets/Plugins/Switch
-          mkdir dist/SDK/unity/Assets/Plugins/PS5
-          mkdir dist/SDK/unity/Assets/Plugins/GameCoreXboxSeries
-          mkdir dist/SDK/unity/Assets/Plugins/Common
-          cp unity-win64/libsuika3.dll dist/SDK/unity/Assets/Plugins/x86_64/
-          cp unity-switch/libsuika3.a  dist/SDK/unity/Assets/Plugins/Switch/
-          cp unity-ps5/libsuika3.a     dist/SDK/unity/Assets/Plugins/PS5/
-          cp unity-xbox/suika3.lib     dist/SDK/unity/Assets/Plugins/GameCoreXboxSeries/
+          mkdir unity/Assets/Plugins
+          mkdir unity/Assets/Plugins/x86_64
+          mkdir unity/Assets/Plugins/Switch
+          mkdir unity/Assets/Plugins/PS5
+          mkdir unity/Assets/Plugins/GameCoreXboxSeries
+          mkdir unity/Assets/Plugins/Common
+          cp unity-win64/libsuika3.dll unity/Assets/Plugins/x86_64/
+          cp unity-switch/libsuika3.a  unity/Assets/Plugins/Switch/
+          cp unity-ps5/libsuika3.a     unity/Assets/Plugins/PS5/
+          cp unity-xbox/suika3.lib     unity/Assets/Plugins/GameCoreXboxSeries/
 
           cp docs/readme/unity.md dist/SDK/unity/
 
