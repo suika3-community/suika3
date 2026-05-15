@@ -17,7 +17,7 @@ option(SUIKA_TARGET_MACOS_LIB        "Build for macOS (Library)"                
 option(SUIKA_TARGET_LINUX            "Build for Linux (Wayland/X11 Dual)"             OFF)
 option(SUIKA_TARGET_LINUX_X11        "Build for Linux (X11, OpenGL)"                  OFF)
 option(SUIKA_TARGET_LINUX_WAYLAND    "Build for Linux (Wayland, OpenGL ES)"           OFF)
-option(SUIKA_TARGET_LINUX_GBM        "Build for Linux (GBM, OpenGL ES)"               OFF)
+option(SUIKA_TARGET_LINUX_DRI        "Build for Linux (DRI, OpenGL ES)"               OFF)
 option(SUIKA_TARGET_LINUX_FBDEV      "Build for Linux (fbdev, Soft3D)"                OFF)
 option(SUIKA_TARGET_LINUX_X11SOFT    "Build for Linux (X11, Soft3D)"                  OFF)
 option(SUIKA_TARGET_IOS              "Build for iOS"                                  OFF)
@@ -207,7 +207,7 @@ if(   SUIKA_TARGET_WINDOWS
    OR SUIKA_TARGET_LINUX
    OR SUIKA_TARGET_LINUX_X11
    OR SUIKA_TARGET_LINUX_WAYLAND
-   OR SUIKA_TARGET_LINUX_GBM
+   OR SUIKA_TARGET_LINUX_DRI
    OR SUIKA_TARGET_LINUX_FBDEV
    OR SUIKA_TARGET_LINUX_X11SOFT
    OR SUIKA_TARGET_IOS
@@ -396,8 +396,8 @@ if(   NOT SUIKA_ENABLE_DIST
     set(PLAYFIELD_TARGET_LINUX_X11 ON)
   elseif(SUIKA_TARGET_LINUX_WAYLAND)
     set(PLAYFIELD_TARGET_LINUX_WAYLAND ON)
-  elseif(SUIKA_TARGET_LINUX_GBM)
-    set(PLAYFIELD_TARGET_LINUX_GBM ON)
+  elseif(SUIKA_TARGET_LINUX_DRI)
+    set(PLAYFIELD_TARGET_LINUX_DRI ON)
   elseif(SUIKA_TARGET_LINUX_FBDEV)
     set(PLAYFIELD_TARGET_LINUX_FBDEV ON)
   elseif(SUIKA_TARGET_LINUX_X11SOFT)
@@ -518,11 +518,6 @@ endif()
 #
 # Release/Debug
 #
-
-# Use "Release" build type by default.
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type (Debug or Release)" FORCE)
-endif()
 
 # Debug Configuration
 if(MSVC)
@@ -893,7 +888,7 @@ endif()
 if(   SUIKA_TARGET_LINUX
    OR SUIKA_TARGET_LINUX_X11
    OR SUIKA_TARGET_LINUX_WAYLAND
-   OR SUIKA_TARGET_LINUX_GBM
+   OR SUIKA_TARGET_LINUX_DRI
    OR SUIKA_TARGET_LINUX_FBDEV
    OR SUIKA_TARGET_LINUX_X11SOFT
    OR SUIKA_TARGET_FREEBSD

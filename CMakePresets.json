@@ -12,9 +12,6 @@
             "toolset":        "v143",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":    "Release",
-                "CMAKE_BUILD_TYPE":             "Release",
-                "CMAKE_MSVC_RUNTIME_LIBRARY":   "MultiThreaded$<$<CONFIG:Debug>:Debug>",
                 "SUIKA_TARGET_WINDOWS":         "ON",
                 "SUIKA_ENABLE_JIT":             "ON",
                 "SUIKA_ENABLE_I18N":            "ON",
@@ -37,9 +34,6 @@
             "toolset":        "v143",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":    "Release",
-                "CMAKE_BUILD_TYPE":             "Release",
-                "CMAKE_MSVC_RUNTIME_LIBRARY":   "MultiThreaded$<$<CONFIG:Debug>:Debug>",
                 "SUIKA_TARGET_WINDOWS":         "ON",
                 "SUIKA_ENABLE_JIT":             "ON",
                 "SUIKA_ENABLE_I18N":            "ON",
@@ -62,9 +56,6 @@
             "toolset":        "v143",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":    "Release",
-                "CMAKE_BUILD_TYPE":             "Release",
-                "CMAKE_MSVC_RUNTIME_LIBRARY":   "MultiThreaded$<$<CONFIG:Debug>:Debug>",
                 "SUIKA_TARGET_WINDOWS":         "ON",
                 "SUIKA_ENABLE_JIT":             "ON",
                 "SUIKA_ENABLE_I18N":            "ON",
@@ -87,9 +78,6 @@
             "toolset":        "v141_xp",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":    "Release",
-                "CMAKE_BUILD_TYPE":             "Release",
-                "CMAKE_MSVC_RUNTIME_LIBRARY":   "MultiThreaded$<$<CONFIG:Debug>:Debug>",
                 "CMAKE_EXE_LINKER_FLAGS":       "/SUBSYSTEM:WINDOWS,5.01",
                 "SUIKA_TARGET_WINDOWS":         "ON",
                 "SUIKA_ENABLE_JIT":             "ON",
@@ -113,9 +101,6 @@
             "toolset":        "v143",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":    "Release",
-                "CMAKE_BUILD_TYPE":             "Release",
-                "CMAKE_MSVC_RUNTIME_LIBRARY":   "MultiThreaded$<$<CONFIG:Debug>:Debug>",
                 "SUIKA_TARGET_WINDOWS":         "ON",
                 "SUIKA_ENABLE_JIT":             "ON",
                 "SUIKA_ENABLE_I18N":            "ON",
@@ -135,9 +120,6 @@
             "toolset":        "v143",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":    "Release",
-                "CMAKE_BUILD_TYPE":             "Release",
-                "CMAKE_MSVC_RUNTIME_LIBRARY":   "MultiThreaded$<$<CONFIG:Debug>:Debug>",
                 "SUIKA_TARGET_WINDOWS":         "ON",
                 "SUIKA_ENABLE_UNSAFE":          "ON"
             },
@@ -157,7 +139,6 @@
             "cacheVariables": {
                 "SUIKA_TARGET_GDK_WINDOWS":     "ON",
                 "SUIKA_ENABLE_JIT":             "ON",
-                "CMAKE_MSVC_RUNTIME_LIBRARY":   "MultiThreaded$<$<CONFIG:Debug>:Debug>",
                 "SUIKA_ENABLE_I18N":            "OFF",
                 "SUIKA_ENABLE_PACK":            "OFF",
                 "SUIKA_ENABLE_BCC":             "OFF",
@@ -225,33 +206,6 @@
             "toolset":        "v145",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":    "Release",
-                "CMAKE_BUILD_TYPE":             "Release",
-                "CMAKE_MSVC_RUNTIME_LIBRARY":   "MultiThreaded$<$<CONFIG:Debug>:Debug>",
-                "SUIKA_TARGET_WINDOWS":         "ON",
-                "SUIKA_ENABLE_JIT":             "ON",
-                "SUIKA_ENABLE_I18N":            "ON",
-                "SUIKA_ENABLE_PACK":            "ON",
-                "SUIKA_ENABLE_BCC":             "ON",
-                "SUIKA_ENABLE_AOTC":            "ON",
-                "SUIKA_ENABLE_WEBSERVER":       "ON"
-            },
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            }
-        },
-        {
-            "name":           "windows-vs2026-x86-debug",
-            "displayName":    "VS2026 x86 Debug",
-            "generator":      "Visual Studio 18 2026",
-            "architecture":   "Win32",
-            "toolset":        "v145",
-            "binaryDir":      "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":    "Debug",
-                "CMAKE_BUILD_TYPE":             "Debug",
                 "SUIKA_TARGET_WINDOWS":         "ON",
                 "SUIKA_ENABLE_JIT":             "ON",
                 "SUIKA_ENABLE_I18N":            "ON",
@@ -274,9 +228,6 @@
             "toolset":        "v145",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":    "Release",
-                "CMAKE_BUILD_TYPE":             "Release",
-                "CMAKE_MSVC_RUNTIME_LIBRARY":   "MultiThreaded$<$<CONFIG:Debug>:Debug>",
                 "SUIKA_TARGET_WINDOWS":         "ON",
                 "SUIKA_ENABLE_JIT":             "ON",
                 "SUIKA_ENABLE_I18N":            "ON",
@@ -296,9 +247,6 @@
             "toolset":        "v145",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":           "Release",
-                "CMAKE_BUILD_TYPE":                    "Release",
-                "CMAKE_MSVC_RUNTIME_LIBRARY":          "MultiThreaded$<$<CONFIG:Debug>:Debug>",
                 "SUIKA_TARGET_WINDOWS":                "ON",
                 "SUIKA_ENABLE_JIT":                    "ON",
                 "SUIKA_ENABLE_I18N":                   "ON",
@@ -308,30 +256,6 @@
                 "CMAKE_CXX_FLAGS_RELEASE":             "/O2 /Zi",
                 "CMAKE_EXE_LINKER_FLAGS_RELEASE":      "/DEBUG",
                 "CMAKE_SHARED_LINKER_FLAGS_RELEASE":   "/DEBUG"
-            },
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            }
-        },
-        {
-            "name":           "windows-vs2026-x64-debug",
-            "displayName":    "VS2026 x64 Debug",
-            "generator":      "Visual Studio 18 2026",
-            "architecture":   "x64",
-            "toolset":        "v145",
-            "binaryDir":      "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES": "Debug",
-                "CMAKE_BUILD_TYPE":          "Debug",
-                "SUIKA_TARGET_WINDOWS":      "ON",
-                "SUIKA_ENABLE_JIT":          "ON",
-                "SUIKA_ENABLE_I18N":         "ON",
-                "SUIKA_ENABLE_PACK":         "ON",
-                "SUIKA_ENABLE_BCC":          "ON",
-                "SUIKA_ENABLE_AOTC":         "ON",
-                "SUIKA_ENABLE_WEBSERVER":    "ON"
             },
             "condition": {
                 "type": "equals",
@@ -365,30 +289,6 @@
             }
         },
         {
-            "name":           "windows-vs2026-arm64-debug",
-            "displayName":    "VS2026 arm64 Debug",
-            "generator":      "Visual Studio 18 2026",
-            "architecture":   "arm64",
-            "toolset":        "v145",
-            "binaryDir":      "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":    "Debug",
-                "CMAKE_BUILD_TYPE":             "Debug",
-                "SUIKA_TARGET_WINDOWS":         "ON",
-                "SUIKA_ENABLE_JIT":             "ON",
-                "SUIKA_ENABLE_I18N":            "ON",
-                "SUIKA_ENABLE_PACK":            "ON",
-                "SUIKA_ENABLE_BCC":             "ON",
-                "SUIKA_ENABLE_AOTC":            "ON",
-                "SUIKA_ENABLE_WEBSERVER":       "ON"
-            },
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            }
-        },
-        {
             "name":           "windows-vs2026-x86-xp",
             "displayName":    "VS2026 MSVC x86 Release",
             "generator":      "Visual Studio 18 2026",
@@ -396,9 +296,6 @@
             "toolset":        "v141_xp",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":    "Release",
-                "CMAKE_BUILD_TYPE":             "Release",
-                "CMAKE_MSVC_RUNTIME_LIBRARY":   "MultiThreaded$<$<CONFIG:Debug>:Debug>",
                 "CMAKE_EXE_LINKER_FLAGS":       "/SUBSYSTEM:WINDOWS,5.01",
                 "SUIKA_TARGET_WINDOWS":         "ON",
                 "SUIKA_ENABLE_JIT":             "ON",
@@ -422,9 +319,6 @@
             "toolset":        "v145",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":    "Release",
-                "CMAKE_BUILD_TYPE":             "Release",
-                "CMAKE_MSVC_RUNTIME_LIBRARY":   "MultiThreaded$<$<CONFIG:Debug>:Debug>",
                 "SUIKA_TARGET_WINDOWS":         "ON",
                 "SUIKA_ENABLE_JIT":             "ON",
                 "SUIKA_ENABLE_I18N":            "ON",
@@ -444,9 +338,6 @@
             "toolset":        "v145",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":    "Release",
-                "CMAKE_BUILD_TYPE":             "Release",
-                "CMAKE_MSVC_RUNTIME_LIBRARY":   "MultiThreaded$<$<CONFIG:Debug>:Debug>",
                 "SUIKA_TARGET_WINDOWS":         "ON",
                 "SUIKA_ENABLE_UNSAFE":          "ON"
             },
@@ -507,7 +398,6 @@
             "binaryDir":      "${sourceDir}/build-mingw-x86",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/mingw-x86.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":        "Release",
                 "SUIKA_TARGET_WINDOWS":    "ON",
                 "SUIKA_ENABLE_INSTALL":    "ON",
                 "SUIKA_ENABLE_JIT":        "ON",
@@ -525,7 +415,6 @@
             "binaryDir":      "${sourceDir}/build-mingw-x86_64",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/mingw-x86_64.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":        "Release",
                 "SUIKA_TARGET_WINDOWS":    "ON",
                 "SUIKA_ENABLE_INSTALL":    "ON",
                 "SUIKA_ENABLE_JIT":        "ON",
@@ -543,7 +432,6 @@
             "binaryDir":      "${sourceDir}/build-mingw-x86_64-console",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/mingw-x86_64.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":        "Release",
                 "SUIKA_TARGET_WINDOWS":    "ON",
                 "SUIKA_ENABLE_INSTALL":    "ON",
                 "SUIKA_ENABLE_JIT":        "ON",
@@ -562,7 +450,6 @@
             "binaryDir":      "${sourceDir}/build-mingw-x86_64-launcher",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/mingw-x86_64.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":        "Release",
                 "SUIKA_TARGET_WINDOWS":    "ON",
                 "SUIKA_ENABLE_INSTALL":    "ON",
                 "SUIKA_ENABLE_JIT":        "ON",
@@ -581,7 +468,6 @@
             "binaryDir":      "${sourceDir}/build-mingw-win95",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/mingw-win95.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":        "Release",
                 "SUIKA_TARGET_WINDOWS95":  "ON",
                 "SUIKA_ENABLE_JIT":        "OFF",
                 "SUIKA_ENABLE_I18N":       "OFF",
@@ -598,7 +484,6 @@
             "binaryDir":      "${sourceDir}/build-mingw-arm64",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/mingw-arm64.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":        "Release",
                 "SUIKA_TARGET_WINDOWS":    "ON",
                 "SUIKA_ENABLE_INSTALL":    "ON",
                 "SUIKA_ENABLE_JIT":        "ON",
@@ -616,7 +501,6 @@
             "binaryDir":      "${sourceDir}/build-macos",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/macos.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
                 "CMAKE_OSX_DEPLOYMENT_TARGET": "10.11",
                 "SUIKA_TARGET_MACOS":          "ON",
                 "SUIKA_ENABLE_JIT":            "ON",
@@ -630,27 +514,6 @@
             "binaryDir":      "${sourceDir}/build-macos-cli",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/macos.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "CMAKE_OSX_DEPLOYMENT_TARGET": "10.11",
-                "SUIKA_TARGET_MACOS_CLI":      "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_JIT":            "ON",
-                "SUIKA_ENABLE_I18N":           "ON",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON",
-                "SUIKA_ENABLE_CONSOLE":        "ON",
-                "SUIKA_ENABLE_UNSAFE":         "ON"
-            }
-        },
-        {
-            "name":           "macos-cli-debug",
-            "displayName":    "macOS",
-            "generator":      "Ninja",
-            "binaryDir":      "${sourceDir}/build-macos-cli-debug",
-            "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/macos.cmake",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Debug",
                 "CMAKE_OSX_DEPLOYMENT_TARGET": "10.11",
                 "SUIKA_TARGET_MACOS_CLI":      "ON",
                 "SUIKA_ENABLE_INSTALL":        "ON",
@@ -670,7 +533,6 @@
             "binaryDir":      "${sourceDir}/build-macos-lib",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/macos.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Debug",
                 "CMAKE_OSX_DEPLOYMENT_TARGET": "10.11",
                 "SUIKA_TARGET_MACOS_LIB":      "ON",
                 "SUIKA_ENABLE_MAIN2":          "ON",
@@ -688,27 +550,6 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-linux",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "SUIKA_TARGET_LINUX":          "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_FREEDESKTOP":    "ON",
-                "SUIKA_ENABLE_JIT":            "ON",
-                "SUIKA_ENABLE_I18N":           "ON",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON",
-                "SUIKA_ENABLE_GST":            "ON",
-                "SUIKA_ENABLE_PORTAL":         "ON",
-                "SUIKA_ENABLE_UNSAFE":         "ON"
-            }
-        },
-        {
-            "name":           "linux-debug",
-            "displayName":    "Linux",
-            "generator":      "Ninja",
-            "binaryDir":      "${sourceDir}/build-linux-debug",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Debug",
                 "SUIKA_TARGET_LINUX":          "ON",
                 "SUIKA_ENABLE_INSTALL":        "ON",
                 "SUIKA_ENABLE_FREEDESKTOP":    "ON",
@@ -728,7 +569,6 @@
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-linux-debian",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
                 "SUIKA_TARGET_LINUX":          "ON",
                 "SUIKA_ENABLE_INSTALL":        "ON",
                 "SUIKA_ENABLE_DIST":           "ON",
@@ -749,26 +589,6 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-linux-x11",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "SUIKA_TARGET_LINUX_X11":      "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_FREEDESKTOP":    "ON",
-                "SUIKA_ENABLE_JIT":            "ON",
-                "SUIKA_ENABLE_I18N":           "ON",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON",
-                "SUIKA_ENABLE_GST":            "ON",
-                "SUIKA_ENABLE_UNSAFE":         "ON"
-            }
-        },
-        {
-            "name":           "linux-x11-debug",
-            "displayName":    "Linux",
-            "generator":      "Ninja",
-            "binaryDir":      "${sourceDir}/build-linux-x11-debug",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Debug",
                 "SUIKA_TARGET_LINUX_X11":      "ON",
                 "SUIKA_ENABLE_INSTALL":        "ON",
                 "SUIKA_ENABLE_FREEDESKTOP":    "ON",
@@ -787,7 +607,6 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-linux-wayland",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
                 "SUIKA_TARGET_LINUX_WAYLAND":  "ON",
                 "SUIKA_ENABLE_INSTALL":        "ON",
                 "SUIKA_ENABLE_FREEDESKTOP":    "ON",
@@ -801,32 +620,12 @@
             }
         },
         {
-            "name":           "linux-wayland-debug",
-            "displayName":    "Linux Framebuffer",
+            "name":           "linux-dri",
+            "displayName":    "Linux DRI Framebuffer",
             "generator":      "Ninja",
-            "binaryDir":      "${sourceDir}/build-linux-wayland-debug",
+            "binaryDir":      "${sourceDir}/build-linux-dri",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Debug",
-                "SUIKA_TARGET_LINUX_WAYLAND":  "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_FREEDESKTOP":    "ON",
-                "SUIKA_ENABLE_JIT":            "ON",
-                "SUIKA_ENABLE_I18N":           "ON",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON",
-                "SUIKA_ENABLE_GST":            "ON",
-                "SUIKA_ENABLE_UNSAFE":         "ON"
-            }
-        },
-        {
-            "name":           "linux-gbm",
-            "displayName":    "Linux Framebuffer",
-            "generator":      "Ninja",
-            "binaryDir":      "${sourceDir}/build-linux-gbm",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "SUIKA_TARGET_LINUX_GBM":      "ON",
+                "SUIKA_TARGET_LINUX_DRI":      "ON",
                 "SUIKA_ENABLE_INSTALL":        "ON",
                 "SUIKA_ENABLE_JIT":            "ON",
                 "SUIKA_ENABLE_I18N":           "ON",
@@ -839,12 +638,11 @@
         },
         {
             "name":           "linux-gbm-rot90",
-            "displayName":    "Linux GBM Framebuffer (OpenGL)",
+            "displayName":    "Linux DRI Framebuffer (OpenGL)",
             "generator":      "Ninja",
-            "binaryDir":      "${sourceDir}/build-linux-gbm-rot90",
+            "binaryDir":      "${sourceDir}/build-linux-dri-rot90",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "SUIKA_TARGET_LINUX_GBM":      "ON",
+                "SUIKA_TARGET_LINUX_DRI":      "ON",
                 "SUIKA_ENABLE_INSTALL":        "ON",
                 "SUIKA_ENABLE_ROT90":          "ON",
                 "SUIKA_ENABLE_JIT":            "ON",
