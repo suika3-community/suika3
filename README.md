@@ -1227,6 +1227,7 @@ configurations.
 | windows-vs2022-gdk-xbox-xs  | Windows               | MSVC       | Executable     |
 | windows-vs2026-gdk-desktop  | Windows               | MSVC       | Executable     |
 | windows-vs2026-gdk-xbox-xs  | Windows               | MSVC       | Executable     |
+| pc98                        | MS-DOS PC-9801        | OpenWatcom | Executable     |
 
 ---
 
