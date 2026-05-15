@@ -413,6 +413,22 @@
             }
         },
         {
+            "name":           "linux-debug",
+            "displayName":    "Linux Wayland/X11 Dual OpenGL",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-linux-debug",
+            "cacheVariables": {
+                "PLAYFIELD_TARGET_LINUX":      "ON",
+                "PLAYFIELD_ENABLE_INSTALL":    "ON",
+                "PLAYFIELD_ENABLE_JIT":        "ON",
+                "PLAYFIELD_ENABLE_BIN":        "ON",
+                "PLAYFIELD_ENABLE_I18N":       "ON",
+                "PLAYFIELD_ENABLE_PACK":       "ON",
+                "PLAYFIELD_ENABLE_BCC":        "ON",
+                "PLAYFIELD_ENABLE_AOTC":       "ON"
+            }
+        },
+        {
             "name":           "linux-debian",
             "displayName":    "Linux Wayland/X11 Dual OpenGL",
             "generator":      "Unix Makefiles",
@@ -1100,7 +1116,7 @@
         },
         {
             "name": "linux-debug",
-            "configurePreset": "linux",
+            "configurePreset": "linux-debug",
 	    "configuration":   "Debug"
         },
         {
