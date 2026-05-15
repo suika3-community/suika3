@@ -706,8 +706,8 @@ jobs:
           cp windows/playfield-arm64.exe dist/SDK/windows/playfield-arm64.exe
           cp mingw/playfield-win32.exe dist/SDK/windows/playfield-win32.exe
 
-          mkdir dist/SDK/wasm
-          cp windows/playfield-web.exe   dist/SDK/wasm/
+          mkdir -p dist/SDK/wasm
+          cp windows/playfield-web.exe dist/SDK/wasm/
 
       - name: Download macOS artifacts
         uses: actions/download-artifact@v4
@@ -782,7 +782,7 @@ jobs:
 
       - name: Copy for Wasm
         run: |
-          mkdir dist/SDK/wasm
+          mkdir -p dist/SDK/wasm
           cp wasm/index.html dist/SDK/wasm/
           cp resources/assets.arc dist/SDK/wasm/
 
