@@ -3,7 +3,7 @@
   <h1 align="center" style="border-bottom: none">
     <a href="https://suika3.vn">Suika3</a>:
     A Modern, Ultra-Portable Full-Stack<br>
-    2D Game Runtime with a Visual Novel DSL
+    Visual Novel Engine for Mobile and Desktop
   </h1>
   <p>
     We've brought Suika3 to life<br>
@@ -71,7 +71,7 @@
     - **Mobile:** iOS, Android, HarmonyOS NEXT
     - **Web:** WebAssembly
     - **Console:** Xbox (GDK), PS5/Switch/Xbox via Unity Integration \[DevKit required\]
-    - **More:** FreeBSD, NetBSD, OpenBSD, Solaris, Haiku
+    - **More:** FreeBSD, NetBSD, OpenBSD, Solaris, Haiku, PC98
 - **Users:** Professional creators, indie studios, enterprise teams.
 
 ---
@@ -343,7 +343,7 @@ Suika3 is engineered with modern techniques, and delivers:
 
 ## Getting Started Guide
 
-See alsp [Getting Started Guid](docs/mkdocs-en/getting-started.md)
+See also [Getting Started Guid](docs/mkdocs-en/getting-started.md)
 
 This guide will help you jump-start your very first visual novel
 project in just a few easy steps.
