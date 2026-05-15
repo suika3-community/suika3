@@ -14,7 +14,7 @@ option(PLAYFIELD_TARGET_MACOS_LIB        "Build for macOS (library)"            
 option(PLAYFIELD_TARGET_LINUX            "Build for Linux (Wayland/X11 Dual)"         OFF)
 option(PLAYFIELD_TARGET_LINUX_X11        "Build for Linux (X11, OpenGL)"              OFF)
 option(PLAYFIELD_TARGET_LINUX_WAYLAND    "Build for Linux (Wayland, OpenGL)"          OFF)
-option(PLAYFIELD_TARGET_LINUX_GBM        "Build for Linux (GBM, OpenGL ES)"           OFF)
+option(PLAYFIELD_TARGET_LINUX_DRI        "Build for Linux (DRI, OpenGL ES)"           OFF)
 option(PLAYFIELD_TARGET_LINUX_FBDEV      "Build for Linux (fbdev, Soft3D)"            OFF)
 option(PLAYFIELD_TARGET_LINUX_X11SOFT    "Build for Linux (X11, Soft3D)"              OFF)
 option(PLAYFIELD_TARGET_IOS              "Build for iOS"                              OFF)
@@ -52,7 +52,7 @@ option(PLAYFIELD_ENABLE_BCC              "Enable bytecode compiler"             
 option(PLAYFIELD_ENABLE_AOTC             "Enable AOT compiler"                        OFF)
 option(PLAYFIELD_ENABLE_WEBSERVER        "Enable Web server"                          OFF)
 option(PLAYFIELD_ENABLE_EDITOR           "Enable simple editor for Windows"           OFF)
-option(PLAYFIELD_ENABLE_ROT90            "Rotate screen for GBM"                      OFF)
+option(PLAYFIELD_ENABLE_ROT90            "Rotate screen for DRI"                      OFF)
 option(PLAYFIELD_ENABLE_GST              "Enable Gstreamer support"                   OFF)
 option(PLAYFIELD_ENABLE_MAIN2            "Enable macOS main2()"                       OFF)
 option(PLAYFIELD_ENABLE_CONSOLE          "Enable console debug output on Windows"     OFF)
@@ -74,7 +74,7 @@ if(   PLAYFIELD_TARGET_WINDOWS
    OR PLAYFIELD_TARGET_MACOS_LIB
    OR PLAYFIELD_TARGET_LINUX
    OR PLAYFIELD_TARGET_LINUX_WAYLAND
-   OR PLAYFIELD_TARGET_LINUX_GBM
+   OR PLAYFIELD_TARGET_LINUX_DRI
    OR PLAYFIELD_TARGET_LINUX_FBDEV
    OR PLAYFIELD_TARGET_LINUX_X11SOFT
    OR PLAYFIELD_TARGET_IOS
@@ -279,8 +279,8 @@ if(NOT PLAYFIELD_ENABLE_DIST)
     set(STRATO_TARGET_LINUX_X11 ON)
   elseif(PLAYFIELD_TARGET_LINUX_WAYLAND)
     set(STRATO_TARGET_LINUX_WAYLAND ON)
-  elseif(PLAYFIELD_TARGET_LINUX_GBM)
-    set(STRATO_TARGET_LINUX_GBM ON)
+  elseif(PLAYFIELD_TARGET_LINUX_DRI)
+    set(STRATO_TARGET_LINUX_DRI ON)
   elseif(PLAYFIELD_TARGET_LINUX_FBDEV)
     set(STRATO_TARGET_LINUX_FBDEV ON)
   elseif(PLAYFIELD_TARGET_LINUX_X11SOFT)

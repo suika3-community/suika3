@@ -127,103 +127,6 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-  build-linux:
-    runs-on: ubuntu-24.04
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install deps
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-              git cmake ninja-build build-essential libasound2-dev \
-              zlib1g-dev libpng-dev libjpeg-dev libwebp-dev libogg-dev \
-              libvorbis-dev libfreetype-dev libgstreamer1.0-dev \
-              libgstreamer-plugins-base1.0-dev libx11-dev libxpm-dev \
-              libwayland-dev wayland-protocols libegl1-mesa-dev libegl-dev \
-              libgles-dev libwayland-client0 libwayland-egl1 libdecor-0-dev
-
-      - name: Build static
-        run: |
-          cmake --preset linux
-          cmake --build --preset linux
-
-      - name: Build shared
-        run: |
-          cmake --preset linux-debian
-          cmake --build --preset linux-debian
-
-      - name: Build tar.gz
-        run: |
-          mkdir -p out
-          mkdir -p out/include/strato
-          mkdir -p out/lib/x86_64-linux-gnu/
-          mkdir -p out/lib/x86_64-linux-gnu/pkgconfig
-          mkdir -p out/share/cmake/Modules
-          cp include/strato/strato.h out/include/strato/
-          cp include/strato/c89compat.h out/include/strato/
-          cp build-linux/libstrato.a out/lib/x86_64-linux-gnu/
-          cp build-linux/libstratopack.a out/lib/x86_64-linux-gnu/
-          cp -d build-linux-debian/libstrato.so* out/lib/x86_64-linux-gnu/
-          cp -d build-linux-debian/libstratopack.so out/lib/x86_64-linux-gnu/
-          cp build-linux/strato.pc out/lib/x86_64-linux-gnu/pkgconfig/
-          cp build-linux/stratopack.pc out/lib/x86_64-linux-gnu/pkgconfig/
-          cp cmake/modules/FindStratoHAL.cmake out/share/cmake/Modules/
-          cd out
-          tar czf ../libstrato-linux-x86_64.tar.gz *
-          cd ..
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux
-          path: |
-            libstrato-linux-x86_64.tar.gz
-          if-no-files-found: error
-          retention-days: 7
-
-  build-wasm:
-    runs-on: ubuntu-24.04
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up dependencies
-        run: git submodule update --init
-
-      - name: Setup for Wasm
-        uses: mymindstorm/setup-emsdk@v14
-        with:
-          version: latest
-
-      - name: Build for Wasm
-        run: |
-          cmake --preset wasm
-          cmake --build --preset wasm
-          cp build-wasm/libstrato.a libstrato-wasm.a
-
-      - name: Build tar.gz
-        run: |
-          mkdir -p out
-          mkdir -p out/include/strato
-          mkdir -p out/lib
-          cp include/strato/strato.h out/include/strato/
-          cp include/strato/c89compat.h out/include/strato/
-          cp build-wasm/libstrato.a out/lib/
-          cd out
-          tar czf ../libstrato-wasm.tar.gz *
-          cd ..
-
-      - name: Upload Wasm
-        uses: actions/upload-artifact@v4
-        with:
-          name: wasm
-          path: |
-            libstrato-wasm.tar.gz
-          if-no-files-found: error
-          retention-days: 7
-
   build-macos:
     runs-on: macos-latest
     steps:
@@ -281,6 +184,62 @@ jobs:
           name: macos
           path: |
             StratoHAL.xcframework.zip
+          if-no-files-found: error
+          retention-days: 7
+
+  build-linux:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+              git cmake ninja-build build-essential libasound2-dev \
+              zlib1g-dev libpng-dev libjpeg-dev libwebp-dev libogg-dev \
+              libvorbis-dev libfreetype-dev libgstreamer1.0-dev \
+              libgstreamer-plugins-base1.0-dev libx11-dev libxpm-dev \
+              libwayland-dev wayland-protocols libegl1-mesa-dev libegl-dev \
+              libgles-dev libwayland-client0 libwayland-egl1 libdecor-0-dev
+
+      - name: Build static
+        run: |
+          cmake --preset linux
+          cmake --build --preset linux
+
+      - name: Build shared
+        run: |
+          cmake --preset linux-debian
+          cmake --build --preset linux-debian
+
+      - name: Build tar.gz
+        run: |
+          mkdir -p out
+          mkdir -p out/include/strato
+          mkdir -p out/lib/x86_64-linux-gnu/
+          mkdir -p out/lib/x86_64-linux-gnu/pkgconfig
+          mkdir -p out/share/cmake/Modules
+          cp include/strato/strato.h out/include/strato/
+          cp include/strato/c89compat.h out/include/strato/
+          cp build-linux/libstrato.a out/lib/x86_64-linux-gnu/
+          cp build-linux/libstratopack.a out/lib/x86_64-linux-gnu/
+          cp -d build-linux-debian/libstrato.so* out/lib/x86_64-linux-gnu/
+          cp -d build-linux-debian/libstratopack.so out/lib/x86_64-linux-gnu/
+          cp build-linux/strato.pc out/lib/x86_64-linux-gnu/pkgconfig/
+          cp build-linux/stratopack.pc out/lib/x86_64-linux-gnu/pkgconfig/
+          cp cmake/modules/FindStratoHAL.cmake out/share/cmake/Modules/
+          cd out
+          tar czf ../libstrato-linux-x86_64.tar.gz *
+          cd ..
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: |
+            libstrato-linux-x86_64.tar.gz
           if-no-files-found: error
           retention-days: 7
 
@@ -343,7 +302,7 @@ jobs:
           cp build-android-x86/libstrato.a aar_out/prefab/modules/strato/android.x86/
           cp build-android-riscv64/libstrato.a aar_out/prefab/modules/strato/android.riscv64/
 
-          echo '<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.example.stratohal" />' > aar_out/AndroidManifest.xml
+          echo '<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="io.noctvm.strato" />' > aar_out/AndroidManifest.xml
           echo '{"schema_version": 2, "name": "strato", "dependencies": []}' > aar_out/prefab/prefab.json
           echo '{"export_libraries": [], "library_name": "libstrato"}' > aar_out/prefab/modules/strato/module.json
 
@@ -408,6 +367,44 @@ jobs:
           name: openharmony
           path: |
             libstrato-openharmony.tar.gz
+          if-no-files-found: error
+          retention-days: 7
+
+  build-wasm:
+    name: Build for Wasm
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup for Wasm
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: latest
+
+      - name: Build for Wasm
+        run: |
+          cmake --preset wasm
+          cmake --build --preset wasm
+          cp build-wasm/libstrato.a libstrato-wasm.a
+
+      - name: Build tar.gz
+        run: |
+          mkdir -p out
+          mkdir -p out/include/strato
+          mkdir -p out/lib
+          cp include/strato/strato.h out/include/strato/
+          cp include/strato/c89compat.h out/include/strato/
+          cp build-wasm/libstrato.a out/lib/
+          cd out
+          tar czf ../libstrato-wasm.tar.gz *
+          cd ..
+
+      - name: Upload Wasm
+        uses: actions/upload-artifact@v4
+        with:
+          name: wasm
+          path: |
+            libstrato-wasm.tar.gz
           if-no-files-found: error
           retention-days: 7
 
