@@ -51,23 +51,23 @@
     <img src="https://github.com/awemorris/suika3/blob/main/docs/img/screenshot-20260406.webp" alt="Suika3 Sample Game Screenshot">
   </a>
   <br>
-
+  <br>
   Suika3 now has a nice launcher written in and self-hosted by Suika3!<br>
   <img src="https://github.com/awemorris/suika3/blob/main/docs/img/screenshot-20260429.webp" alt="Suika3 Launcher Screenshot">
   <br>
-
-  <p>Windows 11</p><br>
+  <br>
+  Windows 11<br>
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-win11.webp" alt="Suika3 on Windows 11" width="480">
   <br>
-
-  <p>iOS</p><br>
+  <br>
+  iOS<br>
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-ios.webp" alt="Suika3 on iOS" width="480">
   <br>
-
-  <p>Android</p><br>
+  <br>
+  Android<br>
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-android.webp" alt="Suika3 on Android" width="480">
   <br>
-
+  <br>
   Suika3 on NEC PC-9801<br>
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-pc98.png" alt="Suika3 on NEC PC-9801" width="480"><br>
   We've returned where VN was born...<br>
