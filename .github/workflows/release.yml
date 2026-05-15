@@ -108,6 +108,7 @@ jobs:
           p12-password: ${{ secrets.CERTIFICATE_PASSWORD }}
 
       - name: Build for macOS
+        run: |
           cmake --preset macos
           cmake --build --preset macos
 
