@@ -529,7 +529,7 @@ jobs:
         with:
           name: unity
           path: |
-            Suuka3-Unity.zip
+            Suika3-Unity.zip
           if-no-files-found: error
           retention-days: 7
 
