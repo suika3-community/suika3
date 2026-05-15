@@ -639,11 +639,11 @@ jobs:
           cp macos/Suika3.dmg dist/SDK/macos/
 
           mkdir -p dist/SDK/macos/project
-          cp macos/Suika3-macOS-Xcode.zip -d dist/SDK/macos
+          unzip macos/Suika3-macOS-Xcode.zip -d dist/SDK/macos
           mv dist/SDK/macos/macos dist/SDK/macos/project
 
           mkdir dist/SDK/macos/root
-          tar xzf suika3-macos-universal.tar.gz  -C dist/SDK/macos/root
+          tar xzf suika3-macos-universal.tar.gz -C dist/SDK/macos/root
 
           cp dist/SDK/macos/root/bin/suika3-aotc    dist/SDK/macos/
           cp dist/SDK/macos/root/bin/suika3-bcc     dist/SDK/macos/
