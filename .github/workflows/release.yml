@@ -202,10 +202,10 @@ jobs:
           mkdir -p out
           mkdir -p out/bin
           mkdir -p out/share/man/man1
-          cp build-macos-cli/playfield out/bin/
-          cp build-macos-cli/playfield-pack out/bin/
-          cp build-macos-cli/playfield-aotc out/bin/
-          cp build-macos-cli/playfield-bcc out/bin/
+          cp build-macos-cli/suika3 out/bin/
+          cp build-macos-cli/suika3-pack out/bin/
+          cp build-macos-cli/suika3-aotc out/bin/
+          cp build-macos-cli/suika3-bcc out/bin/
           cp resources/manpage/suika3.1
           cd out
           tar czf ../suika3-macos-universal.tar.gz *
@@ -520,7 +520,7 @@ jobs:
           cp build-unity-ps5/libsuika3.a     unity/Assets/Plugins/PS5/
           cp build-unity-xbox/suika3.lib     unity/Assets/Plugins/GameCoreXboxSeries/
 
-          cp docs/readme/unity.md dist/SDK/unity/
+          cp docs/readme/unity.md unity/
 
           zip -r Suika3-Unity.zip unity
 
