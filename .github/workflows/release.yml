@@ -206,7 +206,7 @@ jobs:
           cp build-macos-cli/suika3-pack out/bin/
           cp build-macos-cli/suika3-aotc out/bin/
           cp build-macos-cli/suika3-bcc out/bin/
-          cp resources/manpage/suika3.1
+          cp resources/manpage/suika3.1 opt/share/man/man1/
           cd out
           tar czf ../suika3-macos-universal.tar.gz *
           cd ..
@@ -377,10 +377,10 @@ jobs:
           mkdir -p android/app/src/main/jniLibs/x86_64
           cp build-android-x86_64/libsuika3.so android/app/src/main/jniLibs/x86_64/libstrato.so
 
-          mkdir -p /android/app/src/main/jniLibs/x86
+          mkdir -p android/app/src/main/jniLibs/x86
           cp build-android-x86/libsuika3.so android/app/src/main/jniLibs/x86/libstrato.so
 
-          mkdir -p /android/app/src/main/jniLibs/riscv64
+          mkdir -p android/app/src/main/jniLibs/riscv64
           cp build-android-riscv64/libsuika3.so android/app/src/main/jniLibs/riscv64/libstrato.so
 
           zip -r Suika3-Android-Studio.zip android
