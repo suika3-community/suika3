@@ -1520,6 +1520,8 @@ pf_install_package_api(
 	NoctValue funcval;
 	char full_name[256];
 
+	env = pfi_get_vm_env();
+
 	/* Make a global variable "Engine". */
 	if (!noct_check_global(env, package)) {
 		if (!noct_make_empty_dict(env, &dict))
