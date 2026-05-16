@@ -899,6 +899,11 @@ if(SUIKA_TARGET_MACOS_LIB)
   target_link_options(suika3 PRIVATE -ObjC -all_load)
 endif()
 
+# iOS
+if(SUIKA_TARGET_IOS)
+  target_link_options(suika3 PRIVATE -ObjC -all_load)
+endif()
+
 # Linux
 if(   SUIKA_TARGET_LINUX
    OR SUIKA_TARGET_LINUX_X11
