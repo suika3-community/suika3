@@ -387,6 +387,7 @@ jobs:
           cp Suika3.aar android/app/libs
 
           # Copy the sample game assets.
+          mkdir -p android/app/src/main/assets
           cp -R game/* android/app/src/main/assets/
 
           # Replace the font file to a smaller one.
