@@ -508,6 +508,49 @@ hal_get_pixel_b(
 #endif
 }
 
+/*
+ * Get a fixed component slot 1 from a pixel value.
+ */
+static INLINE uint32_t
+hal_get_pixel_c1(
+	hal_pixel_t p)
+{
+	return (p >> 16) & 0xff;
+}
+
+/*
+ * Get a fixed component slot 2 from a pixel value.
+ */
+static INLINE uint32_t
+hal_get_pixel_c2(
+	hal_pixel_t p)
+{
+	return (p >> 8) & 0xff;
+}
+
+/*
+ * Get a fixed component slot 3 from a pixel value.
+ */
+static INLINE uint32_t
+hal_get_pixel_c3(
+	hal_pixel_t p)
+{
+	return p & 0xff;
+}
+
+/*
+ * Compose a pixel value from fixed component slots.
+ */
+static INLINE hal_pixel_t
+hal_make_pixel_fast(
+	uint32_t a,
+	uint32_t c1,
+	uint32_t c2,
+	uint32_t c3)
+{
+	return (((hal_pixel_t)a) << 24) | (((hal_pixel_t)c1) << 16) | (((hal_pixel_t)c2) << 8) | ((hal_pixel_t)c3);
+}
+
 #undef ORDER_RGBA
 #undef ORDER_BGRA
 
