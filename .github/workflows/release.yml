@@ -598,7 +598,7 @@ jobs:
           command -v wlink || true
           cmake --preset pcat
           cmake --build --preset pcat
-          mv build-pc98/suika3.exe suika-at.exe
+          mv build-pcat/suika3.exe suika-at.exe
 
       - name: Upload binary
         uses: actions/upload-artifact@v4
@@ -808,7 +808,7 @@ jobs:
       - name: Copy for PC/AT
         run: |
           mkdir dist/SDK/msdos
-          cp pc98/suika-at.exe dist/SDK/msdos/
+          cp pcat/suika-at.exe dist/SDK/msdos/
 
       - name: Copy documents
         run: |
