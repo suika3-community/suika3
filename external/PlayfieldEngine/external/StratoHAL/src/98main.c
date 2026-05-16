@@ -295,7 +295,7 @@ static void process_input(void)
 				next_is_left_key_pressed = true;
 				break;
 			case 0x100 | 0x4d:
-				next_is_up_key_pressed = true;
+				next_is_right_key_pressed = true;
 				break;
 			}
 			break;

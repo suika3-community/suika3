@@ -2,7 +2,7 @@
 
 /*
  * Strato HAL
- * Main code for IBM PC/AT compatibles (DOS/4G, VBE 2.0 LFB)
+ * Main code for NEC PC-9800 series (DOS/4G)
  */
 
 /*-
@@ -46,87 +46,16 @@
 #include <conio.h>
 #include <i86.h>
 
+/* VRAM Address */
+#define VGA_VRAM	0x000A0000UL
+
 /* Screen Size */
 #define SCREEN_WIDTH	640
 #define SCREEN_HEIGHT	480
-#define BYTES_PER_PIXEL	3
-
-/* VRAM */
-#define VBE_SUCCESS		0x004f
-#define VBE_MODE_LFB		0x4000
-#define VBE_ATTR_SUPPORTED	0x0001
-#define VBE_ATTR_COLOR		0x0008
-#define VBE_ATTR_GRAPHICS	0x0010
-#define VBE_ATTR_LFB		0x0080
-#define VBE_MEMORY_PACKEDPIXEL	4
-#define VBE_MEMORY_DIRECTCOLOR	6
+#define LINE_BYTES	(640 / 8)
 
 /* Log */
 #define LOG_FILE	"log.txt"
-
-/*
- * VBE
- */
-#pragma pack(push, 1)
-struct vbe_info_block {
-	char		signature[4];
-	uint16_t	version;
-	uint32_t	oem_string_ptr;
-	uint32_t	capabilities;
-	uint32_t	video_mode_ptr;
-	uint16_t	total_memory;
-	uint8_t		reserved[236];
-	uint8_t		oem_data[256];
-};
-
-struct vbe_mode_info_block {
-	uint16_t	mode_attributes;
-	uint8_t		win_a_attributes;
-	uint8_t		win_b_attributes;
-	uint16_t	win_granularity;
-	uint16_t	win_size;
-	uint16_t	win_a_segment;
-	uint16_t	win_b_segment;
-	uint32_t	win_func_ptr;
-	uint16_t	bytes_per_scan_line;
-	uint16_t	x_resolution;
-	uint16_t	y_resolution;
-	uint8_t		x_char_size;
-	uint8_t		y_char_size;
-	uint8_t		number_of_planes;
-	uint8_t		bits_per_pixel;
-	uint8_t		number_of_banks;
-	uint8_t		memory_model;
-	uint8_t		bank_size;
-	uint8_t		number_of_image_pages;
-	uint8_t		reserved0;
-	uint8_t		red_mask_size;
-	uint8_t		red_field_position;
-	uint8_t		green_mask_size;
-	uint8_t		green_field_position;
-	uint8_t		blue_mask_size;
-	uint8_t		blue_field_position;
-	uint8_t		reserved_mask_size;
-	uint8_t		reserved_field_position;
-	uint8_t		direct_color_mode_info;
-	uint32_t	phys_base_ptr;
-	uint32_t	off_screen_mem_offset;
-	uint16_t	off_screen_mem_size;
-	uint16_t	lin_bytes_per_scan_line;
-	uint8_t		bank_number_of_image_pages;
-	uint8_t		lin_number_of_image_pages;
-	uint8_t		lin_red_mask_size;
-	uint8_t		lin_red_field_position;
-	uint8_t		lin_green_mask_size;
-	uint8_t		lin_green_field_position;
-	uint8_t		lin_blue_mask_size;
-	uint8_t		lin_blue_field_position;
-	uint8_t		lin_reserved_mask_size;
-	uint8_t		lin_reserved_field_position;
-	uint32_t	max_pixel_clock;
-	uint8_t		reserved1[189];
-};
-#pragma pack(pop)
 
 /* Game Info */
 static char *game_title;
@@ -135,12 +64,7 @@ static int game_height;
 
 /* Screen */
 static struct hal_image *back_image;
-static uint8_t *lfb;
-static uint32_t lfb_linear;
-static uint32_t lfb_size;
-static int pitch;
-static int vbe_mode;
-static struct vbe_mode_info_block active_mode_info;
+static uint8_t *fb;
 
 /* Log */
 static FILE *log_fp;
@@ -155,18 +79,11 @@ static void cleanup_vram(void);
 static void process_input(void);
 static void flip(void);
 static bool open_log_file(void);
-static bool get_vbe_info(struct vbe_info_block *info);
-static bool get_vbe_mode_info(int mode, struct vbe_mode_info_block *info);
-static bool find_vbe_mode(int *mode, struct vbe_mode_info_block *info);
-static bool set_vbe_mode(int mode);
-static uint32_t map_physical_address(uint32_t phys_addr, uint32_t size);
-static void unmap_physical_address(uint32_t linear_addr);
-static void put_pixel_24(uint8_t *dst, uint32_t pix);
 
 int hal_main(int argc, char *argv[])
 {
 	printf("\n"
-	       "Suika3 Game Engine for PC/AT\n"
+	       "Suika3 Game Engine for IBM PC/AT VGA\n"
 	       "Copyright (c) 2026 Awe Morris\n");
 
 	if (argc >= 2) {
@@ -181,10 +98,11 @@ int hal_main(int argc, char *argv[])
 		return 1;
 	}
 
-	if (!hal_bootstrap_ptr(&game_title,
-			       &game_width,
-			       &game_height,
-			       &hal_callback)) {
+	if (!hal_bootstrap_ptr(
+		    &game_title,
+		    &game_width,
+		    &game_height,
+		    &hal_callback)) {
 		printf("Error on boot.\n");
 		return 1;
 	}
@@ -214,226 +132,116 @@ int hal_main(int argc, char *argv[])
 	return 0;
 }
 
-static bool
-get_vbe_info(struct vbe_info_block *info)
-{
-	union REGS r;
-	struct SREGS s;
-
-	memset(info, 0, sizeof(*info));
-	memcpy(info->signature, "VBE2", 4);
-	memset(&r, 0, sizeof(r));
-	memset(&s, 0, sizeof(s));
-
-	r.w.ax = 0x4f00;
-	s.es = FP_SEG(info);
-	r.x.edi = FP_OFF(info);
-	int386x(0x10, &r, &r, &s);
-
-	return r.w.ax == VBE_SUCCESS && memcmp(info->signature, "VESA", 4) == 0;
-}
-
-static bool
-get_vbe_mode_info(int mode, struct vbe_mode_info_block *info)
-{
-	union REGS r;
-	struct SREGS s;
-
-	memset(info, 0, sizeof(*info));
-	memset(&r, 0, sizeof(r));
-	memset(&s, 0, sizeof(s));
-
-	r.w.ax = 0x4f01;
-	r.w.cx = (uint16_t)mode;
-	s.es = FP_SEG(info);
-	r.x.edi = FP_OFF(info);
-	int386x(0x10, &r, &r, &s);
-
-	return r.w.ax == VBE_SUCCESS;
-}
-
-static bool
-find_vbe_mode(int *mode, struct vbe_mode_info_block *info)
-{
-	struct vbe_info_block vbe;
-	uint16_t far *mode_list;
-	uint16_t m;
-
-	if (!get_vbe_info(&vbe)) {
-		hal_log_error("VBE 2.0 is not available.");
-		return false;
-	}
-	if (vbe.version < 0x0200) {
-		hal_log_error("VBE version is too old: %x.%02x.", vbe.version >> 8, vbe.version & 0xff);
-		return false;
-	}
-
-	mode_list = (uint16_t far *)MK_FP((uint16_t)(vbe.video_mode_ptr >> 16),
-					    (uint16_t)(vbe.video_mode_ptr & 0xffff));
-
-	while ((m = *mode_list++) != 0xffff) {
-		struct vbe_mode_info_block mi;
-		uint16_t attr;
-		uint16_t scan_line;
-
-		if (!get_vbe_mode_info(m, &mi))
-			continue;
-		attr = mi.mode_attributes;
-		if ((attr & VBE_ATTR_SUPPORTED) == 0 ||
-		    (attr & VBE_ATTR_COLOR) == 0 ||
-		    (attr & VBE_ATTR_GRAPHICS) == 0 ||
-		    (attr & VBE_ATTR_LFB) == 0)
-			continue;
-		if (mi.x_resolution != SCREEN_WIDTH || mi.y_resolution != SCREEN_HEIGHT)
-			continue;
-		if (mi.bits_per_pixel != 24)
-			continue;
-		if (mi.memory_model != VBE_MEMORY_DIRECTCOLOR &&
-		    mi.memory_model != VBE_MEMORY_PACKEDPIXEL)
-			continue;
-		if (mi.phys_base_ptr == 0)
-			continue;
-
-		scan_line = mi.lin_bytes_per_scan_line != 0 ?
-			mi.lin_bytes_per_scan_line : mi.bytes_per_scan_line;
-		if (scan_line < SCREEN_WIDTH * BYTES_PER_PIXEL)
-			continue;
-
-		*mode = m;
-		*info = mi;
-		return true;
-	}
-
-	hal_log_error("No 640x480x24bpp VBE LFB mode found.");
-	return false;
-}
-
-static bool
-set_vbe_mode(int mode)
-{
-	union REGS r;
-
-	memset(&r, 0, sizeof(r));
-	r.w.ax = 0x4f02;
-	r.w.bx = (uint16_t)(mode | VBE_MODE_LFB);
-	int386(0x10, &r, &r);
-	return r.w.ax == VBE_SUCCESS;
-}
-
-static uint32_t
-map_physical_address(uint32_t phys_addr, uint32_t size)
-{
-	union REGS regs;
-	struct SREGS sregs;
-
-	memset(&regs, 0, sizeof(regs));
-	memset(&sregs, 0, sizeof(sregs));
-	regs.w.ax = 0x0800;
-	regs.w.bx = (uint16_t)(phys_addr >> 16);
-	regs.w.cx = (uint16_t)(phys_addr & 0xffff);
-	regs.w.si = (uint16_t)(size >> 16);
-	regs.w.di = (uint16_t)(size & 0xffff);
-	int386x(0x31, &regs, &regs, &sregs);
-	if (regs.x.cflag)
-		return 0;
-	return ((uint32_t)regs.w.bx << 16) | regs.w.cx;
-}
-
 static void
-unmap_physical_address(uint32_t linear_addr)
+set_vga_plane(int plane)
 {
-	union REGS regs;
-	struct SREGS sregs;
-
-	if (linear_addr == 0)
-		return;
-	memset(&regs, 0, sizeof(regs));
-	memset(&sregs, 0, sizeof(sregs));
-	regs.w.ax = 0x0801;
-	regs.w.bx = (uint16_t)(linear_addr >> 16);
-	regs.w.cx = (uint16_t)(linear_addr & 0xffff);
-	int386x(0x31, &regs, &regs, &sregs);
+	/* Sequencer Map Mask */
+	outp(0x3c4, 0x02);
+	outp(0x3c5, (unsigned char)(1 << plane));
 }
 
+/* Initialize G-VRAM. */
 static void
 init_vram(void)
 {
-	if (!find_vbe_mode(&vbe_mode, &active_mode_info)) {
-		printf("Failed to find VBE mode.\n");
-		exit(1);
-	}
+	union REGS r;
+	volatile unsigned char *vram;
+	int plane, i;
 
-	pitch = active_mode_info.lin_bytes_per_scan_line != 0 ?
-		active_mode_info.lin_bytes_per_scan_line :
-		active_mode_info.bytes_per_scan_line;
-	lfb_size = (uint32_t)pitch * SCREEN_HEIGHT;
-	lfb_linear = map_physical_address(active_mode_info.phys_base_ptr, lfb_size);
-	if (lfb_linear == 0) {
-		hal_log_error("Failed to map VBE LFB: phys=%lx size=%lx.",
-			      active_mode_info.phys_base_ptr, lfb_size);
-		exit(1);
-	}
-	lfb = (uint8_t *)lfb_linear;
+	/*
+	 * VGA mode 12h:
+	 *   640x480, 16 colors, planar 4bpp
+	 */
+	memset(&r, 0, sizeof(r));
+	r.w.ax = 0x0012;
+	int386(0x10, &r, &r);
 
-	if (!set_vbe_mode(vbe_mode)) {
-		hal_log_error("Failed to set VBE mode: %x.", vbe_mode);
-		unmap_physical_address(lfb_linear);
-		lfb = NULL;
-		lfb_linear = 0;
-		exit(1);
+	vram = (volatile unsigned char *)VGA_VRAM;
+
+	/* Clear all VGA planes. */
+	for (plane = 0; plane < 4; plane++) {
+		set_vga_plane(plane);
+		for (i = 0; i < LINE_BYTES * SCREEN_HEIGHT; i++)
+			vram[i] = 0;
 	}
-	memset(lfb, 0, lfb_size);
 }
 
+/* Cleanup G-VRAM. */
 static void
 cleanup_vram(void)
 {
 	union REGS r;
 
-	if (lfb_linear != 0) {
-		unmap_physical_address(lfb_linear);
-		lfb_linear = 0;
-		lfb = NULL;
-	}
 	memset(&r, 0, sizeof(r));
-	r.w.ax = 0x0003;
+	r.w.ax = 0x0003;        /* 80x25 text mode */
 	int386(0x10, &r, &r);
 }
 
-static INLINE void
-put_pixel_24(uint8_t *dst, uint32_t pix)
+static INLINE unsigned char
+rgb_to_vga16(uint32_t pix)
 {
-	uint8_t r, g, b;
+	unsigned char r, g, b;
+	unsigned char c = 0;
 
-	r = (uint8_t)(pix & 0xff);
-	g = (uint8_t)((pix >> 8) & 0xff);
-	b = (uint8_t)((pix >> 16) & 0xff);
+	/* Suika/Strato pixel layout: low byte = R, then G, then B */
+	r = pix & 0xff;
+	g = (pix >> 8) & 0xff;
+	b = (pix >> 16) & 0xff;
 
-	/* VBE 24bpp is usually BGR. */
-	dst[0] = b;
-	dst[1] = g;
-	dst[2] = r;
+	if (b >= 128)
+		c |= 0x01;       /* VGA blue */
+	if (g >= 128)
+		c |= 0x02;       /* VGA green */
+	if (r >= 128)
+		c |= 0x04;       /* VGA red */
+	if ((r | g | b) >= 200)
+		c |= 0x08;       /* intensity */
+
+	return c;
 }
 
 static void
 flip(void)
 {
+	volatile unsigned char *vram;
 	uint32_t *pixels;
-	int x, y;
-	int copy_width;
-	int copy_height;
+	int plane, x, y, bit;
 
-	if (lfb == NULL)
-		return;
+	vram = (volatile unsigned char *)VGA_VRAM;
 	pixels = back_image->pixels;
-	copy_width = game_width < SCREEN_WIDTH ? game_width : SCREEN_WIDTH;
-	copy_height = game_height < SCREEN_HEIGHT ? game_height : SCREEN_HEIGHT;
 
-	for (y = 0; y < copy_height; y++) {
-		uint8_t *dst = lfb + (uint32_t)y * pitch;
-		uint32_t *src = pixels + (uint32_t)y * game_width;
-		for (x = 0; x < copy_width; x++)
-			put_pixel_24(dst + x * BYTES_PER_PIXEL, src[x]);
+	for (plane = 0; plane < 4; plane++) {
+		set_vga_plane(plane);
+
+		for (y = 0; y < SCREEN_HEIGHT; y++) {
+			if (y >= game_height)
+				break;
+
+			for (x = 0; x < LINE_BYTES; x++) {
+				unsigned char out = 0;
+
+				if (x >= (game_width >> 3))
+					break;
+
+				for (bit = 0; bit < 8; bit++) {
+					int sx;
+					uint32_t pix;
+					unsigned char c;
+					unsigned char mask;
+
+					sx = x * 8 + bit;
+					pix = pixels[y * game_width + sx];
+
+					c = rgb_to_vga16(pix);
+					mask = (unsigned char)(0x80 >> bit);
+
+					if (c & (1 << plane))
+						out |= mask;
+				}
+
+				vram[y * LINE_BYTES + x] = out;
+			}
+		}
 	}
 }
 
@@ -473,16 +281,16 @@ static void process_input(void)
 				break;
 			ch = getch();
 			switch (ch) {
-			case 0x48:
+			case 0x100 | 0x48:
 				next_is_up_key_pressed = true;
 				break;
-			case 0x50:
+			case 0x100 | 0x50:
 				next_is_down_key_pressed = true;
 				break;
-			case 0x4b:
+			case 0x100 | 0x4b:
 				next_is_left_key_pressed = true;
 				break;
-			case 0x4d:
+			case 0x100 | 0x4d:
 				next_is_right_key_pressed = true;
 				break;
 			}
@@ -895,18 +703,30 @@ hal_render_image_3d_cross(
 				alpha);
 }
 
-static uint32_t get_time(void)
+static uint32_t
+get_time(void)
 {
 	union REGS r;
 	uint32_t tick;
 
-	r.h.al = 0xff;
-	r.h.ah = 0x80;
-	int386(0x1c, &r, &r);
+	/*
+	 * BIOS timer tick
+	 * 18.2065 Hz
+	 */
+	r.h.ah = 0x00;
+	int386(0x1a, &r, &r);
 
-	tick = (r.w.cx << 16) | r.w.dx;
+	tick = ((uint32_t)r.w.cx << 16) | r.w.dx;
 
-	return tick * 1000 / 32;
+	/*
+	 * Convert to milliseconds.
+	 *
+	 * 18.2065 ticks/sec:
+	 *   ms = tick * 1000 / 18.2065
+	 *
+	 * Approximation:
+	 */
+	return (tick * 54925UL) / 1000UL;
 }
 
 void
