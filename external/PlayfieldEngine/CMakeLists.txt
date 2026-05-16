@@ -487,7 +487,6 @@ set(PLAYFIELD_BASE_SOURCES
   src/common.c
   src/mainloop.c
   src/vm.c
-  src/library.c
 )
 
 # I18N Source
@@ -531,10 +530,18 @@ if(NOT PLAYFIELD_ENABLE_DIST)
   endif()
 endif()
 
-# Use stub hook for library-only platforms
+# If the platform needs a library instead of executable,
+# include main() to the library.
 if(PLAYFIELD_ENABLE_APPMAIN)
-  set(PLAYFIELD_HOOK src/app.c)
+  # Include main()
+  set(PLAYFIELD_APP_SOURCES src/app.c)
 endif()
+
+# If building to merge into a downstream library,
+# don't include aot_init_code() because the downstream defines it.
+if(NOT PLAYFIELD_ENABLE_OBJECTS)
+  set(PLAYFIELD_AOT_SOURCES src/library.c)
+endif
 
 # Make a library.
 add_library(
@@ -543,7 +550,8 @@ add_library(
   ${PLAYFIELD_BASE_SOURCES}
   ${PLAYFIELD_I18N_SOURCES}
   ${PLAYFIELD_DEPS}
-  ${PLAYFIELD_HOOK}
+  ${PLAYFIELD_APP_SOURCES}
+  ${PLAYFIELD_AOT_SOURCES}
 )
 if(PLAYFIELD_ENABLE_SHARED)
   set_target_properties(playfield PROPERTIES 
