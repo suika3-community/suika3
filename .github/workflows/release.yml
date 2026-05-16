@@ -553,13 +553,58 @@ jobs:
           command -v wlink || true
           cmake --preset pc98
           cmake --build --preset pc98
-          mv build-pc98/suika3.exe suika98.exe
+          mv build-pc98/suika3.exe suika-98.exe
 
       - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
           name: pc98
-          path: suika98.exe
+          path: suika-98.exe
+
+  build-pcat:
+    name: Build for IBM PC/AT
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake
+
+      - name: Cache Watcom
+        id: cache-watcom
+        uses: actions/cache@v4
+        with:
+          path: openwatcom-1.9
+          key: openwatcom-1.9
+
+      - name: Configure OpenWatcom
+        if: steps.cache-watcom.outputs.cache-hit != 'true'
+        run: |
+          wget https://noctvm.io/ci/openwatcom-1.9.tar.gz
+          tar xzf openwatcom-1.9.tar.gz
+
+      - name: Build
+        run: |
+          export WATCOM="$PWD/openwatcom-1.9"
+          export INCLUDE="$WATCOM/h"
+          export EDPATH="$WATCOM/eddat"
+          export PATH="$WATCOM/binl:$WATCOM/binw:$PATH"
+          echo "$WATCOM"
+          ls -lha "$WATCOM/binl"
+          command -v wcl386 || true
+          command -v wlink || true
+          cmake --preset pcat
+          cmake --build --preset pcat
+          mv build-pc98/suika3.exe suika-at.exe
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: pcat
+          path: suika-at.exe
 
   build-mkdocs:
     if: |
@@ -668,7 +713,6 @@ jobs:
         run: |
           cp macos/Suika3.dmg dist/SDK/macos/
 
-          mkdir -p dist/SDK/macos/project
           unzip macos/Suika3-macOS-Xcode.zip -d dist/SDK/macos
           mv dist/SDK/macos/macos dist/SDK/macos/project
 
@@ -682,9 +726,7 @@ jobs:
 
       - name: Copy for iOS
         run: |
-          mkdir dist/SDK/ios/project
-          unzip macos/Suika3-iOS-Xcode.zip -d dist/SDK/ios
-          mv dist/SDK/ios/ios dist/SDK/ios/project
+          unzip macos/Suika3-iOS-Xcode.zip -d dist/SDK
 
       - name: Download Flatpak x86_64 artifacts
         uses: actions/download-artifact@v4
@@ -754,7 +796,7 @@ jobs:
       - name: Copy for PC98
         run: |
           mkdir dist/SDK/msdos
-          cp pc98/suika98.exe dist/SDK/msdos/
+          cp pc98/suika-98.exe dist/SDK/msdos/
 
       - name: Copy documents
         run: |
@@ -802,7 +844,8 @@ jobs:
             | Wasm        | suika3-wasm.html                | Wasm                       | Emscripten                     |
             | Wasm        | suika3-wasm.tar.gz              | Tarball                    | Emscripten                     |
             | Unity       | Suika3-Unity.zip                | Unity Plugin + Project     | Unity (Win64/Switch/PS5/Xbox)  |
-            | NEC PC-9801 | suika98.exe                     | Executable                 | NEC PC-9801 DOS4G (386+, 16MB) |
+            | NEC PC-9801 | suika-98.exe                    | Executable                 | NEC PC-9801 DOS4G (386+, 16MB) |
+            | IBM PC/AT   | suika-at.exe                    | Executable                 | IBM PC/AT DOS4G (386+, 16MB)   |
             | Documents   | suika3-documents.zip            | ZIP                        | Documents                      |
 
           files: |
@@ -819,4 +862,5 @@ jobs:
             wasm/suika3-wasm.html
             wasm/suika3-wasm.tar.gz
             unity/Suika3-Unity.zip
-            pc98/suika98.exe
+            pc98/suika-98.exe
+            pcat/suika-at.exe

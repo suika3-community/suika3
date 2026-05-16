@@ -1207,6 +1207,19 @@
                 "SUIKA_ENABLE_JIT":    "ON",
                 "SUIKA_ENABLE_MAIN2":  "ON"
 	    }
+        },
+        {
+            "name":           "pcat",
+            "displayName":    "IBM PC/AT Compatible DOS/4G OpenWatcom V2",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-pcat",
+            "toolchainFile":  "${sourceDir}/cmake/toolchains/openwatcom-dos4gw.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":    "Release",
+                "SUIKA_TARGET_PCAT":   "ON",
+                "SUIKA_ENABLE_JIT":    "ON",
+                "SUIKA_ENABLE_MAIN2":  "ON"
+	    }
         }
     ],
     "buildPresets": [
@@ -1480,6 +1493,10 @@
         {
             "name": "pc98",
             "configurePreset": "pc98"
+        },
+        {
+            "name": "pcat",
+            "configurePreset": "pcat"
         }
     ]
 }

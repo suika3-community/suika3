@@ -39,6 +39,7 @@ option(SUIKA_TARGET_SOLARIS10        "Build for Solaris 10 (X11, Soft3D)"       
 option(SUIKA_TARGET_GENERICUNIX      "Build for Generic Unknow UNIX (X11, Soft3D)"    OFF)
 option(SUIKA_TARGET_HAIKU            "Build for Haiku OS (Soft3D)"                    OFF)
 option(SUIKA_TARGET_PC98             "Build for NEC PC-9801"                          OFF)
+option(SUIKA_TARGET_PCAT             "Build for IBM PC/AT"                            OFF)
 
 # ---
 
@@ -229,6 +230,7 @@ if(   SUIKA_TARGET_WINDOWS
    OR SUIKA_TARGET_GENERICUNIX
    OR SUIKA_TARGET_HAIKU
    OR SUIKA_TARGET_PC98
+   OR SUIKA_TARGET_PCAT
 )
   # A target and options are manually specified.
 else()   
@@ -444,6 +446,8 @@ if(   NOT SUIKA_ENABLE_DIST
     set(PLAYFIELD_TARGET_GDK_XBOX_XS ON)
   elseif(SUIKA_TARGET_PC98)
     set(PLAYFIELD_TARGET_PC98 ON)
+  elseif(SUIKA_TARGET_PCAT)
+    set(PLAYFIELD_TARGET_PCAT ON)
   else()
     error("No target specified or detected.")
   endif()
@@ -696,7 +700,7 @@ if(   SUIKA_ENABLE_STATIC
 
   # Link dependencies into the library if not packaing.
   if(NOT SUIKA_ENABLE_DIST)
-    if(NOT SUIKA_TARGET_PC98)
+    if(NOT SUIKA_TARGET_PC98 AND NOT SUIKA_TARGET_PCAT)
       set(SUIKA_DEPS
           $<TARGET_OBJECTS:png>
           $<TARGET_OBJECTS:jpeg>
@@ -804,6 +808,16 @@ if(SUIKA_TARGET_PC98)
     S3_TARGET_PC98
     PF_TARGET_PC98
     HAL_TARGET_PC98
+    NOCT_TARGET_DOS4G
+  )
+endif()
+
+# PC/AT
+if(SUIKA_TARGET_PCAT)
+  target_compile_definitions(suika3 PRIVATE
+    S3_TARGET_PCAT
+    PF_TARGET_PCAT
+    HAL_TARGET_PCAT
     NOCT_TARGET_DOS4G
   )
 endif()
