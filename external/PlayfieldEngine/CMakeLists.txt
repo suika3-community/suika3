@@ -541,7 +541,7 @@ endif()
 # don't include aot_init_code() because the downstream defines it.
 if(NOT PLAYFIELD_ENABLE_OBJECTS)
   set(PLAYFIELD_AOT_SOURCES src/library.c)
-endif
+endif()
 
 # Make a library.
 add_library(
