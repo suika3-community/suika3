@@ -188,13 +188,13 @@ rgb_to_vga16(uint32_t pix)
 	g = (pix >> 8) & 0xff;
 	b = (pix >> 16) & 0xff;
 
-	if (b >= 128)
+	if (b >= 200)
 		c |= 0x01;       /* VGA blue */
-	if (g >= 128)
+	if (g >= 200)
 		c |= 0x02;       /* VGA green */
-	if (r >= 128)
+	if (r >= 200)
 		c |= 0x04;       /* VGA red */
-	if ((r | g | b) >= 200)
+	if ((r | g | b) >= 128)
 		c |= 0x08;       /* intensity */
 
 	return c;
