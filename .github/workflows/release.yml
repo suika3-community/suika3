@@ -157,13 +157,13 @@ jobs:
             -library build-ios-device/libsuika3.a -headers include \
             -library build-ios-simulator/libsuika3.a -headers include \
             -output Suika3.xcframework
-          zip -r Suika3.xcframework.zip Suika3.xcframework
 
       - name: Build macOS project
         run: |
           cp -R resources/projects/macos macos
           mkdir macos/Resources
           mkdir macos/Resources/video
+          cp -R Suika3.xcframework macos/Game/
           cp resources/assets.arc macos/Resources/
           zip -r Suika3-macOS-Xcode.zip macos
 
@@ -172,6 +172,7 @@ jobs:
           cp -R resources/projects/ios ios
           mkdir ios/Resources
           mkdir ios/Resources/video
+          cp -R Suika3.xcframework macos/Game/
           cp resources/assets.arc ios/Resources/
           zip -r Suika3-iOS-Xcode.zip ios
 
