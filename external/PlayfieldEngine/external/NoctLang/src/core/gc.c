@@ -880,7 +880,7 @@ rt_gc_young_gc_body(
 			struct rt_array *arr = (struct rt_array *)obj;
 			for (i = 0; i < arr->size; i++) {
 				if (IS_REF_VAL(&arr->table[i]) &&
-				    arr->table[i].val.obj->region == RT_GC_REGION_GRADUATE &&
+				    IS_YOUNG_OBJ(arr->table[i].val.obj) &&
 				    arr->table[i].val.obj->forward != NULL) {
 					arr->table[i].val.obj = arr->table[i].val.obj->forward;
 				}
@@ -890,12 +890,12 @@ rt_gc_young_gc_body(
 			for (i = 0; i < dict->alloc_size; i++) {
 				if (dict->key[i].type != NOCT_VALUE_STRING)
 					continue; /* Removed or empty. */
-				if (dict->key[i].val.obj->region == RT_GC_REGION_GRADUATE &&
+				if (IS_YOUNG_OBJ(dict->key[i].val.obj) &&
 				    dict->key[i].val.obj->forward != NULL) {
 					dict->key[i].val.obj = dict->key[i].val.obj->forward;
 				}
 				if (IS_REF_VAL(&dict->value[i]) &&
-				    dict->value[i].val.obj->region == RT_GC_REGION_GRADUATE &&
+				    IS_YOUNG_OBJ(dict->value[i].val.obj) &&
 				    dict->value[i].val.obj->forward != NULL) {
 					dict->value[i].val.obj = dict->value[i].val.obj->forward;
 				}
