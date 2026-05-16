@@ -388,24 +388,6 @@ Java_io_noctvm_strato_MainActivity_nativeOnTouchEnd(
 }
 
 JNIEXPORT void JNICALL
-Java_io_noctvm_strato_MainActivity_nativeOnKeyDown(
-	JNIEnv *env,
-	jobject instance,
-	int key)
-{
-	hal_callback.on_key_press(key);
-}
-
-JNIEXPORT void JNICALL
-Java_io_noctvm_strato_engineandroid_MainActivity_nativeOnKeyUp(
-	JNIEnv *env,
-	jobject instance,
-	int key)
-{
-	hal_callback.on_key_release(key);
-}
-
-JNIEXPORT void JNICALL
 Java_io_noctvm_strato_MainActivity_nativeOnGamepadAnalog(
 	JNIEnv *env,
 	jobject instance,
@@ -422,6 +404,24 @@ Java_io_noctvm_strato_MainActivity_nativeOnGamepadAnalog(
 	hal_callback.on_analog_input(HAL_ANALOG_Y2, (int)(y2 * 32767.0f));
 	hal_callback.on_analog_input(HAL_ANALOG_L, (int)(l * 32767.0f));
 	hal_callback.on_analog_input(HAL_ANALOG_R, (int)(r * 32767.0f));
+}
+
+JNIEXPORT void JNICALL
+Java_io_noctvm_strato_MainActivity_nativeOnKeyDown(
+	JNIEnv *env,
+	jobject instance,
+	int key)
+{
+	hal_callback.on_key_press(key);
+}
+
+JNIEXPORT void JNICALL
+Java_io_noctvm_strato_MainActivity_nativeOnKeyUp(
+	JNIEnv *env,
+	jobject instance,
+	int key)
+{
+	hal_callback.on_key_release(key);
 }
 
 /*

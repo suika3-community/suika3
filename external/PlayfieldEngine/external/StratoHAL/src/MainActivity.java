@@ -106,7 +106,7 @@ public class MainActivity extends Activity {
 
 	static {
 		// Load an Android NDK library.
-        System.loadLibrary("libstrato");
+        System.loadLibrary("strato");
 	}
 
     // These are the native methods implemented in ndk*.c
@@ -203,14 +203,6 @@ public class MainActivity extends Activity {
 	// Constructor
 	//
 	public MainActivity() {
-        // Get the language.
-        language = getResources().getConfiguration().locale.getLanguage();
-
-		// Call the native code.
-		nativeOnBootstrap();
-		viewportWidth = nativeGetScreenWidth();
-		viewportHeight = nativeGetScreenHeight();
-		appName = nativeGetTitle();
 	}
 
     //
@@ -222,6 +214,12 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         isFinished = false;
+
+		// Call the native code.
+		nativeOnBootstrap();
+		viewportWidth = nativeGetScreenWidth();
+		viewportHeight = nativeGetScreenHeight();
+		appName = nativeGetTitle();
 
         // Do full screen settings. (step1)
         requestWindowFeature(Window.FEATURE_NO_TITLE);
