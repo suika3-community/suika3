@@ -394,7 +394,7 @@ typedef unsigned long long uint64_t;
 /*
  * Definition of the CDECL keyword
  */
-#ifndef CDECL
+#if !defined(CDECL)
 #if defined(PF_TARGET_PC98) || defined(PD_TARGET_PCAT)
 #define CDECL __cdecl
 #else

@@ -387,10 +387,12 @@ typedef unsigned long uintptr_t;
 /*
  * Definition of the CDECL keyword
  */
+#if !defined(CDECL)
 #if defined(NOCT_TARGET_DOS4G)
 #define CDECL __cdecl
 #else
 #define CDECL
+#endif
 #endif
 
 /*
