@@ -161,44 +161,18 @@ jobs:
 
       - name: Build macOS project
         run: |
-          mkdir macos
-          mkdir macos/project
-          mkdir macos/project/Resources
-          mkdir macos/project/Resources/video
-          cp resources/assets.arc macos/project/Resources/
-
-          mkdir macos/project/Game.xcodeproj
-          cp resources/projects/macos/Game.xcodeproj/project.pbxproj macos/project/Game.xcodeproj/
-
-          mkdir macos/project/Game
-          cp -R Suika3.xcframework macos/project/Game/
-          cp -R resources/projects/macos/Game/Assets.xcassets macos/project/Game/
-          cp resources/projects/macos/Game/main.m macos/project/Game/
-          cp resources/macos/macos.entitlements macos/project/Game/Game.entitlements
-
+          cp -R resources/projects/macos macos
+          mkdir macos/Resources
+          mkdir macos/Resources/video
+          cp resources/assets.arc macos/Resources/
           zip -r Suika3-macOS-Xcode.zip macos
 
       - name: Build iOS project
         run: |
-          mkdir ios
+          cp -R resources/projects/ios ios
           mkdir ios/Resources
           mkdir ios/Resources/video
           cp resources/assets.arc ios/Resources/
-
-          mkdir ios/ios.xcodeproj
-          cp resources/projects/ios/ios.xcodeproj/project.pbxproj ios/ios.xcodeproj/
-
-          mkdir ios/ios
-          cp -R Suika3.xcframework ios/ios/
-          cp -R resources/projects/ios/ios/Assets.xcassets ios/ios/
-
-          cp resources/projects/ios/ios/entry.c ios/ios/
-          cp resources/projects/ios/ios/Info.plist ios/ios/
-          cp resources/projects/ios/ios/ios.entitlements ios/ios/
-          cp resources/projects/ios/ios/LaunchScreen.storyboard ios/ios/
-          cp resources/ios/ExportOptions.plist ios/
-          cp resources/ios/build.sh ios/
-
           zip -r Suika3-iOS-Xcode.zip ios
 
       - name: Build macOS tar.gz
