@@ -715,7 +715,7 @@ jobs:
         run: |
           cp macos/Suika3.dmg dist/SDK/macos/
 
-          unzip macos/Suika3-macOS-Xcode.zip -d dist/SDK/macos
+          unzip macos/Suika3-macOS-Xcode.zip -d dist/SDK/macos/
           mv dist/SDK/macos/macos dist/SDK/macos/project
 
           mkdir dist/SDK/macos/root
