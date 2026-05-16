@@ -172,7 +172,7 @@ jobs:
           cp -R resources/projects/ios ios
           mkdir ios/Resources
           mkdir ios/Resources/video
-          cp -R Suika3.xcframework macos/Game/
+          cp -R Suika3.xcframework ios/Game/
           cp resources/assets.arc ios/Resources/
           zip -r Suika3-iOS-Xcode.zip ios
 
