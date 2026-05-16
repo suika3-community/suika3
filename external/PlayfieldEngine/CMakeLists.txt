@@ -36,6 +36,8 @@ option(PLAYFIELD_TARGET_GENERICUNIX      "Build for Unknown UNIX (X11, Soft3D)" 
 option(PLAYFIELD_TARGET_HAIKU            "Build for Haiku OS (Soft3D)"                OFF)
 option(PLAYFIELD_TARGET_GDK_WINDOWS      "Build for GDK for Desktop"                  OFF)
 option(PLAYFIELD_TARGET_GDK_XBOX_XS      "Build for GDK for Xbox Series X|S"          OFF)
+option(PLAYFIELD_TARGET_PC98             "Build for NEC PC-9801"                      OFF)
+option(PLAYFIELD_TARGET_PCAT             "Build for IBM PC/AT"                        OFF)
 
 # Options
 option(PLAYFIELD_ENABLE_STATIC           "Build a static library"                     OFF)
@@ -96,6 +98,7 @@ if(   PLAYFIELD_TARGET_WINDOWS
    OR PLAYFIELD_TARGET_GDK_XBOX_XS
    OR PLAYFIELD_TARGET_UWP
    OR PLAYFIELD_TARGET_PC98
+   OR PLAYFIELD_TARGET_PCAT
 )
   # A target and options are manually specified.
 else()   
@@ -227,6 +230,11 @@ if(NOT PLAYFIELD_ENABLE_DIST)
     set(NOCT_TARGET_DOS4G ON)
   endif()
 
+  # If building for PC/AT.
+  if(PLAYFIELD_TARGET_PCAT)
+    set(NOCT_TARGET_DOS4G ON)
+  endif()
+
   # Others
   set(NOCT_ENABLE_CLI OFF)
   set(NOCT_ENABLE_INSTALL OFF)
@@ -324,6 +332,8 @@ if(NOT PLAYFIELD_ENABLE_DIST)
     set(STRATO_TARGET_UWP ON)
   elseif(PLAYFIELD_TARGET_PC98)
     set(STRATO_TARGET_PC98 ON)
+  elseif(PLAYFIELD_TARGET_PCAT)
+    set(STRATO_TARGET_PCAT ON)
   else()
     error("No target specified or detected.")
   endif()
@@ -508,7 +518,7 @@ endif()
 
 # Determine the objects if we use static linking.
 if(NOT PLAYFIELD_ENABLE_DIST)
-  if(NOT PLAYFIELD_TARGET_PC98)
+  if(NOT PLAYFIELD_TARGET_PC98 AND NOT PLAYFIELD_TARGET_PCAT)
     set(
       PLAYFIELD_DEPS
       $<TARGET_OBJECTS:png>
@@ -636,6 +646,11 @@ if(PLAYFIELD_TARGET_PC98)
   target_compile_definitions(playfield PUBLIC PF_TARGET_PC98)
 endif()
 
+# PC/AT
+if(PLAYFIELD_TARGET_PCAT)
+  target_compile_definitions(playfield PUBLIC PF_TARGET_PCAT)
+endif()
+
 # Windows
 if(PLAYFIELD_TARGET_WINDOWS)
   if(MSVC)
@@ -758,6 +773,11 @@ endif()
 # PC98
 if(PLAYFIELD_TARGET_PC98 AND PLAYFIELD_ENABLE_BIN)
   target_compile_definitions(playfieldbin PRIVATE PF_TARGET_PC98)
+endif()
+
+# PC/AT
+if(PLAYFIELD_TARGET_PCAT AND PLAYFIELD_ENABLE_BIN)
+  target_compile_definitions(playfieldbin PRIVATE PF_TARGET_PCAT)
 endif()
 
 # ---

@@ -149,7 +149,7 @@ hal_create_image(
 		free(*img);
 		return false;
 	}
-#elif !defined(HAL_TARGET_UNITY) && !defined(HAL_TARGET_PC98)
+#elif !defined(HAL_TARGET_UNITY) && !defined(HAL_TARGET_PC98) && !defined(HAL_TARGET_PCAT)
 	if (posix_memalign((void **)&pixels, 64, (size_t)w * (size_t)h * sizeof(hal_pixel_t)) != 0) {
 		hal_log_out_of_memory();
 		free(*img);
@@ -1035,7 +1035,7 @@ static INLINE int fp32_eq(float a, float b)
 	return d > -0.0001f && d < 0.0001f;
 }
 
-#if defined(HAL_TARGET_PC98)
+#if defined(HAL_TARGET_PC98) || defined(HAL_TARGET_PCAT)
 #undef floorf
 static INLINE int floorf(float x)
 {
@@ -1662,7 +1662,7 @@ png_warning_silent(
  * JPEG
  */
 
-#if !defined(HAL_TARGET_PC98)
+#if !defined(HAL_TARGET_PC98) && !defined(HAL_TARGET_PCAT)
 
 #if defined(HAL_TARGET_WASM) || \
     (defined(HAL_TARGET_MACOS) && defined(HAL_USE_EXTDLL)) || \
@@ -1768,13 +1768,13 @@ hal_create_image_with_jpeg(
 	return false;
 }
 
-#endif /* !defined(HAL_TARGET_PC98) */
+#endif /* !defined(HAL_TARGET_PC98) && !defined(HAL_TARGET_PCAT) */
 
 /*
  * WebP
  */
 
-#if !defined(HAL_TARGET_PC98)
+#if !defined(HAL_TARGET_PC98) && !defined(HAL_TARGET_PCAT)
 
 #include <webp/decode.h>
 
@@ -1854,4 +1854,4 @@ hal_create_image_with_webp(
 	return false;
 }
 
-#endif /* !defined(HAL_TARGET_PC98) */
+#endif /* !defined(HAL_TARGET_PC98) && !defined(HAL_TARGET_PCAT) */

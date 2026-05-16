@@ -1023,13 +1023,26 @@
         },
         {
             "name":           "pc98",
-            "displayName":    "PC-9800 Series DOS/4G OpenWatcom V2",
+            "displayName":    "NEC PC-9800 Series DOS/4G OpenWatcom V2",
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-pc98",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/openwatcom-dos4gw.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":      "Release",
                 "PLAYFIELD_TARGET_PC98": "ON",
+                "PLAYFIELD_ENABLE_JIT":  "ON",
+                "PLAYFIELD_ENABLE_BIN":  "ON"
+	    }
+        },
+        {
+            "name":           "pcat",
+            "displayName":    "IBM PC/AT Compatible DOS/4G OpenWatcom V2",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-pcat",
+            "toolchainFile":  "${sourceDir}/cmake/toolchains/openwatcom-dos4gw.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":      "Release",
+                "PLAYFIELD_TARGET_PCAT": "ON",
                 "PLAYFIELD_ENABLE_JIT":  "ON",
                 "PLAYFIELD_ENABLE_BIN":  "ON"
 	    }
@@ -1296,6 +1309,10 @@
         {
             "name": "pc98",
             "configurePreset": "pc98"
+        },
+        {
+            "name": "pcat",
+            "configurePreset": "pcat"
         }
     ]
 }

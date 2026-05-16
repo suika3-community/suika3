@@ -518,14 +518,77 @@ jobs:
           cp include/strato/c89compat.h out/include/strato/
           cp build-pc98/strato.lib out/lib/
           cd out
+<<<<<<< HEAD
           jlha a ../strato-pc98.lzh *
+=======
+          jlha a ../strato-dos-pc98.lzh *
+>>>>>>> 585da63aa9f4d975488b91cbea41ee405b6c178f
           cd ..
 
       - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
           name: pc98
+<<<<<<< HEAD
           path: strato-pc98.lzh
+=======
+          path: strato-dos-pc98.lzh
+
+  build-pcat:
+    name: Build for PC-AT
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake jlha-utils
+
+      - name: Cache Watcom
+        id: cache-watcom
+        uses: actions/cache@v4
+        with:
+          path: openwatcom-1.9
+          key: openwatcom-1.9
+
+      - name: Configure OpenWatcom
+        if: steps.cache-watcom.outputs.cache-hit != 'true'
+        run: |
+          wget https://noctvm.io/ci/openwatcom-1.9.tar.gz
+          tar xzf openwatcom-1.9.tar.gz
+
+      - name: Build
+        run: |
+          export WATCOM="$PWD/openwatcom-1.9"
+          export INCLUDE="$WATCOM/h"
+          export EDPATH="$WATCOM/eddat"
+          export PATH="$WATCOM/binl:$WATCOM/binw:$PATH"
+          echo "$WATCOM"
+          ls -lha "$WATCOM/binl"
+          command -v wcl386 || true
+          command -v wlink || true
+          cmake --preset pcat
+          cmake --build --preset pcat
+
+      - name: Make ZIP
+        run: |
+          mkdir -p out/include/strato
+          mkdir -p out/lib
+          cp include/strato/strato.h out/include/strato/
+          cp include/strato/c89compat.h out/include/strato/
+          cp build-pcat/strato.lib out/lib/
+          cd out
+          zip -r ../strato-dos-pcat.zip *
+          cd ..
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: pcat
+          path: strato-dos-pcat.zip
+>>>>>>> 585da63aa9f4d975488b91cbea41ee405b6c178f
 
   release:
     name: Create GitHub Release
@@ -539,6 +602,10 @@ jobs:
       - build-openharmony
       - build-unity
       - build-pc98
+<<<<<<< HEAD
+=======
+      - build-pcat
+>>>>>>> 585da63aa9f4d975488b91cbea41ee405b6c178f
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -620,6 +687,7 @@ jobs:
 
             This is an automated nightly build. Not an official release.
             
+<<<<<<< HEAD
             | OS          | File                             | Type             | Description                                  |
             |-------------|----------------------------------|------------------|----------------------------------------------|
             | Windows     | StratoHAL.1.0.0.nupkg            | NuGet Package    | Visual Studio 2022+                          |
@@ -631,6 +699,20 @@ jobs:
             | Wasm        | strato-wasm.tar.gz               | Tarball          | Emscripten                                   |
             | OpenHarmony | strato-openharmony.tar.gz        | Tarball          | OpenHarmony (HarmonyOS NEXT)                 |
             | PC-9801     | strato-pc98.lzh                  | Library          | PC-9801 MS-DOS DOS4GW                        |
+=======
+            | OS             | File                             | Type             | Description                            |
+            |----------------|----------------------------------|------------------|----------------------------------------|
+            | Windows        | StratoHAL.1.0.0.nupkg            | NuGet Package    | Visual Studio 2022+                    |
+            | Windows        | strato-mingw-w64.tar.gz          | Tarball          | MinGW-w64                              |
+            | macOS/iOS      | StratoHAL.xcframework.zip        | Xcode Framework  | macOS and iOS, Xcode                   |
+            | macOS          | strato-macos-universal.tar.gz    | Tarball          | macOS (extract to /usr/local)          |
+            | Linux          | strato-linux-x86_64.tar.gz       | Tarball          | Linux (extract to /usr/local)          |
+            | Android        | StratoHAL.aar                    | AAR              | Android NDK                            |
+            | Wasm           | strato-wasm.tar.gz               | Tarball          | Emscripten                             |
+            | OpenHarmony    | strato-openharmony.tar.gz        | Tarball          | OpenHarmony (HarmonyOS NEXT)           |
+            | MS-DOS PC-9801 | strato-dos-pc98.lzh              | LHA              | OpenWatcom, DOS4GW, GDC 640x400 4-bpp  |
+            | MS-DOS PC/AT   | strato-dos-pcat.zip              | ZIP              | OpenWatcom, DOS4GW, VBE 640x480 24-bpp |
+>>>>>>> 585da63aa9f4d975488b91cbea41ee405b6c178f
 
           files: |
             windows/StratoHAL.1.0.0.nupkg
@@ -641,4 +723,9 @@ jobs:
             android/StratoHAL.aar
             wasm/strato-wasm.tar.gz
             openharmony/strato-openharmony.tar.gz
+<<<<<<< HEAD
             pc98/strato-pc98.lzh
+=======
+            pc98/strato-dos-pc98.lzh
+            pcat/strato-dos-pcat.zip
+>>>>>>> 585da63aa9f4d975488b91cbea41ee405b6c178f

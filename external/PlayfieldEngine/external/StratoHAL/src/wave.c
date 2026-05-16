@@ -28,7 +28,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#if !defined(HAL_TARGET_PC98)
+#if !defined(HAL_TARGET_PC98) && !defined(HAL_TARGET_PCAT)
 
 #include <strato/strato.h>
 

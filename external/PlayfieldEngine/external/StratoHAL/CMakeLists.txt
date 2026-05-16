@@ -37,6 +37,7 @@ option(STRATO_TARGET_UWP              "Build for UWP"                           
 option(STRATO_TARGET_GDK_WINDOWS      "Build for GDK for Desktop"               OFF)
 option(STRATO_TARGET_GDK_XBOX_XS      "Build for GDK for Xbox Series X|S"       OFF)
 option(STRATO_TARGET_PC98             "Build for PC-9800 series"                OFF)
+option(STRATO_TARGET_PCAT             "Build for IBM PC/AT compatible"          OFF)
 
 # Options
 option(STRATO_ENABLE_OBJECT           "Build an object library"                 OFF)
@@ -89,6 +90,7 @@ if(   STRATO_TARGET_WINDOWS
    OR STRATO_TARGET_GDK_WINDOWS
    OR STRATO_TARGET_GDK_XBOX_XS
    OR STRATO_TARGET_PC98
+   OR STRATO_TARGET_PCAT
 )
   # A target and options are manually specified.
 else()
@@ -219,7 +221,7 @@ else()
   # Build the dependencies statically.
   include(cmake/ext/zlib.cmake)
   include(cmake/ext/libpng.cmake)
-  if(NOT STRATO_TARGET_PC98)
+  if(NOT STRATO_TARGET_PC98 AND NOT STRATO_TARGET_PCAT)
     include(cmake/ext/jpeg.cmake)
     include(cmake/ext/libwebp.cmake)
     include(cmake/ext/libogg.cmake)
@@ -652,6 +654,17 @@ if(STRATO_TARGET_PC98)
     )
 endif()
 
+# PC-AT
+if(STRATO_TARGET_PCAT)
+  set(STRATO_SOURCES
+      src/image.c
+      src/glyph.c
+      src/wave.c
+      src/stdfile.c
+      src/atmain.c
+    )
+endif()
+
 # I18N
 if(STRATO_ENABLE_I18N)
   set(STRATO_I18N_SOURCES
@@ -661,7 +674,7 @@ endif()
 
 # Deps (merge third-party library objects into the target)
 if(NOT STRATO_ENABLE_DIST)
-  if(NOT STRATO_TARGET_PC98)
+  if(NOT STRATO_TARGET_PC98 AND NOT STRATO_TARGET_PCAT)
     set(STRATO_DEPS
         $<TARGET_OBJECTS:png>
         $<TARGET_OBJECTS:jpeg>
@@ -890,6 +903,11 @@ endif()
 # PC98
 if(STRATO_TARGET_PC98)
   target_compile_definitions(strato PUBLIC HAL_TARGET_PC98)
+endif()
+
+# PC/AT
+if(STRATO_TARGET_PCAT)
+  target_compile_definitions(strato PUBLIC HAL_TARGET_PCAT)
 endif()
 
 # GLES
