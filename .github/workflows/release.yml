@@ -339,6 +339,7 @@ jobs:
 
       - name: Build AAR
         run: |
+          # Make directory tree.
           mkdir -p aar_out/prefab/modules/suika3/include
           mkdir -p aar_out/prefab/modules/suika3/android.arm64-v8a
           mkdir -p aar_out/prefab/modules/suika3/android.armeabi-v7a
@@ -346,27 +347,32 @@ jobs:
           mkdir -p aar_out/prefab/modules/suika3/android.x86
           mkdir -p aar_out/prefab/modules/suika3/android.riscv64
 
+          # Make the JAR file.
           cd classes
           jar cvf ../aar_out/classes.jar *
           cd ..
 
+          # Copy the header files.
           cp -R include/suika3 aar_out/prefab/modules/suika3/include/
           cp -R external/PlayfieldEngine/external/NoctLang/include/noct aar_out/prefab/modules/suika3/include/
           cp -R external/PlayfieldEngine/external/StratoHAL/include/strato aar_out/prefab/modules/suika3/include/
 
           # Copy and rename libsuika3.so to libstrato.so because MainActivity depends on the name.
-          cp build-android-arm64/libsuika3.so aar_out/prefab/modules/suika3/android.arm64-v8a/libstrato.so
-          cp build-android-armv7/libsuika3.so aar_out/prefab/modules/suika3/android.armeabi-v7a/libstrato.so
-          cp build-android-x86_64/libsuika3.so aar_out/prefab/modules/suika3/android.x86_64/libstrato.so
-          cp build-android-x86/libsuika3.so aar_out/prefab/modules/suika3/android.x86/libstrato.so
-          cp build-android-riscv64/libsuika3.so aar_out/prefab/modules/suika3/android.riscv64/libstrato.so
+          cp build-android-arm64/libsuika3.a aar_out/prefab/modules/suika3/android.arm64-v8a/
+          cp build-android-armv7/libsuika3.a aar_out/prefab/modules/suika3/android.armeabi-v7a/
+          cp build-android-x86_64/libsuika3.a aar_out/prefab/modules/suika3/android.x86_64/
+          cp build-android-x86/libsuika3.a aar_out/prefab/modules/suika3/android.x86/
+          cp build-android-riscv64/libsuika3.a aar_out/prefab/modules/suika3/android.riscv64/
 
+          # Copy the default resource.
           cp -R resources/android/res aar_out/
 
+          # Make meta data.
           cp resources/android/AndroidManifest.xml aar_out/AndroidManifest.xml
           echo '{"schema_version": 2, "name": "suika3", "dependencies": []}' > aar_out/prefab/prefab.json
-          echo '{"export_libraries": [], "library_name": "libstrato"}' > aar_out/prefab/modules/suika3/module.json
+          echo '{"export_libraries": [], "library_name": "suika3", "link_type": "static"}' > aar_out/prefab/modules/suika3/module.json
 
+         # Make an AAR file.
           cd aar_out
           zip -r ../Suika3.aar *
           cd ..
