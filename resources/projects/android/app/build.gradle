@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace 'io.noctvm.playfield.engineandroid'
+    namespace 'vn.suika3.engine'
     compileSdk 35
     defaultConfig {
         applicationId "vn.suika3.android"
@@ -16,6 +16,6 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation files('libs/Suika3.aar')
     implementation 'androidx.appcompat:appcompat:1.6.1'
 }

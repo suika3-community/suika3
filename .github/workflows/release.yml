@@ -330,41 +330,63 @@ jobs:
           cmake --preset android-riscv64
           cmake --build --preset android-riscv64
 
+      - name: Build class files
+        run: |
+          ANDROID_JAR="${ANDROID_SDK_ROOT}/platforms/android-35/android.jar"
+          mkdir classes
+          javac -d classes -cp $ANDROID_JAR external/PlayfieldEngine/external/StratoHAL/src/MainActivity.java
+          ls -l classes
+
+      - name: Build AAR
+        run: |
+          mkdir -p aar_out/prefab/modules/suika3/include
+          mkdir -p aar_out/prefab/modules/suika3/android.arm64-v8a
+          mkdir -p aar_out/prefab/modules/suika3/android.armeabi-v7a
+          mkdir -p aar_out/prefab/modules/suika3/android.x86_64
+          mkdir -p aar_out/prefab/modules/suika3/android.x86
+          mkdir -p aar_out/prefab/modules/suika3/android.riscv64
+
+          cd classes
+          jar cvf ../aar_out/classes.jar *
+          cd ..
+
+          cp -R include/suika3 aar_out/prefab/modules/suika3/include/
+          cp -R external/PlayfieldEngine/external/NoctLang/include/noct aar_out/prefab/modules/suika3/include/
+          cp -R external/PlayfieldEngine/external/StratoHAL/include/strato aar_out/prefab/modules/suika3/include/
+
+          # Copy and rename libsuika3.so to libstrato.so because MainActivity depends on the name.
+          cp build-android-arm64/libsuika3.so aar_out/prefab/modules/suika3/android.arm64-v8a/libstrato.so
+          cp build-android-armv7/libsuika3.so aar_out/prefab/modules/suika3/android.armeabi-v7a/libstrato.so
+          cp build-android-x86_64/libsuika3.so aar_out/prefab/modules/suika3/android.x86_64/libstrato.so
+          cp build-android-x86/libsuika3.so aar_out/prefab/modules/suika3/android.x86/libstrato.so
+          cp build-android-riscv64/libsuika3.so aar_out/prefab/modules/suika3/android.riscv64/libstrato.so
+
+          cp -R resources/android/res aar_out/
+
+          cp resources/android/AndroidManifest.xml aar_out/AndroidManifest.xml
+          echo '{"schema_version": 2, "name": "suika3", "dependencies": []}' > aar_out/prefab/prefab.json
+          echo '{"export_libraries": [], "library_name": "libstrato"}' > aar_out/prefab/modules/suika3/module.json
+
+          cd aar_out
+          zip -r ../Suika3.aar *
+          cd ..
+
       - name: Build project
         run: |
-          mkdir android
-          cp -R resources/projects/android/app                 android/
-          cp -R resources/projects/android/gradle.properties   android/
-          cp -R resources/projects/android/build.gradle        android/
-          cp -R resources/projects/android/gradlew             android/
-          cp -R resources/projects/android/settings.gradle     android/
-          cp -R resources/projects/android/gradlew.bat         android/
-          cp -R resources/projects/android/gradle              android/
-          cp -R resources/projects/android/build.bat           android/
-          cp -R resources/projects/android/build.sh            android/
+          # Copy the project template.
+          cp -R resources/projects/android android
 
-          mkdir -p android/app/src/main/assets
+          # Copy the AAR.
+          mkdir -p android/app/libs
+          cp Suika3.aar android/app/libs
+
+          # Copy the sample game assets.
           cp -R game/* android/app/src/main/assets/
+
+          # Replace the font file to a smaller one.
           cp resources/launcher/system/font/NotoSans-Medium.ttf android/app/src/main/assets/system/font/NotoSansCJK-Medium.ttc
 
-          mkdir -p android/app/src/main/java/io/noctvm/strato
-          cp external/PlayfieldEngine/external/StratoHAL/src/MainActivity.java android/app/src/main/java/io/noctvm/strato/
-
-          mkdir -p android/app/src/main/jniLibs/arm64-v8a
-          cp build-android-arm64/libsuika3.so android/app/src/main/jniLibs/arm64-v8a/libstrato.so
-
-          mkdir -p android/app/src/main/jniLibs/armeabi-v7a
-          cp build-android-armv7/libsuika3.so android/app/src/main/jniLibs/armeabi-v7a/libstrato.so
-
-          mkdir -p android/app/src/main/jniLibs/x86_64
-          cp build-android-x86_64/libsuika3.so android/app/src/main/jniLibs/x86_64/libstrato.so
-
-          mkdir -p android/app/src/main/jniLibs/x86
-          cp build-android-x86/libsuika3.so android/app/src/main/jniLibs/x86/libstrato.so
-
-          mkdir -p android/app/src/main/jniLibs/riscv64
-          cp build-android-riscv64/libsuika3.so android/app/src/main/jniLibs/riscv64/libstrato.so
-
+          # Make a ZIP file.
           zip -r Suika3-Android-Studio.zip android
 
       - name: Upload artifact
