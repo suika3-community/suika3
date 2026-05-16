@@ -798,6 +798,17 @@ jobs:
           mkdir dist/SDK/msdos
           cp pc98/suika-98.exe dist/SDK/msdos/
 
+      - name: Download PC/AT artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: pcat
+          path: pcat
+
+      - name: Copy for PC/AT
+        run: |
+          mkdir dist/SDK/msdos
+          cp pc98/suika-at.exe dist/SDK/msdos/
+
       - name: Copy documents
         run: |
           unzip mkdocs/Suika3-documents.zip -d dist/SDK
