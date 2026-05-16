@@ -88,7 +88,7 @@
     - **Mobile:** iOS, Android, HarmonyOS NEXT
     - **Web:** WebAssembly
     - **Console:** Xbox (GDK), PS5/Switch/Xbox via Unity Integration \[DevKit required\]
-    - **More:** FreeBSD, NetBSD, OpenBSD, Solaris, Haiku, PC98
+    - **More:** FreeBSD, NetBSD, OpenBSD, Solaris, Haiku, PC98, PC/AT
 - **Users:** Professional creators, indie studios, enterprise teams.
 
 ---
@@ -1227,7 +1227,8 @@ configurations.
 | windows-vs2022-gdk-xbox-xs  | Windows               | MSVC       | Executable     |
 | windows-vs2026-gdk-desktop  | Windows               | MSVC       | Executable     |
 | windows-vs2026-gdk-xbox-xs  | Windows               | MSVC       | Executable     |
-| pc98                        | MS-DOS PC-9801        | OpenWatcom | Executable     |
+| pc98                        | MS-DOS NEC PC-9801    | OpenWatcom | Executable     |
+| pcat                        | MS-DOS IBM PC/AT      | OpenWatcom | Executable     |
 
 ---
 
