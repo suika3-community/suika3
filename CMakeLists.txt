@@ -657,6 +657,7 @@ set(SUIKA_BASE_SOURCES
   src/cmd_video.c
   src/cmd_volume.c
   src/cmd_wait.c
+  src/library.c
 )
 
 # I18N Source
