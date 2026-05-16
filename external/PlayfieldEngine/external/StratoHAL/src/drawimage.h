@@ -187,23 +187,24 @@ DRAW_IMAGE_GLYPH(
 			dst_a = 1.0f - src_a;
 
 			/* Multiply the alpha value and the source pixel value. */
-			src_r = src_a * (float)((src_pix >> 16) & 0xff);
-			src_g = src_a * (float)((src_pix >> 8) & 0xff);
-			src_b = src_a * (float)(src_pix & 0xff);
+			src_r = src_a * (float)hal_get_pixel_r(src_pix);
+			src_g = src_a * (float)hal_get_pixel_g(src_pix);
+			src_b = src_a * (float)hal_get_pixel_b(src_pix);
 
 			/* Multiply the alpha value and the destination pixel value. */
-			dst_r = dst_a * (float)((dst_pix >> 16) & 0xff);
-			dst_g = dst_a * (float)((dst_pix >> 8) & 0xff);
-			dst_b = dst_a * (float)(dst_pix & 0xff);
+			dst_r = dst_a * (float)hal_get_pixel_r(dst_pix);
+			dst_g = dst_a * (float)hal_get_pixel_g(dst_pix);
+			dst_b = dst_a * (float)hal_get_pixel_b(dst_pix);
 			dst_a_i = hal_get_pixel_a(dst_pix);
 
 			alpha_i = src_a > dst_a ? (uint32_t)(src_a * 255.0f) : dst_a_i;
 
 			/* Store to the destination. */
-			*dst_ptr++ = (alpha_i << 24) |
-				     ((uint32_t)(src_r + dst_r) << 16) |
-				     ((uint32_t)(src_g + dst_g) << 8) |
-				     (uint32_t)(src_b + dst_b);
+			*dst_ptr++ = hal_make_pixel(
+				alpha_i,
+				(uint32_t)(src_r + dst_r),
+				(uint32_t)(src_g + dst_g),
+				(uint32_t)(src_b + dst_b));
 		}
 		src_ptr += src_line_inc;
 		dst_ptr += dst_line_inc;
