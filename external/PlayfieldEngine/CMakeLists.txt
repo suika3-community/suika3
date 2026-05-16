@@ -539,7 +539,14 @@ endif()
 
 # If building to merge into a downstream library,
 # don't include aot_init_code() because the downstream defines it.
-if(NOT PLAYFIELD_ENABLE_OBJECTS)
+if(   PLAYFIELD_TARGET_IOS
+   OR PLAYFIELD_TARGET_ANDROID
+   OR PLAYFIELD_TARGET_OPENHARMONY
+   OR PLAYFIELD_TARGET_UNITY)
+  if(PLAYFIELD_ENABLE_APPMAIN)
+    set(PLAYFIELD_AOT_SOURCES src/library.c)
+  endif()
+else()
   set(PLAYFIELD_AOT_SOURCES src/library.c)
 endif()
 
