@@ -862,9 +862,9 @@ draw_glyph_func(
 		font_real_height -= (image_real_y + font_real_height) - image_height;
 
 	/* Draw. */
-	color_r = hal_get_pixel_r(color);
-	color_g = hal_get_pixel_g(color);
-	color_b = hal_get_pixel_b(color);
+	color_r = hal_get_pixel_c1(color);
+	color_g = hal_get_pixel_c2(color);
+	color_b = hal_get_pixel_c3(color);
 	dst_ptr = image + image_real_y * image_width + image_real_x;
 	src_ptr = font + font_real_y * font_width + font_real_x;
 	for (py = font_real_y; py < font_real_y + font_real_height; py++) {
