@@ -878,9 +878,9 @@ draw_glyph_func(
 			src_b = color_b;
 
 			dst_a = hal_get_pixel_a(dst_pix);
-			dst_r = hal_get_pixel_r(dst_pix);
-			dst_g = hal_get_pixel_g(dst_pix);
-			dst_b = hal_get_pixel_b(dst_pix);
+			dst_r = hal_get_pixel_c1(dst_pix);
+			dst_g = hal_get_pixel_c2(dst_pix);
+			dst_b = hal_get_pixel_c3(dst_pix);
 
 			if (src_a == 0) {
 				pix_a = dst_a;
@@ -914,7 +914,7 @@ draw_glyph_func(
 					);
 			}
 
-			*dst_ptr++ = hal_make_pixel(
+			*dst_ptr++ = hal_make_pixel_fast(
 				pix_a, pix_r, pix_g, pix_b);
 		}
 		dst_ptr += image_width - font_real_width;
