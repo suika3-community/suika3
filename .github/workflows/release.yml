@@ -651,6 +651,7 @@ jobs:
       - build-openharmony
       - build-unity
       - build-pc98
+      - build-pcat
       - build-mkdocs
     runs-on: ubuntu-latest
     steps:
