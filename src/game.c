@@ -163,18 +163,18 @@ static const char *last_tag_name;
 bool init_aot_code(struct rt_env *env);
 
 /* Forward declaration. */
-static bool init_hook(int width, int height);
+bool pf_init_hook(int width, int height);
 
 /*
  * Entrypoint.
  */
-PF_DEFINE_MAIN(init_hook, init_aot_code)
+PF_DEFINE_MAIN(pf_init_hook, init_aot_code)
 
 /*
  * Called before the game starts.
  */
-static bool
-init_hook(
+bool
+pf_init_hook(
 	int width,
 	int height)
 {

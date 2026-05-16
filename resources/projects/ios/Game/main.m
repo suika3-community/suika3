@@ -1,4 +1,4 @@
-#import <Cocoa/Cocoa.h>
+#import <UIKit/UIKit.h>
 
 struct hal_callback;
 struct rt_env;
