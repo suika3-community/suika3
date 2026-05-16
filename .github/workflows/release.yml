@@ -807,7 +807,7 @@ jobs:
 
       - name: Copy for PC/AT
         run: |
-          mkdir dist/SDK/msdos
+          mkdir -p dist/SDK/msdos
           cp pcat/suika-at.exe dist/SDK/msdos/
 
       - name: Copy documents
