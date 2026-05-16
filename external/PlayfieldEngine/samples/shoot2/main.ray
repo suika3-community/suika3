@@ -49,7 +49,7 @@ func update() {
     lastTime = now;
 
     if (isGameover) {
-        if (Engine.isReturnKeyPressed || Engine.isGamepadBPressed || Engine.isMouseRightPressed) {
+        if (Engine.isReturnKeyPressed || Engine.isGamepadBPressed || Engine.isMouseLeftPressed) {
             isGameover = false;
             restart();
         } else {

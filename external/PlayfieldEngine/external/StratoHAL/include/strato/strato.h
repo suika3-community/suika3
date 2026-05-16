@@ -1661,13 +1661,14 @@ hal_bootstrap(
 		hal_bootstrap_ptr = hal_bootstrap;	\
 		return hal_main(argc, argv);		\
 	}
-#define HAL_DEFINE_MAIN_CHAIN(chain_ptr, chain)		\
-	int main(int argc, char *argv[])		\
-	{						\
-		int hal_main(int argc, char *argv[]);	\
-		hal_bootstrap_ptr = hal_bootstrap;	\
-		chain_ptr = chain;			\
-		return hal_main(argc, argv);		\
+#define HAL_DEFINE_MAIN_CHAIN(chain_ptr1, chain1, chain_ptr2, chain2)	\
+	int main(int argc, char *argv[])				\
+	{								\
+		int hal_main(int argc, char *argv[]);			\
+		hal_bootstrap_ptr = hal_bootstrap;			\
+		chain_ptr1 = chain1;					\
+		chain_ptr2 = chain2;					\
+		return hal_main(argc, argv);				\
 	}
 #endif
 
@@ -1690,23 +1691,24 @@ hal_bootstrap(
 				    lpszCmd,			\
 				    nCmdShow);			\
 	}
-#define HAL_DEFINE_MAIN_CHAIN(chain_ptr, chain)			\
-	int WINAPI wWinMain(					\
-		HINSTANCE hInstance,				\
-		HINSTANCE hPrevInstance,			\
-		LPWSTR lpszCmd,					\
-		int nCmdShow)					\
-	{							\
-		int WINAPI hal_wWinMain(HINSTANCE,		\
-					HINSTANCE,		\
-					LPWSTR,			\
-					int);			\
-		hal_bootstrap_ptr = hal_bootstrap;		\
-		chain_ptr = chain;				\
-		return hal_wWinMain(hInstance,			\
-				    hPrevInstance,		\
-				    lpszCmd,			\
-				    nCmdShow);			\
+#define HAL_DEFINE_MAIN_CHAIN(chain_ptr1, chain1, chain_ptr2, chain2)	\
+	int WINAPI wWinMain(						\
+		HINSTANCE hInstance,					\
+		HINSTANCE hPrevInstance,				\
+		LPWSTR lpszCmd,						\
+		int nCmdShow)						\
+	{								\
+		int WINAPI hal_wWinMain(HINSTANCE,			\
+					HINSTANCE,			\
+					LPWSTR,				\
+					int);				\
+		hal_bootstrap_ptr = hal_bootstrap;			\
+		chain_ptr1 = chain1;					\
+		chain_ptr2 = chain2;					\
+		return hal_wWinMain(hInstance,				\
+				    hPrevInstance,			\
+				    lpszCmd,				\
+				    nCmdShow);				\
 	}
 #endif
 
@@ -1729,23 +1731,24 @@ hal_bootstrap(
 				   lpszCmd,			\
 				   nCmdShow);			\
 	}
-#define HAL_DEFINE_MAIN_CHAIN(chain_ptr, chain)			\
-int WINAPI WinMain(						\
-		HINSTANCE hInstance,				\
-		HINSTANCE hPrevInstance,			\
-		LPSTR lpszCmd,					\
-		int nCmdShow)					\
-	{							\
-		int WINAPI hal_WinMain(HINSTANCE,		\
-				       HINSTANCE,		\
-				       LPWSTR,			\
-				       int);			\
-		hal_bootstrap_ptr = hal_bootstrap;		\
-		chain_ptr = chain;				\
-		return hal_WinMain(hInstance,			\
-				   hPrevInstance,		\
-				   lpszCmd,			\
-				   nCmdShow);			\
+#define HAL_DEFINE_MAIN_CHAIN(chain_ptr1, chain1, chain_ptr2, chain2)	\
+int WINAPI WinMain(							\
+		HINSTANCE hInstance,					\
+		HINSTANCE hPrevInstance,				\
+		LPSTR lpszCmd,						\
+		int nCmdShow)						\
+	{								\
+		int WINAPI hal_WinMain(HINSTANCE,			\
+				       HINSTANCE,			\
+				       LPWSTR,				\
+				       int);				\
+		hal_bootstrap_ptr = hal_bootstrap;			\
+		chain_ptr1 = chain1;					\
+		chain_ptr2 = chain2;					\
+		return hal_WinMain(hInstance,				\
+				   hPrevInstance,			\
+				   lpszCmd,				\
+				   nCmdShow);				\
 	}
 #endif
 
@@ -1758,18 +1761,29 @@ int WINAPI WinMain(						\
 	{							\
 		hal_bootstrap_ptr = hal_bootstrap;		\
 	}
-#define HAL_DEFINE_MAIN_CHAIN(chain_ptr, chain)			\
-	__attribute__((constructor))				\
-	static void so_init(void)				\
-	{							\
-		hal_bootstrap_ptr = hal_bootstrap;		\
-		chain_ptr = chain;				\
+#define HAL_DEFINE_MAIN_CHAIN(chain_ptr1, chain1, chain_ptr2, chain2)	\
+	__attribute__((constructor))					\
+	static void so_init(void)					\
+	{								\
+		hal_bootstrap_ptr = hal_bootstrap;			\
+		chain_ptr1 = chain1;					\
+		chain_ptr2 = chain2;					\
 	}
 #endif
 
 #if defined(HAL_TARGET_UNITY) && !defined(HAL_USE_DLL)
-#define HAL_DEFINE_MAIN()
-#define HAL_DEFINE_MAIN_CHAIN(chain_ptr, chain)
+#define HAL_DEFINE_MAIN()						\
+	static void so_init(void)					\
+	{								\
+		hal_bootstrap_ptr = hal_bootstrap;			\
+	}
+#define HAL_DEFINE_MAIN_CHAIN(chain_ptr1, chain1, chain_ptr2, chain2)	\
+	static void so_init(void)					\
+	{								\
+		hal_bootstrap_ptr = hal_bootstrap;			\
+		chain_ptr1 = chain1;					\
+		chain_ptr2 = chain2;					\
+	}
 #endif
 
 #if defined(HAL_TARGET_WASM)
@@ -1780,13 +1794,14 @@ int WINAPI WinMain(						\
 		hal_bootstrap_ptr = hal_bootstrap;		\
 		return hal_main();				\
 	}
-#define HAL_DEFINE_MAIN_CHAIN(chain_ptr, chain)			\
-	int main(void)						\
-	{							\
-		int hal_main(void);				\
-		hal_bootstrap_ptr = hal_bootstrap;		\
-		chain_ptr = chain;				\
-		return hal_main();				\
+#define HAL_DEFINE_MAIN_CHAIN(chain_ptr1, chain1, chain_ptr2, chain2)	\
+	int main(void)							\
+	{								\
+		int hal_main(void);					\
+		hal_bootstrap_ptr = hal_bootstrap;			\
+		chain_ptr1 = chain1;					\
+		chain_ptr2 = chain2;					\
+		return hal_main();					\
 	}
 #endif
 

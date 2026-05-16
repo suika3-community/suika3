@@ -54,11 +54,10 @@ option(PLAYFIELD_ENABLE_WEBSERVER        "Enable Web server"                    
 option(PLAYFIELD_ENABLE_EDITOR           "Enable simple editor for Windows"           OFF)
 option(PLAYFIELD_ENABLE_ROT90            "Rotate screen for DRI"                      OFF)
 option(PLAYFIELD_ENABLE_GST              "Enable Gstreamer support"                   OFF)
-option(PLAYFIELD_ENABLE_MAIN2            "Enable macOS main2()"                       OFF)
 option(PLAYFIELD_ENABLE_CONSOLE          "Enable console debug output on Windows"     OFF)
 option(PLAYFIELD_ENABLE_UNSAFE           "Enable unsafe APIs for launchers"           OFF)
 option(PLAYFIELD_ENABLE_PORTAL           "Enable XDG Portal"                          OFF)
-option(PLAYFIELD_ENABLE_HOOK             "Enable downstream pf_init_hook()"           OFF)
+option(PLAYFIELD_ENABLE_APPMAIN          "Enable default main() for library"          OFF)
 
 # ---
 
@@ -367,10 +366,6 @@ if(NOT PLAYFIELD_ENABLE_DIST)
     set(STRATO_ENABLE_GST ON)
   endif()
 
-  if(PLAYFIELD_ENABLE_MAIN2)
-    set(STRATO_ENABLE_MAIN2 ON)
-  endif()
-
   if(PLAYFIELD_ENABLE_CONSOLE)
     set(STRATO_ENABLE_CONSOLE)
   endif()
@@ -537,8 +532,8 @@ if(NOT PLAYFIELD_ENABLE_DIST)
 endif()
 
 # Use stub hook for library-only platforms
-if(PLAYFIELD_ENABLE_HOOK)
-  set(PLAYFIELD_HOOK src/hook.c)
+if(PLAYFIELD_ENABLE_APPMAIN)
+  set(PLAYFIELD_HOOK src/app.c)
 endif()
 
 # Make a library.
@@ -719,7 +714,7 @@ endif()
 if(PLAYFIELD_ENABLE_BIN)
   add_executable(
     playfieldbin
-    src/hook.c
+    src/app.c
     ${PLAYFIELD_RESOURCES}
   )
 

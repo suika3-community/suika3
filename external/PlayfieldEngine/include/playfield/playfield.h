@@ -872,23 +872,27 @@ pf_log_out_of_memory(void);
  * Initialization callback for derived engines.
  */
 
-/* DLL side */
+/* DLL side. */
 PF_DLL
 extern bool
 (*pf_init_hook_ptr)(
 	int width,
 	int height);
 
-/* App side */
+/* DLL side. */
+struct rt_env;
+PF_DLL
 extern bool
-pf_init_hook(
-	int width,
-	int height);
+(*pf_init_aot_code_ptr)(struct rt_env *env);
 
 /*
  * Entrypoint Definition
  */
 #include <strato/strato.h>
-#define PF_DEFINE_MAIN() HAL_DEFINE_MAIN_CHAIN(pf_init_hook_ptr, pf_init_hook)
+#define PF_DEFINE_MAIN(init_hook, aot_init)		\
+	HAL_DEFINE_MAIN_CHAIN(pf_init_hook_ptr,		\
+			      init_hook,		\
+			      pf_init_aot_code_ptr,	\
+			      aot_init)
 
 #endif
