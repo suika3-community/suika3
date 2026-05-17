@@ -2,8 +2,8 @@
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/logo-mid.png" alt="Suika3 Logo" width="480" hspace="20">
   <h1 align="center" style="border-bottom: none">
     <a href="https://suika3.vn">Suika3</a>:<br>
-    Standard Universal Infrastructure for Kinetic Arts,<br>
-    Generation 3
+    Standard Universal Infrastructure for Kinetic Arts<br>
+    The Third Generation
   </h1>
   <p>
     Suika3 is a modern, ultra-portable, full-stack<br>
