@@ -6,6 +6,12 @@
     2Dゲームエンジン(ビジュアルノベルDSL搭載)
   </h1>
   <p>
+    Suika3 は「第三世代標準汎用動的芸術基盤」<br>
+    (Standard Universal Infrastructure for Kinetic Arts Gen3)
+    の略です。<br>
+  </p>
+generation
+  <p>
     Suika3は、モバイルデバイスへの<br>
     深い愛情から生まれました——<br>
     主要な3Dエンジンが置き去りにしてきたプラットフォームです。<br>
