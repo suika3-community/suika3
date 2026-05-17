@@ -478,11 +478,6 @@ if(   NOT SUIKA_ENABLE_DIST
     set(PLAYFIELD_ENABLE_GST ON)
   endif()
 
-  # main() --> main2()
-  if(SUIKA_ENABLE_MAIN2)
-    set(PLAYFIELD_ENABLE_MAIN2 ON)
-  endif()
-
   # Console for debug output on Windows.
   if(SUIKA_ENABLE_CONSOLE)
     set(PLAYFIELD_ENABLE_CONSOLE ON)
@@ -666,7 +661,8 @@ set(SUIKA_BASE_SOURCES
 # AOT Source
 if(SUIKA_ENABLE_STATIC OR SUIKA_ENABLE_SHARED)
   if(   SUIKA_TARGET_IOS
-     OR SUIKA_TARGET_ANDROID)
+     OR SUIKA_TARGET_ANDROID
+     OR SUIKA_TARGET_OPENHARMONY)
     # Do not include AOT stub.
   else()
     set(SUIKA_AOT_SOURCES

@@ -444,6 +444,11 @@ jobs:
         run: |
           cp -R resources/projects/openharmony ./
 
+          mkdir -p openharmony/entry/src/main/cpp/third_party/suika3/include/
+          cp -R include/suika3 openharmony/entry/src/main/cpp/third_party/suika3/include/
+          cp -R external/PlayfieldEngine/external/NoctLang/include/noct include/suika3 openharmony/entry/src/main/cpp/third_party/suika3/include/
+          cp -R external/PlayfieldEngine/external/StratoHAL/include/strato include/suika3 openharmony/entry/src/main/cpp/third_party/suika3/include/
+
           mkdir -p openharmony/entry/src/main/cpp/third_party/suika3/lib/arm64-v8a
           cp build-openharmony-arm64/libsuika3.a openharmony/entry/src/main/cpp/third_party/suika3/lib/arm64-v8a/
 
