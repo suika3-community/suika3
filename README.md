@@ -260,7 +260,7 @@ Suika3 is engineered with modern techniques, and delivers:
   faster execution speed compared to our interpreter backend in
   synthetic benchmarks.
 
-- **Lightweight**: Engineered to run smoothly at 60 fps even on
+- **Light Speed**: Engineered to run smoothly at 60 fps even on
   low-spec hardware such as Raspberry Pi in developing regions.
 
 - **True Portability**: Designed with a "port anywhere" strategy,
@@ -603,7 +603,7 @@ the SIE PlayStation firmware team.
 * **Rendering**: Supports native DirectX 9/11/12, Metal, OpenGL,
   OpenGL ES, and WebGL for wide compatibility.
 
-* **Audio**: Provides lightweight audio support through native
+* **Audio**: Provides audio output support through native
   DirectSound or XAudio2 (Windows), Audio Unit (macOS/iOS), ALSA
   (Linux), OSS (BSD), and other APIs.
 
@@ -661,7 +661,7 @@ For Xbox series, you can use the native Microsoft GDK port directly, not via Uni
 Ray = NoctLang + Suika3 API + Playfield API
 ```
 
-**NoctLang** is a lightweight scripting language designed for in-app
+**NoctLang** is a scripting language designed for in-app sandboxed
 scripting.  With a game-oriented syntax, it emphasizes clarity,
 instant startup, and tight integration with the engine.
 
@@ -802,13 +802,13 @@ Compilation stages are as below.
 
 The separation of HIR and LIR enables:
 
-- **A lightweight JIT pipeline**: minimal overhead from analysis to code generation.
+- **Robust JIT pipeline**: minimal overhead from analysis to code generation.
 - **Clarity in architecture**: each stage has a well-defined role, simplifying maintenance.
 - **Portability**: the same LIR can be interpreted directly or lowered into optimized machine code.
 
 As shown above, HIR expresses structure, while LIR expresses
-execution.  This split allows NoctLang to keep the JIT
-pipeline lightweight without sacrificing optimization opportunities.
+execution. This split allows NoctLang to keep the JIT pipeline
+organized without sacrificing optimization opportunities.
 
 Because all JIT backends translate from the same LIR, portability
 across architectures comes naturally.  This unified approach is what
