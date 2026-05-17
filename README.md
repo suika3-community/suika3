@@ -9,7 +9,7 @@
   <p>
     Suika3 is a modern, ultra-portable, full-stack<br>
     compiler / VM / HAL infrastructure<br>
-    for interactive entertainments.
+    for interactive entertainment.
   </p>
   <p>
     We've brought Suika3 to life<br>
