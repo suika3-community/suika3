@@ -3,13 +3,12 @@
   <h1 align="center" style="border-bottom: none">
     <a href="https://suika3.vn">Suika3</a>:
     A Modern, Ultra-Portable, Full-Stack<br>
-    Compiler and Virtual Machine Infrastructure<br>
-    for Visual Novels across All Platforms
+    Compiler / VM / HAL Infrastructure<br>
+    for Interactive Entertainment
   </h1>
   <p>
     SUIKA3 stands for<br>
     "Standard Universal Infrastructure for Kinetic Arts — Gen 3"<br>
-    (ja: 第三世代標準汎用動的視覚表現実行基盤)
   </p>
   <p>
     We've brought Suika3 to life<br>
@@ -29,6 +28,22 @@
     <a href="https://github.com/awemorris/suika3/blob/main/README.ja.md">日本語</a>
   </p>
 </div>
+
+---
+
+## TL;DR
+
+- **What's This:** An open-source equivalent to Unity's IL2CPP
+- **Target:** Mobile-first, yet cross-platform by design
+- **High-Performance:** Native, written in C
+- **Hybrid Scripting:** JIT VM with AOT fallback for App Store compliance
+- **Broad Platforms:**
+    - **Desktop:** Windows, macOS, Linux, Chromebook, Raspberry Pi
+    - **Mobile:** iOS, Android, HarmonyOS NEXT
+    - **Web:** WebAssembly
+    - **Console:** Xbox (GDK), PS5/Switch/Xbox via Unity Integration \[DevKit required\]
+    - **Exotic:** FreeBSD, NetBSD, OpenBSD, Solaris, Haiku, MS-DOS, PC98
+- **Users:** Professional creators, indie studios, enterprise teams.
 
 ---
 
@@ -81,21 +96,6 @@
   Crazy thing is, our Sun-Ray JIT VM works on a real PC98 machine!<br>
   <br>
 </div>
-
----
-
-## TL;DR
-
-- **Target:** Mobile-first, yet runs anywhere
-- **High-Performance:** Native, written in C
-- **Hybrid Scripting:** JIT VM with AOT fallback for App Store compliance
-- **Broad Platforms:**
-    - **Desktop:** Windows, macOS, Linux, Chromebook, Raspberry Pi
-    - **Mobile:** iOS, Android, HarmonyOS NEXT
-    - **Web:** WebAssembly
-    - **Console:** Xbox (GDK), PS5/Switch/Xbox via Unity Integration \[DevKit required\]
-    - **More:** FreeBSD, NetBSD, OpenBSD, Solaris, Haiku, PC98, PC/AT
-- **Users:** Professional creators, indie studios, enterprise teams.
 
 ---
 
