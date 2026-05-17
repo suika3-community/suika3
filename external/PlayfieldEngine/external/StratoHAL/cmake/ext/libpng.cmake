@@ -17,7 +17,6 @@ file(RENAME
 )
 file(APPEND ${CMAKE_BINARY_DIR}/libpng/pnglibconf.h
 "
-#define PNG_NO_CONSOLE_IO
 #define PNG_NO_STDIO
 #undef PNG_WRITE_SUPPORTED
 #undef PNG_SIMPLIFIED_WRITE_SUPPORTED
