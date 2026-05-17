@@ -24,19 +24,12 @@ add_library(webp OBJECT
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/alpha_processing_neon.c
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/alpha_processing_sse2.c
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/alpha_processing_sse41.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/dsp/cost.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/dsp/cost_neon.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/dsp/cost_sse2.c
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/cpu.c
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/dec.c
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/dec_neon.c
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/dec_sse2.c
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/dec_sse41.c
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/dec_clip_tables.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/dsp/enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/dsp/enc_sse2.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/dsp/enc_sse41.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/dsp/enc_neon.c
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/filters.c
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/filters_neon.c
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/filters_sse2.c
@@ -44,15 +37,9 @@ add_library(webp OBJECT
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/lossless_neon.c
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/lossless_sse2.c
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/lossless_sse41.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/dsp/lossless_enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/dsp/lossless_enc_neon.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/dsp/lossless_enc_sse2.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/dsp/lossless_enc_sse41.c
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/rescaler.c
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/rescaler_neon.c
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/rescaler_sse2.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/dsp/ssim.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/dsp/ssim_sse2.c
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/upsampling.c
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/upsampling_neon.c
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/upsampling_sse2.c
@@ -61,41 +48,11 @@ add_library(webp OBJECT
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/yuv_neon.c
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/yuv_sse2.c
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/yuv_sse41.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/enc/alpha_enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/enc/analysis_enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/enc/backward_references_cost_enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/enc/backward_references_enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/enc/config_enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/enc/cost_enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/enc/filter_enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/enc/frame_enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/enc/histogram_enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/enc/iterator_enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/enc/near_lossless_enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/enc/picture_csp_enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/enc/picture_enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/enc/picture_psnr_enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/enc/picture_rescale_enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/enc/picture_tools_enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/enc/predictor_enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/enc/quant_enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/enc/syntax_enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/enc/token_enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/enc/tree_enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/enc/vp8l_enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/enc/webp_enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/mux/anim_encode.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/mux/muxedit.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/mux/muxinternal.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/mux/muxread.c
   ${CMAKE_BINARY_DIR}/libwebp/src/utils/bit_reader_utils.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/utils/bit_writer_utils.c
   ${CMAKE_BINARY_DIR}/libwebp/src/utils/color_cache_utils.c
   ${CMAKE_BINARY_DIR}/libwebp/src/utils/filters_utils.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/utils/huffman_encode_utils.c
   ${CMAKE_BINARY_DIR}/libwebp/src/utils/huffman_utils.c
   ${CMAKE_BINARY_DIR}/libwebp/src/utils/quant_levels_dec_utils.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/utils/quant_levels_utils.c
   ${CMAKE_BINARY_DIR}/libwebp/src/utils/random_utils.c
   ${CMAKE_BINARY_DIR}/libwebp/src/utils/rescaler_utils.c
   ${CMAKE_BINARY_DIR}/libwebp/src/utils/thread_utils.c

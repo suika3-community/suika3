@@ -31,7 +31,6 @@ add_library(vorbis OBJECT
   ${CMAKE_BINARY_DIR}/libvorbis/lib/sharedbook.c
   ${CMAKE_BINARY_DIR}/libvorbis/lib/smallft.c
   ${CMAKE_BINARY_DIR}/libvorbis/lib/synthesis.c
-  #${CMAKE_BINARY_DIR}/libvorbis/lib/vorbisenc.c
   ${CMAKE_BINARY_DIR}/libvorbis/lib/window.c
 )
 

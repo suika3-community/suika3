@@ -524,6 +524,8 @@ int conf_gui_save_last_page;
  * Config Table
  */
 
+#undef OPTIONAL /* for mingw */
+
 #define MUST		true
 #define OPTIONAL	false
 #define SAVE		true

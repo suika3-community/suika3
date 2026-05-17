@@ -15,6 +15,39 @@ file(RENAME
   ${CMAKE_BINARY_DIR}/libpng/pnglibconf.h.prebuilt
   ${CMAKE_BINARY_DIR}/libpng/pnglibconf.h
 )
+file(APPEND ${CMAKE_BINARY_DIR}/libpng/pnglibconf.h
+"
+#undef PNG_WRITE_SUPPORTED
+#undef PNG_SIMPLIFIED_WRITE_SUPPORTED
+#undef PNG_WRITE_INT_FUNCTIONS_SUPPORTED
+#undef PNG_WRITE_CUSTOMIZE_COMPRESSION_SUPPORTED
+#undef PNG_WRITE_CUSTOMIZE_ZTXT_COMPRESSION_SUPPORTED
+#undef PNG_WRITE_16BIT_SUPPORTED
+#undef PNG_WRITE_BGR_SUPPORTED
+#undef PNG_WRITE_CHECK_FOR_INVALID_INDEX_SUPPORTED
+#undef PNG_WRITE_COMPRESSED_TEXT_SUPPORTED
+#undef PNG_WRITE_FILLER_SUPPORTED
+#undef PNG_WRITE_FILTER_SUPPORTED
+#undef PNG_WRITE_FLUSH_SUPPORTED
+#undef PNG_WRITE_GET_PALETTE_MAX_SUPPORTED
+#undef PNG_WRITE_INTERLACING_SUPPORTED
+#undef PNG_WRITE_INVERT_ALPHA_SUPPORTED
+#undef PNG_WRITE_INVERT_SUPPORTED
+#undef PNG_WRITE_OPTIMIZE_CMF_SUPPORTED
+#undef PNG_WRITE_PACK_SUPPORTED
+#undef PNG_WRITE_PACKSWAP_SUPPORTED
+#undef PNG_WRITE_SHIFT_SUPPORTED
+#undef PNG_WRITE_SWAP_ALPHA_SUPPORTED
+#undef PNG_WRITE_SWAP_SUPPORTED
+#undef PNG_WRITE_TEXT_SUPPORTED
+#undef PNG_WRITE_TRANSFORMS_SUPPORTED
+#undef PNG_WRITE_UNKNOWN_CHUNKS_SUPPORTED
+#undef PNG_WRITE_USER_TRANSFORM_SUPPORTED
+#undef PNG_WRITE_WEIGHTED_FILTER_SUPPORTED
+#undef PNG_SAVE_INT_32_SUPPORTED
+"
+)
+
 
 file(GLOB LIBPNG_HEADERS ${CMAKE_BINARY_DIR}/libpng/*.h)
 file(
@@ -27,17 +60,13 @@ add_library(png OBJECT
   ${CMAKE_BINARY_DIR}/libpng/pngread.c
   ${CMAKE_BINARY_DIR}/libpng/pngrutil.c
   ${CMAKE_BINARY_DIR}/libpng/pngtrans.c
-  ${CMAKE_BINARY_DIR}/libpng/pngwtran.c
   ${CMAKE_BINARY_DIR}/libpng/png.c
   ${CMAKE_BINARY_DIR}/libpng/pngmem.c
   ${CMAKE_BINARY_DIR}/libpng/pngrio.c
   ${CMAKE_BINARY_DIR}/libpng/pngset.c
-  ${CMAKE_BINARY_DIR}/libpng/pngwio.c
-  ${CMAKE_BINARY_DIR}/libpng/pngwutil.c
   ${CMAKE_BINARY_DIR}/libpng/pngerror.c
   ${CMAKE_BINARY_DIR}/libpng/pngpread.c
   ${CMAKE_BINARY_DIR}/libpng/pngrtran.c
-  ${CMAKE_BINARY_DIR}/libpng/pngwrite.c
   ${CMAKE_BINARY_DIR}/libpng/arm/arm_init.c
   ${CMAKE_BINARY_DIR}/libpng/arm/filter_neon_intrinsics.c
   ${CMAKE_BINARY_DIR}/libpng/arm/filter_neon.S
@@ -50,9 +79,15 @@ target_include_directories(png PRIVATE ${CMAKE_BINARY_DIR}/libpng)
 target_include_directories(png PUBLIC  ${CMAKE_BINARY_DIR}/libpng)
 set(PNG_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/libpng)
 
+target_compile_definitions(png
+  PUBLIC _XOPEN_SOURCE=600
+  PNG_NO_WRITE_SUPPORTED
+  PNG_NO_SIMPLIFIED_WRITE_SUPPORTED
+  PNG_NO_CONSOLE_IO
+)
+
 target_link_libraries(png PRIVATE z)
 
-target_compile_definitions(png PUBLIC _XOPEN_SOURCE=600)
 
 # Suppress compilation errors.
 if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
