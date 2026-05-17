@@ -358,11 +358,11 @@ jobs:
           cp -R external/PlayfieldEngine/external/StratoHAL/include/strato aar_out/prefab/modules/suika3/include/
 
           # Copy libsuika3.a.
-          cp build-android-arm64/libsuika3.a aar_out/prefab/modules/suika3/libs/android.arm64-v8a/
-          cp build-android-armv7/libsuika3.a aar_out/prefab/modules/suika3/libs/android.armeabi-v7a/
-          cp build-android-x86_64/libsuika3.a aar_out/prefab/modules/suika3/libs/android.x86_64/
-          cp build-android-x86/libsuika3.a aar_out/prefab/modules/suika3/libs/android.x86/
-          cp build-android-riscv64/libsuika3.a aar_out/prefab/modules/suika3/libs/android.riscv64/
+          cp build-android-arm64/libsuika3.a aar_out/prefab/modules/suika3/libs/android.arm64-v8a/suika3.a
+          cp build-android-armv7/libsuika3.a aar_out/prefab/modules/suika3/libs/android.armeabi-v7a/suika3.a
+          cp build-android-x86_64/libsuika3.a aar_out/prefab/modules/suika3/libs/android.x86_64/suika3.a
+          cp build-android-x86/libsuika3.a aar_out/prefab/modules/suika3/libs/android.x86/suika3.a
+          cp build-android-riscv64/libsuika3.a aar_out/prefab/modules/suika3/libs/android.riscv64/suika3.a
 
           # Copy the default resource.
           cp -R resources/android/res aar_out/

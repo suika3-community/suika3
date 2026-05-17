@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace 'vn.suika3.engine'
+    namespace 'vn.suika3.android'
     compileSdk 35
     defaultConfig {
         applicationId "vn.suika3.android"
