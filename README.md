@@ -345,7 +345,7 @@ Suika3 is engineered with modern techniques, and delivers:
 
 - ✅ Cleaning up the Suika2 codebase. (OpenNovel) (June 2024 - November 2024)
 - ✅ Implementing the scripting language. (NoctLang) (December 2024 - March 2025)
-- ✅ Implementing the 2D game engine. (Playfield Engine) (March 2025 - October 2025)
+- ✅ Implementing the 2D game runtime. (Playfield Engine) (March 2025 - October 2025)
 - ✅ Implementing the tag execution engine. (Suika3) (January 2026 - February 2026)
 - ✅ Refactoring all C functions into a stable "C API". (January 2026 - February 2026)
 - ✅ Implementing all tags in C. (January 2026 - February 2026)
@@ -1155,7 +1155,7 @@ repository under the
 
 | Library          | Purpose             | Key Feature                                            |
 |------------------|---------------------|--------------------------------------------------------|
-| Playfield Engine | 2D Game Engine      | Our base game runtime. (in-house)                      |
+| Playfield Engine | 2D Game Runtime     | Our base game runtime. (in-house)                      |
 | NoctLang         | Scripting Language  | Our scripting language. (in-house)                     |
 | zlib             | Compression         | Deflate algorithm for general data compression.        |
 | libpng           | Image               | Reference library for supporting PNG images.           |
@@ -1243,7 +1243,7 @@ configurations.
 
 ## Codebase & Maturity
 
-Suika3 is a robust visual novel engine with over 100k lines of code (LoC).
+Suika3 is a robust 2D game runtime with over 100k lines of code (LoC).
 This is not a weekend project but a mature codebase evolved over 25+ years.
 
 - **Proven Stability:** Includes core modules refined since 2001.
@@ -1596,7 +1596,7 @@ We are not looking at the existing VN market. We aim to pioneer a
 mobile VN market that does not yet exist.
 
 Creators with different goals may also find excellent resources in
-other engines like Ren'Py, Unity, or Godot.
+other runtimes like Ren'Py, Unity, or Godot.
 
 ### Mission: Building a Sustainable Ecosystem
 
