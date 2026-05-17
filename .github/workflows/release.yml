@@ -367,10 +367,10 @@ jobs:
           # Copy the default resource.
           cp -R resources/android/res aar_out/
 
-          # Make meta data.
+          # Copy meta data.
           cp resources/android/AndroidManifest.xml aar_out/AndroidManifest.xml
-          echo '{"schema_version": 2, "name": "suika3", "dependencies": []}' > aar_out/prefab/prefab.json
-          echo '{"export_libraries": [], "library_name": "suika3", "link_type": "static"}' > aar_out/prefab/modules/suika3/module.json
+          cp resources/android/prefab.json aar_out/prefab/
+          cp resources/android/module.json aar_out/prefab/modules/suika3/
 
           # Make an AAR file.
           cd aar_out
