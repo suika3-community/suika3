@@ -2,7 +2,7 @@
  * Replace by your AOT code (library.c)
  *
  * To generate AOT code:
- *  $ playfield-aotc script1.ray script2.ray ...
+ *  $ suika3-aotc script1.ray script2.ray ...
  */
 
 #include <stdbool.h>
