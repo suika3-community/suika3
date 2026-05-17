@@ -6,9 +6,9 @@
     Visual Novel Engine for Mobile and Desktop
   </h1>
   <p>
-    Suika3 stands for<br>
+    SUIKA stands for<br>
     "Standard Universal Infrastructure for Kinetic Arts"<br>
-    generation 3
+    (ja: 標準汎用動的視覚表現実行基盤)
   </p>
   <p>
     We've brought Suika3 to life<br>
