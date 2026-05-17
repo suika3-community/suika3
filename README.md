@@ -227,7 +227,8 @@ specifically engineered for commercial mobile app development,
 developed by the Suika3 Project, led by Awe Morris.
 
 Games made with Suika3 are powered by `NovelML` and the `Ray`
-scripting platform.
+scripting platform. It runs swiftly, but it's not a lightweight
+technology.
 
 - **NovelML** ("演戲標記"): A tag-based, human-readable, extensible
   DSL designed specifically for visual novels. It features concise,
