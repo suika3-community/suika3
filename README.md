@@ -8,8 +8,9 @@
   </h1>
   <p>
     Suika3 is a modern, ultra-portable, full-stack<br>
-    Infrastructure on Compiler / Vitrual Machine / HAL<br>
-    for interactive entertainment.
+    Infrastructure on Compiler / Virtual Machine / HAL<br>
+    for interactive entertainment.<br>
+    Rather, it's a next-generation open-source game VM / runtime.
   </p>
   <p>
     We've brought Suika3 to life<br>
