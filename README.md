@@ -6,6 +6,11 @@
     Visual Novel Engine for Mobile and Desktop
   </h1>
   <p>
+    Suika3 stands for<br>
+    "Standard Universal Infrastructure for Kinetic Arts"<br>
+    generation 3
+  </p>
+  <p>
     We've brought Suika3 to life<br>
     with a deep love for mobile devices —<br>
     the platforms that major 3D engines left behind.<br>
