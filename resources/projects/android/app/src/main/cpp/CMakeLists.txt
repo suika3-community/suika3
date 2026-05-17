@@ -15,7 +15,12 @@ add_library(
 # Link libsuika3.a in the AAR to libstrato.so
 target_link_libraries(
   strato
-  suika3::strato
+  PRIVATE
+
+  -Wl,--whole-archive
+  suika3::suika3
+  -Wl,--no-whole-archive
+
   android
   log
   m
@@ -24,11 +29,7 @@ target_link_libraries(
   log
 )
 
-# Force load all symbols fro libsuika3.a
-target_link_options(
-  strato
-  PRIVATE
-  "LINKER:--whole-archive"
-  suika3::strato
-  "LINKER:--no-whole-archive"
+# Do not remove libsuika3.a sections
+target_link_options(strato PRIVATE
+  "LINKER:--no-gc-sections"
 )

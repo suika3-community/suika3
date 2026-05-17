@@ -341,11 +341,11 @@ jobs:
         run: |
           # Make directory tree.
           mkdir -p aar_out/prefab/modules/suika3/include
-          mkdir -p aar_out/prefab/modules/suika3/android.arm64-v8a
-          mkdir -p aar_out/prefab/modules/suika3/android.armeabi-v7a
-          mkdir -p aar_out/prefab/modules/suika3/android.x86_64
-          mkdir -p aar_out/prefab/modules/suika3/android.x86
-          mkdir -p aar_out/prefab/modules/suika3/android.riscv64
+          mkdir -p aar_out/prefab/modules/suika3/libs/android.arm64-v8a
+          mkdir -p aar_out/prefab/modules/suika3/libs/android.armeabi-v7a
+          mkdir -p aar_out/prefab/modules/suika3/libs/android.x86_64
+          mkdir -p aar_out/prefab/modules/suika3/libs/android.x86
+          mkdir -p aar_out/prefab/modules/suika3/libs/android.riscv64
 
           # Make the JAR file.
           cd classes
@@ -357,12 +357,12 @@ jobs:
           cp -R external/PlayfieldEngine/external/NoctLang/include/noct aar_out/prefab/modules/suika3/include/
           cp -R external/PlayfieldEngine/external/StratoHAL/include/strato aar_out/prefab/modules/suika3/include/
 
-          # Copy and rename libsuika3.so to libstrato.so because MainActivity depends on the name.
-          cp build-android-arm64/libsuika3.a aar_out/prefab/modules/suika3/android.arm64-v8a/
-          cp build-android-armv7/libsuika3.a aar_out/prefab/modules/suika3/android.armeabi-v7a/
-          cp build-android-x86_64/libsuika3.a aar_out/prefab/modules/suika3/android.x86_64/
-          cp build-android-x86/libsuika3.a aar_out/prefab/modules/suika3/android.x86/
-          cp build-android-riscv64/libsuika3.a aar_out/prefab/modules/suika3/android.riscv64/
+          # Copy libsuika3.a.
+          cp build-android-arm64/libsuika3.a aar_out/prefab/modules/suika3/libs/android.arm64-v8a/
+          cp build-android-armv7/libsuika3.a aar_out/prefab/modules/suika3/libs/android.armeabi-v7a/
+          cp build-android-x86_64/libsuika3.a aar_out/prefab/modules/suika3/libs/android.x86_64/
+          cp build-android-x86/libsuika3.a aar_out/prefab/modules/suika3/libs/android.x86/
+          cp build-android-riscv64/libsuika3.a aar_out/prefab/modules/suika3/libs/android.riscv64/
 
           # Copy the default resource.
           cp -R resources/android/res aar_out/
@@ -371,6 +371,11 @@ jobs:
           cp resources/android/AndroidManifest.xml aar_out/AndroidManifest.xml
           cp resources/android/prefab.json aar_out/prefab/
           cp resources/android/module.json aar_out/prefab/modules/suika3/
+          echo '{"abi": "arm64-v8a",   "api": 19, "ndk": 27, "stl": "none", "static": true}' > aar_out/prefab/modules/suika3/libs/android.arm64-v8a/abi.json
+          echo '{"abi": "armeabi-v7a", "api": 19, "ndk": 27, "stl": "none", "static": true}' > aar_out/prefab/modules/suika3/libs/android.armeabi-v7a/abi.json
+          echo '{"abi": "x86_64",      "api": 19, "ndk": 27, "stl": "none", "static": true}' > aar_out/prefab/modules/suika3/libs/android.x86_64/abi.json
+          echo '{"abi": "x86",         "api": 19, "ndk": 27, "stl": "none", "static": true}' > aar_out/prefab/modules/suika3/libs/android.x86/abi.json
+          echo '{"abi": "riscv64",     "api": 35, "ndk": 27, "stl": "none", "static": true}' > aar_out/prefab/modules/suika3/libs/android.riscv64/abi.json
 
           # Make an AAR file.
           cd aar_out
