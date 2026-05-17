@@ -10,8 +10,9 @@
     Suika3 is a modern, ultra-portable, full-stack<br>
     Infrastructure on Compiler / Virtual Machine / HAL<br>
     for interactive entertainment.<br>
-    It's a next-generation open-source game OS or runtime at low-level,<br>
-    rather than a managed game engine with an editor and an object system.
+    It's a next-generation open-source game OS or runtime at low-level.<br>
+    In a nutshell, it's like Unity with the 3D and editor removed,<br>
+    and visual novel added by default.<br>
   </p>
   <p>
     We've brought Suika3 to life<br>
