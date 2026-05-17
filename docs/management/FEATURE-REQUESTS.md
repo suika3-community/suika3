@@ -44,6 +44,7 @@ Concerns:
 * d0aaa Add file extension association
 
 ---
+
 ## Separating Screenshot Size from Display Size
 
 | Item          | Details                                                                 |
@@ -81,13 +82,25 @@ Concerns:
 
 ---
 
-**Suggest renaming the issue to: Save data structure and additional support for image saves**
+## Suggest renaming the issue to: Save data structure and additional support for image saves
+
+| Item          | Details                                                                 |
+|---------------|-------------------------------------------------------------------------|
+| ID            | FR-20260518-001                                                         |
+| Priority      | <Mid>                                                                   |
+| Status        | <Accepted>                                                              |
+| Target LTS    | 27.07 LTS                                                               |
+| Refereneces   | [GitHub Issue #33](https://github.com/awemorris/suika3/issues/33)       |
+| Created       | 18 May 2026                                                             |
+| Updated       | 18 May 2026                                                             |
+| Requested By  | @lalalll-lalalll                                                        |
 
 ---
 
 I would like to supplement the details of this feature. Please refer to the discussion in issues #26. We propose two distinct modes for save files: `System Mode` and `User Mode` for the moment (To be discussed).
 
 #### 1. System Mode
+
 This mode treats save data as part of the system cache. It is invisible to the user to maintain program robustness and portability.
 
 - **File Naming**: The filename is a hash value with **no file extension**.
@@ -100,6 +113,7 @@ This mode treats save data as part of the system cache. It is invisible to the u
 - **Requirement**: Since files are not user-readable, the engine requires a solution for **Save Import/Export**.
 
 #### 2. User Mode
+
 This mode treats save data as user cache. It is visible to the user, allowing them to manage save files manually (e.g., via copy/paste).
 
 - **File Naming**:
@@ -115,6 +129,7 @@ This mode treats save data as user cache. It is visible to the user, allowing th
   ```
 
 #### 3. Extension: PNG Saves
+
 An optional feature based on User Mode to support saving files as images.
 
 - **Feature**: Allows saving user mode files as PNG or other image formats for visual identification.
