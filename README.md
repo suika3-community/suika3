@@ -16,7 +16,7 @@
     with a deep love for mobile devices —<br>
     the platforms that major 3D engines left behind.<br>
     <br>
-    It's a powerful, production-ready game engine<br>
+    It's a powerful, production-ready game runtime<br>
     for Visual Novels and all kinds of 2D games,<br>
     designed to run beautifully on any platform you choose.
   </p>
@@ -222,7 +222,7 @@ louder than any pitch deck ever could!
 
 ## Introduction
 
-Suika3 is a production-grade visual novel & 2D game engine
+Suika3 is a production-grade visual novel & 2D game runtime
 specifically engineered for commercial mobile app development,
 developed by the Suika3 Project, led by Awe Morris.
 
@@ -249,7 +249,7 @@ welcome to use it just for fun — after all, fun is the driving force
 behind every great community.
 
 > [!TIP]
-> Suika3 is an ambitious engine born from over 25 years of independent
+> Suika3 is ambitious software born from over 25 years of independent
 > R&D, and we are still shaping its future together with early
 > adopters.
 
@@ -291,7 +291,7 @@ Suika3 is engineered with modern techniques, and delivers:
   laptop from overheating—pretty "cool," isn't it?
 
 - **Long-Term Support:** Built with a highly portable codebase, our
-  engine is designed to support future platforms through the 2030s,
+  software is designed to support future platforms through the 2030s,
   2040s, and beyond. LTS versions include a minimum of 10 years of
   bug-fix support.
 
@@ -372,7 +372,7 @@ project in just a few easy steps.
 
 ### Installation
 
-Let's get the engine running so you can see the magic happen!
+Let's get Suika3 running so you can see the magic happen!
 
 **Windows:**
 - **Download & Extract**
@@ -396,7 +396,7 @@ Let's get the engine running so you can see the magic happen!
     - Download Suika3-full.zip and extract it to your preferred directory.
 - **Install the Flatpak Package**
     - Navigate to `SDK/linux/` and open `Suika3.flatpak` (or run `flatpak install --user Suika3.flatpak`).
-    - This associates `.novel` and `.ray` files with the Suika3 engine.
+    - This associates `.novel` and `.ray` files with the Suika3.
 - **Launch**
     - Open the extracted folder, then double-click `start.novel` to launch the sample game!
 
@@ -568,11 +568,11 @@ place.
 
 Suika3 is not merely an SDL wrapper with scripting. It features its
 own rendering and audio backends, and its own scripting language,
-positioning it as a fully independent game engine.
+positioning it as a fully independent game runtime.
 
 ### Core Architecture
 
-Suika3 is based on `PlayField Engine`, a comprehensive 2D game engine.
+Suika3 is based on `PlayField Engine`, a comprehensive 2D game runtime.
 This means that Suika3 is fully extensible using the Playfield API.
 
 Playfield Engine was originally developed specifically for Suika3.
@@ -612,7 +612,7 @@ the SIE PlayStation firmware team.
 
 ### StratoHAL
 
-StratoHAL originated as the codebase of a 2D game engine developed
+StratoHAL originated as the codebase of a 2D game runtime developed
 since 2001, and has been Zlib-licensed with a proven record of
 exceptional stability.
 
@@ -666,7 +666,7 @@ Ray = NoctLang + Suika3 API + Playfield API
 
 **NoctLang** is a scripting language designed for in-app sandboxed
 scripting.  With a game-oriented syntax, it emphasizes clarity,
-instant startup, and tight integration with the engine.
+instant startup, and tight integration with the game runtime.
 
 The built-in JIT compiler supports a wide range of CPU architectures
 to cover most gaming consoles and smartphones, including:
@@ -740,7 +740,7 @@ The footprint of Suika3 is very small.
 > [!TIP]
 > Due to the modern graphics architecture, game applications using
 > DirectX 12 typically consume at least 300 MB of memory even before
-> loading any game assets. The engine itself consumes only 8 MB on
+> loading any game assets. The runtime itself consumes only 8 MB on
 > Windows 2000.
 
 ### JIT Pipeline
@@ -1144,7 +1144,7 @@ If you want to help us reach more developers, here is how you can contribute:
 
 ## Third-Party Libraries
 
-Our engine is built upon several free/libre software libraries. To
+Our software is built upon several free/libre software libraries. To
 ensure build reproducibility and long-term maintainability, all
 necessary source code tarballs and patches are bundled within this
 repository under the
@@ -1154,7 +1154,7 @@ repository under the
 
 | Library          | Purpose             | Key Feature                                            |
 |------------------|---------------------|--------------------------------------------------------|
-| Playfield Engine | 2D Game Engine      | Our base game engine. (in-house)                       |
+| Playfield Engine | 2D Game Engine      | Our base game runtime. (in-house)                      |
 | NoctLang         | Scripting Language  | Our scripting language. (in-house)                     |
 | zlib             | Compression         | Deflate algorithm for general data compression.        |
 | libpng           | Image               | Reference library for supporting PNG images.           |
@@ -1303,13 +1303,13 @@ wish to revisit the project once Suika3 has matured further.
 
 ```
 include/                           # Public headers
-src/                               # Engine source code
-resources/                         # Assets and resources for the engine
+src/                               # Source code
+resources/                         # Assets and resources
   projects/                          # Official project base for iOS, Android, etc.
 cmake/                             # CMake configuration files and presets
 docs/                              # Documentation source files (MkDocs)
 external/                          # Third-party libraries and dependencies
-  PlayfieldEngine/                   # The core 2D game engine
+  PlayfieldEngine/                   # The core 2D game runtime
     external/                          # Sub-dependencies of Playfield Engine
       NoctLang/                          # Scripting language used by the engine
         include/                           # Public headers for NoctLang
@@ -1351,7 +1351,7 @@ external/                          # Third-party libraries and dependencies
 To generate `assets.arc` from your game assets, please use the
 `suika3-pack` tool. The `suika3-pack` tool creates an obfuscated
 archive of your assets that can be efficiently loaded by the
-engine. (The obfuscation algorithm is a key rotating XOR, and it is
+runtime. (The obfuscation algorithm is a key rotating XOR, and it is
 not intended for strong security. It can help prevent casual
 tampering. The obfuscation key can be changed in "key.h".)
 
@@ -1455,7 +1455,7 @@ released under the permissive `ZLib License`.
 
 * You can use Suika3 for commercial games.
 * You do not need to open-source your game code.
-* You may modify and redistribute the engine.
+* You may modify and redistribute the software.
 * Attribution is appreciated but not required.
 
 ```
@@ -1580,7 +1580,7 @@ Suika3 represents the culmination of over two decades of relentless innovation a
   visual novel experience with extensive platform compatibility.
   Several games with Suika3 were sold on App Store. [Archive](https://github.com/awemorris/suika2)
 
-- **Playfield Engine (2025–)**: A versatile 2D engine derived from the
+- **Playfield Engine (2025–)**: A versatile 2D runtime derived from the
   core portability layer of the Suika series. [Repo](https://github.com/awemorris/PlayfieldEngine)
 
 - **Suika3 (2026–)**: By synthesizing these legacies and introducing
@@ -1701,10 +1701,10 @@ Play, regardless of their software, hardware, and budget limitations.
 
 ### What's this?
 
-Suika3 is a next-generation visual novel engine designed with
-professional studios and commercial app development in mind. It aims
-for high performance, long-term maintainability, and broad platform
-support through native implementations (primarily in C).
+Suika3 is a next-generation 2D game and visual novel runtime designed
+with professional studios and commercial app development in mind. It
+aims for high performance, long-term maintainability, and broad
+platform support through native implementations (primarily in C).
 
 ### Is this a competitor to existing engines such as Ren'Py, Unity, or Godot?
 
@@ -1712,6 +1712,11 @@ Rather than being competitors, we target different problem
 areas. Suika3 clearly states its direction as "creating a
 mobile-centric VN market that can withstand commercial use," and
 respects existing engines as viable options.
+
+By the way, Suika3 might seem like a competitor to Ren'Py if you
+compare them by VN genre. However, Suika3 is actually a competitor to
+Unity when you compare them by technology because Ray scripting can be
+considered an open-source equivalent to Unity's IL2CPP.
 
 ### Is this okay to use for now?
 
