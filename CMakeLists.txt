@@ -661,8 +661,23 @@ set(SUIKA_BASE_SOURCES
   src/cmd_video.c
   src/cmd_volume.c
   src/cmd_wait.c
-  src/library.c
 )
+
+# AOT Source
+if(SUIKA_ENABLE_STATIC OR SUIKA_ENABLE_SHARED)
+  if(   SUIKA_TARGET_IOS
+     OR SUIKA_TARGET_ANDROID)
+    # Do not include AOT stub.
+  else()
+    set(SUIKA_AOT_SOURCES
+      src/library.c
+    )
+  endif()
+else()
+  set(SUIKA_AOT_SOURCES
+    src/library.c
+  )
+endif()
 
 # I18N Source
 if(SUIKA_ENABLE_I18N)
@@ -729,6 +744,7 @@ if(   SUIKA_ENABLE_STATIC
     suika3
     ${SUIKA_LIB_TYPE}
     ${SUIKA_BASE_SOURCES}
+    ${SUIKA_AOT_SOURCES}
     ${SUIKA_I18N_SOURCES}
     ${SUIKA_RESOURCES}
     ${SUIKA_DEPS}
@@ -740,6 +756,7 @@ else()
   add_executable(
     suika3
     ${SUIKA_BASE_SOURCES}
+    ${SUIKA_AOT_SOURCES}
     ${SUIKA_I18N_SOURCES}
     ${SUIKA_RESOURCES}
   )
