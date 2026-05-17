@@ -78,3 +78,51 @@ Concerns:
 ### Related Commits
 
 * d0aaa Add file extension association
+
+---
+
+**Suggest renaming the issue to: Save data structure and additional support for image saves**
+
+---
+
+I would like to supplement the details of this feature. Please refer to the discussion in issues #26. We propose two distinct modes for save files: `System Mode` and `User Mode` for the moment (To be discussed).
+
+#### 1. System Mode
+This mode treats save data as part of the system cache. It is invisible to the user to maintain program robustness and portability.
+
+- **File Naming**: The filename is a hash value with **no file extension**.
+- **Example**:
+  ```text
+  3030312e736176
+  3030322e736176
+  ...
+  ```
+- **Requirement**: Since files are not user-readable, the engine requires a solution for **Save Import/Export**.
+
+#### 2. User Mode
+This mode treats save data as user cache. It is visible to the user, allowing them to manage save files manually (e.g., via copy/paste).
+
+- **File Naming**:
+  - Filenames should be based on **Save Slot Names** (one file per slot).
+  - A separate main save file is needed for global data (e.g., CG gallery status,scenario locks).
+- **File Extension**: `.sav` is recommended (for visual distinction only; internal logic remains unchanged).
+- **Example**:
+  ```text
+  save_00.sav
+  save_01.sav
+  Sys.sav
+  ...
+  ```
+
+#### 3. Extension: PNG Saves
+An optional feature based on User Mode to support saving files as images.
+
+- **Feature**: Allows saving user mode files as PNG or other image formats for visual identification.
+- **Configuration**: Image dimensions are controlled by `save.thumb.width` / `save.thumb.height`.
+- **Example**:
+  ```text
+  save_00.png
+  save_01.png
+  Sys.sav
+  ...
+  ```
