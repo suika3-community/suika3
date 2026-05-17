@@ -1077,11 +1077,9 @@ s3_append_last_message(
 		return false;
 	}
 
-	strcpy(s, "");
-	if (last_message != NULL)
-		strcat(s, last_message);
-	if (msg != NULL)
-		strcat(s, msg);
+	snprintf(s, len + 1, "%s%s",
+		last_message != NULL ? last_message : "",
+		msg != NULL ? msg : "");
 
 	last_message = s;
 
