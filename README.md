@@ -36,7 +36,7 @@
 
 - **What's This:** An open-source equivalent to Unity's IL2CPP
 - **Target:** Mobile-first, yet cross-platform by design
-- **High-Performance:** Native, written in C
+- **High-Performance:** Native, core written in 100%-pure ANSI C (C89)
 - **Hybrid Scripting:** JIT VM with AOT fallback for App Store compliance
 - **Broad Platforms:**
     - **Desktop:** Windows, macOS, Linux, ChromeOS, Raspberry Pi
@@ -258,11 +258,11 @@ behind every great community.
 
 Suika3 is engineered with modern techniques, and delivers:
 
-- **High Performance**: Powered by Ray JIT, it delivers 2.5-4.5x
+- **High Performance**: Powered by Sun-Ray JIT, it delivers 2.5-4.5x
   faster execution speed compared to our interpreter backend in
   synthetic benchmarks.
 
-- **Light Speed**: Engineered to run smoothly at 60 fps even on
+- **Optimized**: Engineered to run smoothly at 60 fps even on
   low-spec hardware such as Raspberry Pi in developing regions.
 
 - **True Portability**: Designed with a "port anywhere" strategy,
