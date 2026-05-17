@@ -18,6 +18,15 @@ file(
   DESTINATION ${CMAKE_BINARY_DIR}/jpeg/jpeg
 )
 
+# Patch
+file(READ ${CMAKE_BINARY_DIR}/jpeg/jerror.c JERROR)
+string(REPLACE
+  "fprintf(stderr, \"%s\\n\", buffer);"
+  ""
+  JERROR "${JERROR}"
+)
+file(WRITE ${CMAKE_BINARY_DIR}/jpeg/jerror.c "${JERROR}")
+
 add_library(jpeg OBJECT
   # shared/core
   ${CMAKE_BINARY_DIR}/jpeg/jaricom.c

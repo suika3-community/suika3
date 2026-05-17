@@ -6,7 +6,6 @@ file(ARCHIVE_EXTRACT
 file(GLOB LIBPNG_EXTRACTED_DIR ${CMAKE_BINARY_DIR}/libpng-*)
 file(REMOVE_RECURSE ${CMAKE_BINARY_DIR}/libpng)
 file(RENAME ${LIBPNG_EXTRACTED_DIR} ${CMAKE_BINARY_DIR}/libpng)
-
 file(
   COPY        ${CMAKE_BINARY_DIR}/libpng/scripts/pnglibconf.h.prebuilt
   DESTINATION ${CMAKE_BINARY_DIR}/libpng
@@ -15,9 +14,20 @@ file(RENAME
   ${CMAKE_BINARY_DIR}/libpng/pnglibconf.h.prebuilt
   ${CMAKE_BINARY_DIR}/libpng/pnglibconf.h
 )
+file(READ ${CMAKE_BINARY_DIR}/libpng/pnglibconf.h PNGCONF)
+string(REPLACE
+  "#define PNG_CONSOLE_IO_SUPPORTED"
+  "/* #undef PNG_CONSOLE_IO_SUPPORTED */"
+  PNGCONF "${PNGCONF}"
+)
+string(REPLACE
+  "#define PNG_STDIO_SUPPORTED"
+  "/* #undef PNG_STDIO_SUPPORTED */"
+  PNGCONF "${PNGCONF}"
+)
 file(APPEND ${CMAKE_BINARY_DIR}/libpng/pnglibconf.h
 "
-#define PNG_NO_STDIO
+#undef PNG_CONSOLE_IO_SUPPORTED
 #undef PNG_WRITE_SUPPORTED
 #undef PNG_SIMPLIFIED_WRITE_SUPPORTED
 #undef PNG_WRITE_INT_FUNCTIONS_SUPPORTED
@@ -48,7 +58,7 @@ file(APPEND ${CMAKE_BINARY_DIR}/libpng/pnglibconf.h
 #undef PNG_SAVE_INT_32_SUPPORTED
 "
 )
-
+file(WRITE ${CMAKE_BINARY_DIR}/libpng/pnglibconf.h "${PNGCONF}")
 
 file(GLOB LIBPNG_HEADERS ${CMAKE_BINARY_DIR}/libpng/*.h)
 file(
@@ -85,6 +95,7 @@ target_compile_definitions(png
   PNG_NO_WRITE_SUPPORTED
   PNG_NO_SIMPLIFIED_WRITE_SUPPORTED
   PNG_NO_CONSOLE_IO
+  PNG_NO_STDIO
 )
 
 target_link_libraries(png PRIVATE z)
