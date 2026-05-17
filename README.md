@@ -11,7 +11,7 @@
     Infrastructure on Compiler / Virtual Machine / HAL<br>
     for interactive entertainment.<br>
     It's a next-generation open-source game OS or runtime at low-level,<br>
-    rather than a managed game engine with an editor.
+    rather than a managed game engine with an editor and an object system.
   </p>
   <p>
     We've brought Suika3 to life<br>
