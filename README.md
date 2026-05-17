@@ -2,13 +2,12 @@
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/logo-mid.png" alt="Suika3 Logo" width="480" hspace="20">
   <h1 align="center" style="border-bottom: none">
     <a href="https://suika3.vn">Suika3</a>:
-    A Modern, Ultra-Portable, Full-Stack<br>
-    Compiler / VM / HAL Infrastructure<br>
-    for Interactive Entertainment
+    Standard Universal Infrastructure for Kinetic Arts Generation 3
   </h1>
   <p>
-    SUIKA3 stands for<br>
-    "Standard Universal Infrastructure for Kinetic Arts — Gen 3"<br>
+    Suika3 is a modern, ultra-portable, full-stack<br>
+    compiler / VM / HAL infrastructure<br>
+    for interactive entertainments.
   </p>
   <p>
     We've brought Suika3 to life<br>
@@ -38,7 +37,7 @@
 - **High-Performance:** Native, written in C
 - **Hybrid Scripting:** JIT VM with AOT fallback for App Store compliance
 - **Broad Platforms:**
-    - **Desktop:** Windows, macOS, Linux, Chromebook, Raspberry Pi
+    - **Desktop:** Windows, macOS, Linux, ChromeOS, Raspberry Pi
     - **Mobile:** iOS, Android, HarmonyOS NEXT
     - **Web:** WebAssembly
     - **Console:** Xbox (GDK), PS5/Switch/Xbox via Unity Integration \[DevKit required\]
