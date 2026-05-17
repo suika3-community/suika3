@@ -3017,7 +3017,7 @@ s3_show_namebox(
 bool
 s3_is_namebox_visible(void)
 {
-	return is_msgbox_visible;
+	return is_namebox_visible;
 }
 
 /*

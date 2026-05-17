@@ -734,6 +734,10 @@ s3_execute_load_local(
 		if (!s3_move_to_tag_index((int)u))
 			break;
 
+		/* Read the last English tag index. */
+		if (!read_u32(&u))
+			break;
+
 		/* Read the gosub return index. */
 		for (i = 0; i < S3_CALL_STACK_MAX; i++) {
 			if (!read_string(sbuf, sizeof(sbuf)))
