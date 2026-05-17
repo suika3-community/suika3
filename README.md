@@ -2,12 +2,13 @@
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/logo-mid.png" alt="Suika3 Logo" width="480" hspace="20">
   <h1 align="center" style="border-bottom: none">
     <a href="https://suika3.vn">Suika3</a>:
-    A Modern, Ultra-Portable Full-Stack<br>
-    Visual Novel Engine for Mobile and Desktop
+    A Modern, Ultra-Portable, Full-Stack<br>
+    Compiler and Virtual Machine Infrastructure<br>
+    for Visual Novels across All Platforms
   </h1>
   <p>
     SUIKA3 stands for<br>
-    "Standard Universal Infrastructure for Kinetic Arts Gen 3"<br>
+    "Standard Universal Infrastructure for Kinetic Arts — Gen 3"<br>
     (ja: 第三世代標準汎用動的視覚表現実行基盤)
   </p>
   <p>
