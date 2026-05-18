@@ -5,11 +5,6 @@
 # find_package(Suika3 REQUIRED)
 # target_link_libraries(entry PUBLIC Suika3::Suika3)
 
-message(ERROR " ${NATIVERENDER_ROOT_PATH}/third_patry/suika3/include")
-
-unset(SUIKA3_INCLUDE_DIR CACHE)
-unset(SUIKA3_LIBRARY CACHE)
-
 find_path(SUIKA3_INCLUDE_DIR
   NAMES suika3/suika3.h
   PATHS "${NATIVERENDER_ROOT_PATH}/third_party/suika3/include"
