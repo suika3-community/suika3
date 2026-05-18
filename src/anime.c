@@ -1019,7 +1019,7 @@ s3_load_eye_image_if_exists(
 	if (slash != NULL) {
 		char base[1024], file[1024];
 
-		strcpy(base, fname);
+		snprintf(base, sizeof(base), "%s", fname);
 		slash = strrchr(base, '/');
 		*slash = '\0';
 		strcpy(file, slash + 1);
