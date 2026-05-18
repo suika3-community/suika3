@@ -1,0 +1,191 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "%s:%d: %s"
+msgstr "%s:%d: %s"
+
+msgid "Error: %s:%d: %s"
+msgstr "Error: %s:%d: %s"
+
+msgid "Error: %s:%d: Tag %s:"
+msgstr "Error: %s:%d: Tag %s:"
+
+msgid "Error: %s:%d: Runtime error"
+msgstr "Error: %s:%d: Error de ejecución"
+
+msgid "Error: %s:%d: Tag \"%s\" not found."
+msgstr "Error: %s:%d: No se encontró la etiqueta \"%s\"."
+
+msgid "Error: %s:%d: \"Tag_%s\" is not a function."
+msgstr "Error: %s:%d: \"Tag_%s\" no es una función."
+
+msgid "Argument \"%s\" not specified."
+msgstr "No se ha especificado el argumento \"%s\"."
+
+msgid "Cannot play sound file \"%s\"."
+msgstr "No se puede reproducir el archivo de sonido \"%s\"."
+
+msgid "Conifg \"%s\" not found."
+msgstr "No se encontró la configuración \"%s\"."
+
+msgid "Duplicated config key %s."
+msgstr "Clave de configuración duplicada %s."
+
+msgid "Error loading GUI file %s."
+msgstr "Error al cargar el archivo GUI %s."
+
+msgid "Failed to write save data."
+msgstr "Error al escribir los datos de guardado."
+
+msgid "File \"%s\" not exist."
+msgstr "El archivo \"%s\" no existe."
+
+msgid "Internal error."
+msgstr "Error interno."
+
+msgid "Invalid EOF on GUI file %s."
+msgstr "EOF no válido en el archivo GUI %s."
+
+msgid "Invalid EOF while parsing anime file %s"
+msgstr "EOF no válido al analizar el archivo de animación %s"
+
+msgid "Invalid accel type \"%s\"."
+msgstr "Tipo de aceleración \"%s\" no válido."
+
+msgid "Invalid character \"%c\" while parsing anime file \"%s\" line %d."
+msgstr "Carácter \"%c\" no válido al analizar el archivo de animación \"%s\" en la línea %d."
+
+msgid "Invalid character."
+msgstr "Carácter no válido."
+
+msgid "Invalid fade method \"%s\"."
+msgstr "Método de desvanecimiento \"%s\" no válido."
+
+msgid "Invalid fade type \"%s\"."
+msgstr "Tipo de desvanecimiento \"%s\" no válido."
+
+msgid "Invalid layer name \"%s\" while parsing anime file \"%s\" line %d."
+msgstr "Nombre de capa \"%s\" no válido al analizar el archivo de animación \"%s\" en la línea %d."
+
+msgid "Invalid layer name \"%s\"."
+msgstr "Nombre de capa \"%s\" no válido."
+
+msgid "Invalid registered anime \"%s\"."
+msgstr "Animación registrada \"%s\" no válida."
+
+msgid "Invalid track \"%s\" specified."
+msgstr "Pista \"%s\" especificada no válida."
+
+msgid "Label \"%s\" not found."
+msgstr "No se encontró la etiqueta \"%s\"."
+
+msgid "Layer not specified while parsing anime file \"%s\" line %d."
+msgstr "No se especificó la capa al analizar el archivo de animación \"%s\" en la línea %d."
+
+msgid "Macro \"%s\" not found."
+msgstr "No se encontró la macro \"%s\"."
+
+msgid "No LHS specified."
+msgstr "No se ha especificado LHS (lado izquierdo)."
+
+msgid "No RHS specified."
+msgstr "No se ha especificado RHS (lado derecho)."
+
+msgid "No available button-id for a GUI button in GUI file \"%s\"."
+msgstr "No hay ID de botón disponible para un botón GUI en el archivo GUI \"%s\"."
+
+msgid "No correspoinding \"for\" detected."
+msgstr "No se detectó el \"for\" correspondiente."
+
+msgid "No correspoinding \"if\" detected."
+msgstr "No se detectó el \"if\" correspondiente."
+
+msgid "No correspoinding \"while\" detected."
+msgstr "No se detectó el \"while\" correspondiente."
+
+msgid "No matching endif found."
+msgstr "No se encontró un endif correspondiente."
+
+msgid "No matching endmacro found."
+msgstr "No se encontró un endmacro correspondiente."
+
+msgid "No operator specified."
+msgstr "No se especificó ningún operador."
+
+msgid "Property name too long."
+msgstr "Nombre de propiedad demasiado largo."
+
+msgid "Property value too long."
+msgstr "Valor de propiedad demasiado largo."
+
+msgid "Rule file is missing."
+msgstr "Falta el archivo de reglas."
+
+msgid "Rule file is not specified."
+msgstr "No se ha especificado el archivo de reglas."
+
+msgid "Save data version mismatched."
+msgstr "La versión de los datos de guardado no coincide."
+
+msgid "Sequence too long while parsing anime file \"%s\" line %d."
+msgstr "Secuencia demasiado larga al analizar el archivo de animación \"%s\" en la línea %d."
+
+msgid "Specified ID is already used in GUI file \"%s\" line %d."
+msgstr "El ID especificado ya se está usando en el archivo GUI \"%s\" en la línea %d."
+
+msgid "Tag name too long."
+msgstr "Nombre de etiqueta demasiado largo."
+
+msgid "This API is not implemented yet."
+msgstr "Esta API aún no se ha implementado."
+
+msgid "Too long word while parsing anime file \"%s\" line %d."
+msgstr "Palabra demasiado larga al analizar el archivo de animación \"%s\" en la línea %d."
+
+msgid "Too many GUI buttons in GUI file \"%s\"."
+msgstr "Demasiados botones GUI en el archivo GUI \"%s\"."
+
+msgid "Too many drawmsg contexts."
+msgstr "Demasiados contextos drawmsg."
+
+msgid "Too many macro calls."
+msgstr "Demasiadas llamadas a macros."
+
+msgid "Too many nests."
+msgstr "Demasiados anidamientos."
+
+msgid "Too many properties."
+msgstr "Demasiadas propiedades."
+
+msgid "Too many registered animes."
+msgstr "Demasiadas animaciones registradas."
+
+msgid "Undefined config key \"%s\"."
+msgstr "Clave de configuración \"%s\" no definida."
+
+msgid "Unexpected EOF."
+msgstr "Fin de archivo (EOF) inesperado."
+
+msgid "Unknown button property \"%s\" found in GUI file \"%s\" line %d."
+msgstr "Se encontró una propiedad de botón \"%s\" desconocida en el archivo GUI \"%s\" en la línea %d."
+
+msgid "Unknown button type name \"%s\" in GUI file \"%s\" line %d."
+msgstr "Nombre de tipo de botón \"%s\" desconocido en el archivo GUI \"%s\" en la línea %d."
+
+msgid "Unknown config key \"%s\"."
+msgstr "Clave de configuración \"%s\" desconocida."
+
+msgid "Unknown global key \"%s\" found in GUI file \"%s\" line %d."
+msgstr "Se encontró una clave global \"%s\" desconocida en el archivo GUI \"%s\" en la línea %d."
+
+msgid "Unkwon key \"%s\" while parsing anime file \"%s\" line %d."
+msgstr "Clave \"%s\" desconocida al analizar el archivo de animación \"%s\" en la línea %d."
+
+msgid "Invalid config line at file \"%s\" line %d."
+msgstr "Línea de configuración no válida en el archivo \"%s\" en la línea %d."
+
+msgid "No matching localized text."
+msgstr "No se encontro un texto localizado coincidente."
+

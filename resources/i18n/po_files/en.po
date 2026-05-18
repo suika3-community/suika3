@@ -1,0 +1,191 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "%s:%d: %s"
+msgstr "%s:%d: %s"
+
+msgid "Error: %s:%d: %s"
+msgstr "Error: %s:%d: %s"
+
+msgid "Error: %s:%d: Tag %s:"
+msgstr "Error: %s:%d: Tag %s:"
+
+msgid "Error: %s:%d: Runtime error"
+msgstr "Error: %s:%d: Runtime error"
+
+msgid "Error: %s:%d: Tag \"%s\" not found."
+msgstr "Error: %s:%d: Tag \"%s\" not found."
+
+msgid "Error: %s:%d: \"Tag_%s\" is not a function."
+msgstr "Error: %s:%d: \"Tag_%s\" is not a function."
+
+msgid "Argument \"%s\" not specified."
+msgstr "Argument \"%s\" not specified."
+
+msgid "Cannot play sound file \"%s\"."
+msgstr "Cannot play sound file \"%s\"."
+
+msgid "Conifg \"%s\" not found."
+msgstr "Conifg \"%s\" not found."
+
+msgid "Duplicated config key %s."
+msgstr "Duplicated config key %s."
+
+msgid "Error loading GUI file %s."
+msgstr "Error loading GUI file %s."
+
+msgid "Failed to write save data."
+msgstr "Failed to write save data."
+
+msgid "File \"%s\" not exist."
+msgstr "File \"%s\" not exist."
+
+msgid "Internal error."
+msgstr "Internal error."
+
+msgid "Invalid EOF on GUI file %s."
+msgstr "Invalid EOF on GUI file %s."
+
+msgid "Invalid EOF while parsing anime file %s"
+msgstr "Invalid EOF while parsing anime file %s"
+
+msgid "Invalid accel type \"%s\"."
+msgstr "Invalid accel type \"%s\"."
+
+msgid "Invalid character \"%c\" while parsing anime file \"%s\" line %d."
+msgstr "Invalid character \"%c\" while parsing anime file \"%s\" line %d."
+
+msgid "Invalid character."
+msgstr "Invalid character."
+
+msgid "Invalid fade method \"%s\"."
+msgstr "Invalid fade method \"%s\"."
+
+msgid "Invalid fade type \"%s\"."
+msgstr "Invalid fade type \"%s\"."
+
+msgid "Invalid layer name \"%s\" while parsing anime file \"%s\" line %d."
+msgstr "Invalid layer name \"%s\" while parsing anime file \"%s\" line %d."
+
+msgid "Invalid layer name \"%s\"."
+msgstr "Invalid layer name \"%s\"."
+
+msgid "Invalid registered anime \"%s\"."
+msgstr "Invalid registered anime \"%s\"."
+
+msgid "Invalid track \"%s\" specified."
+msgstr "Invalid track \"%s\" specified."
+
+msgid "Label \"%s\" not found."
+msgstr "Label \"%s\" not found."
+
+msgid "Layer not specified while parsing anime file \"%s\" line %d."
+msgstr "Layer not specified while parsing anime file \"%s\" line %d."
+
+msgid "Macro \"%s\" not found."
+msgstr "Macro \"%s\" not found."
+
+msgid "No LHS specified."
+msgstr "No LHS specified."
+
+msgid "No RHS specified."
+msgstr "No RHS specified."
+
+msgid "No available button-id for a GUI button in GUI file \"%s\"."
+msgstr "No available button-id for a GUI button in GUI file \"%s\"."
+
+msgid "No correspoinding \"for\" detected."
+msgstr "No correspoinding \"for\" detected."
+
+msgid "No correspoinding \"if\" detected."
+msgstr "No correspoinding \"if\" detected."
+
+msgid "No correspoinding \"while\" detected."
+msgstr "No correspoinding \"while\" detected."
+
+msgid "No matching endif found."
+msgstr "No matching endif found."
+
+msgid "No matching endmacro found."
+msgstr "No matching endmacro found."
+
+msgid "No operator specified."
+msgstr "No operator specified."
+
+msgid "Property name too long."
+msgstr "Property name too long."
+
+msgid "Property value too long."
+msgstr "Property value too long."
+
+msgid "Rule file is missing."
+msgstr "Rule file is missing."
+
+msgid "Rule file is not specified."
+msgstr "Rule file is not specified."
+
+msgid "Save data version mismatched."
+msgstr "Save data version mismatched."
+
+msgid "Sequence too long while parsing anime file \"%s\" line %d."
+msgstr "Sequence too long while parsing anime file \"%s\" line %d."
+
+msgid "Specified ID is already used in GUI file \"%s\" line %d."
+msgstr "Specified ID is already used in GUI file \"%s\" line %d."
+
+msgid "Tag name too long."
+msgstr "Tag name too long."
+
+msgid "This API is not implemented yet."
+msgstr "This API is not implemented yet."
+
+msgid "Too long word while parsing anime file \"%s\" line %d."
+msgstr "Too long word while parsing anime file \"%s\" line %d."
+
+msgid "Too many GUI buttons in GUI file \"%s\"."
+msgstr "Too many GUI buttons in GUI file \"%s\"."
+
+msgid "Too many drawmsg contexts."
+msgstr "Too many drawmsg contexts."
+
+msgid "Too many macro calls."
+msgstr "Too many macro calls."
+
+msgid "Too many nests."
+msgstr "Too many nests."
+
+msgid "Too many properties."
+msgstr "Too many properties."
+
+msgid "Too many registered animes."
+msgstr "Too many registered animes."
+
+msgid "Undefined config key \"%s\"."
+msgstr "Undefined config key \"%s\"."
+
+msgid "Unexpected EOF."
+msgstr "Unexpected EOF."
+
+msgid "Unknown button property \"%s\" found in GUI file \"%s\" line %d."
+msgstr "Unknown button property \"%s\" found in GUI file \"%s\" line %d."
+
+msgid "Unknown button type name \"%s\" in GUI file \"%s\" line %d."
+msgstr "Unknown button type name \"%s\" in GUI file \"%s\" line %d."
+
+msgid "Unknown config key \"%s\"."
+msgstr "Unknown config key \"%s\"."
+
+msgid "Unknown global key \"%s\" found in GUI file \"%s\" line %d."
+msgstr "Unknown global key \"%s\" found in GUI file \"%s\" line %d."
+
+msgid "Unkwon key \"%s\" while parsing anime file \"%s\" line %d."
+msgstr "Unkwon key \"%s\" while parsing anime file \"%s\" line %d."
+
+msgid "Invalid config line at file \"%s\" line %d."
+msgstr "Invalid config line at file \"%s\" line %d."
+
+msgid "No matching localized text."
+msgstr "No matching localized text."
+

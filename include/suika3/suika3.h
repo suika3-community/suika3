@@ -375,19 +375,6 @@
 
 
 /*
- * Message Translation
- */
-#if !defined(S3_TR)
-#if defined(S3_USE_TRANSLATION)
-#define S3_TR(s)	s3_gettext(s)
-const char *s3_gettext(const char *msg);
-#else
-#define S3_TR(s)	(s)
-#endif
-#endif
-
-
-/*
  * Types
  */
 
@@ -2951,5 +2938,19 @@ s3_log_tag_error(
 void
 s3_speak_text(
 	const char *msg);
+
+/*
+ * Message Translation
+ */
+
+#if defined(S3_USE_TRANSLATION) && !defined(S3_USE_LIBINTL)
+#define S3_TR(s)	s3_gettext(s)
+const char *s3_gettext(const char *s);
+#elif defined(S3_USE_TRANSLATION) && defined(S3_USE_LIBINTL)
+#include <libintl.h>
+#define S3_TR(s)	dgettext("suika3", s)
+#else
+#define S3_TR(s)	(s)
+#endif
 
 #endif

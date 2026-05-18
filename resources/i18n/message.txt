@@ -1,4 +1,5 @@
 ID:%s:%d: %s
+en:%s:%d: %s
 es:%s:%d: %s
 fr:%s:%d : %s
 it:%s:%d: %s
@@ -10,6 +11,7 @@ tw:%s:%d: %s
 ja:%s:%d: %s
 ---
 ID:Error: %s:%d: %s
+en:Error: %s:%d: %s
 es:Error: %s:%d: %s
 fr:Erreur : %s:%d : %s
 it:Errore: %s:%d: %s
@@ -21,6 +23,7 @@ tw:錯誤: %s:%d: %s
 ja:エラー: %s:%d: %s
 ---
 ID:Error: %s:%d: Tag %s: 
+en:Error: %s:%d: Tag %s: 
 es:Error: %s:%d: Tag %s: 
 fr:Erreur : %s:%d : Tag %s: 
 it:Errore: %s:%d: Tag %s: 
@@ -32,6 +35,7 @@ tw:錯誤: %s:%d: Tag %s:
 ja:エラー: %s:%d: Tag %s: 
 ---
 ID:Error: %s:%d: Runtime error
+en:Error: %s:%d: Runtime error
 es:Error: %s:%d: Error de ejecución
 fr:Erreur : %s:%d: Erreur d'exécution
 it:Errore: %s:%d: Erreur d'esecuzione
@@ -43,6 +47,7 @@ tw:錯誤: %s:%d: 執行階段錯誤
 ja:エラー: %s:%d: 実行時エラー
 ---
 ID:Error: %s:%d: Tag "%s" not found.
+en:Error: %s:%d: Tag "%s" not found.
 es:Error: %s:%d: No se encontró la etiqueta "%s".
 fr:Erreur : %s:%d : Balise "%s" introuvable.
 it:Errore: %s:%d: Tag "%s" non trovato.
@@ -54,6 +59,7 @@ tw:錯誤: %s:%d: 找不到標籤 "%s"。
 ja:エラー: %s:%d: タグ "%s" がみつかりません。
 ---
 ID:Error: %s:%d: "Tag_%s" is not a function.
+en:Error: %s:%d: "Tag_%s" is not a function.
 es:Error: %s:%d: "Tag_%s" no es una función.
 fr:Erreur : %s:%d : "Tag_%s" n'est pas une fonction.
 it:Errore: %s:%d: "Tag_%s" non è una funzione.
@@ -65,6 +71,7 @@ tw:錯誤: %s:%d: "Tag_%s" 不是函式。
 ja:エラー: %s:%d: "Tag_%s" は関数ではありません。
 ---
 ID:Argument "%s" not specified.
+en:Argument "%s" not specified.
 es:No se ha especificado el argumento "%s".
 fr:Argument "%s" non spécifié.
 it:Argomento "%s" non specificato.
@@ -76,6 +83,7 @@ tw:未指定引數 "%s"。
 ja:引数 "%s" が指定されていません。
 ---
 ID:Cannot play sound file "%s".
+en:Cannot play sound file "%s".
 es:No se puede reproducir el archivo de sonido "%s".
 fr:Impossible de lire le fichier sonore "%s".
 it:Impossibile riprodurre il file audio "%s".
@@ -87,6 +95,7 @@ tw:無法播放音訊檔案 "%s"。
 ja:サウンドファイル "%s" を再生できません。
 ---
 ID:Conifg "%s" not found.
+en:Conifg "%s" not found.
 es:No se encontró la configuración "%s".
 fr:Configuration "%s" introuvable.
 it:Configurazione "%s" non trovata.
@@ -98,6 +107,7 @@ tw:找不到設定 "%s"。
 ja:設定 "%s" が見つかりません。
 ---
 ID:Duplicated config key %s.
+en:Duplicated config key %s.
 es:Clave de configuración duplicada %s.
 fr:Clé de configuration en double %s.
 it:Chiave di configurazione duplicata %s.
@@ -109,6 +119,7 @@ tw:設定鍵 %s 重複。
 ja:設定キー %s が重複しています。
 ---
 ID:Error loading GUI file %s.
+en:Error loading GUI file %s.
 es:Error al cargar el archivo GUI %s.
 fr:Erreur lors du chargement du fichier GUI %s.
 it:Errore durante il caricamento del file GUI %s.
@@ -120,6 +131,7 @@ tw:載入 GUI 檔案 %s 時發生錯誤。
 ja:GUIファイル %s の読み込み中にエラーが発生しました。
 ---
 ID:Failed to write save data.
+en:Failed to write save data.
 es:Error al escribir los datos de guardado.
 fr:Échec de l'écriture des données de sauvegarde.
 it:Scrittura dei dati di salvataggio fallita.
@@ -131,6 +143,7 @@ tw:儲存存檔資料失敗。
 ja:セーブデータの書き込みに失敗しました。
 ---
 ID:File "%s" not exist.
+en:File "%s" not exist.
 es:El archivo "%s" no existe.
 fr:Le fichier "%s" n'existe pas.
 it:Il file "%s" non esiste.
@@ -142,6 +155,7 @@ tw:檔案 "%s" 不存在。
 ja:ファイル "%s" がありません。
 ---
 ID:Internal error.
+en:Internal error.
 es:Error interno.
 fr:Erreur interne.
 it:Errore interno.
@@ -153,6 +167,7 @@ tw:內部錯誤。
 ja:内部エラーが発生しました。
 ---
 ID:Invalid EOF on GUI file %s.
+en:Invalid EOF on GUI file %s.
 es:EOF no válido en el archivo GUI %s.
 fr:Fin de fichier (EOF) non valide dans le fichier GUI %s.
 it:EOF non valido nel file GUI %s.
@@ -164,6 +179,7 @@ tw:GUI 檔案 %s 中的 EOF 無效。
 ja:GUIファイル %s の終端が不正です。
 ---
 ID:Invalid EOF while parsing anime file %s
+en:Invalid EOF while parsing anime file %s
 es:EOF no válido al analizar el archivo de animación %s
 fr:Fin de fichier (EOF) non valide lors de l'analyse du fichier d'animation %s
 it:EOF non valido durante l'analisi del file di animazione %s
@@ -175,6 +191,7 @@ tw:解析動畫檔案 %s 時遇到無效的 EOF。
 ja:アニメーションファイル %s の解析中に不正な終端に達しました。
 ---
 ID:Invalid accel type "%s".
+en:Invalid accel type "%s".
 es:Tipo de aceleración "%s" no válido.
 fr:Type d'accélération "%s" non valide.
 it:Tipo di accelerazione "%s" non valido.
@@ -186,6 +203,7 @@ tw:加速類型 "%s" 無效。
 ja:加速タイプ "%s" は無効です。
 ---
 ID:Invalid character "%c" while parsing anime file "%s" line %d.
+en:Invalid character "%c" while parsing anime file "%s" line %d.
 es:Carácter "%c" no válido al analizar el archivo de animación "%s" en la línea %d.
 fr:Caractère "%c" non valide lors de l'analyse du fichier d'animation "%s" ligne %d.
 it:Carattere "%c" non valido durante l'analisi del file di animazione "%s" riga %d.
@@ -197,6 +215,7 @@ tw:解析動畫檔案 "%s" 第 %d 行時發現無效字元 "%c"。
 ja:アニメーションファイル "%s" の %d 行目を解析中に無効な文字 "%c" が見つかりました。
 ---
 ID:Invalid character.
+en:Invalid character.
 es:Carácter no válido.
 fr:Caractère non valide.
 it:Carattere non valido.
@@ -208,6 +227,7 @@ tw:無效字元。
 ja:文字が不正です。
 ---
 ID:Invalid fade method "%s".
+en:Invalid fade method "%s".
 es:Método de desvanecimiento "%s" no válido.
 fr:Méthode de fondu "%s" non valide.
 it:Metodo di dissolvenza "%s" non valido.
@@ -219,6 +239,7 @@ tw:漸變方法 "%s" 無效。
 ja:フェードメソッド "%s" は無効です。
 ---
 ID:Invalid fade type "%s".
+en:Invalid fade type "%s".
 es:Tipo de desvanecimiento "%s" no válido.
 fr:Type de fondu "%s" non valide.
 it:Tipo di dissolvenza "%s" non valido.
@@ -230,6 +251,7 @@ tw:漸變類型 "%s" 無效。
 ja:フェードタイプ "%s" は無効です。
 ---
 ID:Invalid layer name "%s" while parsing anime file "%s" line %d.
+en:Invalid layer name "%s" while parsing anime file "%s" line %d.
 es:Nombre de capa "%s" no válido al analizar el archivo de animación "%s" en la línea %d.
 fr:Nom de calque "%s" non valide lors de l'analyse du fichier d'animation "%s" ligne %d.
 it:Nome livello "%s" non valido durante l'analisi del file di animazione "%s" riga %d.
@@ -241,6 +263,7 @@ tw:解析動畫檔案 "%s" 第 %d 行時發現無效圖層名稱 "%s"。
 ja:アニメーションファイル "%s" の %d 行目を解析中に無効なレイヤー名 "%s" が見つかりました。
 ---
 ID:Invalid layer name "%s".
+en:Invalid layer name "%s".
 es:Nombre de capa "%s" no válido.
 fr:Nom de calque "%s" non valide.
 it:Nome livello "%s" non valido.
@@ -252,6 +275,7 @@ tw:圖層名稱 "%s" 無效。
 ja:レイヤー名 "%s" は無効です。
 ---
 ID:Invalid registered anime "%s".
+en:Invalid registered anime "%s".
 es:Animación registrada "%s" no válida.
 fr:Animation enregistrée "%s" non valide.
 it:Animazione registrata "%s" non valida.
@@ -263,6 +287,7 @@ tw:註冊動畫 "%s" 無效。
 ja:登録されているアニメーション "%s" は無効です。
 ---
 ID:Invalid track "%s" specified.
+en:Invalid track "%s" specified.
 es:Pista "%s" especificada no válida.
 fr:Piste "%s" spécifiée non valide.
 it:Traccia "%s" specificata non valida.
@@ -274,6 +299,7 @@ tw:指定的軌道 "%s" 無效。
 ja:トラック "%s" の指定が不正です。
 ---
 ID:Label "%s" not found.
+en:Label "%s" not found.
 es:No se encontró la etiqueta "%s".
 fr:Étiquette "%s" introuvable.
 it:Etichetta "%s" non trovata.
@@ -284,7 +310,8 @@ zh:未找到标签 "%s"。
 tw:找不到標籤 "%s"。
 ja:ラベル "%s" が見つかりません。
 ---
-ID:Layer not specifed while parsing anime file "%s" line %d.
+ID:Layer not specified while parsing anime file "%s" line %d.
+en:Layer not specified while parsing anime file "%s" line %d.
 es:No se especificó la capa al analizar el archivo de animación "%s" en la línea %d.
 fr:Calque non spécifié lors de l'analyse du fichier d'animation "%s" ligne %d.
 it:Livello non specificato durante l'analisi del file di animazione "%s" riga %d.
@@ -296,6 +323,7 @@ tw:解析動畫檔案 "%s" 第 %d 行時未指定圖層。
 ja:アニメーションファイル "%s" の %d 行目を解析中にレイヤーが指定されていません。
 ---
 ID:Macro "%s" not found.
+en:Macro "%s" not found.
 es:No se encontró la macro "%s".
 fr:Macro "%s" introuvable.
 it:Macro "%s" non trovata.
@@ -307,6 +335,7 @@ tw:找不到巨集 "%s"。
 ja:マクロ "%s" が見つかりません。
 ---
 ID:No LHS specified.
+en:No LHS specified.
 es:No se ha especificado LHS (lado izquierdo).
 fr:Aucun membre de gauche (LHS) spécifié.
 it:Nessun LHS specificato.
@@ -318,6 +347,7 @@ tw:未指定左值。
 ja:左辺が指定されていません。
 ---
 ID:No RHS specified.
+en:No RHS specified.
 es:No se ha especificado RHS (lado derecho).
 fr:Aucun membre de droite (RHS) spécifié.
 it:Nessun RHS specificato.
@@ -329,6 +359,7 @@ tw:未指定右值。
 ja:右辺が指定されていません。
 ---
 ID:No available button-id for a GUI button in GUI file "%s".
+en:No available button-id for a GUI button in GUI file "%s".
 es:No hay ID de botón disponible para un botón GUI en el archivo GUI "%s".
 fr:Aucun ID de bouton disponible pour un bouton GUI dans le fichier GUI "%s".
 it:Nessun ID pulsante disponibile per un pulsante GUI nel file GUI "%s".
@@ -340,6 +371,7 @@ tw:GUI 檔案 "%s" 中沒有可用的按鈕 ID。
 ja:GUIファイル "%s" に使用可能なボタンIDがありません。
 ---
 ID:No correspoinding "for" detected.
+en:No correspoinding "for" detected.
 es:No se detectó el "for" correspondiente.
 fr:Aucun "for" correspondant détecté.
 it:Nessun "for" corrispondente rilevato.
@@ -351,6 +383,7 @@ tw:找不到對應的 "for"。
 ja:対応する "for" がありません。
 ---
 ID:No correspoinding "if" detected.
+en:No correspoinding "if" detected.
 es:No se detectó el "if" correspondiente.
 fr:Aucun "if" correspondant détecté.
 it:Nessun "if" corrispondente rilevato.
@@ -362,6 +395,7 @@ tw:找不到對應的 "if"。
 ja:対応する "if" がありません。
 ---
 ID:No correspoinding "while" detected.
+en:No correspoinding "while" detected.
 es:No se detectó el "while" correspondiente.
 fr:Aucun "while" correspondant détecté.
 it:Nessun "while" corrispondente rilevato.
@@ -373,6 +407,7 @@ tw:找不到對應的 "while"。
 ja:対応する "while" がありません。
 ---
 ID:No matching endif found.
+en:No matching endif found.
 es:No se encontró un endif correspondiente.
 fr:Aucun endif correspondant trouvé.
 it:Nessun endif corrispondente trovato.
@@ -384,6 +419,7 @@ tw:找不到對應的 endif。
 ja:endif が見つかりません。
 ---
 ID:No matching endmacro found.
+en:No matching endmacro found.
 es:No se encontró un endmacro correspondiente.
 fr:Aucun endmacro correspondant trouvé.
 it:Nessun endmacro corrispondente trovato.
@@ -395,6 +431,7 @@ tw:找不到對應的 endmacro。
 ja:endmacro が見つかりません。
 ---
 ID:No operator specified.
+en:No operator specified.
 es:No se especificó ningún operador.
 fr:Aucun opérateur spécifié.
 it:Nessun operatore specificato.
@@ -406,6 +443,7 @@ tw:未指定運算子。
 ja:演算子が指定されていません。
 ---
 ID:Property name too long.
+en:Property name too long.
 es:Nombre de propiedad demasiado largo.
 fr:Nom de propriété trop long.
 it:Nome della proprietà troppo lungo.
@@ -417,6 +455,7 @@ tw:屬性名稱過長。
 ja:プロパティ名が長すぎます。
 ---
 ID:Property value too long.
+en:Property value too long.
 es:Valor de propiedad demasiado largo.
 fr:Valeur de propriété trop longue.
 it:Valore della proprietà troppo lungo.
@@ -428,6 +467,7 @@ tw:屬性值過長。
 ja:プロパティ値が長すぎます。
 ---
 ID:Rule file is missing.
+en:Rule file is missing.
 es:Falta el archivo de reglas.
 fr:Le fichier de règles est manquant.
 it:Il file delle regole è mancante.
@@ -439,6 +479,7 @@ tw:缺少規則檔案。
 ja:ルールファイルがありません。
 ---
 ID:Rule file is not specified.
+en:Rule file is not specified.
 es:No se ha especificado el archivo de reglas.
 fr:Le fichier de règles n'est pas spécifié.
 it:Il file delle regole non è specificato.
@@ -450,6 +491,7 @@ tw:未指定規則檔案。
 ja:ルールファイルが指定されていません。
 ---
 ID:Save data version mismatched.
+en:Save data version mismatched.
 es:La versión de los datos de guardado no coincide.
 fr:La version des données de sauvegarde ne correspond pas.
 it:Versione dei dati di salvataggio non corrispondente.
@@ -460,7 +502,8 @@ zh:存档数据版本不匹配。
 tw:存檔版本不符。
 ja:セーブデータのバージョンが一致しません。
 ---
-ID:Sequece too long while parsing anime file "%s" line %d.
+ID:Sequence too long while parsing anime file "%s" line %d.
+en:Sequence too long while parsing anime file "%s" line %d.
 es:Secuencia demasiado larga al analizar el archivo de animación "%s" en la línea %d.
 fr:Séquence trop longue lors de l'analyse du fichier d'animation "%s" ligne %d.
 it:Sequenza troppo lunga durante l'analisi del file di animazione "%s" riga %d.
@@ -472,6 +515,7 @@ tw:解析動畫檔案 "%s" 第 %d 行時序列過長。
 ja:アニメーションファイル "%s" の %d 行目を解析中にシーケンスが長すぎます。
 ---
 ID:Specified ID is already used in GUI file "%s" line %d.
+en:Specified ID is already used in GUI file "%s" line %d.
 es:El ID especificado ya se está usando en el archivo GUI "%s" en la línea %d.
 fr:L'ID spécifié est déjà utilisé dans le fichier GUI "%s" ligne %d.
 it:L'ID specificato è già in uso nel file GUI "%s" riga %d.
@@ -483,6 +527,7 @@ tw:指定的 ID 已在 GUI 檔案 "%s" 第 %d 行中使用。
 ja:指定されたIDはGUIファイル "%s" の %d 行目ですでに使用されています。
 ---
 ID:Tag name too long.
+en:Tag name too long.
 es:Nombre de etiqueta demasiado largo.
 fr:Nom de balise trop long.
 it:Nome del tag troppo lungo.
@@ -494,6 +539,7 @@ tw:標籤名稱過長。
 ja:タグ名が長すぎます。
 ---
 ID:This API is not implemented yet.
+en:This API is not implemented yet.
 es:Esta API aún no se ha implementado.
 fr:Cette API n'est pas encore implémentée.
 it:Questa API non è ancora implementata.
@@ -505,6 +551,7 @@ tw:此 API 尚未實作。
 ja:このAPIはまだ実装されていません。
 ---
 ID:Too long word while parsing anime file "%s" line %d.
+en:Too long word while parsing anime file "%s" line %d.
 es:Palabra demasiado larga al analizar el archivo de animación "%s" en la línea %d.
 fr:Mot trop long lors de l'analyse du fichier d'animation "%s" ligne %d.
 it:Parola troppo lunga durante l'analisi del file di animazione "%s" riga %d.
@@ -516,6 +563,7 @@ tw:解析動畫檔案 "%s" 第 %d 行時單字過長。
 ja:アニメーションファイル "%s" の %d 行目を解析中に単語が長すぎます。
 ---
 ID:Too many GUI buttons in GUI file "%s".
+en:Too many GUI buttons in GUI file "%s".
 es:Demasiados botones GUI en el archivo GUI "%s".
 fr:Trop de boutons GUI dans le fichier GUI "%s".
 it:Troppi pulsanti GUI nel file GUI "%s".
@@ -527,6 +575,7 @@ tw:GUI 檔案 "%s" 中的 GUI 按鈕過多。
 ja:GUIファイル "%s" のGUIボタンが多すぎます。
 ---
 ID:Too many drawmsg contexts.
+en:Too many drawmsg contexts.
 es:Demasiados contextos drawmsg.
 fr:Trop de contextes drawmsg.
 it:Troppi contesti drawmsg.
@@ -538,6 +587,7 @@ tw:drawmsg 上下文過多。
 ja:drawmsg コンテキストが多すぎます。
 ---
 ID:Too many macro calls.
+en:Too many macro calls.
 es:Demasiadas llamadas a macros.
 fr:Trop d'appels de macros.
 it:Troppe chiamate macro.
@@ -549,6 +599,7 @@ tw:巨集呼叫過多。
 ja:マクロの呼び出し回数が多すぎます。
 ---
 ID:Too many nests.
+en:Too many nests.
 es:Demasiados anidamientos.
 fr:Trop d'imbrications.
 it:Troppi annidamenti.
@@ -560,6 +611,7 @@ tw:巢狀層級過多。
 ja:ネストが深すぎます。
 ---
 ID:Too many properties.
+en:Too many properties.
 es:Demasiadas propiedades.
 fr:Trop de propriétés.
 it:Troppe proprietà.
@@ -571,6 +623,7 @@ tw:屬性過多。
 ja:プロパティが多すぎます。
 ---
 ID:Too many registered animes.
+en:Too many registered animes.
 es:Demasiadas animaciones registradas.
 fr:Trop d'animations enregistrées.
 it:Troppe animazioni registrate.
@@ -582,6 +635,7 @@ tw:註冊動畫過多。
 ja:登録されているアニメーションが多すぎます。
 ---
 ID:Undefined config key "%s".
+en:Undefined config key "%s".
 es:Clave de configuración "%s" no definida.
 fr:Clé de configuration "%s" non définie.
 it:Chiave di configurazione "%s" non definita.
@@ -593,6 +647,7 @@ tw:未定義的設定鍵 "%s"。
 ja:設定キー "%s" は定義されていません。
 ---
 ID:Unexpected EOF.
+en:Unexpected EOF.
 es:Fin de archivo (EOF) inesperado.
 fr:Fin de fichier (EOF) inattendue.
 it:EOF imprevisto.
@@ -604,6 +659,7 @@ tw:未預期的 EOF。
 ja:予期しないファイル終端です。
 ---
 ID:Unknown button property "%s" found in GUI file "%s" line %d.
+en:Unknown button property "%s" found in GUI file "%s" line %d.
 es:Se encontró una propiedad de botón "%s" desconocida en el archivo GUI "%s" en la línea %d.
 fr:Propriété de bouton "%s" inconnue dans le fichier GUI "%s" ligne %d.
 it:Proprietà pulsante "%s" sconosciuta nel file GUI "%s" riga %d.
@@ -615,6 +671,7 @@ tw:在 GUI 檔案 "%s" 第 %d 行發現未知的按鈕屬性 "%s"。
 ja:GUIファイル "%s" の %d 行目に未知のボタンプロパティ "%s" があります。
 ---
 ID:Unknown button type name "%s" in GUI file "%s" line %d.
+en:Unknown button type name "%s" in GUI file "%s" line %d.
 es:Nombre de tipo de botón "%s" desconocido en el archivo GUI "%s" en la línea %d.
 fr:Nom de type de bouton "%s" inconnu dans le fichier GUI "%s" ligne %d.
 it:Nome tipo pulsante "%s" sconosciuto nel file GUI "%s" riga %d.
@@ -626,6 +683,7 @@ tw:GUI 檔案 "%s" 第 %d 行發現未知的按鈕類型 "%s"。
 ja:GUIファイル "%s" の %d 行目に未知のボタンタイプ "%s" があります。
 ---
 ID:Unknown config key "%s".
+en:Unknown config key "%s".
 es:Clave de configuración "%s" desconocida.
 fr:Clé de configuration "%s" inconnue.
 it:Chiave di configurazione "%s" sconosciuta.
@@ -637,6 +695,7 @@ tw:未知的設定鍵 "%s"。
 ja:未知の設定キー "%s" です。
 ---
 ID:Unknown global key "%s" found in GUI file "%s" line %d.
+en:Unknown global key "%s" found in GUI file "%s" line %d.
 es:Se encontró una clave global "%s" desconocida en el archivo GUI "%s" en la línea %d.
 fr:Clé globale "%s" inconnue dans le fichier GUI "%s" ligne %d.
 it:Chiave globale "%s" sconosciuta nel file GUI "%s" riga %d.
@@ -648,6 +707,7 @@ tw:在 GUI 檔案 "%s" 第 %d 行發現未知的全域鍵 "%s"。
 ja:GUIファイル "%s" の %d 行目に未知のグローバルキー "%s" があります。
 ---
 ID:Unkwon key "%s" while parsing anime file "%s" line %d.
+en:Unkwon key "%s" while parsing anime file "%s" line %d.
 es:Clave "%s" desconocida al analizar el archivo de animación "%s" en la línea %d.
 fr:Clé "%s" inconnue lors de l'analyse du fichier d'animation "%s" ligne %d.
 it:Chiave "%s" sconosciuta durante l'analisi del file di animazione "%s" riga %d.
@@ -659,6 +719,7 @@ tw:解析動畫檔案 "%s" 第 %d 行時發現未知鍵 "%s"。
 ja:アニメーションファイル "%s" の %d 行目を解析中に未知のキー "%s" が見つかりました。
 ---
 ID:Invalid config line at file "%s" line %d.
+en:Invalid config line at file "%s" line %d.
 es:Línea de configuración no válida en el archivo "%s" en la línea %d.
 fr:Ligne de configuration non valide dans le fichier "%s" ligne %d.
 it:Linea di configurazione non valida nel file "%s" riga %d.
@@ -670,6 +731,7 @@ tw:檔案 "%s" 第 %d 行設定無効。
 ja:ファイル "%s" の %d 行目の設定が不正です。
 ---
 ID:No matching localized text.
+en:No matching localized text.
 es:No se encontro un texto localizado coincidente.
 fr:Aucun texte localisé correspondant n'a été trouvé.
 it:Nessun testo localizzato corrispondente trovato.

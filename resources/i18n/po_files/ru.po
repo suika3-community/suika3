@@ -1,0 +1,191 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "%s:%d: %s"
+msgstr "%s:%d: %s"
+
+msgid "Error: %s:%d: %s"
+msgstr "Ошибка: %s:%d: %s"
+
+msgid "Error: %s:%d: Tag %s:"
+msgstr "Ошибка: %s:%d: Tag %s:"
+
+msgid "Error: %s:%d: Runtime error"
+msgstr "Ошибка: %s:%d: Ошибка времени выполнения"
+
+msgid "Error: %s:%d: Tag \"%s\" not found."
+msgstr "Ошибка: %s:%d: Тег \"%s\" не найден."
+
+msgid "Error: %s:%d: \"Tag_%s\" is not a function."
+msgstr "Ошибка: %s:%d: «Tag_%s» не является функцией."
+
+msgid "Argument \"%s\" not specified."
+msgstr "Аргумент «%s» не указан."
+
+msgid "Cannot play sound file \"%s\"."
+msgstr "Невозможно воспроизвести звуковой файл «%s»."
+
+msgid "Conifg \"%s\" not found."
+msgstr "Конфигурация «%s» не найдена."
+
+msgid "Duplicated config key %s."
+msgstr "Дублирующийся ключ конфигурации %s."
+
+msgid "Error loading GUI file %s."
+msgstr "Ошибка загрузки GUI-файла %s."
+
+msgid "Failed to write save data."
+msgstr "Ошибка записи данных сохранения."
+
+msgid "File \"%s\" not exist."
+msgstr "Файл «%s» не существует."
+
+msgid "Internal error."
+msgstr "Внутренняя ошибка."
+
+msgid "Invalid EOF on GUI file %s."
+msgstr "Недопустимый EOF в GUI-файле %s."
+
+msgid "Invalid EOF while parsing anime file %s"
+msgstr "Недопустимый EOF при анализе файла анимации %s"
+
+msgid "Invalid accel type \"%s\"."
+msgstr "Недопустимый тип ускорения «%s»."
+
+msgid "Invalid character \"%c\" while parsing anime file \"%s\" line %d."
+msgstr "Недопустимый символ «%c» при анализе файла анимации «%s» в строке %d."
+
+msgid "Invalid character."
+msgstr "Недопустимый символ."
+
+msgid "Invalid fade method \"%s\"."
+msgstr "Недопустимый метод затухания «%s»."
+
+msgid "Invalid fade type \"%s\"."
+msgstr "Недопустимый тип затухания «%s»."
+
+msgid "Invalid layer name \"%s\" while parsing anime file \"%s\" line %d."
+msgstr "Недопустимое имя слоя «%s» при анализе файла анимации «%s» в строке %d."
+
+msgid "Invalid layer name \"%s\"."
+msgstr "Недопустимое имя слоя «%s»."
+
+msgid "Invalid registered anime \"%s\"."
+msgstr "Недопустимая зарегистрированная анимация «%s»."
+
+msgid "Invalid track \"%s\" specified."
+msgstr "Указана недопустимая дорожка «%s»."
+
+msgid "Label \"%s\" not found."
+msgstr "Метка «%s» не найдена."
+
+msgid "Layer not specified while parsing anime file \"%s\" line %d."
+msgstr "Слой не указан при анализе файла анимации «%s» в строке %d."
+
+msgid "Macro \"%s\" not found."
+msgstr "Макрос «%s» не найден."
+
+msgid "No LHS specified."
+msgstr "Левая часть (LHS) не указана."
+
+msgid "No RHS specified."
+msgstr "Правая часть (RHS) не указана."
+
+msgid "No available button-id for a GUI button in GUI file \"%s\"."
+msgstr "Нет доступного ID кнопки для GUI-кнопки в GUI-файле «%s»."
+
+msgid "No correspoinding \"for\" detected."
+msgstr "Не обнаружен соответствующий цикл «for»."
+
+msgid "No correspoinding \"if\" detected."
+msgstr "Не обнаружено соответствующее условие «if»."
+
+msgid "No correspoinding \"while\" detected."
+msgstr "Не обнаружен соответствующий цикл «while»."
+
+msgid "No matching endif found."
+msgstr "Соответствующий endif не найден."
+
+msgid "No matching endmacro found."
+msgstr "Соответствующий endmacro не найден."
+
+msgid "No operator specified."
+msgstr "Оператор не указан."
+
+msgid "Property name too long."
+msgstr "Имя свойства слишком длинное."
+
+msgid "Property value too long."
+msgstr "Значение свойства слишком длинное."
+
+msgid "Rule file is missing."
+msgstr "Файл правил отсутствует."
+
+msgid "Rule file is not specified."
+msgstr "Файл правил не указан."
+
+msgid "Save data version mismatched."
+msgstr "Версия данных сохранения не совпадает."
+
+msgid "Sequence too long while parsing anime file \"%s\" line %d."
+msgstr "Слишком длинная последовательность при анализе файла анимации «%s» в строке %d."
+
+msgid "Specified ID is already used in GUI file \"%s\" line %d."
+msgstr "Указанный ID уже используется в GUI-файле «%s» в строке %d."
+
+msgid "Tag name too long."
+msgstr "Имя тега слишком длинное."
+
+msgid "This API is not implemented yet."
+msgstr "Этот API еще не реализован."
+
+msgid "Too long word while parsing anime file \"%s\" line %d."
+msgstr "Слишком длинное слово при анализе файла анимации «%s» в строке %d."
+
+msgid "Too many GUI buttons in GUI file \"%s\"."
+msgstr "Слишком много GUI-кнопок в GUI-файле «%s»."
+
+msgid "Too many drawmsg contexts."
+msgstr "Слишком много контекстов drawmsg."
+
+msgid "Too many macro calls."
+msgstr "Слишком много вызовов макросов."
+
+msgid "Too many nests."
+msgstr "Слишком много уровней вложенности."
+
+msgid "Too many properties."
+msgstr "Слишком много свойств."
+
+msgid "Too many registered animes."
+msgstr "Слишком много зарегистрированных анимаций."
+
+msgid "Undefined config key \"%s\"."
+msgstr "Неопределенный ключ конфигурации «%s»."
+
+msgid "Unexpected EOF."
+msgstr "Непредвиденный конец файла (EOF)."
+
+msgid "Unknown button property \"%s\" found in GUI file \"%s\" line %d."
+msgstr "Неизвестное свойство кнопки «%s» в GUI-файле «%s» в строке %d."
+
+msgid "Unknown button type name \"%s\" in GUI file \"%s\" line %d."
+msgstr "Неизвестное имя типа кнопки «%s» в GUI-файле «%s» в строке %d."
+
+msgid "Unknown config key \"%s\"."
+msgstr "Неизвестный ключ конфигурации «%s»."
+
+msgid "Unknown global key \"%s\" found in GUI file \"%s\" line %d."
+msgstr "Неизвестный глобальный ключ «%s» в GUI-файле «%s» в строке %d."
+
+msgid "Unkwon key \"%s\" while parsing anime file \"%s\" line %d."
+msgstr "Неизвестный ключ «%s» при анализе файла анимации «%s» в строке %d."
+
+msgid "Invalid config line at file \"%s\" line %d."
+msgstr "Недопустимая строка конфигурации в файле «%s» в строке %d."
+
+msgid "No matching localized text."
+msgstr "Соответствующий локализованный текст не найден."
+

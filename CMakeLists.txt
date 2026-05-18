@@ -676,7 +676,7 @@ else()
 endif()
 
 # I18N Source
-if(SUIKA_ENABLE_I18N)
+if(SUIKA_ENABLE_I18N AND NOT SUIKA_ENABLE_I18N_LIBINTL)
   set(SUIKA_I18N_SOURCES
     src/translation.c
   )
@@ -775,6 +775,11 @@ endif()
 # Translation
 if(SUIKA_ENABLE_I18N)
   target_compile_definitions(suika3 PRIVATE S3_USE_TRANSLATION)
+endif()
+
+# S3_USE_LIBINTL
+if(SUIKA_ENABLE_I18N_LIBINTL)
+  target_compile_definitions(suika3 PRIVATE S3_USE_LIBINTL)
 endif()
 
 # DLL
@@ -1253,6 +1258,14 @@ if(SUIKA_ENABLE_INSTALL)
       DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/docs/mkdocs-en/docs/"
       DESTINATION ${SUIKA_DIR_DOCS}
     )
+  endif()
+
+  #
+  #  Install the translation.
+  #
+  if(SUIKA_ENABLE_I18N_LIBINTL)
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/locale/
+            DESTINATION ${CMAKE_INSTALL_FULL_LOCALEDIR})
   endif()
 
   #

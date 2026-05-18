@@ -181,6 +181,11 @@ pf_init_hook(
 	conf_game_width = width;
 	conf_game_height = height;
 
+#if defined(S3_USE_LIBINTL)
+	bindtextdomain("suika3", LOCALEDIR);
+	bind_textdomain_codeset("suika3", "UTF-8");
+#endif
+
 	/* Install the default API. */
 	if (!s3i_install_default_api())
 		return false;

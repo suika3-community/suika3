@@ -1,0 +1,191 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "%s:%d: %s"
+msgstr "%s:%d: %s"
+
+msgid "Error: %s:%d: %s"
+msgstr "エラー: %s:%d: %s"
+
+msgid "Error: %s:%d: Tag %s:"
+msgstr "エラー: %s:%d: Tag %s:"
+
+msgid "Error: %s:%d: Runtime error"
+msgstr "エラー: %s:%d: 実行時エラー"
+
+msgid "Error: %s:%d: Tag \"%s\" not found."
+msgstr "エラー: %s:%d: タグ \"%s\" がみつかりません。"
+
+msgid "Error: %s:%d: \"Tag_%s\" is not a function."
+msgstr "エラー: %s:%d: \"Tag_%s\" は関数ではありません。"
+
+msgid "Argument \"%s\" not specified."
+msgstr "引数 \"%s\" が指定されていません。"
+
+msgid "Cannot play sound file \"%s\"."
+msgstr "サウンドファイル \"%s\" を再生できません。"
+
+msgid "Conifg \"%s\" not found."
+msgstr "設定 \"%s\" が見つかりません。"
+
+msgid "Duplicated config key %s."
+msgstr "設定キー %s が重複しています。"
+
+msgid "Error loading GUI file %s."
+msgstr "GUIファイル %s の読み込み中にエラーが発生しました。"
+
+msgid "Failed to write save data."
+msgstr "セーブデータの書き込みに失敗しました。"
+
+msgid "File \"%s\" not exist."
+msgstr "ファイル \"%s\" がありません。"
+
+msgid "Internal error."
+msgstr "内部エラーが発生しました。"
+
+msgid "Invalid EOF on GUI file %s."
+msgstr "GUIファイル %s の終端が不正です。"
+
+msgid "Invalid EOF while parsing anime file %s"
+msgstr "アニメーションファイル %s の解析中に不正な終端に達しました。"
+
+msgid "Invalid accel type \"%s\"."
+msgstr "加速タイプ \"%s\" は無効です。"
+
+msgid "Invalid character \"%c\" while parsing anime file \"%s\" line %d."
+msgstr "アニメーションファイル \"%s\" の %d 行目を解析中に無効な文字 \"%c\" が見つかりました。"
+
+msgid "Invalid character."
+msgstr "文字が不正です。"
+
+msgid "Invalid fade method \"%s\"."
+msgstr "フェードメソッド \"%s\" は無効です。"
+
+msgid "Invalid fade type \"%s\"."
+msgstr "フェードタイプ \"%s\" は無効です。"
+
+msgid "Invalid layer name \"%s\" while parsing anime file \"%s\" line %d."
+msgstr "アニメーションファイル \"%s\" の %d 行目を解析中に無効なレイヤー名 \"%s\" が見つかりました。"
+
+msgid "Invalid layer name \"%s\"."
+msgstr "レイヤー名 \"%s\" は無効です。"
+
+msgid "Invalid registered anime \"%s\"."
+msgstr "登録されているアニメーション \"%s\" は無効です。"
+
+msgid "Invalid track \"%s\" specified."
+msgstr "トラック \"%s\" の指定が不正です。"
+
+msgid "Label \"%s\" not found."
+msgstr "ラベル \"%s\" が見つかりません。"
+
+msgid "Layer not specified while parsing anime file \"%s\" line %d."
+msgstr "アニメーションファイル \"%s\" の %d 行目を解析中にレイヤーが指定されていません。"
+
+msgid "Macro \"%s\" not found."
+msgstr "マクロ \"%s\" が見つかりません。"
+
+msgid "No LHS specified."
+msgstr "左辺が指定されていません。"
+
+msgid "No RHS specified."
+msgstr "右辺が指定されていません。"
+
+msgid "No available button-id for a GUI button in GUI file \"%s\"."
+msgstr "GUIファイル \"%s\" に使用可能なボタンIDがありません。"
+
+msgid "No correspoinding \"for\" detected."
+msgstr "対応する \"for\" がありません。"
+
+msgid "No correspoinding \"if\" detected."
+msgstr "対応する \"if\" がありません。"
+
+msgid "No correspoinding \"while\" detected."
+msgstr "対応する \"while\" がありません。"
+
+msgid "No matching endif found."
+msgstr "endif が見つかりません。"
+
+msgid "No matching endmacro found."
+msgstr "endmacro が見つかりません。"
+
+msgid "No operator specified."
+msgstr "演算子が指定されていません。"
+
+msgid "Property name too long."
+msgstr "プロパティ名が長すぎます。"
+
+msgid "Property value too long."
+msgstr "プロパティ値が長すぎます。"
+
+msgid "Rule file is missing."
+msgstr "ルールファイルがありません。"
+
+msgid "Rule file is not specified."
+msgstr "ルールファイルが指定されていません。"
+
+msgid "Save data version mismatched."
+msgstr "セーブデータのバージョンが一致しません。"
+
+msgid "Sequence too long while parsing anime file \"%s\" line %d."
+msgstr "アニメーションファイル \"%s\" の %d 行目を解析中にシーケンスが長すぎます。"
+
+msgid "Specified ID is already used in GUI file \"%s\" line %d."
+msgstr "指定されたIDはGUIファイル \"%s\" の %d 行目ですでに使用されています。"
+
+msgid "Tag name too long."
+msgstr "タグ名が長すぎます。"
+
+msgid "This API is not implemented yet."
+msgstr "このAPIはまだ実装されていません。"
+
+msgid "Too long word while parsing anime file \"%s\" line %d."
+msgstr "アニメーションファイル \"%s\" の %d 行目を解析中に単語が長すぎます。"
+
+msgid "Too many GUI buttons in GUI file \"%s\"."
+msgstr "GUIファイル \"%s\" のGUIボタンが多すぎます。"
+
+msgid "Too many drawmsg contexts."
+msgstr "drawmsg コンテキストが多すぎます。"
+
+msgid "Too many macro calls."
+msgstr "マクロの呼び出し回数が多すぎます。"
+
+msgid "Too many nests."
+msgstr "ネストが深すぎます。"
+
+msgid "Too many properties."
+msgstr "プロパティが多すぎます。"
+
+msgid "Too many registered animes."
+msgstr "登録されているアニメーションが多すぎます。"
+
+msgid "Undefined config key \"%s\"."
+msgstr "設定キー \"%s\" は定義されていません。"
+
+msgid "Unexpected EOF."
+msgstr "予期しないファイル終端です。"
+
+msgid "Unknown button property \"%s\" found in GUI file \"%s\" line %d."
+msgstr "GUIファイル \"%s\" の %d 行目に未知のボタンプロパティ \"%s\" があります。"
+
+msgid "Unknown button type name \"%s\" in GUI file \"%s\" line %d."
+msgstr "GUIファイル \"%s\" の %d 行目に未知のボタンタイプ \"%s\" があります。"
+
+msgid "Unknown config key \"%s\"."
+msgstr "未知の設定キー \"%s\" です。"
+
+msgid "Unknown global key \"%s\" found in GUI file \"%s\" line %d."
+msgstr "GUIファイル \"%s\" の %d 行目に未知のグローバルキー \"%s\" があります。"
+
+msgid "Unkwon key \"%s\" while parsing anime file \"%s\" line %d."
+msgstr "アニメーションファイル \"%s\" の %d 行目を解析中に未知のキー \"%s\" が見つかりました。"
+
+msgid "Invalid config line at file \"%s\" line %d."
+msgstr "ファイル \"%s\" の %d 行目の設定が不正です。"
+
+msgid "No matching localized text."
+msgstr "テキストのローカライズ版がマッチしませんでした。"
+

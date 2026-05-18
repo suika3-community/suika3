@@ -1,3 +1,32 @@
+/* -*- coding: utf-8; tab-width: 8; indent-tabs-mode: t; -*- */
+
+/*
+ * Suika3
+ * Translation
+ */
+
+/*-
+ * SPDX-License-Identifier: Zlib
+ *
+ * Copyright (c) 1996-2026 Awe Morris / SCHOLA SUIKAE
+ *
+ * This software is provided 'as-is', without any express or implied
+ * warranty. In no event will the authors be held liable for any damages
+ * arising from the use of this software.
+ *
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
+ *
+ * 1. The origin of this software must not be misrepresented; you must not
+ *    claim that you wrote the original software. If you use this software
+ *    in a product, an acknowledgment in the product documentation would be
+ *    appreciated but is not required.
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ *    misrepresented as being the original software.
+ * 3. This notice may not be removed or altered from any source distribution.
+ */
+
 #include <string.h>
 
 const char *pf_get_system_language(void);
@@ -6,6 +35,7 @@ const char *s3_gettext(const char *msg)
 {
     const char *lang_code = pf_get_system_language();
     if (strcmp(msg, "%s:%d: %s") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "%s:%d: %s";
         if (strncmp(lang_code, "es", 2) == 0) return "%s:%d: %s";
         if (strncmp(lang_code, "fr", 2) == 0) return "%s:%d : %s";
         if (strncmp(lang_code, "it", 2) == 0) return "%s:%d: %s";
@@ -18,6 +48,7 @@ const char *s3_gettext(const char *msg)
         return "%s:%d: %s";
     }
     if (strcmp(msg, "Error: %s:%d: %s") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Error: %s:%d: %s";
         if (strncmp(lang_code, "es", 2) == 0) return "Error: %s:%d: %s";
         if (strncmp(lang_code, "fr", 2) == 0) return "Erreur : %s:%d : %s";
         if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s:%d: %s";
@@ -30,6 +61,7 @@ const char *s3_gettext(const char *msg)
         return "Error: %s:%d: %s";
     }
     if (strcmp(msg, "Error: %s:%d: Tag %s: ") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Error: %s:%d: Tag %s: ";
         if (strncmp(lang_code, "es", 2) == 0) return "Error: %s:%d: Tag %s: ";
         if (strncmp(lang_code, "fr", 2) == 0) return "Erreur : %s:%d : Tag %s: ";
         if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s:%d: Tag %s: ";
@@ -42,6 +74,7 @@ const char *s3_gettext(const char *msg)
         return "Error: %s:%d: Tag %s: ";
     }
     if (strcmp(msg, "Error: %s:%d: Runtime error") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Error: %s:%d: Runtime error";
         if (strncmp(lang_code, "es", 2) == 0) return "Error: %s:%d: Error de ejecución";
         if (strncmp(lang_code, "fr", 2) == 0) return "Erreur : %s:%d: Erreur d'exécution";
         if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s:%d: Erreur d'esecuzione";
@@ -54,6 +87,7 @@ const char *s3_gettext(const char *msg)
         return "Error: %s:%d: Runtime error";
     }
     if (strcmp(msg, "Error: %s:%d: Tag \"%s\" not found.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Error: %s:%d: Tag \"%s\" not found.";
         if (strncmp(lang_code, "es", 2) == 0) return "Error: %s:%d: No se encontró la etiqueta \"%s\".";
         if (strncmp(lang_code, "fr", 2) == 0) return "Erreur : %s:%d : Balise \"%s\" introuvable.";
         if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s:%d: Tag \"%s\" non trovato.";
@@ -66,6 +100,7 @@ const char *s3_gettext(const char *msg)
         return "Error: %s:%d: Tag \"%s\" not found.";
     }
     if (strcmp(msg, "Error: %s:%d: \"Tag_%s\" is not a function.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Error: %s:%d: \"Tag_%s\" is not a function.";
         if (strncmp(lang_code, "es", 2) == 0) return "Error: %s:%d: \"Tag_%s\" no es una función.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Erreur : %s:%d : \"Tag_%s\" n'est pas une fonction.";
         if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s:%d: \"Tag_%s\" non è una funzione.";
@@ -78,6 +113,7 @@ const char *s3_gettext(const char *msg)
         return "Error: %s:%d: \"Tag_%s\" is not a function.";
     }
     if (strcmp(msg, "Argument \"%s\" not specified.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Argument \"%s\" not specified.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se ha especificado el argumento \"%s\".";
         if (strncmp(lang_code, "fr", 2) == 0) return "Argument \"%s\" non spécifié.";
         if (strncmp(lang_code, "it", 2) == 0) return "Argomento \"%s\" non specificato.";
@@ -90,6 +126,7 @@ const char *s3_gettext(const char *msg)
         return "Argument \"%s\" not specified.";
     }
     if (strcmp(msg, "Cannot play sound file \"%s\".") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Cannot play sound file \"%s\".";
         if (strncmp(lang_code, "es", 2) == 0) return "No se puede reproducir el archivo de sonido \"%s\".";
         if (strncmp(lang_code, "fr", 2) == 0) return "Impossible de lire le fichier sonore \"%s\".";
         if (strncmp(lang_code, "it", 2) == 0) return "Impossibile riprodurre il file audio \"%s\".";
@@ -102,6 +139,7 @@ const char *s3_gettext(const char *msg)
         return "Cannot play sound file \"%s\".";
     }
     if (strcmp(msg, "Conifg \"%s\" not found.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Conifg \"%s\" not found.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se encontró la configuración \"%s\".";
         if (strncmp(lang_code, "fr", 2) == 0) return "Configuration \"%s\" introuvable.";
         if (strncmp(lang_code, "it", 2) == 0) return "Configurazione \"%s\" non trovata.";
@@ -114,6 +152,7 @@ const char *s3_gettext(const char *msg)
         return "Conifg \"%s\" not found.";
     }
     if (strcmp(msg, "Duplicated config key %s.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Duplicated config key %s.";
         if (strncmp(lang_code, "es", 2) == 0) return "Clave de configuración duplicada %s.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Clé de configuration en double %s.";
         if (strncmp(lang_code, "it", 2) == 0) return "Chiave di configurazione duplicata %s.";
@@ -126,6 +165,7 @@ const char *s3_gettext(const char *msg)
         return "Duplicated config key %s.";
     }
     if (strcmp(msg, "Error loading GUI file %s.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Error loading GUI file %s.";
         if (strncmp(lang_code, "es", 2) == 0) return "Error al cargar el archivo GUI %s.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Erreur lors du chargement du fichier GUI %s.";
         if (strncmp(lang_code, "it", 2) == 0) return "Errore durante il caricamento del file GUI %s.";
@@ -138,6 +178,7 @@ const char *s3_gettext(const char *msg)
         return "Error loading GUI file %s.";
     }
     if (strcmp(msg, "Failed to write save data.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Failed to write save data.";
         if (strncmp(lang_code, "es", 2) == 0) return "Error al escribir los datos de guardado.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Échec de l'écriture des données de sauvegarde.";
         if (strncmp(lang_code, "it", 2) == 0) return "Scrittura dei dati di salvataggio fallita.";
@@ -150,6 +191,7 @@ const char *s3_gettext(const char *msg)
         return "Failed to write save data.";
     }
     if (strcmp(msg, "File \"%s\" not exist.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "File \"%s\" not exist.";
         if (strncmp(lang_code, "es", 2) == 0) return "El archivo \"%s\" no existe.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Le fichier \"%s\" n'existe pas.";
         if (strncmp(lang_code, "it", 2) == 0) return "Il file \"%s\" non esiste.";
@@ -162,6 +204,7 @@ const char *s3_gettext(const char *msg)
         return "File \"%s\" not exist.";
     }
     if (strcmp(msg, "Internal error.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Internal error.";
         if (strncmp(lang_code, "es", 2) == 0) return "Error interno.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Erreur interne.";
         if (strncmp(lang_code, "it", 2) == 0) return "Errore interno.";
@@ -174,6 +217,7 @@ const char *s3_gettext(const char *msg)
         return "Internal error.";
     }
     if (strcmp(msg, "Invalid EOF on GUI file %s.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Invalid EOF on GUI file %s.";
         if (strncmp(lang_code, "es", 2) == 0) return "EOF no válido en el archivo GUI %s.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Fin de fichier (EOF) non valide dans le fichier GUI %s.";
         if (strncmp(lang_code, "it", 2) == 0) return "EOF non valido nel file GUI %s.";
@@ -186,6 +230,7 @@ const char *s3_gettext(const char *msg)
         return "Invalid EOF on GUI file %s.";
     }
     if (strcmp(msg, "Invalid EOF while parsing anime file %s") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Invalid EOF while parsing anime file %s";
         if (strncmp(lang_code, "es", 2) == 0) return "EOF no válido al analizar el archivo de animación %s";
         if (strncmp(lang_code, "fr", 2) == 0) return "Fin de fichier (EOF) non valide lors de l'analyse du fichier d'animation %s";
         if (strncmp(lang_code, "it", 2) == 0) return "EOF non valido durante l'analisi del file di animazione %s";
@@ -198,6 +243,7 @@ const char *s3_gettext(const char *msg)
         return "Invalid EOF while parsing anime file %s";
     }
     if (strcmp(msg, "Invalid accel type \"%s\".") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Invalid accel type \"%s\".";
         if (strncmp(lang_code, "es", 2) == 0) return "Tipo de aceleración \"%s\" no válido.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Type d'accélération \"%s\" non valide.";
         if (strncmp(lang_code, "it", 2) == 0) return "Tipo di accelerazione \"%s\" non valido.";
@@ -210,6 +256,7 @@ const char *s3_gettext(const char *msg)
         return "Invalid accel type \"%s\".";
     }
     if (strcmp(msg, "Invalid character \"%c\" while parsing anime file \"%s\" line %d.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Invalid character \"%c\" while parsing anime file \"%s\" line %d.";
         if (strncmp(lang_code, "es", 2) == 0) return "Carácter \"%c\" no válido al analizar el archivo de animación \"%s\" en la línea %d.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Caractère \"%c\" non valide lors de l'analyse du fichier d'animation \"%s\" ligne %d.";
         if (strncmp(lang_code, "it", 2) == 0) return "Carattere \"%c\" non valido durante l'analisi del file di animazione \"%s\" riga %d.";
@@ -222,6 +269,7 @@ const char *s3_gettext(const char *msg)
         return "Invalid character \"%c\" while parsing anime file \"%s\" line %d.";
     }
     if (strcmp(msg, "Invalid character.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Invalid character.";
         if (strncmp(lang_code, "es", 2) == 0) return "Carácter no válido.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Caractère non valide.";
         if (strncmp(lang_code, "it", 2) == 0) return "Carattere non valido.";
@@ -234,6 +282,7 @@ const char *s3_gettext(const char *msg)
         return "Invalid character.";
     }
     if (strcmp(msg, "Invalid fade method \"%s\".") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Invalid fade method \"%s\".";
         if (strncmp(lang_code, "es", 2) == 0) return "Método de desvanecimiento \"%s\" no válido.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Méthode de fondu \"%s\" non valide.";
         if (strncmp(lang_code, "it", 2) == 0) return "Metodo di dissolvenza \"%s\" non valido.";
@@ -246,6 +295,7 @@ const char *s3_gettext(const char *msg)
         return "Invalid fade method \"%s\".";
     }
     if (strcmp(msg, "Invalid fade type \"%s\".") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Invalid fade type \"%s\".";
         if (strncmp(lang_code, "es", 2) == 0) return "Tipo de desvanecimiento \"%s\" no válido.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Type de fondu \"%s\" non valide.";
         if (strncmp(lang_code, "it", 2) == 0) return "Tipo di dissolvenza \"%s\" non valido.";
@@ -258,6 +308,7 @@ const char *s3_gettext(const char *msg)
         return "Invalid fade type \"%s\".";
     }
     if (strcmp(msg, "Invalid layer name \"%s\" while parsing anime file \"%s\" line %d.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Invalid layer name \"%s\" while parsing anime file \"%s\" line %d.";
         if (strncmp(lang_code, "es", 2) == 0) return "Nombre de capa \"%s\" no válido al analizar el archivo de animación \"%s\" en la línea %d.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Nom de calque \"%s\" non valide lors de l'analyse du fichier d'animation \"%s\" ligne %d.";
         if (strncmp(lang_code, "it", 2) == 0) return "Nome livello \"%s\" non valido durante l'analisi del file di animazione \"%s\" riga %d.";
@@ -270,6 +321,7 @@ const char *s3_gettext(const char *msg)
         return "Invalid layer name \"%s\" while parsing anime file \"%s\" line %d.";
     }
     if (strcmp(msg, "Invalid layer name \"%s\".") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Invalid layer name \"%s\".";
         if (strncmp(lang_code, "es", 2) == 0) return "Nombre de capa \"%s\" no válido.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Nom de calque \"%s\" non valide.";
         if (strncmp(lang_code, "it", 2) == 0) return "Nome livello \"%s\" non valido.";
@@ -282,6 +334,7 @@ const char *s3_gettext(const char *msg)
         return "Invalid layer name \"%s\".";
     }
     if (strcmp(msg, "Invalid registered anime \"%s\".") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Invalid registered anime \"%s\".";
         if (strncmp(lang_code, "es", 2) == 0) return "Animación registrada \"%s\" no válida.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Animation enregistrée \"%s\" non valide.";
         if (strncmp(lang_code, "it", 2) == 0) return "Animazione registrata \"%s\" non valida.";
@@ -294,6 +347,7 @@ const char *s3_gettext(const char *msg)
         return "Invalid registered anime \"%s\".";
     }
     if (strcmp(msg, "Invalid track \"%s\" specified.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Invalid track \"%s\" specified.";
         if (strncmp(lang_code, "es", 2) == 0) return "Pista \"%s\" especificada no válida.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Piste \"%s\" spécifiée non valide.";
         if (strncmp(lang_code, "it", 2) == 0) return "Traccia \"%s\" specificata non valida.";
@@ -306,6 +360,7 @@ const char *s3_gettext(const char *msg)
         return "Invalid track \"%s\" specified.";
     }
     if (strcmp(msg, "Label \"%s\" not found.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Label \"%s\" not found.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se encontró la etiqueta \"%s\".";
         if (strncmp(lang_code, "fr", 2) == 0) return "Étiquette \"%s\" introuvable.";
         if (strncmp(lang_code, "it", 2) == 0) return "Etichetta \"%s\" non trovata.";
@@ -317,7 +372,8 @@ const char *s3_gettext(const char *msg)
         if (strncmp(lang_code, "ja", 2) == 0) return "ラベル \"%s\" が見つかりません。";
         return "Label \"%s\" not found.";
     }
-    if (strcmp(msg, "Layer not specifed while parsing anime file \"%s\" line %d.") == 0) {
+    if (strcmp(msg, "Layer not specified while parsing anime file \"%s\" line %d.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Layer not specified while parsing anime file \"%s\" line %d.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se especificó la capa al analizar el archivo de animación \"%s\" en la línea %d.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Calque non spécifié lors de l'analyse du fichier d'animation \"%s\" ligne %d.";
         if (strncmp(lang_code, "it", 2) == 0) return "Livello non specificato durante l'analisi del file di animazione \"%s\" riga %d.";
@@ -327,9 +383,10 @@ const char *s3_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "解析动画文件 \"%s\" 第 %d 行時未指定图层。";
         if (strncmp(lang_code, "tw", 2) == 0) return "解析動畫檔案 \"%s\" 第 %d 行時未指定圖層。";
         if (strncmp(lang_code, "ja", 2) == 0) return "アニメーションファイル \"%s\" の %d 行目を解析中にレイヤーが指定されていません。";
-        return "Layer not specifed while parsing anime file \"%s\" line %d.";
+        return "Layer not specified while parsing anime file \"%s\" line %d.";
     }
     if (strcmp(msg, "Macro \"%s\" not found.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Macro \"%s\" not found.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se encontró la macro \"%s\".";
         if (strncmp(lang_code, "fr", 2) == 0) return "Macro \"%s\" introuvable.";
         if (strncmp(lang_code, "it", 2) == 0) return "Macro \"%s\" non trovata.";
@@ -342,6 +399,7 @@ const char *s3_gettext(const char *msg)
         return "Macro \"%s\" not found.";
     }
     if (strcmp(msg, "No LHS specified.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "No LHS specified.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se ha especificado LHS (lado izquierdo).";
         if (strncmp(lang_code, "fr", 2) == 0) return "Aucun membre de gauche (LHS) spécifié.";
         if (strncmp(lang_code, "it", 2) == 0) return "Nessun LHS specificato.";
@@ -354,6 +412,7 @@ const char *s3_gettext(const char *msg)
         return "No LHS specified.";
     }
     if (strcmp(msg, "No RHS specified.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "No RHS specified.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se ha especificado RHS (lado derecho).";
         if (strncmp(lang_code, "fr", 2) == 0) return "Aucun membre de droite (RHS) spécifié.";
         if (strncmp(lang_code, "it", 2) == 0) return "Nessun RHS specificato.";
@@ -366,6 +425,7 @@ const char *s3_gettext(const char *msg)
         return "No RHS specified.";
     }
     if (strcmp(msg, "No available button-id for a GUI button in GUI file \"%s\".") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "No available button-id for a GUI button in GUI file \"%s\".";
         if (strncmp(lang_code, "es", 2) == 0) return "No hay ID de botón disponible para un botón GUI en el archivo GUI \"%s\".";
         if (strncmp(lang_code, "fr", 2) == 0) return "Aucun ID de bouton disponible pour un bouton GUI dans le fichier GUI \"%s\".";
         if (strncmp(lang_code, "it", 2) == 0) return "Nessun ID pulsante disponibile per un pulsante GUI nel file GUI \"%s\".";
@@ -378,6 +438,7 @@ const char *s3_gettext(const char *msg)
         return "No available button-id for a GUI button in GUI file \"%s\".";
     }
     if (strcmp(msg, "No correspoinding \"for\" detected.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "No correspoinding \"for\" detected.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se detectó el \"for\" correspondiente.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Aucun \"for\" correspondant détecté.";
         if (strncmp(lang_code, "it", 2) == 0) return "Nessun \"for\" corrispondente rilevato.";
@@ -390,6 +451,7 @@ const char *s3_gettext(const char *msg)
         return "No correspoinding \"for\" detected.";
     }
     if (strcmp(msg, "No correspoinding \"if\" detected.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "No correspoinding \"if\" detected.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se detectó el \"if\" correspondiente.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Aucun \"if\" correspondant détecté.";
         if (strncmp(lang_code, "it", 2) == 0) return "Nessun \"if\" corrispondente rilevato.";
@@ -402,6 +464,7 @@ const char *s3_gettext(const char *msg)
         return "No correspoinding \"if\" detected.";
     }
     if (strcmp(msg, "No correspoinding \"while\" detected.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "No correspoinding \"while\" detected.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se detectó el \"while\" correspondiente.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Aucun \"while\" correspondant détecté.";
         if (strncmp(lang_code, "it", 2) == 0) return "Nessun \"while\" corrispondente rilevato.";
@@ -414,6 +477,7 @@ const char *s3_gettext(const char *msg)
         return "No correspoinding \"while\" detected.";
     }
     if (strcmp(msg, "No matching endif found.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "No matching endif found.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se encontró un endif correspondiente.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Aucun endif correspondant trouvé.";
         if (strncmp(lang_code, "it", 2) == 0) return "Nessun endif corrispondente trovato.";
@@ -426,6 +490,7 @@ const char *s3_gettext(const char *msg)
         return "No matching endif found.";
     }
     if (strcmp(msg, "No matching endmacro found.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "No matching endmacro found.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se encontró un endmacro correspondiente.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Aucun endmacro correspondant trouvé.";
         if (strncmp(lang_code, "it", 2) == 0) return "Nessun endmacro corrispondente trovato.";
@@ -438,6 +503,7 @@ const char *s3_gettext(const char *msg)
         return "No matching endmacro found.";
     }
     if (strcmp(msg, "No operator specified.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "No operator specified.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se especificó ningún operador.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Aucun opérateur spécifié.";
         if (strncmp(lang_code, "it", 2) == 0) return "Nessun operatore specificato.";
@@ -450,6 +516,7 @@ const char *s3_gettext(const char *msg)
         return "No operator specified.";
     }
     if (strcmp(msg, "Property name too long.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Property name too long.";
         if (strncmp(lang_code, "es", 2) == 0) return "Nombre de propiedad demasiado largo.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Nom de propriété trop long.";
         if (strncmp(lang_code, "it", 2) == 0) return "Nome della proprietà troppo lungo.";
@@ -462,6 +529,7 @@ const char *s3_gettext(const char *msg)
         return "Property name too long.";
     }
     if (strcmp(msg, "Property value too long.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Property value too long.";
         if (strncmp(lang_code, "es", 2) == 0) return "Valor de propiedad demasiado largo.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Valeur de propriété trop longue.";
         if (strncmp(lang_code, "it", 2) == 0) return "Valore della proprietà troppo lungo.";
@@ -474,6 +542,7 @@ const char *s3_gettext(const char *msg)
         return "Property value too long.";
     }
     if (strcmp(msg, "Rule file is missing.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Rule file is missing.";
         if (strncmp(lang_code, "es", 2) == 0) return "Falta el archivo de reglas.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Le fichier de règles est manquant.";
         if (strncmp(lang_code, "it", 2) == 0) return "Il file delle regole è mancante.";
@@ -486,6 +555,7 @@ const char *s3_gettext(const char *msg)
         return "Rule file is missing.";
     }
     if (strcmp(msg, "Rule file is not specified.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Rule file is not specified.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se ha especificado el archivo de reglas.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Le fichier de règles n'est pas spécifié.";
         if (strncmp(lang_code, "it", 2) == 0) return "Il file delle regole non è specificato.";
@@ -498,6 +568,7 @@ const char *s3_gettext(const char *msg)
         return "Rule file is not specified.";
     }
     if (strcmp(msg, "Save data version mismatched.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Save data version mismatched.";
         if (strncmp(lang_code, "es", 2) == 0) return "La versión de los datos de guardado no coincide.";
         if (strncmp(lang_code, "fr", 2) == 0) return "La version des données de sauvegarde ne correspond pas.";
         if (strncmp(lang_code, "it", 2) == 0) return "Versione dei dati di salvataggio non corrispondente.";
@@ -509,7 +580,8 @@ const char *s3_gettext(const char *msg)
         if (strncmp(lang_code, "ja", 2) == 0) return "セーブデータのバージョンが一致しません。";
         return "Save data version mismatched.";
     }
-    if (strcmp(msg, "Sequece too long while parsing anime file \"%s\" line %d.") == 0) {
+    if (strcmp(msg, "Sequence too long while parsing anime file \"%s\" line %d.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Sequence too long while parsing anime file \"%s\" line %d.";
         if (strncmp(lang_code, "es", 2) == 0) return "Secuencia demasiado larga al analizar el archivo de animación \"%s\" en la línea %d.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Séquence trop longue lors de l'analyse du fichier d'animation \"%s\" ligne %d.";
         if (strncmp(lang_code, "it", 2) == 0) return "Sequenza troppo lunga durante l'analisi del file di animazione \"%s\" riga %d.";
@@ -519,9 +591,10 @@ const char *s3_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "解析动画文件 \"%s\" 第 %d 行時序列过长。";
         if (strncmp(lang_code, "tw", 2) == 0) return "解析動畫檔案 \"%s\" 第 %d 行時序列過長。";
         if (strncmp(lang_code, "ja", 2) == 0) return "アニメーションファイル \"%s\" の %d 行目を解析中にシーケンスが長すぎます。";
-        return "Sequece too long while parsing anime file \"%s\" line %d.";
+        return "Sequence too long while parsing anime file \"%s\" line %d.";
     }
     if (strcmp(msg, "Specified ID is already used in GUI file \"%s\" line %d.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Specified ID is already used in GUI file \"%s\" line %d.";
         if (strncmp(lang_code, "es", 2) == 0) return "El ID especificado ya se está usando en el archivo GUI \"%s\" en la línea %d.";
         if (strncmp(lang_code, "fr", 2) == 0) return "L'ID spécifié est déjà utilisé dans le fichier GUI \"%s\" ligne %d.";
         if (strncmp(lang_code, "it", 2) == 0) return "L'ID specificato è già in uso nel file GUI \"%s\" riga %d.";
@@ -534,6 +607,7 @@ const char *s3_gettext(const char *msg)
         return "Specified ID is already used in GUI file \"%s\" line %d.";
     }
     if (strcmp(msg, "Tag name too long.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Tag name too long.";
         if (strncmp(lang_code, "es", 2) == 0) return "Nombre de etiqueta demasiado largo.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Nom de balise trop long.";
         if (strncmp(lang_code, "it", 2) == 0) return "Nome del tag troppo lungo.";
@@ -546,6 +620,7 @@ const char *s3_gettext(const char *msg)
         return "Tag name too long.";
     }
     if (strcmp(msg, "This API is not implemented yet.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "This API is not implemented yet.";
         if (strncmp(lang_code, "es", 2) == 0) return "Esta API aún no se ha implementado.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Cette API n'est pas encore implémentée.";
         if (strncmp(lang_code, "it", 2) == 0) return "Questa API non è ancora implementata.";
@@ -558,6 +633,7 @@ const char *s3_gettext(const char *msg)
         return "This API is not implemented yet.";
     }
     if (strcmp(msg, "Too long word while parsing anime file \"%s\" line %d.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Too long word while parsing anime file \"%s\" line %d.";
         if (strncmp(lang_code, "es", 2) == 0) return "Palabra demasiado larga al analizar el archivo de animación \"%s\" en la línea %d.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Mot trop long lors de l'analyse du fichier d'animation \"%s\" ligne %d.";
         if (strncmp(lang_code, "it", 2) == 0) return "Parola troppo lunga durante l'analisi del file di animazione \"%s\" riga %d.";
@@ -570,6 +646,7 @@ const char *s3_gettext(const char *msg)
         return "Too long word while parsing anime file \"%s\" line %d.";
     }
     if (strcmp(msg, "Too many GUI buttons in GUI file \"%s\".") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Too many GUI buttons in GUI file \"%s\".";
         if (strncmp(lang_code, "es", 2) == 0) return "Demasiados botones GUI en el archivo GUI \"%s\".";
         if (strncmp(lang_code, "fr", 2) == 0) return "Trop de boutons GUI dans le fichier GUI \"%s\".";
         if (strncmp(lang_code, "it", 2) == 0) return "Troppi pulsanti GUI nel file GUI \"%s\".";
@@ -582,6 +659,7 @@ const char *s3_gettext(const char *msg)
         return "Too many GUI buttons in GUI file \"%s\".";
     }
     if (strcmp(msg, "Too many drawmsg contexts.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Too many drawmsg contexts.";
         if (strncmp(lang_code, "es", 2) == 0) return "Demasiados contextos drawmsg.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Trop de contextes drawmsg.";
         if (strncmp(lang_code, "it", 2) == 0) return "Troppi contesti drawmsg.";
@@ -594,6 +672,7 @@ const char *s3_gettext(const char *msg)
         return "Too many drawmsg contexts.";
     }
     if (strcmp(msg, "Too many macro calls.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Too many macro calls.";
         if (strncmp(lang_code, "es", 2) == 0) return "Demasiadas llamadas a macros.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Trop d'appels de macros.";
         if (strncmp(lang_code, "it", 2) == 0) return "Troppe chiamate macro.";
@@ -606,6 +685,7 @@ const char *s3_gettext(const char *msg)
         return "Too many macro calls.";
     }
     if (strcmp(msg, "Too many nests.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Too many nests.";
         if (strncmp(lang_code, "es", 2) == 0) return "Demasiados anidamientos.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Trop d'imbrications.";
         if (strncmp(lang_code, "it", 2) == 0) return "Troppi annidamenti.";
@@ -618,6 +698,7 @@ const char *s3_gettext(const char *msg)
         return "Too many nests.";
     }
     if (strcmp(msg, "Too many properties.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Too many properties.";
         if (strncmp(lang_code, "es", 2) == 0) return "Demasiadas propiedades.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Trop de propriétés.";
         if (strncmp(lang_code, "it", 2) == 0) return "Troppe proprietà.";
@@ -630,6 +711,7 @@ const char *s3_gettext(const char *msg)
         return "Too many properties.";
     }
     if (strcmp(msg, "Too many registered animes.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Too many registered animes.";
         if (strncmp(lang_code, "es", 2) == 0) return "Demasiadas animaciones registradas.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Trop d'animations enregistrées.";
         if (strncmp(lang_code, "it", 2) == 0) return "Troppe animazioni registrate.";
@@ -642,6 +724,7 @@ const char *s3_gettext(const char *msg)
         return "Too many registered animes.";
     }
     if (strcmp(msg, "Undefined config key \"%s\".") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Undefined config key \"%s\".";
         if (strncmp(lang_code, "es", 2) == 0) return "Clave de configuración \"%s\" no definida.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Clé de configuration \"%s\" non définie.";
         if (strncmp(lang_code, "it", 2) == 0) return "Chiave di configurazione \"%s\" non definita.";
@@ -654,6 +737,7 @@ const char *s3_gettext(const char *msg)
         return "Undefined config key \"%s\".";
     }
     if (strcmp(msg, "Unexpected EOF.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Unexpected EOF.";
         if (strncmp(lang_code, "es", 2) == 0) return "Fin de archivo (EOF) inesperado.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Fin de fichier (EOF) inattendue.";
         if (strncmp(lang_code, "it", 2) == 0) return "EOF imprevisto.";
@@ -666,6 +750,7 @@ const char *s3_gettext(const char *msg)
         return "Unexpected EOF.";
     }
     if (strcmp(msg, "Unknown button property \"%s\" found in GUI file \"%s\" line %d.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Unknown button property \"%s\" found in GUI file \"%s\" line %d.";
         if (strncmp(lang_code, "es", 2) == 0) return "Se encontró una propiedad de botón \"%s\" desconocida en el archivo GUI \"%s\" en la línea %d.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Propriété de bouton \"%s\" inconnue dans le fichier GUI \"%s\" ligne %d.";
         if (strncmp(lang_code, "it", 2) == 0) return "Proprietà pulsante \"%s\" sconosciuta nel file GUI \"%s\" riga %d.";
@@ -678,6 +763,7 @@ const char *s3_gettext(const char *msg)
         return "Unknown button property \"%s\" found in GUI file \"%s\" line %d.";
     }
     if (strcmp(msg, "Unknown button type name \"%s\" in GUI file \"%s\" line %d.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Unknown button type name \"%s\" in GUI file \"%s\" line %d.";
         if (strncmp(lang_code, "es", 2) == 0) return "Nombre de tipo de botón \"%s\" desconocido en el archivo GUI \"%s\" en la línea %d.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Nom de type de bouton \"%s\" inconnu dans le fichier GUI \"%s\" ligne %d.";
         if (strncmp(lang_code, "it", 2) == 0) return "Nome tipo pulsante \"%s\" sconosciuto nel file GUI \"%s\" riga %d.";
@@ -690,6 +776,7 @@ const char *s3_gettext(const char *msg)
         return "Unknown button type name \"%s\" in GUI file \"%s\" line %d.";
     }
     if (strcmp(msg, "Unknown config key \"%s\".") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Unknown config key \"%s\".";
         if (strncmp(lang_code, "es", 2) == 0) return "Clave de configuración \"%s\" desconocida.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Clé de configuration \"%s\" inconnue.";
         if (strncmp(lang_code, "it", 2) == 0) return "Chiave di configurazione \"%s\" sconosciuta.";
@@ -702,6 +789,7 @@ const char *s3_gettext(const char *msg)
         return "Unknown config key \"%s\".";
     }
     if (strcmp(msg, "Unknown global key \"%s\" found in GUI file \"%s\" line %d.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Unknown global key \"%s\" found in GUI file \"%s\" line %d.";
         if (strncmp(lang_code, "es", 2) == 0) return "Se encontró una clave global \"%s\" desconocida en el archivo GUI \"%s\" en la línea %d.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Clé globale \"%s\" inconnue dans le fichier GUI \"%s\" ligne %d.";
         if (strncmp(lang_code, "it", 2) == 0) return "Chiave globale \"%s\" sconosciuta nel file GUI \"%s\" riga %d.";
@@ -714,6 +802,7 @@ const char *s3_gettext(const char *msg)
         return "Unknown global key \"%s\" found in GUI file \"%s\" line %d.";
     }
     if (strcmp(msg, "Unkwon key \"%s\" while parsing anime file \"%s\" line %d.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Unkwon key \"%s\" while parsing anime file \"%s\" line %d.";
         if (strncmp(lang_code, "es", 2) == 0) return "Clave \"%s\" desconocida al analizar el archivo de animación \"%s\" en la línea %d.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Clé \"%s\" inconnue lors de l'analyse du fichier d'animation \"%s\" ligne %d.";
         if (strncmp(lang_code, "it", 2) == 0) return "Chiave \"%s\" sconosciuta durante l'analisi del file di animazione \"%s\" riga %d.";
@@ -726,6 +815,7 @@ const char *s3_gettext(const char *msg)
         return "Unkwon key \"%s\" while parsing anime file \"%s\" line %d.";
     }
     if (strcmp(msg, "Invalid config line at file \"%s\" line %d.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Invalid config line at file \"%s\" line %d.";
         if (strncmp(lang_code, "es", 2) == 0) return "Línea de configuración no válida en el archivo \"%s\" en la línea %d.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Ligne de configuration non valide dans le fichier \"%s\" ligne %d.";
         if (strncmp(lang_code, "it", 2) == 0) return "Linea di configurazione non valida nel file \"%s\" riga %d.";
@@ -738,6 +828,7 @@ const char *s3_gettext(const char *msg)
         return "Invalid config line at file \"%s\" line %d.";
     }
     if (strcmp(msg, "No matching localized text.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "No matching localized text.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se encontro un texto localizado coincidente.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Aucun texte localisé correspondant n'a été trouvé.";
         if (strncmp(lang_code, "it", 2) == 0) return "Nessun testo localizzato corrispondente trovato.";

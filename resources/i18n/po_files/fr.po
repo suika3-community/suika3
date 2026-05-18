@@ -1,0 +1,191 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "%s:%d: %s"
+msgstr "%s:%d : %s"
+
+msgid "Error: %s:%d: %s"
+msgstr "Erreur : %s:%d : %s"
+
+msgid "Error: %s:%d: Tag %s:"
+msgstr "Erreur : %s:%d : Tag %s:"
+
+msgid "Error: %s:%d: Runtime error"
+msgstr "Erreur : %s:%d: Erreur d'exécution"
+
+msgid "Error: %s:%d: Tag \"%s\" not found."
+msgstr "Erreur : %s:%d : Balise \"%s\" introuvable."
+
+msgid "Error: %s:%d: \"Tag_%s\" is not a function."
+msgstr "Erreur : %s:%d : \"Tag_%s\" n'est pas une fonction."
+
+msgid "Argument \"%s\" not specified."
+msgstr "Argument \"%s\" non spécifié."
+
+msgid "Cannot play sound file \"%s\"."
+msgstr "Impossible de lire le fichier sonore \"%s\"."
+
+msgid "Conifg \"%s\" not found."
+msgstr "Configuration \"%s\" introuvable."
+
+msgid "Duplicated config key %s."
+msgstr "Clé de configuration en double %s."
+
+msgid "Error loading GUI file %s."
+msgstr "Erreur lors du chargement du fichier GUI %s."
+
+msgid "Failed to write save data."
+msgstr "Échec de l'écriture des données de sauvegarde."
+
+msgid "File \"%s\" not exist."
+msgstr "Le fichier \"%s\" n'existe pas."
+
+msgid "Internal error."
+msgstr "Erreur interne."
+
+msgid "Invalid EOF on GUI file %s."
+msgstr "Fin de fichier (EOF) non valide dans le fichier GUI %s."
+
+msgid "Invalid EOF while parsing anime file %s"
+msgstr "Fin de fichier (EOF) non valide lors de l'analyse du fichier d'animation %s"
+
+msgid "Invalid accel type \"%s\"."
+msgstr "Type d'accélération \"%s\" non valide."
+
+msgid "Invalid character \"%c\" while parsing anime file \"%s\" line %d."
+msgstr "Caractère \"%c\" non valide lors de l'analyse du fichier d'animation \"%s\" ligne %d."
+
+msgid "Invalid character."
+msgstr "Caractère non valide."
+
+msgid "Invalid fade method \"%s\"."
+msgstr "Méthode de fondu \"%s\" non valide."
+
+msgid "Invalid fade type \"%s\"."
+msgstr "Type de fondu \"%s\" non valide."
+
+msgid "Invalid layer name \"%s\" while parsing anime file \"%s\" line %d."
+msgstr "Nom de calque \"%s\" non valide lors de l'analyse du fichier d'animation \"%s\" ligne %d."
+
+msgid "Invalid layer name \"%s\"."
+msgstr "Nom de calque \"%s\" non valide."
+
+msgid "Invalid registered anime \"%s\"."
+msgstr "Animation enregistrée \"%s\" non valide."
+
+msgid "Invalid track \"%s\" specified."
+msgstr "Piste \"%s\" spécifiée non valide."
+
+msgid "Label \"%s\" not found."
+msgstr "Étiquette \"%s\" introuvable."
+
+msgid "Layer not specified while parsing anime file \"%s\" line %d."
+msgstr "Calque non spécifié lors de l'analyse du fichier d'animation \"%s\" ligne %d."
+
+msgid "Macro \"%s\" not found."
+msgstr "Macro \"%s\" introuvable."
+
+msgid "No LHS specified."
+msgstr "Aucun membre de gauche (LHS) spécifié."
+
+msgid "No RHS specified."
+msgstr "Aucun membre de droite (RHS) spécifié."
+
+msgid "No available button-id for a GUI button in GUI file \"%s\"."
+msgstr "Aucun ID de bouton disponible pour un bouton GUI dans le fichier GUI \"%s\"."
+
+msgid "No correspoinding \"for\" detected."
+msgstr "Aucun \"for\" correspondant détecté."
+
+msgid "No correspoinding \"if\" detected."
+msgstr "Aucun \"if\" correspondant détecté."
+
+msgid "No correspoinding \"while\" detected."
+msgstr "Aucun \"while\" correspondant détecté."
+
+msgid "No matching endif found."
+msgstr "Aucun endif correspondant trouvé."
+
+msgid "No matching endmacro found."
+msgstr "Aucun endmacro correspondant trouvé."
+
+msgid "No operator specified."
+msgstr "Aucun opérateur spécifié."
+
+msgid "Property name too long."
+msgstr "Nom de propriété trop long."
+
+msgid "Property value too long."
+msgstr "Valeur de propriété trop longue."
+
+msgid "Rule file is missing."
+msgstr "Le fichier de règles est manquant."
+
+msgid "Rule file is not specified."
+msgstr "Le fichier de règles n'est pas spécifié."
+
+msgid "Save data version mismatched."
+msgstr "La version des données de sauvegarde ne correspond pas."
+
+msgid "Sequence too long while parsing anime file \"%s\" line %d."
+msgstr "Séquence trop longue lors de l'analyse du fichier d'animation \"%s\" ligne %d."
+
+msgid "Specified ID is already used in GUI file \"%s\" line %d."
+msgstr "L'ID spécifié est déjà utilisé dans le fichier GUI \"%s\" ligne %d."
+
+msgid "Tag name too long."
+msgstr "Nom de balise trop long."
+
+msgid "This API is not implemented yet."
+msgstr "Cette API n'est pas encore implémentée."
+
+msgid "Too long word while parsing anime file \"%s\" line %d."
+msgstr "Mot trop long lors de l'analyse du fichier d'animation \"%s\" ligne %d."
+
+msgid "Too many GUI buttons in GUI file \"%s\"."
+msgstr "Trop de boutons GUI dans le fichier GUI \"%s\"."
+
+msgid "Too many drawmsg contexts."
+msgstr "Trop de contextes drawmsg."
+
+msgid "Too many macro calls."
+msgstr "Trop d'appels de macros."
+
+msgid "Too many nests."
+msgstr "Trop d'imbrications."
+
+msgid "Too many properties."
+msgstr "Trop de propriétés."
+
+msgid "Too many registered animes."
+msgstr "Trop d'animations enregistrées."
+
+msgid "Undefined config key \"%s\"."
+msgstr "Clé de configuration \"%s\" non définie."
+
+msgid "Unexpected EOF."
+msgstr "Fin de fichier (EOF) inattendue."
+
+msgid "Unknown button property \"%s\" found in GUI file \"%s\" line %d."
+msgstr "Propriété de bouton \"%s\" inconnue dans le fichier GUI \"%s\" ligne %d."
+
+msgid "Unknown button type name \"%s\" in GUI file \"%s\" line %d."
+msgstr "Nom de type de bouton \"%s\" inconnu dans le fichier GUI \"%s\" ligne %d."
+
+msgid "Unknown config key \"%s\"."
+msgstr "Clé de configuration \"%s\" inconnue."
+
+msgid "Unknown global key \"%s\" found in GUI file \"%s\" line %d."
+msgstr "Clé globale \"%s\" inconnue dans le fichier GUI \"%s\" ligne %d."
+
+msgid "Unkwon key \"%s\" while parsing anime file \"%s\" line %d."
+msgstr "Clé \"%s\" inconnue lors de l'analyse du fichier d'animation \"%s\" ligne %d."
+
+msgid "Invalid config line at file \"%s\" line %d."
+msgstr "Ligne de configuration non valide dans le fichier \"%s\" ligne %d."
+
+msgid "No matching localized text."
+msgstr "Aucun texte localisé correspondant n'a été trouvé."
+

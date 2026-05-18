@@ -1,0 +1,191 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "%s:%d: %s"
+msgstr "%s:%d: %s"
+
+msgid "Error: %s:%d: %s"
+msgstr "错误: %s:%d: %s"
+
+msgid "Error: %s:%d: Tag %s:"
+msgstr "错误: %s:%d: Tag %s:"
+
+msgid "Error: %s:%d: Runtime error"
+msgstr "错误: %s:%d: 运行时错误"
+
+msgid "Error: %s:%d: Tag \"%s\" not found."
+msgstr "错误: %s:%d: 未找到标签 \"%s\"。"
+
+msgid "Error: %s:%d: \"Tag_%s\" is not a function."
+msgstr "错误: %s:%d: \"Tag_%s\" 不是函数。"
+
+msgid "Argument \"%s\" not specified."
+msgstr "未指定参数 \"%s\"。"
+
+msgid "Cannot play sound file \"%s\"."
+msgstr "无法播放音频文件 \"%s\"。"
+
+msgid "Conifg \"%s\" not found."
+msgstr "未找到配置 \"%s\"。"
+
+msgid "Duplicated config key %s."
+msgstr "配置键 %s 重复。"
+
+msgid "Error loading GUI file %s."
+msgstr "加载 GUI 文件 %s 時出错。"
+
+msgid "Failed to write save data."
+msgstr "保存数据写入失败。"
+
+msgid "File \"%s\" not exist."
+msgstr "文件 \"%s\" 不存在。"
+
+msgid "Internal error."
+msgstr "内部错误。"
+
+msgid "Invalid EOF on GUI file %s."
+msgstr "GUI 文件 %s 中的 EOF 无效。"
+
+msgid "Invalid EOF while parsing anime file %s"
+msgstr "解析动画文件 %s 時遇到无效的 EOF。"
+
+msgid "Invalid accel type \"%s\"."
+msgstr "加速类型 \"%s\" 无效。"
+
+msgid "Invalid character \"%c\" while parsing anime file \"%s\" line %d."
+msgstr "解析动画文件 \"%s\" 第 %d 行時发现无效字符 \"%c\"。"
+
+msgid "Invalid character."
+msgstr "无效字符。"
+
+msgid "Invalid fade method \"%s\"."
+msgstr "渐变方法 \"%s\" 无效。"
+
+msgid "Invalid fade type \"%s\"."
+msgstr "渐变类型 \"%s\" 无效。"
+
+msgid "Invalid layer name \"%s\" while parsing anime file \"%s\" line %d."
+msgstr "解析动画文件 \"%s\" 第 %d 行時发现无效图层名 \"%s\"。"
+
+msgid "Invalid layer name \"%s\"."
+msgstr "图层名 \"%s\" 无效。"
+
+msgid "Invalid registered anime \"%s\"."
+msgstr "注册动画 \"%s\" 无效。"
+
+msgid "Invalid track \"%s\" specified."
+msgstr "指定的轨道 \"%s\" 无效。"
+
+msgid "Label \"%s\" not found."
+msgstr "未找到标签 \"%s\"。"
+
+msgid "Layer not specified while parsing anime file \"%s\" line %d."
+msgstr "解析动画文件 \"%s\" 第 %d 行時未指定图层。"
+
+msgid "Macro \"%s\" not found."
+msgstr "未找到宏 \"%s\"。"
+
+msgid "No LHS specified."
+msgstr "未指定左值。"
+
+msgid "No RHS specified."
+msgstr "未指定右值。"
+
+msgid "No available button-id for a GUI button in GUI file \"%s\"."
+msgstr "GUI 文件 \"%s\" 中没有可用的按钮 ID。"
+
+msgid "No correspoinding \"for\" detected."
+msgstr "未发现对应的 \"for\"。"
+
+msgid "No correspoinding \"if\" detected."
+msgstr "未发现对应的 \"if\"。"
+
+msgid "No correspoinding \"while\" detected."
+msgstr "未发现对应的 \"while\"。"
+
+msgid "No matching endif found."
+msgstr "未找到匹配的 endif。"
+
+msgid "No matching endmacro found."
+msgstr "未找到匹配的 endmacro。"
+
+msgid "No operator specified."
+msgstr "未指定操作符。"
+
+msgid "Property name too long."
+msgstr "属性名过长。"
+
+msgid "Property value too long."
+msgstr "属性值过长。"
+
+msgid "Rule file is missing."
+msgstr "缺少规则文件。"
+
+msgid "Rule file is not specified."
+msgstr "未指定规则文件。"
+
+msgid "Save data version mismatched."
+msgstr "存档数据版本不匹配。"
+
+msgid "Sequence too long while parsing anime file \"%s\" line %d."
+msgstr "解析动画文件 \"%s\" 第 %d 行時序列过长。"
+
+msgid "Specified ID is already used in GUI file \"%s\" line %d."
+msgstr "指定的 ID 已在 GUI 文件 \"%s\" 第 %d 行中使用。"
+
+msgid "Tag name too long."
+msgstr "标签名过长。"
+
+msgid "This API is not implemented yet."
+msgstr "该 API 尚未实现。"
+
+msgid "Too long word while parsing anime file \"%s\" line %d."
+msgstr "解析动画文件 \"%s\" 第 %d 行時单词过长。"
+
+msgid "Too many GUI buttons in GUI file \"%s\"."
+msgstr "GUI 文件 \"%s\" 中的 GUI 按钮过多。"
+
+msgid "Too many drawmsg contexts."
+msgstr "drawmsg 上下文过多。"
+
+msgid "Too many macro calls."
+msgstr "宏调用过多。"
+
+msgid "Too many nests."
+msgstr "嵌套过多。"
+
+msgid "Too many properties."
+msgstr "属性过多。"
+
+msgid "Too many registered animes."
+msgstr "注册动画过多。"
+
+msgid "Undefined config key \"%s\"."
+msgstr "未定义的配置键 \"%s\"。"
+
+msgid "Unexpected EOF."
+msgstr "意外的 EOF。"
+
+msgid "Unknown button property \"%s\" found in GUI file \"%s\" line %d."
+msgstr "在 GUI 文件 \"%s\" 第 %d 行发现未知的按钮属性 \"%s\"。"
+
+msgid "Unknown button type name \"%s\" in GUI file \"%s\" line %d."
+msgstr "GUI 文件 \"%s\" 第 %d 行发现未知的按钮类型 \"%s\"。"
+
+msgid "Unknown config key \"%s\"."
+msgstr "未知的配置键 \"%s\"。"
+
+msgid "Unknown global key \"%s\" found in GUI file \"%s\" line %d."
+msgstr "在 GUI 文件 \"%s\" 第 %d 行发现未知的全局键 \"%s\"。"
+
+msgid "Unkwon key \"%s\" while parsing anime file \"%s\" line %d."
+msgstr "解析动画文件 \"%s\" 第 %d 行時发现未知键 \"%s\"。"
+
+msgid "Invalid config line at file \"%s\" line %d."
+msgstr "文件 \"%s\" 第 %d 行配置无效。"
+
+msgid "No matching localized text."
+msgstr "未找到匹配的本地化文本。"
+

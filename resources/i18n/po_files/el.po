@@ -1,0 +1,191 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "%s:%d: %s"
+msgstr "%s:%d: %s"
+
+msgid "Error: %s:%d: %s"
+msgstr "Σφάλμα: %s:%d: %s"
+
+msgid "Error: %s:%d: Tag %s:"
+msgstr "Σφάλμα: %s:%d: Tag %s:"
+
+msgid "Error: %s:%d: Runtime error"
+msgstr "Σφάλμα: %s:%d: Σφάλμα κατά την εκτέλεση"
+
+msgid "Error: %s:%d: Tag \"%s\" not found."
+msgstr "Σφάλμα: %s:%d: Η ετικέτα \"%s\" δεν βρέθηκε."
+
+msgid "Error: %s:%d: \"Tag_%s\" is not a function."
+msgstr "Σφάλμα: %s:%d: Το \"Tag_%s\" δεν είναι συνάρτηση."
+
+msgid "Argument \"%s\" not specified."
+msgstr "Το όρισμα \"%s\" δεν έχει οριστεί."
+
+msgid "Cannot play sound file \"%s\"."
+msgstr "Δεν είναι δυνατή η αναπαραγωγή του αρχείου ήχου \"%s\"."
+
+msgid "Conifg \"%s\" not found."
+msgstr "Η ρύθμιση \"%s\" δεν βρέθηκε."
+
+msgid "Duplicated config key %s."
+msgstr "Διπλότυπο κλειδί ρύθμισης %s."
+
+msgid "Error loading GUI file %s."
+msgstr "Σφάλμα κατά τη φόρτωση του αρχείου GUI %s."
+
+msgid "Failed to write save data."
+msgstr "Αποτυχία εγγραφής δεδομένων αποθήκευσης."
+
+msgid "File \"%s\" not exist."
+msgstr "Το αρχείο \"%s\" δεν υπάρχει."
+
+msgid "Internal error."
+msgstr "Εσωτερικό σφάλμα."
+
+msgid "Invalid EOF on GUI file %s."
+msgstr "Μη έγκυρο τέλος αρχείου (EOF) στο αρχείο GUI %s."
+
+msgid "Invalid EOF while parsing anime file %s"
+msgstr "Μη έγκυρο τέλος αρχείου (EOF) κατά την ανάλυση του αρχείου κινουμένων σχεδίων %s"
+
+msgid "Invalid accel type \"%s\"."
+msgstr "Μη έγκυρος τύπος επιτάχυνσης \"%s\"."
+
+msgid "Invalid character \"%c\" while parsing anime file \"%s\" line %d."
+msgstr "Μη έγκυρος χαρακτήρας \"%c\" κατά την ανάλυση του αρχείου κινουμένων σχεδίων \"%s\" γραμμή %d."
+
+msgid "Invalid character."
+msgstr "Μη έγκυρος χαρακτήρας."
+
+msgid "Invalid fade method \"%s\"."
+msgstr "Μη έγκυρη μέθοδος εξασθένισης \"%s\"."
+
+msgid "Invalid fade type \"%s\"."
+msgstr "Μη έγκυρος τύπος εξασθένισης \"%s\"."
+
+msgid "Invalid layer name \"%s\" while parsing anime file \"%s\" line %d."
+msgstr "Μη έγκυρο όνομα επιπέδου \"%s\" κατά την ανάλυση του αρχείου κινουμένων σχεδίων \"%s\" γραμμή %d."
+
+msgid "Invalid layer name \"%s\"."
+msgstr "Μη έγκυρο όνομα επιπέδου \"%s\"."
+
+msgid "Invalid registered anime \"%s\"."
+msgstr "Μη έγκυρη εγγεγραμμένη κίνηση \"%s\"."
+
+msgid "Invalid track \"%s\" specified."
+msgstr "Ορίστηκε μη έγκυρο κομμάτι \"%s\"."
+
+msgid "Label \"%s\" not found."
+msgstr "Η ετικέτα \"%s\" δεν βρέθηκε."
+
+msgid "Layer not specified while parsing anime file \"%s\" line %d."
+msgstr "Δεν ορίστηκε επίπεδο κατά την ανάλυση του αρχείου κινουμένων σχεδίων \"%s\" γραμμή %d."
+
+msgid "Macro \"%s\" not found."
+msgstr "Η μακροεντολή \"%s\" δεν βρέθηκε."
+
+msgid "No LHS specified."
+msgstr "Δεν ορίστηκε αριστερό μέλος (LHS)."
+
+msgid "No RHS specified."
+msgstr "Δεν ορίστηκε δεξί μέλος (RHS)."
+
+msgid "No available button-id for a GUI button in GUI file \"%s\"."
+msgstr "Δεν υπάρχει διαθέσιμο ID κουμπιού για ένα κουμπί GUI στο αρχείο GUI \"%s\"."
+
+msgid "No correspoinding \"for\" detected."
+msgstr "Δεν εντοπίστηκε αντίστοιχο \"for\"."
+
+msgid "No correspoinding \"if\" detected."
+msgstr "Δεν εντοπίστηκε αντίστοιχο \"if\"."
+
+msgid "No correspoinding \"while\" detected."
+msgstr "Δεν εντοπίστηκε αντίστοιχο \"while\"."
+
+msgid "No matching endif found."
+msgstr "Δεν βρέθηκε αντίστοιχο endif."
+
+msgid "No matching endmacro found."
+msgstr "Δεν βρέθηκε αντίστοιχο endmacro."
+
+msgid "No operator specified."
+msgstr "Δεν ορίστηκε τελεστής."
+
+msgid "Property name too long."
+msgstr "Το όνομα της ιδιότητας είναι πολύ μεγάλο."
+
+msgid "Property value too long."
+msgstr "Η τιμή της ιδιότητας είναι πολύ μεγάλη."
+
+msgid "Rule file is missing."
+msgstr "Το αρχείο κανόνων λείπει."
+
+msgid "Rule file is not specified."
+msgstr "Δεν ορίστηκε αρχείο κανόνων."
+
+msgid "Save data version mismatched."
+msgstr "Αναντιστοιχία έκδοσης δεδομένων αποθήκευσης."
+
+msgid "Sequence too long while parsing anime file \"%s\" line %d."
+msgstr "Η σειρά είναι πολύ μεγάλη κατά την ανάλυση του αρχείου κινουμένων σχεδίων \"%s\" γραμμή %d."
+
+msgid "Specified ID is already used in GUI file \"%s\" line %d."
+msgstr "Το καθορισμένο ID χρησιμοποιείται ήδη στο αρχείο GUI \"%s\" γραμμή %d."
+
+msgid "Tag name too long."
+msgstr "Το όνομα της ετικέτας είναι πολύ μεγάλο."
+
+msgid "This API is not implemented yet."
+msgstr "Αυτό το API δεν έχει υλοποιηθεί ακόμα."
+
+msgid "Too long word while parsing anime file \"%s\" line %d."
+msgstr "Η λέξη είναι πολύ μεγάλη κατά την ανάλυση του αρχείου κινουμένων σχεδίων \"%s\" γραμμή %d."
+
+msgid "Too many GUI buttons in GUI file \"%s\"."
+msgstr "Πάρα πολλά κουμπιά GUI στο αρχείο GUI \"%s\"."
+
+msgid "Too many drawmsg contexts."
+msgstr "Πάρα πολλά περιβάλλοντα drawmsg."
+
+msgid "Too many macro calls."
+msgstr "Πάρα πολλές κλήσεις μακροεντολών."
+
+msgid "Too many nests."
+msgstr "Πάρα πολλές εμφωλεύσεις."
+
+msgid "Too many properties."
+msgstr "Πάρα πολλές ιδιότητες."
+
+msgid "Too many registered animes."
+msgstr "Πάρα πολλές εγγεγραμμένες κινήσεις."
+
+msgid "Undefined config key \"%s\"."
+msgstr "Μη ορισμένο κλειδί ρύθμισης \"%s\"."
+
+msgid "Unexpected EOF."
+msgstr "Μη αναμενόμενο τέλος αρχείου (EOF)."
+
+msgid "Unknown button property \"%s\" found in GUI file \"%s\" line %d."
+msgstr "Βρέθηκε άγνωστη ιδιότητα κουμπιού \"%s\" στο αρχείο GUI \"%s\" γραμμή %d."
+
+msgid "Unknown button type name \"%s\" in GUI file \"%s\" line %d."
+msgstr "Άγνωστο όνομα τύπου κουμπιού \"%s\" στο αρχείο GUI \"%s\" γραμμή %d."
+
+msgid "Unknown config key \"%s\"."
+msgstr "Άγνωστο κλειδί ρύθμισης \"%s\"."
+
+msgid "Unknown global key \"%s\" found in GUI file \"%s\" line %d."
+msgstr "Βρέθηκε άγνωστο παγκόσμιο κλειδί \"%s\" στο αρχείο GUI \"%s\" γραμμή %d."
+
+msgid "Unkwon key \"%s\" while parsing anime file \"%s\" line %d."
+msgstr "Άγνωστο κλειδί \"%s\" κατά την ανάλυση του αρχείου κινουμένων σχεδίων \"%s\" γραμμή %d."
+
+msgid "Invalid config line at file \"%s\" line %d."
+msgstr "Μη έγκυρη γραμμή ρύθμισης στο αρχείο \"%s\" γραμμή %d."
+
+msgid "No matching localized text."
+msgstr "Δεν βρέθηκε αντίστοιχο τοπικό κείμενο."
+

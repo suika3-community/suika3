@@ -1,0 +1,188 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "%s:%d: %s"
+msgstr "%s:%d: %s"
+
+msgid "Error: %s:%d: %s"
+msgstr "錯誤: %s:%d: %s"
+
+msgid "Error: %s:%d: Tag %s:"
+msgstr "錯誤: %s:%d: Tag %s:"
+
+msgid "Error: %s:%d: Runtime error"
+msgstr "錯誤: %s:%d: 執行階段錯誤"
+
+msgid "Error: %s:%d: Tag \"%s\" not found."
+msgstr "錯誤: %s:%d: 找不到標籤 \"%s\"。"
+
+msgid "Error: %s:%d: \"Tag_%s\" is not a function."
+msgstr "錯誤: %s:%d: \"Tag_%s\" 不是函式。"
+
+msgid "Argument \"%s\" not specified."
+msgstr "未指定引數 \"%s\"。"
+
+msgid "Cannot play sound file \"%s\"."
+msgstr "無法播放音訊檔案 \"%s\"。"
+
+msgid "Conifg \"%s\" not found."
+msgstr "找不到設定 \"%s\"。"
+
+msgid "Duplicated config key %s."
+msgstr "設定鍵 %s 重複。"
+
+msgid "Error loading GUI file %s."
+msgstr "載入 GUI 檔案 %s 時發生錯誤。"
+
+msgid "Failed to write save data."
+msgstr "儲存存檔資料失敗。"
+
+msgid "File \"%s\" not exist."
+msgstr "檔案 \"%s\" 不存在。"
+
+msgid "Internal error."
+msgstr "內部錯誤。"
+
+msgid "Invalid EOF on GUI file %s."
+msgstr "GUI 檔案 %s 中的 EOF 無效。"
+
+msgid "Invalid EOF while parsing anime file %s"
+msgstr "解析動畫檔案 %s 時遇到無效的 EOF。"
+
+msgid "Invalid accel type \"%s\"."
+msgstr "加速類型 \"%s\" 無效。"
+
+msgid "Invalid character \"%c\" while parsing anime file \"%s\" line %d."
+msgstr "解析動畫檔案 \"%s\" 第 %d 行時發現無效字元 \"%c\"。"
+
+msgid "Invalid character."
+msgstr "無效字元。"
+
+msgid "Invalid fade method \"%s\"."
+msgstr "漸變方法 \"%s\" 無效。"
+
+msgid "Invalid fade type \"%s\"."
+msgstr "漸變類型 \"%s\" 無效。"
+
+msgid "Invalid layer name \"%s\" while parsing anime file \"%s\" line %d."
+msgstr "解析動畫檔案 \"%s\" 第 %d 行時發現無效圖層名稱 \"%s\"。"
+
+msgid "Invalid layer name \"%s\"."
+msgstr "圖層名稱 \"%s\" 無效。"
+
+msgid "Invalid registered anime \"%s\"."
+msgstr "註冊動畫 \"%s\" 無效。"
+
+msgid "Invalid track \"%s\" specified."
+msgstr "指定的軌道 \"%s\" 無效。"
+
+msgid "Label \"%s\" not found."
+msgstr "找不到標籤 \"%s\"。"
+
+msgid "Layer not specified while parsing anime file \"%s\" line %d."
+msgstr "解析動畫檔案 \"%s\" 第 %d 行時未指定圖層。"
+
+msgid "Macro \"%s\" not found."
+msgstr "找不到巨集 \"%s\"。"
+
+msgid "No LHS specified."
+msgstr "未指定左值。"
+
+msgid "No RHS specified."
+msgstr "未指定右值。"
+
+msgid "No available button-id for a GUI button in GUI file \"%s\"."
+msgstr "GUI 檔案 \"%s\" 中沒有可用的按鈕 ID。"
+
+msgid "No correspoinding \"for\" detected."
+msgstr "找不到對應的 \"for\"。"
+
+msgid "No correspoinding \"if\" detected."
+msgstr "找不到對應的 \"if\"。"
+
+msgid "No correspoinding \"while\" detected."
+msgstr "找不到對應的 \"while\"。"
+
+msgid "No matching endif found."
+msgstr "找不到對應的 endif。"
+
+msgid "No matching endmacro found."
+msgstr "找不到對應的 endmacro。"
+
+msgid "No operator specified."
+msgstr "未指定運算子。"
+
+msgid "Property name too long."
+msgstr "屬性名稱過長。"
+
+msgid "Property value too long."
+msgstr "屬性值過長。"
+
+msgid "Rule file is missing."
+msgstr "缺少規則檔案。"
+
+msgid "Rule file is not specified."
+msgstr "未指定規則檔案。"
+
+msgid "Save data version mismatched."
+msgstr "存檔版本不符。"
+
+msgid "Sequence too long while parsing anime file \"%s\" line %d."
+msgstr "解析動畫檔案 \"%s\" 第 %d 行時序列過長。"
+
+msgid "Specified ID is already used in GUI file \"%s\" line %d."
+msgstr "指定的 ID 已在 GUI 檔案 \"%s\" 第 %d 行中使用。"
+
+msgid "Tag name too long."
+msgstr "標籤名稱過長。"
+
+msgid "This API is not implemented yet."
+msgstr "此 API 尚未實作。"
+
+msgid "Too long word while parsing anime file \"%s\" line %d."
+msgstr "解析動畫檔案 \"%s\" 第 %d 行時單字過長。"
+
+msgid "Too many GUI buttons in GUI file \"%s\"."
+msgstr "GUI 檔案 \"%s\" 中的 GUI 按鈕過多。"
+
+msgid "Too many drawmsg contexts."
+msgstr "drawmsg 上下文過多。"
+
+msgid "Too many macro calls."
+msgstr "巨集呼叫過多。"
+
+msgid "Too many nests."
+msgstr "巢狀層級過多。"
+
+msgid "Too many properties."
+msgstr "屬性過多。"
+
+msgid "Too many registered animes."
+msgstr "註冊動畫過多。"
+
+msgid "Undefined config key \"%s\"."
+msgstr "未定義的設定鍵 \"%s\"。"
+
+msgid "Unexpected EOF."
+msgstr "未預期的 EOF。"
+
+msgid "Unknown button property \"%s\" found in GUI file \"%s\" line %d."
+msgstr "在 GUI 檔案 \"%s\" 第 %d 行發現未知的按鈕屬性 \"%s\"。"
+
+msgid "Unknown button type name \"%s\" in GUI file \"%s\" line %d."
+msgstr "GUI 檔案 \"%s\" 第 %d 行發現未知的按鈕類型 \"%s\"。"
+
+msgid "Unknown config key \"%s\"."
+msgstr "未知的設定鍵 \"%s\"。"
+
+msgid "Unknown global key \"%s\" found in GUI file \"%s\" line %d."
+msgstr "在 GUI 檔案 \"%s\" 第 %d 行發現未知的全域鍵 \"%s\"。"
+
+msgid "Unkwon key \"%s\" while parsing anime file \"%s\" line %d."
+msgstr "解析動畫檔案 \"%s\" 第 %d 行時發現未知鍵 \"%s\"。"
+
+msgid "Invalid config line at file \"%s\" line %d."
+msgstr "檔案 \"%s\" 第 %d 行設定無効。"
+

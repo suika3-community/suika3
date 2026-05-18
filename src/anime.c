@@ -750,14 +750,14 @@ on_key_value(
 		return true;
 	}
 	if (cur_seq_layer == -1) {
-		s3_log_error(S3_TR("Layer not specifed while parsing anime file \"%s\" line %d."), file, line + 1);
+		s3_log_error(S3_TR("Layer not specified while parsing anime file \"%s\" line %d."), file, line + 1);
 		return false;
 	}
 
 	/* Check the sequence length of the layer. */
 	top = context[cur_seq_layer].seq_count - 1;
 	if (top == SEQUENCE_COUNT) {
-		s3_log_error(S3_TR("Sequece too long while parsing anime file \"%s\" line %d."), file, line + 1);
+		s3_log_error(S3_TR("Sequence too long while parsing anime file \"%s\" line %d."), file, line + 1);
 		return false;
 	}
 	assert(top >= 0);
