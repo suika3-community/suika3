@@ -823,7 +823,7 @@ on_key_value(
 	} else if (strcmp(key, "show-special") == 0) {
 		s->show_special = true;
 	} else {
-		s3_log_error(S3_TR("Unkown key \"%s\" while parsing anime file \"%s\" line %d."), key, file, line + 1);
+		s3_log_error(S3_TR("Unknown key \"%s\" while parsing anime file \"%s\" line %d."), key, file, line + 1);
 		return false;
 	}
 
